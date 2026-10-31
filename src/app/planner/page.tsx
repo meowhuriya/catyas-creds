@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDataStore } from "@/lib/repository";
 import { Course, PlannerEvent, Assessment, Topic } from "@/types/schemas";
 import { ScheduleStudyBlockModal } from "@/components/planner/schedule-study-block-modal";
+import { AiStudyPlanModal } from "@/components/planner/ai-study-plan-modal";
 import { Button } from "@/components/ui/button";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import {
@@ -52,6 +53,7 @@ export default function PlannerPage() {
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<"all" | "pending" | "done">("all");
   const [selectedTypeFilter, setSelectedTypeFilter] = React.useState<"all" | "study_block" | "due_date" | "exam" | "revision">("all");
   const [scheduleModalOpen, setScheduleModalOpen] = React.useState(false);
+  const [aiPlanModalOpen, setAiPlanModalOpen] = React.useState(false);
   const [selectedDateForModal, setSelectedDateForModal] = React.useState<string>("");
   const [loading, setLoading] = React.useState(true);
 
@@ -246,6 +248,16 @@ export default function PlannerPage() {
               Week View
             </button>
           </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setAiPlanModalOpen(true)}
+            className="gap-1.5 text-xs text-app-accent border-app-accent/40 hover:bg-app-accent/10"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Draft Plan with AI</span>
+          </Button>
 
           <Button
             variant="primary"
@@ -595,6 +607,14 @@ export default function PlannerPage() {
         initialDate={selectedDateForModal}
         open={scheduleModalOpen}
         onOpenChange={setScheduleModalOpen}
+        onSuccess={loadData}
+      />
+
+      {/* AI Study Plan Drafter Modal */}
+      <AiStudyPlanModal
+        courses={courses}
+        open={aiPlanModalOpen}
+        onOpenChange={setAiPlanModalOpen}
         onSuccess={loadData}
       />
     </div>

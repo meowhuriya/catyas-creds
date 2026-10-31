@@ -17,6 +17,7 @@ import {
   Video as VideoIcon,
   HelpCircle,
   FlaskConical,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ interface TopicChecklistProps {
   onSplitTopic: (topicId: string, title1: string, title2: string) => Promise<void>;
   onMergeTopics: (primaryId: string, secondaryId: string, combinedTitle: string) => Promise<void>;
   onStartQuickCheck?: (topic: Topic) => void;
+  onOpenTopicAi?: (topic: Topic) => void;
   className?: string;
 }
 
@@ -54,6 +56,7 @@ export function TopicChecklist({
   onSplitTopic,
   onMergeTopics,
   onStartQuickCheck,
+  onOpenTopicAi,
   className = "",
 }: TopicChecklistProps) {
   const [editingTopicId, setEditingTopicId] = React.useState<string | null>(null);
@@ -264,6 +267,19 @@ export function TopicChecklist({
 
               {/* Right: Quick Check Button & Topic Action Dropdown */}
               <div className="flex items-center gap-1.5 shrink-0">
+                {/* Ask AI Assistant */}
+                {onOpenTopicAi && (
+                  <button
+                    type="button"
+                    onClick={() => onOpenTopicAi(topic)}
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-[6px] text-[11px] font-semibold text-app-accent border border-app-accent/30 bg-app-accent/5 hover:bg-app-accent/10 transition-colors"
+                    title="Ask AI: Explain simply, test me, or flashcards"
+                  >
+                    <Sparkles className="h-3 w-3" />
+                    <span>AI</span>
+                  </button>
+                )}
+
                 {/* Take Quick Check Button */}
                 <button
                   type="button"

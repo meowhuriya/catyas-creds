@@ -40,6 +40,7 @@ import { UnitVideoGallery } from "@/components/courses/unit-video-gallery";
 import { ResetSyllabusDialog } from "@/components/courses/reset-syllabus-dialog";
 import { TidyTopicsDialog } from "@/components/courses/tidy-topics-dialog";
 import { QuickCheckModal } from "@/components/courses/quick-check-modal";
+import { TopicAiChatModal } from "@/components/topics/topic-ai-chat-modal";
 import { MilestoneBanner } from "@/components/ui/milestone-banner";
 import { calculateUnitMastery, calculateCourseMastery } from "@/lib/mastery/mastery-engine";
 import {
@@ -103,6 +104,7 @@ export default function CourseDetailPage() {
   const [resetSyllabusOpen, setResetSyllabusOpen] = React.useState(false);
   const [tidyTopicsOpen, setTidyTopicsOpen] = React.useState(false);
   const [quickCheckTopic, setQuickCheckTopic] = React.useState<Topic | null>(null);
+  const [aiChatTopic, setAiChatTopic] = React.useState<Topic | null>(null);
   const [activeQuizAssessment, setActiveQuizAssessment] = React.useState<Assessment | null>(null);
   const [activeAssignmentAssessment, setActiveAssignmentAssessment] = React.useState<Assessment | null>(null);
   const [aiQuizDraftOpen, setAiQuizDraftOpen] = React.useState(false);
@@ -562,6 +564,7 @@ export default function CourseDetailPage() {
                     onSplitTopic={handleSplitTopic}
                     onMergeTopics={handleMergeTopics}
                     onStartQuickCheck={(topic) => setQuickCheckTopic(topic)}
+                    onOpenTopicAi={(topic) => setAiChatTopic(topic)}
                   />
                 </div>
               </div>
@@ -1384,6 +1387,16 @@ export default function CourseDetailPage() {
           if (!open) setQuickCheckTopic(null);
         }}
         onSuccess={loadData}
+      />
+
+      {/* Topic AI Assistant Modal */}
+      <TopicAiChatModal
+        topicTitle={aiChatTopic?.title || ""}
+        courseTitle={course.title}
+        open={Boolean(aiChatTopic)}
+        onOpenChange={(open) => {
+          if (!open) setAiChatTopic(null);
+        }}
       />
     </div>
   );

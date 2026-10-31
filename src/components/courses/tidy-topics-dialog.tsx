@@ -3,8 +3,9 @@
 import * as React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Check, ArrowRight } from "lucide-react";
+import { Sparkles, Check, ArrowRight, AlertCircle } from "lucide-react";
 import { Topic } from "@/types/schemas";
+import { useAiStatus } from "@/lib/ai/use-ai-status";
 
 interface TidyTopicsDialogProps {
   courseCode: string;
@@ -23,42 +24,68 @@ export function TidyTopicsDialog({
   onOpenChange,
   onApplyTidy,
 }: TidyTopicsDialogProps) {
-  const [loading, setLoading] = React.useState(false);
+  const { configured, unconfiguredMessage } = useAiStatus();
 
-  // Generate cleaned titles (removing lecture hour fragments, trailing punctuation, formatting)
+  const [loading, setLoading] = React.useState(false);
+  const [aiRefinements, setAiRefinements] = React.useState<Record<string, string>>({});
+
+  // Fallback regex cleaner
+  const cleanTitleRegex = React.useCallback((raw: string) => {
+    let cleaned = raw
+      .replace(/^\d+\.\s*/, "") // remove leading "1. "
+      .replace(/^[a-z]\)\s*/i, "") // remove "a) "
+      .replace(/\s+\d+\s*L.*$/i, "") // remove "8 L"
+      .replace(/[;:]+$/, "") // remove trailing punctuation
+      .trim();
+    if (cleaned.length > 2 && cleaned.charAt(0) !== cleaned.charAt(0).toUpperCase()) {
+      cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+    }
+    return cleaned || raw;
+  }, []);
+
+  // Fetch AI refinements when opened if configured
+  React.useEffect(() => {
+    if (open && configured && topics.length > 0) {
+      const rawTitles = topics.slice(0, 10).map((t) => t.title);
+      fetch("/api/ai/tidy-topics", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rawTopics: rawTitles }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.result?.refinedTopics) {
+            const map: Record<string, string> = {};
+            data.result.refinedTopics.forEach((item: any) => {
+              map[item.original] = item.cleaned;
+            });
+            setAiRefinements(map);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [open, configured, topics]);
+
   const previews = React.useMemo(() => {
     return topics.slice(0, 5).map((t) => {
-      let cleaned = t.title
-        .replace(/^\d+\.\s*/, "") // remove leading "1. "
-        .replace(/^[a-z]\)\s*/i, "") // remove "a) "
-        .replace(/\s+\d+\s*L.*$/i, "") // remove "8 L"
-        .replace(/[;:]+$/, "") // remove trailing punctuation
-        .trim();
-      if (cleaned.length > 2 && cleaned.charAt(0) !== cleaned.charAt(0).toUpperCase()) {
-        cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-      }
+      const aiCleaned = aiRefinements[t.title];
+      const cleaned = aiCleaned || cleanTitleRegex(t.title);
       return {
         id: t.id,
         original: t.title,
-        cleaned: cleaned || t.title,
+        cleaned,
+        isAi: Boolean(aiCleaned),
       };
     });
-  }, [topics]);
+  }, [topics, aiRefinements, cleanTitleRegex]);
 
   const handleApply = async () => {
     try {
       setLoading(true);
       const allCleaned = topics.map((t) => {
-        let cleaned = t.title
-          .replace(/^\d+\.\s*/, "")
-          .replace(/^[a-z]\)\s*/i, "")
-          .replace(/\s+\d+\s*L.*$/i, "")
-          .replace(/[;:]+$/, "")
-          .trim();
-        if (cleaned.length > 2 && cleaned.charAt(0) !== cleaned.charAt(0).toUpperCase()) {
-          cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-        }
-        return { id: t.id, title: cleaned || t.title };
+        const aiCleaned = aiRefinements[t.title];
+        const cleaned = aiCleaned || cleanTitleRegex(t.title);
+        return { id: t.id, title: cleaned };
       });
       await onApplyTidy(allCleaned);
       onOpenChange(false);
@@ -84,10 +111,24 @@ export function TidyTopicsDialog({
           </p>
         </DialogHeader>
 
+        {configured === false && (
+          <div className="rounded-control border border-[var(--color-border)] bg-[var(--color-surface-muted)] p-2.5 text-xs text-[var(--color-ink-muted)] flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 text-[var(--color-accent)] shrink-0" />
+            <span>
+              Gemini API key not configured. Using algorithmic pattern refinements (set GEMINI_API_KEY in .env for full AI models).
+            </span>
+          </div>
+        )}
+
         <div className="py-2 space-y-2.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
-            Preview Refinements (First 5 Topics):
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
+              Preview Refinements (First 5 Topics):
+            </span>
+            <span className="text-[10px] font-mono text-[var(--color-ink-muted)]">
+              Rules: AI only drafts. Review below.
+            </span>
+          </div>
 
           <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
             {previews.map((item) => (
@@ -98,9 +139,16 @@ export function TidyTopicsDialog({
                 <div className="text-[11px] text-[var(--color-ink-muted)] line-through">
                   {item.original}
                 </div>
-                <div className="flex items-center gap-1.5 font-medium text-[var(--color-ink)]">
-                  <ArrowRight className="h-3 w-3 text-[var(--color-accent)] shrink-0" />
-                  <span>{item.cleaned}</span>
+                <div className="flex items-center justify-between font-medium text-[var(--color-ink)]">
+                  <div className="flex items-center gap-1.5">
+                    <ArrowRight className="h-3 w-3 text-[var(--color-accent)] shrink-0" />
+                    <span>{item.cleaned}</span>
+                  </div>
+                  {item.isAi && (
+                    <span className="text-[9px] uppercase font-mono px-1.5 py-0.2 rounded bg-app-accent/10 text-app-accent font-bold">
+                      AI Model
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

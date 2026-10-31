@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { CourseCard } from "@/components/dashboard/course-card";
 import { CreateCourseDialog } from "@/components/courses/create-course-dialog";
 import { CreateTermDialog } from "@/components/courses/create-term-dialog";
-import { Plus, Calendar, BookOpen, Filter } from "lucide-react";
+import { AiCourseBuilderModal } from "@/components/courses/ai-course-builder-modal";
+import { Plus, Calendar, BookOpen, Filter, Sparkles } from "lucide-react";
 import { LessonProgress, Assessment, Module, Topic } from "@/types/schemas";
 
 function CoursesContent() {
@@ -22,6 +23,7 @@ function CoursesContent() {
   const [selectedTermId, setSelectedTermId] = React.useState<string>("all");
   const [createCourseOpen, setCreateCourseOpen] = React.useState(false);
   const [createTermOpen, setCreateTermOpen] = React.useState(false);
+  const [aiBuilderOpen, setAiBuilderOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (searchParams.get("action") === "new-course") {
@@ -76,7 +78,17 @@ function CoursesContent() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setAiBuilderOpen(true)}
+            className="gap-1.5 text-xs text-app-accent border-app-accent/40 hover:bg-app-accent/10"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Draft with AI</span>
+          </Button>
+
           <Button
             variant="outline"
             size="sm"
@@ -163,6 +175,12 @@ function CoursesContent() {
       )}
 
       {/* Modals */}
+      <AiCourseBuilderModal
+        open={aiBuilderOpen}
+        onOpenChange={setAiBuilderOpen}
+        onOpenManual={() => setCreateCourseOpen(true)}
+      />
+
       <CreateCourseDialog
         open={createCourseOpen}
         onOpenChange={setCreateCourseOpen}

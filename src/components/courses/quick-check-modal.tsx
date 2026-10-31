@@ -28,7 +28,10 @@ import {
   BookOpen,
   ArrowRight,
   ArrowLeft,
+  Sparkles,
+  AlertCircle,
 } from "lucide-react";
+import { useAiStatus } from "@/lib/ai/use-ai-status";
 
 interface QuickCheckModalProps {
   topic: Topic | null;
@@ -52,7 +55,19 @@ export function QuickCheckModal({
   const [currentIdx, setCurrentIdx] = React.useState(0);
   const [selectedAnswers, setSelectedAnswers] = React.useState<Record<number, number>>({});
   const [submitted, setSubmitted] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<"quiz" | "builder">("quiz");
+  const { configured, unconfiguredMessage } = useAiStatus();
+  const [activeTab, setActiveTab] = React.useState<"quiz" | "builder" | "ai_draft">("quiz");
+  const [aiDrafting, setAiDrafting] = React.useState(false);
+  const [aiDraftError, setAiDraftError] = React.useState<string | null>(null);
+  const [aiDraftQuestions, setAiDraftQuestions] = React.useState<
+    Array<{
+      prompt: string;
+      options: string[];
+      correctAnswer: string;
+      explanation: string;
+      selected: boolean;
+    }>
+  >([]);
 
   // Custom question builder inputs
   const [customQuestionText, setCustomQuestionText] = React.useState("");
@@ -165,6 +180,57 @@ export function QuickCheckModal({
     setActiveTab("quiz");
   };
 
+  const handleDraftAiQuestions = async () => {
+    if (!topic) return;
+    try {
+      setAiDrafting(true);
+      setAiDraftError(null);
+      const res = await fetch("/api/ai/quick-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topicTitle: topic.title,
+          count: 3,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        throw new Error(data.error || "Failed to draft diagnostic questions");
+      }
+      const qs = (data.draft?.questions || []).map((q: any) => ({
+        prompt: q.prompt,
+        options: q.options,
+        correctAnswer: q.correctAnswer,
+        explanation: q.explanation,
+        selected: true,
+      }));
+      setAiDraftQuestions(qs);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Error drafting questions";
+      setAiDraftError(msg);
+    } finally {
+      setAiDrafting(false);
+    }
+  };
+
+  const handleApproveAiQuestions = () => {
+    const selected = aiDraftQuestions.filter((q) => q.selected);
+    if (selected.length === 0) return;
+    const formatted: QuickCheckQuestion[] = selected.map((q, idx) => {
+      const cIdx = q.options.indexOf(q.correctAnswer);
+      return {
+        id: "ai-check-" + Date.now() + "-" + idx,
+        question: q.prompt,
+        options: q.options,
+        correctIndex: cIdx !== -1 ? cIdx : 0,
+        explanation: q.explanation,
+      };
+    });
+    setQuestions((prev) => [...prev, ...formatted]);
+    setAiDraftQuestions([]);
+    setActiveTab("quiz");
+  };
+
   // Score calculations if submitted
   const correctCount = questions.reduce(
     (acc, q, idx) => (selectedAnswers[idx] === q.correctIndex ? acc + 1 : acc),
@@ -215,6 +281,18 @@ export function QuickCheckModal({
             }`}
           >
             + Add Custom Question
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("ai_draft")}
+            className={`font-semibold pb-1 border-b-2 transition-colors flex items-center gap-1 ${
+              activeTab === "ai_draft"
+                ? "border-[var(--color-accent)] text-[var(--color-ink)]"
+                : "border-transparent text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+            }`}
+          >
+            <Sparkles className="h-3 w-3 text-app-accent" />
+            <span>Draft with AI</span>
           </button>
         </div>
 
@@ -393,7 +471,7 @@ export function QuickCheckModal({
               </div>
             </div>
           </div>
-        ) : (
+        ) : activeTab === "builder" ? (
           /* Custom Question Builder Form */
           <form onSubmit={handleAddCustomQuestion} className="space-y-3 py-2 text-xs">
             <div>
@@ -469,6 +547,153 @@ export function QuickCheckModal({
               </Button>
             </DialogFooter>
           </form>
+        ) : (
+          /* AI Question Drafter */
+          <div className="space-y-4 py-2 text-xs">
+            {configured === false && (
+              <div className="rounded-control border border-app-border bg-app-surface-muted/50 p-3 text-xs space-y-1.5">
+                <div className="flex items-center gap-2 text-app-ink font-semibold">
+                  <AlertCircle className="h-4 w-4 text-app-accent" />
+                  <span>{unconfiguredMessage}</span>
+                </div>
+                <p className="text-app-ink-muted text-[11px]">
+                  You can still manually craft diagnostic questions using the &quot;+ Add Custom Question&quot; tab.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setActiveTab("builder")}
+                  className="mt-1 text-xs"
+                >
+                  Switch to Manual Question Authoring
+                </Button>
+              </div>
+            )}
+
+            {aiDraftQuestions.length === 0 ? (
+              <div className="rounded-card border border-app-border bg-app-surface p-4 text-center space-y-3">
+                <Sparkles className="h-6 w-6 text-app-accent mx-auto" />
+                <div>
+                  <h4 className="font-semibold text-app-ink text-sm">
+                    Draft Diagnostic Check for &quot;{topic.title}&quot;
+                  </h4>
+                  <p className="text-xs text-app-ink-muted mt-1 max-w-sm mx-auto">
+                    Gemini will craft 3 academic multiple-choice questions with 4 options, an answer key, and formal rationale for your review.
+                  </p>
+                </div>
+
+                {aiDraftError && (
+                  <div className="rounded-control border border-app-danger/30 bg-app-danger/10 p-2.5 text-xs text-app-danger">
+                    {aiDraftError}
+                  </div>
+                )}
+
+                <div className="flex items-center justify-center gap-2 pt-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setActiveTab("quiz")}
+                  >
+                    Back to Check Questions
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={handleDraftAiQuestions}
+                    disabled={aiDrafting || configured === false}
+                    className="gap-1.5"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>{aiDrafting ? "Synthesising Questions..." : "Draft Questions with AI"}</span>
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              /* Review & Approve Draft Questions */
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-app-ink text-xs">
+                    Review Questions ({aiDraftQuestions.filter((q) => q.selected).length} selected)
+                  </span>
+                  <span className="text-[10px] text-app-ink-muted">
+                    Rules: AI only drafts. Review and approve.
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                  {aiDraftQuestions.map((q, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-control border border-app-border bg-app-surface p-3 space-y-2"
+                    >
+                      <div className="flex items-start gap-2">
+                        <input
+                          type="checkbox"
+                          checked={q.selected}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setAiDraftQuestions((prev) =>
+                              prev.map((item, i) =>
+                                i === idx ? { ...item, selected: checked } : item
+                              )
+                            );
+                          }}
+                          className="accent-app-accent mt-0.5"
+                        />
+                        <span className="font-semibold text-app-ink leading-tight">
+                          {idx + 1}. {q.prompt}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-1.5 pl-5">
+                        {q.options.map((opt, oIdx) => (
+                          <div
+                            key={oIdx}
+                            className={`rounded px-2 py-1 text-[11px] border ${
+                              opt === q.correctAnswer
+                                ? "border-emerald-500/40 bg-emerald-500/10 font-bold text-app-ink"
+                                : "border-app-border/40 text-app-ink-muted"
+                            }`}
+                          >
+                            {opt}
+                          </div>
+                        ))}
+                      </div>
+
+                      <p className="text-[10px] text-app-ink-muted pl-5 italic">
+                        Rationale: {q.explanation}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <DialogFooter className="pt-2 border-t border-app-border">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setAiDraftQuestions([])}
+                  >
+                    Discard
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={handleApproveAiQuestions}
+                    disabled={aiDraftQuestions.filter((q) => q.selected).length === 0}
+                    className="gap-1.5"
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>Approve & Add Questions</span>
+                  </Button>
+                </DialogFooter>
+              </div>
+            )}
+          </div>
         )}
       </DialogContent>
     </Dialog>
