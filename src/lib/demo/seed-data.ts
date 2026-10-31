@@ -9226,6 +9226,60 @@ export const DEMO_PLANNER_EVENTS: PlannerEvent[] = [
     "type": "study_block",
     "courseId": "course-ma101bs",
     "isDone": false
+  },
+  {
+    "id": "event-4",
+    "userId": "valeria-student",
+    "title": "Focus Block: C Pointers & Dynamic Memory",
+    "date": "2026-10-31",
+    "startTime": "14:00",
+    "endTime": "15:30",
+    "type": "study_block",
+    "courseId": "course-cs105es",
+    "isDone": false
+  },
+  {
+    "id": "event-5",
+    "userId": "valeria-student",
+    "title": "Exam Milestone: Midterm Examination",
+    "date": "2026-11-05",
+    "startTime": "10:00",
+    "endTime": "11:30",
+    "type": "exam",
+    "courseId": "course-cs105es",
+    "isDone": false
+  },
+  {
+    "id": "event-6",
+    "userId": "valeria-student",
+    "title": "Revision: Rank & Homogeneous Systems",
+    "date": "2026-11-08",
+    "startTime": "16:00",
+    "endTime": "17:00",
+    "type": "revision",
+    "courseId": "course-ma101bs",
+    "isDone": false
+  },
+  {
+    "id": "event-7",
+    "userId": "valeria-student",
+    "title": "Assignment Due: Structured Numeric Problem Solver",
+    "date": "2026-11-12",
+    "startTime": "23:59",
+    "type": "due_date",
+    "courseId": "course-cs105es",
+    "isDone": false
+  },
+  {
+    "id": "event-8",
+    "userId": "valeria-student",
+    "title": "Study Block: Physics Harmonic Motion Lab Prep",
+    "date": "2026-11-15",
+    "startTime": "11:00",
+    "endTime": "13:00",
+    "type": "study_block",
+    "courseId": "course-ph102bs",
+    "isDone": false
   }
 ];
 

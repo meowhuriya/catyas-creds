@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useDataStore } from "@/lib/repository";
-import { Course, PlannerEvent, Assessment } from "@/types/schemas";
+import { Course, PlannerEvent, Assessment, Topic } from "@/types/schemas";
 import { ScheduleStudyBlockModal } from "@/components/planner/schedule-study-block-modal";
 import { Button } from "@/components/ui/button";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
@@ -19,6 +19,9 @@ import {
   Filter,
   Check,
   ExternalLink,
+  RotateCcw,
+  Sparkles,
+  Award,
 } from "lucide-react";
 import {
   format,
@@ -39,13 +42,15 @@ import {
 export default function PlannerPage() {
   const { dataStore } = useDataStore();
 
-  const [currentDate, setCurrentDate] = React.useState<Date>(new Date(2026, 10, 1)); // Default to Nov 2026 matching seed data
+  const [currentDate, setCurrentDate] = React.useState<Date>(() => new Date());
   const [viewMode, setViewMode] = React.useState<"month" | "week">("month");
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [assessments, setAssessments] = React.useState<Assessment[]>([]);
+  const [topics, setTopics] = React.useState<Topic[]>([]);
   const [plannerEvents, setPlannerEvents] = React.useState<PlannerEvent[]>([]);
   const [selectedCourseFilter, setSelectedCourseFilter] = React.useState<string>("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<"all" | "pending" | "done">("all");
+  const [selectedTypeFilter, setSelectedTypeFilter] = React.useState<"all" | "study_block" | "due_date" | "exam" | "revision">("all");
   const [scheduleModalOpen, setScheduleModalOpen] = React.useState(false);
   const [selectedDateForModal, setSelectedDateForModal] = React.useState<string>("");
   const [loading, setLoading] = React.useState(true);
@@ -53,13 +58,15 @@ export default function PlannerPage() {
   const loadData = React.useCallback(async () => {
     try {
       setLoading(true);
-      const [allCourses, allEvents] = await Promise.all([
+      const [allCourses, allEvents, allTopics] = await Promise.all([
         dataStore.getCourses(),
         dataStore.getPlannerEvents(),
+        dataStore.getAllTopics(),
       ]);
 
       setCourses(allCourses);
       setPlannerEvents(allEvents);
+      setTopics(allTopics);
 
       const nestedAsms = await Promise.all(
         allCourses.map((c) => dataStore.getAssessments(c.id))
@@ -76,7 +83,7 @@ export default function PlannerPage() {
     loadData();
   }, [loadData]);
 
-  // Aggregate all events (scheduled study blocks + assessment due dates)
+  // Aggregate all events (scheduled study blocks, assessment due dates, spaced revisions)
   const aggregatedEvents = React.useMemo(() => {
     const list: Array<PlannerEvent & { course?: Course }> = [];
 
@@ -89,7 +96,6 @@ export default function PlannerPage() {
     // 2. Assessment Due Dates
     assessments.forEach((asm) => {
       if (asm.dueDate) {
-        // Only add if not already present as a planner event
         const alreadyExists = plannerEvents.some((e) => e.assessmentId === asm.id);
         if (!alreadyExists) {
           const crs = courses.find((c) => c.id === asm.courseId);
@@ -109,8 +115,32 @@ export default function PlannerPage() {
       }
     });
 
+    // 3. Spaced Revision Reminders (1, 3, 7, 21 days)
+    topics.forEach((top) => {
+      if (top.revisionDueAt) {
+        const revDate = top.revisionDueAt.split("T")[0];
+        const alreadyExists = list.some(
+          (e) => e.date === revDate && e.title.includes(top.title)
+        );
+        if (!alreadyExists) {
+          const crs = courses.find((c) => c.id === top.courseId);
+          list.push({
+            id: "rev-top-" + top.id + "-" + revDate,
+            userId: top.userId,
+            title: `Spaced Revision: ${top.title}`,
+            date: revDate,
+            startTime: "09:00",
+            type: "revision",
+            courseId: top.courseId,
+            isDone: false,
+            course: crs,
+          });
+        }
+      }
+    });
+
     return list;
-  }, [plannerEvents, assessments, courses]);
+  }, [plannerEvents, assessments, topics, courses]);
 
   // Filter events
   const filteredEvents = React.useMemo(() => {
@@ -120,14 +150,14 @@ export default function PlannerPage() {
       }
       if (selectedStatusFilter === "pending" && evt.isDone) return false;
       if (selectedStatusFilter === "done" && !evt.isDone) return false;
+      if (selectedTypeFilter !== "all" && evt.type !== selectedTypeFilter) return false;
       return true;
     });
-  }, [aggregatedEvents, selectedCourseFilter, selectedStatusFilter]);
+  }, [aggregatedEvents, selectedCourseFilter, selectedStatusFilter, selectedTypeFilter]);
 
   // Toggle item done
   const handleToggleDone = async (evt: PlannerEvent) => {
-    if (evt.id.startsWith("asm-due-")) {
-      // Create local planner event for this assessment due date
+    if (evt.id.startsWith("asm-due-") || evt.id.startsWith("rev-top-")) {
       await dataStore.createPlannerEvent({
         title: evt.title,
         date: evt.date,
@@ -162,7 +192,7 @@ export default function PlannerPage() {
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date(2026, 10, 1)); // Default to active academic term
+    setCurrentDate(new Date());
   };
 
   // Month grid calculation
@@ -186,7 +216,7 @@ export default function PlannerPage() {
             Academic Planner
           </h1>
           <p className="text-xs text-app-ink-muted mt-0.5">
-            Syllabus deadlines, examination schedule, and dedicated study blocks.
+            Syllabus deadlines, examination schedule, spaced revision sessions, and dedicated study blocks.
           </p>
         </div>
 
@@ -289,6 +319,22 @@ export default function PlannerPage() {
             </select>
           </div>
 
+          {/* Type filter */}
+          <div className="flex items-center gap-1.5 rounded-control border border-app-border bg-app-surface px-2.5 py-1">
+            <span className="text-app-ink-muted text-[11px]">Type:</span>
+            <select
+              value={selectedTypeFilter}
+              onChange={(e) => setSelectedTypeFilter(e.target.value as any)}
+              className="bg-transparent font-medium text-app-ink focus:outline-none cursor-pointer"
+            >
+              <option value="all">All Event Types</option>
+              <option value="study_block">Study Blocks</option>
+              <option value="due_date">Assessment Deadlines</option>
+              <option value="exam">Examination Milestones</option>
+              <option value="revision">Spaced Revisions</option>
+            </select>
+          </div>
+
           {/* Status filter */}
           <div className="flex items-center gap-1.5 rounded-control border border-app-border bg-app-surface px-2.5 py-1">
             <span className="text-app-ink-muted text-[11px]">Status:</span>
@@ -297,7 +343,7 @@ export default function PlannerPage() {
               onChange={(e) => setSelectedStatusFilter(e.target.value as any)}
               className="bg-transparent font-medium text-app-ink focus:outline-none cursor-pointer"
             >
-              <option value="all">All Items</option>
+              <option value="all">All Status</option>
               <option value="pending">Pending</option>
               <option value="done">Completed</option>
             </select>
@@ -321,7 +367,7 @@ export default function PlannerPage() {
             {monthDays.map((day) => {
               const dateStr = format(day, "yyyy-MM-dd");
               const isCurrentMonth = isSameMonth(day, currentDate);
-              const isCurrentDay = isSameDay(day, new Date(2026, 10, 1)); // Highlight active anchor day
+              const isCurrentDay = isToday(day);
               const dayEvents = filteredEvents.filter((e) => e.date === dateStr);
 
               return (
@@ -376,9 +422,11 @@ export default function PlannerPage() {
                               ? "border-app-border/40 bg-app-surface-muted/40 text-app-ink-muted line-through opacity-70"
                               : evt.type === "exam"
                               ? "border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200 font-semibold"
+                              : evt.type === "revision"
+                              ? "border-teal-500/30 bg-teal-500/10 text-teal-900 dark:text-teal-200 font-medium"
                               : evt.type === "study_block"
-                              ? "border-app-accent/30 bg-app-accent/5 text-app-ink font-medium"
-                              : "border-app-border bg-app-surface text-app-ink font-medium"
+                              ? "border-indigo-500/30 bg-indigo-500/5 text-app-ink font-medium"
+                              : "border-app-accent/30 bg-app-accent/5 text-app-ink font-medium"
                           }`}
                         >
                           <button
@@ -426,11 +474,11 @@ export default function PlannerPage() {
           <div className="grid grid-cols-1 md:grid-cols-7 divide-y md:divide-y-0 md:divide-x divide-app-border">
             {weekDays.map((day) => {
               const dateStr = format(day, "yyyy-MM-dd");
-              const isCurrentDay = isSameDay(day, new Date(2026, 10, 1));
+              const isCurrentDay = isToday(day);
               const dayEvents = filteredEvents.filter((e) => e.date === dateStr);
 
               return (
-                <div key={dateStr} className="min-h-[300px] p-3 flex flex-col">
+                <div key={dateStr} className="min-h-[320px] p-3 flex flex-col">
                   {/* Day Header */}
                   <div className="flex items-center justify-between border-b border-app-border pb-2 mb-3">
                     <div>
@@ -464,7 +512,7 @@ export default function PlannerPage() {
                   <div className="space-y-2 flex-1">
                     {dayEvents.length === 0 ? (
                       <span className="text-[11px] text-app-ink-muted italic block pt-4 text-center">
-                        No events
+                        No scheduled items
                       </span>
                     ) : (
                       dayEvents.map((evt) => {
@@ -481,7 +529,11 @@ export default function PlannerPage() {
                                 ? "border-app-border/40 bg-app-surface-muted/30 opacity-60 line-through"
                                 : evt.type === "exam"
                                 ? "border-amber-500/30 bg-amber-500/10 font-semibold"
-                                : "border-app-border bg-app-surface shadow-xs"
+                                : evt.type === "revision"
+                                ? "border-teal-500/30 bg-teal-500/10 font-medium"
+                                : evt.type === "study_block"
+                                ? "border-indigo-500/30 bg-indigo-500/5 font-medium"
+                                : "border-app-accent/30 bg-app-accent/5 font-medium shadow-xs"
                             }`}
                           >
                             <div className="flex items-start justify-between gap-1.5">

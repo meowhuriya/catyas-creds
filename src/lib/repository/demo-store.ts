@@ -111,7 +111,15 @@ export class DemoDataStore implements DataStore {
     this.rubrics = getStorage<Rubric[]>("rubrics", DEMO_RUBRICS);
     this.submissions = getStorage<Submission[]>("submissions", DEMO_SUBMISSIONS);
     this.notes = getStorage<Note[]>("notes", DEMO_NOTES);
-    this.plannerEvents = getStorage<PlannerEvent[]>("plannerEvents", DEMO_PLANNER_EVENTS);
+    const storedEvents = getStorage<PlannerEvent[]>("plannerEvents", DEMO_PLANNER_EVENTS);
+    const existingEvtIds = new Set(storedEvents.map((e) => e.id));
+    const mergedEvents = [...storedEvents];
+    for (const d of DEMO_PLANNER_EVENTS) {
+      if (!existingEvtIds.has(d.id)) {
+        mergedEvents.push(d);
+      }
+    }
+    this.plannerEvents = mergedEvents;
     this.degreePlan = getStorage<DegreePlan | null>("degreePlan", DEMO_DEGREE_PLAN);
     this.snapshots = getStorage<TranscriptSnapshot[]>("snapshots", []);
     this.auditLogs = getStorage<AuditLog[]>("auditLogs", DEMO_AUDIT_LOGS);

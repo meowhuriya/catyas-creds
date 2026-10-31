@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useDataStore } from "@/lib/repository";
-import { Course, DegreePlan, Term, LessonProgress } from "@/types/schemas";
+import { Course, DegreePlan, Term, LessonProgress, Topic } from "@/types/schemas";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Stat } from "@/components/ui/stat";
 import { Button } from "@/components/ui/button";
@@ -27,20 +27,54 @@ import {
   Edit2,
   ShieldCheck,
   ChevronRight,
+  Award,
 } from "lucide-react";
 
+function matchesDepartment(courseDept: string, targetDept: string): boolean {
+  const cd = (courseDept || "").toLowerCase().trim();
+  const td = (targetDept || "").toLowerCase().trim();
+  if (cd === td) return true;
+  if (td.includes("computer") && (cd.includes("computer") || cd.includes("cse") || cd === "cs")) return true;
+  if (td.includes("math") && (cd.includes("math") || cd.includes("calculus"))) return true;
+  if (
+    td.includes("basic sciences") &&
+    (cd.includes("physics") || cd.includes("chemistry") || cd.includes("science") || cd === "bs")
+  ) {
+    return true;
+  }
+  if (
+    td.includes("humanities") &&
+    (cd.includes("humanities") || cd.includes("english") || cd.includes("skill") || cd === "hs")
+  ) {
+    return true;
+  }
+  if (
+    td.includes("engineering sciences") &&
+    (cd.includes("electronics") ||
+      cd.includes("electrical") ||
+      cd.includes("mechanical") ||
+      cd.includes("workshop") ||
+      cd.includes("engineering") ||
+      cd === "es")
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export default function DegreePage() {
-  const { dataStore, currentUser } = useDataStore();
+  const { dataStore } = useDataStore();
 
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [terms, setTerms] = React.useState<Term[]>([]);
   const [degreePlan, setDegreePlan] = React.useState<DegreePlan | null>(null);
   const [progressList, setProgressList] = React.useState<LessonProgress[]>([]);
+  const [topics, setTopics] = React.useState<Topic[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   // Edit target modal state
   const [editTargetOpen, setEditTargetOpen] = React.useState(false);
-  const [tempTarget, setTempTarget] = React.useState<number>(120);
+  const [tempTarget, setTempTarget] = React.useState<number>(160);
   const [savingTarget, setSavingTarget] = React.useState(false);
 
   // Audit filter tab
@@ -51,17 +85,19 @@ export default function DegreePage() {
   const loadData = React.useCallback(async () => {
     try {
       setLoading(true);
-      const [c, t, p, prog] = await Promise.all([
+      const [c, t, p, prog, top] = await Promise.all([
         dataStore.getCourses(),
         dataStore.getTerms(),
         dataStore.getDegreePlan(),
         dataStore.getAllLessonProgress(),
+        dataStore.getAllTopics(),
       ]);
 
       setCourses(c);
       setTerms(t);
       setDegreePlan(p);
       setProgressList(prog);
+      setTopics(top);
       if (p) {
         setTempTarget(p.totalCreditsTarget);
       }
@@ -76,7 +112,7 @@ export default function DegreePage() {
     loadData();
   }, [loadData]);
 
-  const targetCredits = degreePlan?.totalCreditsTarget || 120;
+  const targetCredits = degreePlan?.totalCreditsTarget || 160;
 
   // Active term identification
   const currentTerm = terms.find((t) => t.isCurrent) || terms[0];
@@ -87,13 +123,16 @@ export default function DegreePage() {
     const inProg: Course[] = [];
 
     courses.forEach((c) => {
-      // In our model, courses in past terms or with >= 90% completed lessons count as completed
       const courseProg = progressList.filter((p) => p.courseId === c.id);
       const totalLes = courseProg.length;
       const doneLes = courseProg.filter((p) => p.isCompleted).length;
-      const isComplete = totalLes > 0 && doneLes >= totalLes;
+      const isLesComplete = totalLes > 0 && doneLes >= totalLes;
 
-      if (isComplete || (c.termId !== currentTerm?.id && c.termId)) {
+      const courseTopics = topics.filter((t) => t.courseId === c.id);
+      const isTopicComplete =
+        courseTopics.length > 0 && courseTopics.every((t) => t.isDone);
+
+      if (isLesComplete || isTopicComplete || (c.termId !== currentTerm?.id && c.termId)) {
         completed.push(c);
       } else {
         inProg.push(c);
@@ -101,7 +140,7 @@ export default function DegreePage() {
     });
 
     return { completedCourses: completed, inProgressCourses: inProg };
-  }, [courses, progressList, currentTerm]);
+  }, [courses, progressList, topics, currentTerm]);
 
   const earnedCredits = completedCourses.reduce((acc, c) => acc + c.credits, 0);
   const inProgressCredits = inProgressCourses.reduce((acc, c) => acc + c.credits, 0);
@@ -112,11 +151,11 @@ export default function DegreePage() {
   const departmentRequirements: Record<string, number> = React.useMemo(() => {
     return (
       degreePlan?.departmentRequirements || {
-        "Computer Science": 48,
-        Mathematics: 24,
-        Philosophy: 12,
-        Economics: 12,
-        Electives: 24,
+        "Computer Science": 70,
+        Mathematics: 20,
+        "Basic Sciences": 20,
+        Humanities: 15,
+        "Engineering Sciences": 35,
       }
     );
   }, [degreePlan]);
@@ -124,10 +163,10 @@ export default function DegreePage() {
   const departmentBreakdown = React.useMemo(() => {
     return Object.entries(departmentRequirements).map(([dept, required]) => {
       const earned = completedCourses
-        .filter((c) => c.department.toLowerCase() === dept.toLowerCase())
+        .filter((c) => matchesDepartment(c.department, dept))
         .reduce((acc, c) => acc + c.credits, 0);
       const inProg = inProgressCourses
-        .filter((c) => c.department.toLowerCase() === dept.toLowerCase())
+        .filter((c) => matchesDepartment(c.department, dept))
         .reduce((acc, c) => acc + c.credits, 0);
       const remaining = Math.max(0, required - earned);
       const pct = Math.min(100, Math.round((earned / required) * 100));
@@ -140,10 +179,10 @@ export default function DegreePage() {
   const levelRequirements: Record<string, number> = React.useMemo(() => {
     return (
       degreePlan?.levelRequirements || {
-        "100": 30,
-        "200": 36,
-        "300": 30,
-        "400": 24,
+        "100": 40,
+        "200": 42,
+        "300": 41,
+        "400": 37,
       }
     );
   }, [degreePlan]);
@@ -168,7 +207,7 @@ export default function DegreePage() {
             ? "200-Level Intermediate"
             : level === "300"
             ? "300-Level Upper Division"
-            : "400-Level Advanced Seminar",
+            : "400-Level Advanced Seminar & Capstone",
         required,
         earned,
         inProg,
@@ -187,7 +226,7 @@ export default function DegreePage() {
     try {
       setSavingTarget(true);
       await dataStore.updateDegreePlan({
-        totalCreditsTarget: Number(tempTarget) || 120,
+        totalCreditsTarget: Number(tempTarget) || 160,
       });
       await loadData();
       setEditTargetOpen(false);
@@ -207,7 +246,7 @@ export default function DegreePage() {
             Degree Audit & Curriculum Progress
           </h1>
           <p className="text-xs text-app-ink-muted mt-0.5">
-            Bachelor of Science collegiate curriculum audit ({targetCredits} Total Credits Target).
+            Bachelor of Technology (B.Tech CSE) collegiate curriculum audit ({targetCredits} Total Credits Target).
           </p>
         </div>
 
@@ -250,10 +289,19 @@ export default function DegreePage() {
 
         <Stat
           label="Estimated Graduation"
-          value="Spring 2028"
+          value="Spring 2029"
           unit=""
-          subtext="At 15 credits / semester pace"
+          subtext="At 20 credits / semester pace"
         />
+      </div>
+
+      {/* Overall Degree Progress Bar */}
+      <div className="rounded-card border border-app-border bg-app-surface p-4 space-y-2 shadow-sm">
+        <div className="flex items-center justify-between text-xs font-semibold">
+          <span className="text-app-ink">Overall Degree Completion</span>
+          <span className="font-mono text-app-accent tabular-nums">{overallPercent}% ({earnedCredits} / {targetCredits} Credits)</span>
+        </div>
+        <ProgressBar value={overallPercent} />
       </div>
 
       {/* Advisory Guidance Notice */}
@@ -283,7 +331,7 @@ export default function DegreePage() {
                 Departmental Credit Requirements
               </h3>
               <p className="text-[11px] text-app-ink-muted">
-                Core majors, quantitative methods, and general education distribution.
+                Major core, basic sciences, humanities, and engineering sciences.
               </p>
             </div>
             <span className="font-mono text-xs font-bold text-app-ink-muted tabular-nums">
@@ -318,7 +366,7 @@ export default function DegreePage() {
               </p>
             </div>
             <span className="font-mono text-xs font-bold text-app-ink-muted tabular-nums">
-              4 Levels
+              4 Academic Levels
             </span>
           </div>
 
@@ -547,7 +595,7 @@ export default function DegreePage() {
           <DialogHeader>
             <DialogTitle>Configure Degree Credit Target</DialogTitle>
             <DialogDescription>
-              Set the total credit threshold for your academic curriculum (default 120 credits).
+              Set the total credit threshold for your academic curriculum (default 160 credits).
             </DialogDescription>
           </DialogHeader>
 

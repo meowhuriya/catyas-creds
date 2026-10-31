@@ -352,7 +352,7 @@ export const PlannerEventSchema = z.object({
   date: z.string(), // YYYY-MM-DD
   startTime: z.string().optional(), // HH:MM
   endTime: z.string().optional(),   // HH:MM
-  type: z.enum(["due_date", "study_block", "exam"]),
+  type: z.enum(["due_date", "study_block", "exam", "revision"]),
   courseId: z.string().optional(),
   assessmentId: z.string().optional(),
   isDone: z.boolean().default(false),
