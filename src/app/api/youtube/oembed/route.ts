@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     const res = await fetch(oEmbedEndpoint, {
       next: { revalidate: 86400 * 30 }, // Cache up to 30 days
       headers: {
-        "User-Agent": "CatyasCreds/1.0 (+https://github.com/meowhuriya/catyas-creds)",
+        "User-Agent": "ValeriasCreds/1.0 (+https://github.com/meowhuriya/catyas-creds)",
       },
     });
 
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
           videoId,
           title: "Lecture Video (Embedding Restricted)",
           author_name: "YouTube Creator",
-          thumbnail_url: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          thumbnail_url: `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
           canEmbed: false,
           error: "Video cannot be embedded by creator request or is unavailable.",
         },
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
       title: data.title || "Untitled Lecture",
       author_name: data.author_name || "Unknown Channel",
       thumbnail_url:
-        data.thumbnail_url || `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+        data.thumbnail_url || `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`,
       canEmbed: true,
       cachedAt: new Date().toISOString(),
     });

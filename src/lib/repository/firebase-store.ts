@@ -361,6 +361,39 @@ export class FirebaseDataStore implements DataStore {
       updatedAt: now,
     };
     await setDoc(doc(db, "lessonProgress", id), progress, { merge: true });
+
+    // Auto-award 40 watch mastery points to linked topics if completed
+    if (progressData.isCompleted) {
+      try {
+        const lessonSnap = await getDoc(doc(db, "lessons", progressData.lessonId));
+        if (lessonSnap.exists()) {
+          const lesson = lessonSnap.data() as Lesson;
+          if (lesson.linkedTopicIds && lesson.linkedTopicIds.length > 0) {
+            for (const tid of lesson.linkedTopicIds) {
+              const topicRef = doc(db, "topics", tid);
+              const topicSnap = await getDoc(topicRef);
+              if (topicSnap.exists()) {
+                const topicData = topicSnap.data() as Topic;
+                if ((topicData.watchScore || 0) < 40) {
+                  const watchScore = 40;
+                  const topicScore = watchScore + (topicData.checkScore || 0);
+                  const isDone = topicScore >= 70;
+                  await updateDoc(topicRef, {
+                    watchScore,
+                    topicScore,
+                    isDone,
+                    updatedAt: now,
+                  });
+                }
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Could not auto-award topic watch scores in firestore:", err);
+      }
+    }
+
     return progress;
   }
 

@@ -537,7 +537,7 @@ export default function DegreePage() {
           Self-awarded credits. Not accredited by any institution.
         </span>
         <p className="text-[11px] text-app-ink-muted mt-0.5 max-w-xl mx-auto">
-          Catya&apos;s Creds degree audit calculations are mathematically modelled after standard university degree requirements for structured independent study and portfolio evidence.
+          Valeria’s Creds degree audit calculations are mathematically modelled after standard university degree requirements for structured independent study and portfolio evidence.
         </p>
       </div>
 

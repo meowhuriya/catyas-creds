@@ -53,7 +53,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {/* Academic Portal Footer */}
           <footer className="mt-16 border-t border-app-border pt-6 pb-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-medium text-app-ink">Catya's Creds</span>
+              <span className="font-medium text-app-ink">Valeria’s Creds</span>
               <span>·</span>
               <span>Self-awarded credits. Not accredited by any institution.</span>
             </div>

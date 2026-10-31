@@ -73,4 +73,31 @@ describe("parseYouTubeUrl", () => {
     expect(res.isValid).toBe(true);
     expect(res.videoId).toBe("tpIctyqH29Q");
   });
+
+  it("handles URLs without protocol scheme", () => {
+    const res = parseYouTubeUrl("youtu.be/dQw4w9WgXcQ");
+    expect(res.isValid).toBe(true);
+    expect(res.videoId).toBe("dQw4w9WgXcQ");
+  });
+
+  it("handles shorts URLs with query parameters", () => {
+    const res = parseYouTubeUrl("https://www.youtube.com/shorts/dQw4w9WgXcQ?feature=share");
+    expect(res.isValid).toBe(true);
+    expect(res.videoId).toBe("dQw4w9WgXcQ");
+  });
+
+  it("rejects watch URL with list param but missing v param as playlist-only", () => {
+    const res = parseYouTubeUrl("https://www.youtube.com/watch?list=PLbpi6ZahtOH6e_38bO7C1590_75b_W318");
+    expect(res.isValid).toBe(false);
+    expect(res.isPlaylistOnly).toBe(true);
+    expect(res.error).toBe("Playlist links are not supported. Paste individual video links.");
+  });
+
+  it("parses single-unit timestamps like 45s and 12m", () => {
+    const res1 = parseYouTubeUrl("https://youtu.be/dQw4w9WgXcQ?t=45s");
+    expect(res1.startTimeSeconds).toBe(45);
+
+    const res2 = parseYouTubeUrl("https://youtu.be/dQw4w9WgXcQ?t=12m");
+    expect(res2.startTimeSeconds).toBe(720);
+  });
 });

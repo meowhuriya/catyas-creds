@@ -429,14 +429,14 @@ export class DemoDataStore implements DataStore {
     const idx = this.progress.findIndex((p) => p.lessonId === progData.lessonId);
     const now = new Date().toISOString();
 
+    let result: LessonProgress;
     if (idx !== -1) {
       this.progress[idx] = {
         ...this.progress[idx],
         ...progData,
         updatedAt: now,
       };
-      setStorage("progress", this.progress);
-      return this.progress[idx];
+      result = this.progress[idx];
     } else {
       const newProg: LessonProgress = {
         ...progData,
@@ -445,9 +445,31 @@ export class DemoDataStore implements DataStore {
         updatedAt: now,
       };
       this.progress.push(newProg);
-      setStorage("progress", this.progress);
-      return newProg;
+      result = newProg;
     }
+    setStorage("progress", this.progress);
+
+    // If lesson is marked completed (90%+ watched), award 40 points to linked topics
+    if (progData.isCompleted) {
+      const lesson = this.lessons.find((l) => l.id === progData.lessonId);
+      if (lesson && lesson.linkedTopicIds && lesson.linkedTopicIds.length > 0) {
+        let changed = false;
+        for (const tid of lesson.linkedTopicIds) {
+          const tIdx = this.topics.findIndex((t) => t.id === tid);
+          if (tIdx !== -1 && this.topics[tIdx].watchScore < 40) {
+            this.topics[tIdx].watchScore = 40;
+            this.topics[tIdx].topicScore = this.topics[tIdx].watchScore + this.topics[tIdx].checkScore;
+            this.topics[tIdx].isDone = this.topics[tIdx].topicScore >= 70;
+            changed = true;
+          }
+        }
+        if (changed) {
+          setStorage("topics", this.topics);
+        }
+      }
+    }
+
+    return result;
   }
 
   async getNote(lessonId: string): Promise<Note | null> {

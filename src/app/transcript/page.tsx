@@ -219,7 +219,7 @@ export default function TranscriptPage() {
       }));
 
       const created = await dataStore.createTranscriptSnapshot({
-        studentName: currentUser?.displayName || "Catya V.",
+        studentName: currentUser?.displayName || "Valeria V.",
         cgpa,
         totalCredits: totalEarnedCredits,
         isPublic: makePublic,
@@ -368,7 +368,7 @@ export default function TranscriptPage() {
             Official Academic Transcript
           </h2>
           <div className="text-[11px] font-serif tracking-widest text-app-accent uppercase mt-0.5 font-bold">
-            Catya&apos;s Creds Registry of Academic Records
+            Valeria’s Creds Registry of Academic Records
           </div>
         </div>
 
@@ -379,7 +379,7 @@ export default function TranscriptPage() {
               Student Name
             </span>
             <span className="font-bold text-sm text-neutral-900">
-              {currentUser?.displayName || "Catya V."}
+              {currentUser?.displayName || "Valeria V."}
             </span>
           </div>
 

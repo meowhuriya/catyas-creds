@@ -1267,6 +1267,8 @@ export default function CourseDetailPage() {
         courseId={course.id}
         modules={modules}
         existingLessons={lessons}
+        topics={topics}
+        targetUnitId={activeUnit?.id || (modules.length > 0 ? modules[0].id : undefined)}
         open={addLessonsOpen}
         onOpenChange={setAddLessonsOpen}
         onSuccess={loadData}

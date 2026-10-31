@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import "@/styles/globals.css";
 import { DataStoreProvider } from "@/lib/repository";
+import { ToastProvider } from "@/components/ui/toast";
 import { AppShell } from "@/components/shell/app-shell";
 
 const inter = Inter({
@@ -34,7 +35,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${sourceSerif.variable} antialiased`} suppressHydrationWarning>
       <body className="min-h-screen bg-[var(--color-bg)] text-[var(--color-ink)] font-sans">
         <DataStoreProvider>
-          <AppShell>{children}</AppShell>
+          <ToastProvider>
+            <AppShell>{children}</AppShell>
+          </ToastProvider>
         </DataStoreProvider>
       </body>
     </html>

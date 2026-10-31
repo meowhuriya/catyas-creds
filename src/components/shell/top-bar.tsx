@@ -184,7 +184,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
           <PopoverContent align="end" className="w-64 p-2">
             <div className="border-b border-app-border pb-2 mb-2">
               <div className="font-serif text-sm font-semibold text-app-ink">
-                {currentUser?.displayName || "Catya V."}
+                {currentUser?.displayName || "Valeria V."}
               </div>
               <div className="text-xs text-app-ink-muted truncate">
                 {currentUser?.email || "catya.student@catyascreds.edu"}

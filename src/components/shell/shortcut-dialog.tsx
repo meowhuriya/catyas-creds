@@ -112,7 +112,7 @@ export function ShortcutDialog({
         <DialogHeader>
           <DialogTitle>Keyboard Shortcuts</DialogTitle>
           <DialogDescription>
-            Navigate Catya's Creds efficiently using quick key combinations.
+            Navigate Valeria’s Creds efficiently using quick key combinations.
           </DialogDescription>
         </DialogHeader>
 
