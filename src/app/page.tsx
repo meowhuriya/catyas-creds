@@ -13,12 +13,13 @@ import { StudyHeatmap } from "@/components/dashboard/study-heatmap";
 import { WeeklyHoursChart } from "@/components/dashboard/weekly-hours-chart";
 import { WeakestTopics } from "@/components/dashboard/weakest-topics";
 import { QuickCheckModal } from "@/components/courses/quick-check-modal";
+import { WeeklyReviewModal } from "@/components/dashboard/weekly-review-modal";
 import {
   calculateSemesterProgress,
   calculateCourseMastery,
   calculateUnitMastery,
 } from "@/lib/mastery/mastery-engine";
-import { Plus, BookOpen, Database, Filter } from "lucide-react";
+import { Plus, BookOpen, Database, Filter, Printer } from "lucide-react";
 import {
   Lesson,
   LessonProgress,
@@ -45,6 +46,7 @@ export default function DashboardPage() {
   const [modules, setModules] = React.useState<Module[]>([]);
   const [studySessions, setStudySessions] = React.useState<StudySession[]>([]);
   const [quickCheckTopic, setQuickCheckTopic] = React.useState<Topic | null>(null);
+  const [weeklyReviewOpen, setWeeklyReviewOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [selectedTermId, setSelectedTermId] = React.useState<string>(
     currentTerm?.id || "term-sem-1"
@@ -197,21 +199,33 @@ export default function DashboardPage() {
               </span>
             </div>
 
-            {/* Term Filter Tabs */}
-            <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs">
-              {terms.map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setSelectedTermId(t.id)}
-                  className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
-                    selectedTermId === t.id
-                      ? "bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm"
-                      : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
-                  }`}
-                >
-                  {t.name.split(" ")[0]} {t.name.split(" ")[1]}
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setWeeklyReviewOpen(true)}
+                className="gap-1.5 text-xs text-app-ink-muted hover:text-app-ink"
+              >
+                <Printer className="h-3.5 w-3.5 text-app-accent" />
+                <span>Weekly Review</span>
+              </Button>
+
+              {/* Term Filter Tabs */}
+              <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs">
+                {terms.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectedTermId(t.id)}
+                    className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
+                      selectedTermId === t.id
+                        ? "bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm"
+                        : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                    }`}
+                  >
+                    {t.name.split(" ")[0]} {t.name.split(" ")[1]}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -287,6 +301,12 @@ export default function DashboardPage() {
           const allTops = await dataStore.getAllTopics();
           setTopics(allTops);
         }}
+      />
+
+      {/* Weekly Academic Review Modal */}
+      <WeeklyReviewModal
+        open={weeklyReviewOpen}
+        onOpenChange={setWeeklyReviewOpen}
       />
     </div>
   );

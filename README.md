@@ -1,125 +1,165 @@
-# Catya's Creds — University-Grade Academic Learning Portal
+# Valeria’s Creds — University-Grade Academic Learning Portal
 
-> An independent academic learning portal where students organize YouTube video lectures into credit-bearing university courses, complete rigorous graded assessments with structured rubrics, track SGPA/CGPA, and issue verifiable academic credentials.
-
----
-
-## 1. Executive Overview & Design System
-
-Catya's Creds is engineered to the aesthetic and structural standards of Google Classroom combined with an elite university registrar's student portal. The user interface prioritizes clarity, trust, and speed:
-* **Academic Atmosphere**: Zero emojis, zero cartoon illustrations, and zero decorative gradients.
-* **Palette**: High-contrast academic light mode (`#FAFAF8` background, `#FFFFFF` surface, `#1B1F2A` ink, `#A51C30` crimson accent) paired with an authentic deep slate dark mode (`#14161B` background, `#1B1E25` surface, `#D4586B` accent).
-* **Course Tag Rules**: 8 muted departmental colors (slate blue, teal, olive, ochre, plum, rust, graphite, forest) rendered strictly as 4px thin indicator bars and 6px status dots—never as oversized saturated blocks.
-* **Typography**: *Source Serif 4* for page titles, course titles, large metric numbers, and official certificates; *Inter* for body and user interface controls. All numeric grades, credits, durations, and percentages enforce tabular figures (`font-variant-numeric: tabular-nums`).
-* **Accessibility**: Fully WCAG AA compliant with 2px crimson visible focus rings, full keyboard accessibility, proper ARIA landmarks, and a skip-to-content link.
+> **LEARNING PORTAL**  
+> An autonomous, collegiate-grade learning portal for one student. Students curate YouTube video lectures into credit-bearing academic courses, verify real watched seconds, master syllabus competencies, complete graded classwork under strict rubrics, track SGPA & CGPA, and issue verifiable academic transcripts.
 
 ---
 
-## 2. Architecture & Data Repository Layer
+## 1. Executive Overview & Brand Identity
 
-The application enforces a strict **Single Repository Interface** (`DataStore`), ensuring UI components and page routes never communicate with underlying database drivers directly:
-
-```
-src/
-├── app/                  # Next.js App Router (Layouts & Pages)
-│   ├── api/              # Route handlers (/api/youtube/oembed, /api/ai/draft-quiz)
-│   ├── courses/          # Course Classwork, Syllabus, Notes, Lesson Player
-│   ├── degree/           # 120-credit Degree Progress Audit
-│   ├── grades/           # Global Grades, SGPA, CGPA & Scale Switcher
-│   ├── planner/          # Month & Week Academic Calendar
-│   ├── settings/         # Grading parameters, theme toggle, JSON backup/restore
-│   ├── transcript/       # Official Printable Transcript with QR verification
-│   └── verify/[id]/      # Public cryptographic credential verification
-├── components/           # Reusable academic controls, dialogs & modules
-├── lib/
-│   ├── grading/          # Pure TypeScript grading mathematics engine
-│   ├── repository/       # DataStore interface, DemoDataStore & FirebaseDataStore
-│   └── youtube/          # Pure YouTube URL parser & embed compliance
-├── styles/               # Design tokens (tokens.ts) and globals.css
-└── types/                # Strict Zod & TypeScript domain schemas
-```
-
-### High-Fidelity Demo Store vs. Firebase Cloud Store
-* **`DemoDataStore`**: In-memory and local storage backed implementation populated with high-fidelity sample data across two academic semesters, 4 courses (Computer Science, Mathematics, Ethics, Economics), verified lesson progress, graded quizzes, and rubrics.
-* **`FirebaseDataStore`**: Production cloud implementation utilizing Firebase Authentication (Google Sign-In) and Cloud Firestore client SDK.
-* **Zero Disruption Switching**: Switching stores or exporting/importing JSON backups happens instantly through `DataStoreProvider`.
+Valeria’s Creds is engineered to the aesthetic and structural benchmark of Google Classroom, elite university registrar student portals, and the refined design polish of Linear and Coursera:
+* **Brand Assets**:
+  * **Wordmark**: *Valeria’s Creds* in Source Serif 4 semibold with a letter-spaced caps label `LEARNING PORTAL`.
+  * **Logo Mark**: Rounded crimson square with a white serif `V` and a tiny gold dot (`/icon.svg` and `/favicon.svg`).
+  * **Name Everywhere**: Enforced across page titles, shell headers, metadata, transcript, verification registry, and exports. Never uses unauthorized university crests or names.
+* **Palette & Design System**:
+  * Light Background: Heritage Academic `#F6F3EE`, surface `#FFFFFF`, secondary surface `#EFEBE4`, border `#E2DDD3`, ink `#14161F`, muted ink `#5E6472`.
+  * Brand Highlights: Crimson `#A51C30`, Deep Burgundy `#3A0F1B`, Gold `#C79A3B`.
+  * Dark Mode: Authentically toned `#0F1117`, surface `#171A22`, secondary surface `#1F232D`, border `#282D3A`.
+  * Course Department Accents: 8 muted tones (slate, teal, olive, ochre, plum, rust, graphite, forest) rendered strictly as thin 4px bars and 6px dots.
+* **Typography**: *Source Serif 4* for page titles, course titles, large numeric metrics, and formal certificates; *Inter* for interface controls and body copy. All numeric metrics, percentages, credit totals, and grade points strictly enforce tabular numbers (`tabular-nums`).
+* **Accessibility**: Fully WCAG AA compliant with 2px crimson visible focus rings, full keyboard shortcuts modal (`?`), keyboard skip-to-content anchor, and verified contrast ratios.
 
 ---
 
-## 3. YouTube Embed Compliance & Watch Tracking Engine
+## 2. Pre-Loaded Curricular Syllabus
 
-Catya's Creds strictly adheres to the YouTube API Terms of Service:
-1. **Official IFrame Embed Only**: Video playback operates exclusively via the official YouTube IFrame Player API. Videos are never proxied, downloaded, re-hosted, clipped, or overlaid.
-2. **Channel Attribution & Fallback**: Every lecture prominently attributes the creator's YouTube channel and features a direct "Watch on YouTube" fallback link.
+* **Accredited Baseline**: Seeded with 19 foundational undergraduate courses from the JNTUH R25 Computer Science and Engineering syllabus across Year 1:
+  * **Semester 1 (9 courses, 20 credits)**:
+    * `MA101BS`: Matrices and Calculus (4 cr)
+    * `CH102BS`: Engineering Chemistry (3 cr)
+    * `EN103HS`: English for Skill Enhancement (3 cr)
+    * `EC104ES`: Electronic Devices and Circuits (3 cr)
+    * `CS105ES`: Programming for Problem Solving (3 cr)
+    * `CH106BS`: Engineering Chemistry Laboratory (1 cr)
+    * `CS107ES`: Programming for Problem Solving Laboratory (1.5 cr)
+    * `EN108HS`: English Language and Communication Skills Lab (1 cr)
+    * `ME109ES`: Environmental Science and Engineering (0.5 cr)
+  * **Semester 2 (10 courses, 20 credits)**:
+    * `MA201BS`: Ordinary Differential Equations and Vector Calculus (4 cr)
+    * `PH202BS`: Applied Physics (3 cr)
+    * `ME203ES`: Engineering Graphics (3 cr)
+    * `EE204ES`: Basic Electrical Engineering (3 cr)
+    * `CS205ES`: Python Programming (2 cr)
+    * `PH206BS`: Applied Physics Laboratory (1 cr)
+    * `CS207ES`: Python Programming Laboratory (1.5 cr)
+    * `CS208ES`: Basic Electrical and Electronics Engineering Lab (1 cr)
+    * `EE209ES`: IT Workshop (1 cr)
+    * `CS210ES`: Constitution of India (0.5 cr)
+* **Lab Electives & Operations**:
+  * Lab sections with elective requirements (e.g., *"any 8 experiments"*) include an interactive experiment selector that only counts chosen experiments towards completion.
+  * Full syllabus agility: inline rename, reorder, split, merge, delete, and a safe *"Reset this course to original syllabus"* restoration action.
+
+---
+
+## 3. YouTube Embed Compliance & Verified Watch Tracking
+
+Valeria’s Creds strictly observes YouTube Developer Policies and Terms of Service:
+1. **Official IFrame Embed Only**: Videos play exclusively via the official YouTube IFrame Player API. Videos are never proxied, downloaded, clipped, resized below minimum standards, or overlaid with advertisements.
+2. **Channel Attribution & Fallback**: Every lecture card and player screen prominently displays the YouTube channel name and a direct *"Watch on YouTube"* link.
 3. **Verified Watch Time Accumulator**:
-   * Watched seconds are counted **only** while player state is strictly `PLAYING` ($1$).
-   * Scrubbing or seeking ahead is intercepted and adds zero seconds:
-     $$\Delta t \le 1.25 \times \Delta \text{wallTime} \times \text{playbackRate}$$
-   * Automatic completion trigger marks lessons as **Complete** once real watched duration reaches $\ge 90\%$.
-4. **Zero-Key Metadata Route**: Metadata is fetched via Next.js server route `/api/youtube/oembed` (no YouTube Data API key required), utilizing strict 11-character video ID validation and sliding-window rate limiting.
+   * Watched seconds are accumulated **only** while the player state is strictly `PLAYING` ($1$).
+   * Scrubbing or seeking ahead is discarded:
+     $$\Delta t \le 1.25 \times \Delta t_{\text{wallClock}} \times \text{playbackRate}$$
+   * Live watch percentage is saved to localStorage/Firestore for seamless playback resumption.
+   * At $\ge 90\%$ verified watch progress, the video is marked as **Completed**.
+4. **Metadata Route with 30-Day Cache**:
+   * Server route `/api/youtube/oembed` resolves video titles, author channels, and thumbnails without requiring a YouTube API key.
+   * Validates strict 11-character video IDs, enforces sliding-window rate limits, and re-fetches metadata older than 30 days.
 5. **Mandatory Legal Notices**:
-   * Direct links to [YouTube Terms of Service](https://www.youtube.com/t/terms) and [Google Privacy Policy](https://policies.google.com/privacy) in universal footer and sidebar.
-   * Persistent accreditation disclaimer: *"Self-awarded credits. Not accredited by any institution."*
+   * Footer links to [YouTube Terms of Service](https://www.youtube.com/t/terms) and [Google Privacy Policy](https://policies.google.com/privacy).
+   * Persistent academic disclaimer across all pages and certificates:
+     > *"Self-awarded credits. Not accredited by any institution."*
 
 ---
 
-## 4. Pure Grading Mathematics Engine
+## 4. Mastery Scoring & Spaced Revision Engine
 
-All academic math lives in an isolated pure TypeScript module (`src/lib/grading/grading-engine.ts`) covered by comprehensive Vitest unit tests:
-
-1. **Strict 100% Weighted Categories**:
-   * Course schemes enforce that category weights sum to exactly 100%:
-     $$\sum_{i} W_i = 100\%$$
-   * Within any category, the category score is strictly proportional to points:
-     $$\text{Category Score} = \frac{\sum \text{Earned Points}}{\sum \text{Available Points}} \times 100$$
-2. **Collegiate Retake Grade Replacement Rule**:
-   * When a course is retaken across terms, the latest grade replaces previous attempts in cumulative CGPA calculation, flagging superseded attempts with `(R)`.
-3. **Dual Grading Scales**:
-   * **10-Point Academic Scale**:
-     * $O$ (Outstanding, $\ge 90\%$, 10.0 GP)
-     * $A+$ (Excellent, $\ge 80\%$, 9.0 GP)
-     * $A$ (Very Good, $\ge 70\%$, 8.0 GP)
-     * $B+$ (Good, $\ge 60\%$, 7.0 GP)
-     * $B$ (Above Average, $\ge 50\%$, 6.0 GP)
-     * $P$ (Pass, $\ge 40\%$, 5.0 GP)
-     * $F$ (Fail, $< 40\%$, 0.0 GP)
-   * **4.0 US Collegiate Scale**: $A$ ($4.0$), $A-$ ($3.7$), $B+$ ($3.3$), $B$ ($3.0$), $B-$ ($2.7$), $C$ ($2.0$), $D$ ($1.0$), $F$ ($0.0$).
-4. **What-If Target Solver**:
-   * Embedded simulator that calculates exact exam scores required to achieve a target letter grade.
+Every syllabus topic has an objective mastery score (0–100) and three status levels (*Not started*, *Learning*, *Done*):
+$$\text{Topic Score} = \text{Watch Score (0–40)} + \text{Check Score (0–60)}$$
+* **Watch Part (40 pts)**: Automatically awarded when a linked video lecture reaches 90% completion, or when manually ticked as *"I studied this"* if no video is linked.
+* **Check Part (60 pts)**: Earned through diagnostic quick checks (3–5 conceptual questions):
+  $$\text{Check Score} = \text{Percent Correct} \times 60$$
+* **Done State Threshold**: Awarded at $\ge 70$ points. Ticking a checkbox alone never confers full mastery.
+* **Hierarchical Aggregations**:
+  * $\text{Unit Score} = \text{Average of its topic scores}$
+  * $\text{Course Score} = \text{Average of its unit scores}$
+  * $\text{Semester Progress} = \text{Credit-weighted average of course scores}$
+* **Spaced Revision Schedule**: Once a topic is Done, automated revision checkpoints trigger at **1, 3, 7, and 21 days** on the Today dashboard and Academic Planner.
 
 ---
 
-## 5. Official Documents, Verification & A4 Print Engine
+## 5. Pure Grading Mathematics Engine
+
+Grading mathematics reside in an isolated pure TypeScript module (`src/lib/grading/grading-engine.ts`) verified by unit tests:
+1. **Strict 100% Category Weighting**:
+   * Theory Presets: Study Progress (10%), Quizzes (25%), Assignments (30%), Midterm (15%), Final Exam (20%).
+   * Lab Presets: Experiments Done (60%), Quizzes/Viva (20%), Final Lab Test (20%).
+   * The Study Progress component directly reflects the pure topic mastery score.
+2. **Assessment Types & Runners**:
+   * **Quiz**: MCQ, multi-select, and short-answer with live timer, attempt limits, instant auto-marking, and review rationales.
+   * **Assignment**: Student submission with structured rubric self-assessment requiring written justifications ($\ge 10$ characters).
+   * **Exam**: Proctored single-attempt examination gated by prerequisite topic completion (e.g. requires $\ge 80\%$ unit topics mastered).
+3. **Collegiate Retake Replacement Rule**:
+   * When a course is retaken, the latest grade replaces previous attempts in cumulative CGPA calculation, while both attempts remain visible on the official transcript flagged with `(R)`.
+4. **Dual Grading Scales**:
+   * **10-Point Indian Collegiate Scale**: $O$ ($\ge 90\%$, 10.0), $A+$ ($\ge 80\%$, 9.0), $A$ ($\ge 70\%$, 8.0), $B+$ ($\ge 60\%$, 7.0), $B$ ($\ge 50\%$, 6.0), $P$ ($\ge 40\%$, 5.0), $F$ ($< 40\%$, 0.0).
+   * **4.0 Standard US Scale**: $A$ ($4.0$), $A-$ ($3.7$), $B+$ ($3.3$), $B$ ($3.0$), $B-$ ($2.7$), $C$ ($2.0$), $D$ ($1.0$), $F$ ($0.0$).
+5. **What-If Target Solver**:
+   * Computes the exact final exam score needed to reach a desired target letter grade.
+
+---
+
+## 6. Official Documents, Verification & Settings
 
 1. **Official Academic Transcript (`/transcript`)**:
-   * Styled with academic double crimson rule, Source Serif 4 typography, biographical registrar block, term tables, and Dean/Registrar signatures.
-   * Dedicated print stylesheet (`@media print`) rendering a pristine, multi-page A4 PDF without UI chrome.
-2. **Opt-in Cryptographic Credential Verification (`/verify/[id]`)**:
-   * Opt-in verification engine generates unique IDs (`VER-...`) and dynamic QR codes.
-   * Public standalone route displays timestamped verification badge, coursework snapshot, and immutable audit trail.
-   * One-click revoke capability to decommission public verification.
+   * Source Serif 4 typography with double crimson rule header (*Valeria’s Creds Registry of Academic Records*), Registry ID `VC-2026-9812-REG`, term-by-term tables, SGPA, CGPA, Dean & Registrar signature lines, dynamic verification QR code, and print-to-PDF stylesheet (`@media print`).
+2. **Opt-In Public Verification Registry (`/verify/[id]`)**:
+   * Verification links are strictly **opt-in** and private by default. Unshared snapshots display the Privacy Sharing Policy gate.
+   * When activated, displays verified status banner, student candidate, ID, CGPA, total credits, snapshot timestamp, course breakdown, immutable audit log chain, and mandatory disclaimer.
+3. **Weekly Academic Review**:
+   * One-page printable summary featuring 7-day study hours, topics mastered, weakest topics revision priorities, next week milestones, and reflection notes.
+4. **Academic Settings (`/settings`)**:
+   * Switch between 10-Point and 4.0 grading scales.
+   * Configure watch hours per credit ratio (default: 15 hrs/cr).
+   * Instant color theme switching (Light, Dark, System).
+   * Academic Term Manager (create terms, switch active term).
+   * Complete JSON backup export (`valerias-creds-backup-<date>.json`) and restoration.
+   * Danger zone account reset requiring exact `CONFIRM RESET` confirmation.
 
 ---
 
-## 6. Global Keyboard Shortcuts
+## 7. Gemini AI Academic Suite
 
-| Shortcut | Description |
+All AI capabilities operate under one strict rule: **AI only drafts; the student reviews and approves before anything is saved.**
+* `POST /api/ai/course-builder`: Converts pasted raw syllabus text into structured courses with units and topics matching the seed format.
+* `POST /api/ai/quick-check`: Synthesizes 3–5 conceptual multiple-choice questions with 4 options, an answer key, and formal explanations.
+* `POST /api/ai/topic-chat`: Scoped contextual topic assistant (*Explain Simply*, *Test Me* diagnostic challenge, *Flashcards* spaced-repetition cards).
+* `POST /api/ai/study-plan`: Crafts a week-by-week study timetable calibrated against exam dates, current mastery, and weak topics.
+* `POST /api/ai/tidy-topics`: Refines raw, noisy syllabus strings into concise, professional academic lesson titles.
+* **Offline Safeguard**: When `GEMINI_API_KEY` is not present, all AI endpoints return HTTP 503 with informative guidance, and UI components display clear notices while offering manual alternatives.
+
+---
+
+## 8. Keyboard Shortcuts
+
+| Shortcut | Action |
 | :--- | :--- |
-| `g` then `d` | Jump to Academic Dashboard |
-| `g` then `c` | Jump to Enrolled Courses |
-| `g` then `p` | Jump to Academic Planner |
-| `g` then `g` | Jump to Grades & Standing |
-| `g` then `t` | Jump to Official Transcript |
-| `g` then `s` | Jump to Academic Settings |
-| `⌘K` / `Ctrl+K` / `/` | Open Global Command Palette & Search |
+| `g` then `d` | Navigate to Dashboard |
+| `g` then `c` | Navigate to Enrolled Courses |
+| `g` then `p` | Navigate to Academic Planner |
+| `g` then `g` | Navigate to Grades & Standing |
+| `g` then `t` | Navigate to Official Transcript |
+| `g` then `s` | Navigate to Academic Settings |
+| `⌘K` / `Ctrl+K` / `/` | Open Global Command Palette |
 | `?` | Open Keyboard Shortcuts Help Modal |
-| `j` | Next lecture (in Lesson Player) |
-| `k` | Previous lecture (in Lesson Player) |
+| `j` | Next video lecture (in Lesson Player) |
+| `k` | Previous video lecture (in Lesson Player) |
 | `n` | Focus timestamped notes editor (in Lesson Player) |
 
 ---
 
-## 7. Local Setup & Testing Guide
+## 9. Local Setup & Testing Guide
 
 ### Prerequisites
 * **Node.js**: v18.17+ or v20+
@@ -150,7 +190,7 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
-# Optional Google Gemini API Key (for automated AI quiz drafting from lecture notes)
+# Optional Google Gemini API Key for academic AI drafting
 GEMINI_API_KEY=
 ```
 
@@ -170,44 +210,43 @@ Open `http://localhost:3000` in your browser.
 ### Test Suites
 
 ```bash
-# Run Vitest pure mathematics and parser unit test suites
+# Run Vitest test suite (65 passing unit tests)
 npm run test
 
-# Run Playwright End-to-End student journey test suite
-npm run test:e2e
+# Run Playwright verification
+node tests/phase8-valeria-browser-check.js
 ```
 
 ---
 
-## 8. Firestore Security Rules (`firestore.rules`)
+## 10. Firestore Security Rules (`firestore.rules`)
 
-The production security rules enforce strict user isolation:
-* Students can only read and write documents inside their own partition (`/users/{userId}/**`).
-* Public verification records (`/verification_snapshots/{snapshotId}`) are strictly **read-only** for unauthenticated public viewers and can only be authored by the owning student when opted in.
+Production rules enforce strict user partition isolation across all 23 collections (`users`, `terms`, `courses`, `units`, `topics`, `videos`, `videoProgress`, `checks`, `attempts`, `assessments`, `questions`, `submissions`, `rubrics`, `notes`, `plannerEvents`, `studySessions`, `examDates`, `degreePlans`, `transcriptSnapshots`, `auditLog`, `modules`, `lessons`, `lessonProgress`):
+* Students can only read and write documents inside their authenticated partition (`request.auth.uid == resource.data.userId`).
+* Public verification records (`/transcriptSnapshots/{snapshotId}`) are strictly **read-only** for unauthenticated viewers and only when `isPublic == true`.
 
-To deploy rules to your Firebase project:
-
+Deploy rules to your Firebase project:
 ```bash
 firebase deploy --only firestore:rules
 ```
 
 ---
 
-## 9. Vercel Deployment
+## 11. Vercel Deployment Checklist
 
-Catya's Creds is engineered for zero-config deployment on Vercel:
-
-1. Push your code to your GitHub repository.
-2. Import the repository into [Vercel](https://vercel.com).
-3. Framework Preset: **Next.js**.
-4. Set optional environment variables (`NEXT_PUBLIC_FIREBASE_*` and `GEMINI_API_KEY`).
-5. Click **Deploy**.
+1. Push your repository to GitHub (`main` branch).
+2. Import the project into [Vercel](https://vercel.com).
+3. Set Framework Preset to **Next.js**.
+4. Configure optional environment variables:
+   - `NEXT_PUBLIC_FIREBASE_*` (for Cloud Firestore and Google Sign-In)
+   - `GEMINI_API_KEY` (for Gemini AI features)
+5. Click **Deploy**. The app will build statically and dynamically with zero configuration.
 
 ---
 
 ## License & Attribution
 
-This project is released under the **MIT License**.
+Released under the **MIT License**.
 
 All lecture video content belongs to their respective YouTube creators and channels. Videos are embedded in strict compliance with the YouTube Terms of Service and Google Privacy Policy.
 
