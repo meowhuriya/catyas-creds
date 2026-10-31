@@ -96,19 +96,46 @@ export const ModuleSchema = z.object({
   id: z.string(),
   userId: z.string(),
   courseId: z.string(),
-  title: z.string().min(1, "Module title is required"),
+  title: z.string().min(1, "Module/Unit title is required"),
   order: z.number().default(0),
+  unitNumber: z.number().optional(),
+  isSection: z.boolean().optional().default(false),
+  electiveExperimentsCount: z.number().nullable().optional(),
   isCollapsed: z.boolean().default(false),
   createdAt: z.string(),
 });
 export type Module = z.infer<typeof ModuleSchema>;
+export const UnitSchema = ModuleSchema;
+export type Unit = Module;
 
-// Lesson Schema
+// Topic Schema
+export const TopicSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  courseId: z.string(),
+  unitId: z.string(),
+  title: z.string().min(1, "Topic title is required"),
+  order: z.number().default(0),
+  isDone: z.boolean().default(false),
+  watchScore: z.number().min(0).max(40).default(0),
+  checkScore: z.number().min(0).max(60).default(0),
+  topicScore: z.number().min(0).max(100).default(0),
+  isStudiedManually: z.boolean().default(false),
+  isExperiment: z.boolean().default(false),
+  isSelectedExperiment: z.boolean().default(true),
+  lastRevisedAt: z.string().optional(),
+  revisionDueAt: z.string().optional(),
+  createdAt: z.string(),
+});
+export type Topic = z.infer<typeof TopicSchema>;
+
+// Lesson / Video Schema
 export const LessonSchema = z.object({
   id: z.string(),
   userId: z.string(),
   courseId: z.string(),
-  moduleId: z.string(),
+  moduleId: z.string(), // can be unitId
+  unitId: z.string().optional(),
   youtubeVideoId: z.string().length(11),
   originalUrl: z.string().url(),
   title: z.string().min(1),
@@ -118,17 +145,21 @@ export const LessonSchema = z.object({
   manualDuration: z.string().optional(),   // hh:mm:ss if manually typed
   startTimeSeconds: z.number().default(0),
   canEmbed: z.boolean().default(true),
+  linkedTopicIds: z.array(z.string()).optional().default([]),
   order: z.number().default(0),
   cachedAt: z.string(), // ISO date for 30-day freshness re-fetch
   createdAt: z.string(),
 });
 export type Lesson = z.infer<typeof LessonSchema>;
+export const VideoSchema = LessonSchema;
+export type Video = Lesson;
 
-// Lesson Progress Schema
+// Lesson Progress / Video Progress Schema
 export const LessonProgressSchema = z.object({
   id: z.string(),
   userId: z.string(),
-  lessonId: z.string(),
+  lessonId: z.string(), // can be videoId
+  videoId: z.string().optional(),
   courseId: z.string(),
   watchedSeconds: z.number().default(0),
   totalDurationSeconds: z.number().default(0),
@@ -139,6 +170,51 @@ export const LessonProgressSchema = z.object({
   updatedAt: z.string(),
 });
 export type LessonProgress = z.infer<typeof LessonProgressSchema>;
+export const VideoProgressSchema = LessonProgressSchema;
+export type VideoProgress = LessonProgress;
+
+// Topic Quick Check Schema
+export const QuickCheckSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  topicId: z.string(),
+  courseId: z.string(),
+  questions: z.array(
+    z.object({
+      id: z.string(),
+      prompt: z.string(),
+      options: z.array(z.string()),
+      correctAnswerIndex: z.number(),
+      explanation: z.string().optional(),
+    })
+  ),
+  score: z.number().min(0).max(60),
+  isPassed: z.boolean().default(false),
+  completedAt: z.string(),
+});
+export type QuickCheck = z.infer<typeof QuickCheckSchema>;
+
+// Focus Study Session Log Schema
+export const StudySessionSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  courseId: z.string().optional(),
+  durationMinutes: z.number(),
+  mode: z.enum(["pomodoro", "short_break", "long_break", "custom"]).default("pomodoro"),
+  completedAt: z.string(),
+});
+export type StudySession = z.infer<typeof StudySessionSchema>;
+
+// Exam Date Milestone Schema
+export const ExamDateSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  courseId: z.string(),
+  examTitle: z.string(),
+  date: z.string(), // YYYY-MM-DD
+  targetScore: z.number().default(85),
+});
+export type ExamDate = z.infer<typeof ExamDateSchema>;
 
 // Assessment Schema (Notice: weightPercentage removed per user requirement #2)
 export const AssessmentTypeSchema = z.enum(["quiz", "assignment", "midterm", "final"]);

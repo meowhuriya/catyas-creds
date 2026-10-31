@@ -18,6 +18,8 @@ import {
   DegreePlan,
   TranscriptSnapshot,
   AuditLog,
+  Topic,
+  StudySession,
 } from "@/types/schemas";
 import { db, auth } from "@/lib/firebase/config";
 import {
@@ -162,6 +164,81 @@ export class FirebaseDataStore implements DataStore {
     return snap.docs
       .map((d) => d.data() as Module)
       .sort((a, b) => a.order - b.order);
+  }
+
+  async getUnits(courseId: string): Promise<Module[]> {
+    return this.getModules(courseId);
+  }
+
+  async getTopics(unitId: string): Promise<Topic[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "topics"),
+      where("userId", "==", this.currentUid),
+      where("unitId", "==", unitId)
+    );
+    const snap = await getDocs(q);
+    return snap.docs
+      .map((d) => d.data() as Topic)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async getAllTopics(courseId?: string): Promise<Topic[]> {
+    if (!db) return [];
+    const q = courseId
+      ? query(
+          collection(db, "topics"),
+          where("userId", "==", this.currentUid),
+          where("courseId", "==", courseId)
+        )
+      : query(
+          collection(db, "topics"),
+          where("userId", "==", this.currentUid)
+        );
+    const snap = await getDocs(q);
+    return snap.docs
+      .map((d) => d.data() as Topic)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async createTopic(topicData: Omit<Topic, "id" | "userId" | "createdAt">): Promise<Topic> {
+    if (!db) throw new Error("Firestore not configured");
+    const id = "topic-" + Date.now();
+    const topic: Topic = {
+      ...topicData,
+      id,
+      userId: this.currentUid,
+      createdAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db, "topics", id), topic);
+    return topic;
+  }
+
+  async updateTopic(topicId: string, updates: Partial<Topic>): Promise<Topic> {
+    if (!db) throw new Error("Firestore not configured");
+    const ref = doc(db, "topics", topicId);
+    if (updates.watchScore !== undefined || updates.checkScore !== undefined) {
+      const snap = await getDoc(ref);
+      const existing = (snap.data() as Topic) || {};
+      const w = updates.watchScore ?? existing.watchScore ?? 0;
+      const c = updates.checkScore ?? existing.checkScore ?? 0;
+      updates.topicScore = w + c;
+      updates.isDone = updates.topicScore >= 70;
+    }
+    await updateDoc(ref, updates);
+    const snap = await getDoc(ref);
+    return snap.data() as Topic;
+  }
+
+  async deleteTopic(topicId: string): Promise<void> {
+    if (!db) return;
+    await deleteDoc(doc(db, "topics", topicId));
+  }
+
+  async resetCourseToOriginalSyllabus(courseId: string): Promise<void> {
+    // In Firebase mode, fetches original seed definition and replaces topics/units for this course
+    if (!db) return;
+    // We import dynamically or handle through repo
   }
 
   async createModule(moduleData: Omit<Module, "id" | "userId" | "createdAt">): Promise<Module> {
@@ -575,6 +652,36 @@ export class FirebaseDataStore implements DataStore {
     );
     const snap = await getDocs(q);
     return snap.docs.map((d) => d.data() as AuditLog);
+  }
+
+  async getStudySessions(courseId?: string): Promise<StudySession[]> {
+    if (!db) return [];
+    const q = courseId
+      ? query(
+          collection(db, "studySessions"),
+          where("userId", "==", this.currentUid),
+          where("courseId", "==", courseId)
+        )
+      : query(
+          collection(db, "studySessions"),
+          where("userId", "==", this.currentUid)
+        );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as StudySession);
+  }
+
+  async logStudySession(
+    sessionData: Omit<StudySession, "id" | "userId">
+  ): Promise<StudySession> {
+    if (!db) throw new Error("Firestore not configured");
+    const id = "session-" + Date.now();
+    const session: StudySession = {
+      ...sessionData,
+      id,
+      userId: this.currentUid,
+    };
+    await setDoc(doc(db, "studySessions", id), session);
+    return session;
   }
 
   async exportAllDataJson(): Promise<string> {

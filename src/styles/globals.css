@@ -3,37 +3,43 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #FAFAF8;
+  --color-bg: #F6F3EE;
   --color-surface: #FFFFFF;
-  --color-surface-muted: #F3F2EE;
-  --color-border: #E4E2DC;
-  --color-ink: #1B1F2A;
-  --color-ink-muted: #5B6070;
+  --color-surface-muted: #EFEBE4;
+  --color-border: #E2DDD3;
+  --color-ink: #14161F;
+  --color-ink-muted: #5E6472;
   --color-accent: #A51C30;
   --color-accent-hover: #8A1627;
+  --color-burgundy: #3A0F1B;
+  --color-gold: #C79A3B;
   --color-success: #1F7A4D;
   --color-warning: #B7791F;
   --color-danger: #B42318;
   --color-info: #2F5D8A;
 
-  --focus-ring: 0 0 0 2px #FAFAF8, 0 0 0 4px #A51C30;
+  --focus-ring: 0 0 0 2px #F6F3EE, 0 0 0 4px #A51C30;
+  --card-shadow: 0 1px 2px rgba(20, 22, 31, 0.06), 0 8px 24px rgba(20, 22, 31, 0.06);
 }
 
 .dark {
-  --color-bg: #14161B;
-  --color-surface: #1B1E25;
-  --color-surface-muted: #232731;
-  --color-border: #2E3340;
-  --color-ink: #ECEAE4;
-  --color-ink-muted: #9AA0AE;
-  --color-accent: #D4586B;
-  --color-accent-hover: #E06D7E;
+  --color-bg: #0F1117;
+  --color-surface: #171A22;
+  --color-surface-muted: #1F232D;
+  --color-border: #282D3A;
+  --color-ink: #F0EDE6;
+  --color-ink-muted: #9BA1B0;
+  --color-accent: #E0657A;
+  --color-accent-hover: #EA7C8F;
+  --color-burgundy: #2B0D17;
+  --color-gold: #D9B25A;
   --color-success: #2E9E68;
   --color-warning: #D9942C;
   --color-danger: #E0483B;
   --color-info: #4E85BD;
 
-  --focus-ring: 0 0 0 2px #14161B, 0 0 0 4px #D4586B;
+  --focus-ring: 0 0 0 2px #0F1117, 0 0 0 4px #E0657A;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 body {
@@ -43,6 +49,20 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Academic Card Styling */
+.academic-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--card-shadow);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+
+.academic-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(20, 22, 31, 0.08), 0 12px 28px rgba(20, 22, 31, 0.09);
 }
 
 /* Enforce tabular figures for all numeric, grade, credit and metrics */

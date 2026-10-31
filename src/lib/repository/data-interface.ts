@@ -17,6 +17,8 @@ import {
   DegreePlan,
   TranscriptSnapshot,
   AuditLog,
+  Topic,
+  StudySession,
 } from "@/types/schemas";
 
 export interface DataStore {
@@ -38,16 +40,37 @@ export interface DataStore {
   updateCourse(courseId: string, updates: Partial<Course>): Promise<Course>;
   deleteCourse(courseId: string): Promise<void>;
 
-  // Modules
+  // Modules / Units
   getModules(courseId: string): Promise<Module[]>;
-  createModule(moduleData: Omit<Module, "id" | "userId" | "createdAt">): Promise<Module>;
+  getUnits(courseId: string): Promise<Module[]>;
+  createModule(
+    moduleData: Omit<Module, "id" | "userId" | "createdAt" | "isSection"> & {
+      isSection?: boolean;
+      unitNumber?: number;
+      electiveExperimentsCount?: number | null;
+    }
+  ): Promise<Module>;
   updateModuleOrder(modules: { id: string; order: number }[]): Promise<void>;
   toggleModuleCollapsed(moduleId: string, isCollapsed: boolean): Promise<void>;
+
+  // Topics
+  getTopics(unitId: string): Promise<Topic[]>;
+  getAllTopics(courseId?: string): Promise<Topic[]>;
+  createTopic(
+    topic: Omit<Topic, "id" | "userId" | "createdAt">
+  ): Promise<Topic>;
+  updateTopic(topicId: string, updates: Partial<Topic>): Promise<Topic>;
+  deleteTopic(topicId: string): Promise<void>;
+  resetCourseToOriginalSyllabus(courseId: string): Promise<void>;
 
   // Lessons
   getLessons(courseId: string): Promise<Lesson[]>;
   getLesson(lessonId: string): Promise<Lesson | null>;
-  addLessons(lessons: Omit<Lesson, "id" | "userId" | "createdAt">[]): Promise<Lesson[]>;
+  addLessons(
+    lessons: (Omit<Lesson, "id" | "userId" | "createdAt" | "linkedTopicIds"> & {
+      linkedTopicIds?: string[];
+    })[]
+  ): Promise<Lesson[]>;
   updateLesson(lessonId: string, updates: Partial<Lesson>): Promise<Lesson>;
   updateLessonOrder(lessons: { id: string; order: number; moduleId: string }[]): Promise<void>;
   deleteLesson(lessonId: string): Promise<void>;
@@ -119,6 +142,12 @@ export interface DataStore {
     details: string
   ): Promise<void>;
   getAuditLogs(): Promise<AuditLog[]>;
+
+  // Study Sessions (Focus Timer)
+  getStudySessions(courseId?: string): Promise<StudySession[]>;
+  logStudySession(
+    session: Omit<StudySession, "id" | "userId">
+  ): Promise<StudySession>;
 
   // Demo Data Controls
   loadDemoData(): Promise<void>;

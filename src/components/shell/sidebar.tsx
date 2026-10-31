@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  Clock,
   BookOpen,
   Calendar,
   GraduationCap,
@@ -18,6 +19,7 @@ import {
 import { useDataStore } from "@/lib/repository";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { cn } from "@/lib/utils";
+import { LogoMark, Wordmark } from "@/components/brand/logo";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -30,6 +32,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    { label: "Today", href: "/today", icon: Clock },
     { label: "Courses", href: "/courses", icon: BookOpen },
     { label: "Planner", href: "/planner", icon: Calendar },
     { label: "Grades", href: "/grades", icon: GraduationCap },
@@ -43,32 +46,28 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "relative hidden md:flex flex-col border-r border-app-border bg-app-surface transition-all duration-200 select-none",
+        "relative hidden md:flex flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200 select-none",
         collapsed ? "w-16" : "w-64"
       )}
     >
-      {/* App Branding Header */}
-      <div className="flex h-16 items-center justify-between border-b border-app-border px-4">
+      {/* Brand Header */}
+      <div className="flex h-16 items-center justify-between border-b border-[var(--color-border)] px-4">
         {!collapsed && (
-          <Link href="/" className="flex flex-col">
-            <span className="font-serif text-lg font-bold tracking-tight text-app-ink">
-              Catya's Creds
-            </span>
-            <span className="text-[10px] uppercase tracking-widest text-app-accent font-semibold -mt-1">
-              Academic Portal
-            </span>
+          <Link href="/" className="flex items-center gap-2.5 focus:outline-none">
+            <LogoMark size={28} />
+            <Wordmark size="sm" />
           </Link>
         )}
         {collapsed && (
-          <Link href="/" className="mx-auto flex h-9 w-9 items-center justify-center rounded-control bg-app-accent text-white font-serif font-bold text-base">
-            C
+          <Link href="/" className="mx-auto focus:outline-none" title="Valeria’s Creds">
+            <LogoMark size={30} />
           </Link>
         )}
         <button
           onClick={onToggle}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           className={cn(
-            "rounded-control p-1.5 text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink transition-colors",
+            "rounded-[6px] p-1.5 text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)] transition-colors",
             collapsed && "mx-auto mt-2"
           )}
         >
@@ -95,22 +94,22 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-control px-3 py-2 text-sm font-medium transition-colors",
+                  "group relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-app-surface-muted text-app-ink font-semibold"
-                    : "text-app-ink-muted hover:bg-app-surface-muted/60 hover:text-app-ink",
+                    ? "bg-[#A51C30]/10 text-[var(--color-accent)] font-semibold"
+                    : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]",
                   collapsed && "justify-center px-0"
                 )}
                 title={collapsed ? item.label : undefined}
               >
                 {/* 4px crimson active indicator */}
                 {isActive && (
-                  <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-app-accent" />
+                  <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[var(--color-accent)]" />
                 )}
                 <Icon
                   className={cn(
                     "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-app-accent" : "text-app-ink-muted group-hover:text-app-ink"
+                    isActive ? "text-[var(--color-accent)]" : "text-[var(--color-ink-muted)] group-hover:text-[var(--color-ink)]"
                   )}
                 />
                 {!collapsed && <span>{item.label}</span>}
@@ -121,15 +120,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
         {/* Recent Courses List (under Courses) */}
         {!collapsed && recentCourses.length > 0 && (
-          <div className="mt-8 border-t border-app-border/80 pt-4">
+          <div className="mt-8 border-t border-[var(--color-border)]/80 pt-4">
             <div className="flex items-center justify-between px-3 mb-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-app-ink-muted">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
                 Recent Courses
               </span>
               <Link
                 href="/courses?action=new-course"
-                className="text-app-ink-muted hover:text-app-accent transition-colors"
-                title="Add Course"
+                className="text-[var(--color-ink-muted)] hover:text-[var(--color-accent)] transition-colors"
+                title="Create Course"
               >
                 <Plus className="h-3.5 w-3.5" />
               </Link>
@@ -146,10 +145,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     <Link
                       href={`/courses/${c.id}`}
                       className={cn(
-                        "group relative flex items-center gap-2.5 rounded-control px-3 py-1.5 text-xs transition-colors",
+                        "group relative flex items-center gap-2.5 rounded-[6px] px-3 py-1.5 text-xs transition-colors",
                         isCourseActive
-                          ? "bg-app-surface-muted font-medium text-app-ink"
-                          : "text-app-ink-muted hover:bg-app-surface-muted/60 hover:text-app-ink"
+                          ? "bg-[var(--color-surface-muted)] font-medium text-[var(--color-ink)]"
+                          : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]"
                       )}
                     >
                       {/* Small 6px course dot */}
@@ -157,7 +156,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         className="h-1.5 w-1.5 rounded-full shrink-0"
                         style={{ backgroundColor: tagColor }}
                       />
-                      <span className="font-mono font-semibold uppercase text-app-ink/80 shrink-0">
+                      <span className="font-mono font-semibold uppercase text-[var(--color-ink)]/80 shrink-0">
                         {c.code}
                       </span>
                       <span className="truncate">{c.title}</span>
@@ -170,11 +169,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </div>
 
-      {/* Footer Meta */}
+      {/* Footer Legal & Disclaimers */}
       {!collapsed && (
-        <div className="border-t border-app-border p-3 text-[11px] text-app-ink-muted flex flex-col gap-1">
-          <div className="flex items-center justify-between text-app-ink-muted/80">
-            <span>Catya's Creds v1.0</span>
+        <div className="border-t border-[var(--color-border)] p-3 text-[11px] text-[var(--color-ink-muted)] flex flex-col gap-1">
+          <div className="flex items-center justify-between text-[var(--color-ink-muted)]/80">
+            <span>Valeria’s Creds v1.0</span>
             <span className="font-mono text-[10px]">Academic</span>
           </div>
           <div className="flex items-center gap-2 text-[10px]">

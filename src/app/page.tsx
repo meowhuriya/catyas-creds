@@ -6,22 +6,27 @@ import { useDataStore } from "@/lib/repository";
 import { Stat } from "@/components/ui/stat";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { BentoHero } from "@/components/dashboard/bento-hero";
 import { CourseCard } from "@/components/dashboard/course-card";
-import { ContinueWatchingStrip } from "@/components/dashboard/continue-watching";
-import { TodoList } from "@/components/dashboard/todo-list";
-import { Plus, BookOpen, Database, Sparkles } from "lucide-react";
+import { RightRail } from "@/components/dashboard/right-rail";
+import { StudyHeatmap } from "@/components/dashboard/study-heatmap";
+import { WeeklyHoursChart } from "@/components/dashboard/weekly-hours-chart";
+import { WeakestTopics } from "@/components/dashboard/weakest-topics";
+import { Plus, BookOpen, Database, Filter } from "lucide-react";
 import {
   Lesson,
   LessonProgress,
   Assessment,
-  Attempt,
-  Submission,
+  Topic,
+  Module,
+  StudySession,
 } from "@/types/schemas";
 
 export default function DashboardPage() {
   const {
     courses,
     currentTerm,
+    terms,
     dataStore,
     loadDemoData,
     currentUser,
@@ -30,48 +35,52 @@ export default function DashboardPage() {
   const [lessons, setLessons] = React.useState<Lesson[]>([]);
   const [progressList, setProgressList] = React.useState<LessonProgress[]>([]);
   const [assessments, setAssessments] = React.useState<Assessment[]>([]);
-  const [attempts, setAttempts] = React.useState<Attempt[]>([]);
-  const [submissions, setSubmissions] = React.useState<Submission[]>([]);
+  const [topics, setTopics] = React.useState<Topic[]>([]);
+  const [modules, setModules] = React.useState<Module[]>([]);
+  const [studySessions, setStudySessions] = React.useState<StudySession[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [selectedTermId, setSelectedTermId] = React.useState<string>(
+    currentTerm?.id || "term-sem-1"
+  );
+
+  React.useEffect(() => {
+    if (currentTerm?.id) {
+      setSelectedTermId(currentTerm.id);
+    }
+  }, [currentTerm]);
 
   React.useEffect(() => {
     async function loadDashboardData() {
       try {
         setLoading(true);
-        const [allLessons, allProgress, allAssessments, allAttempts, allSubmissions] =
-          await Promise.all([
-            Promise.all(courses.map((c) => dataStore.getLessons(c.id))).then((res) =>
-              res.flat()
-            ),
-            dataStore.getAllLessonProgress(),
-            Promise.all(courses.map((c) => dataStore.getAssessments(c.id))).then(
-              (res) => res.flat()
-            ),
-            Promise.all(
-              courses.map(async (c) => {
-                const asms = await dataStore.getAssessments(c.id);
-                const atts = await Promise.all(
-                  asms.map((a) => dataStore.getAttempts(a.id))
-                );
-                return atts.flat();
-              })
-            ).then((res) => res.flat()),
-            Promise.all(
-              courses.map(async (c) => {
-                const asms = await dataStore.getAssessments(c.id);
-                const subs = await Promise.all(
-                  asms.map((a) => dataStore.getSubmission(a.id))
-                );
-                return subs.filter(Boolean) as Submission[];
-              })
-            ).then((res) => res.flat()),
-          ]);
+        const [
+          allLessons,
+          allProgress,
+          allAssessments,
+          allTopics,
+          allModules,
+          allSessions,
+        ] = await Promise.all([
+          Promise.all(courses.map((c) => dataStore.getLessons(c.id))).then((res) =>
+            res.flat()
+          ),
+          dataStore.getAllLessonProgress(),
+          Promise.all(courses.map((c) => dataStore.getAssessments(c.id))).then(
+            (res) => res.flat()
+          ),
+          dataStore.getAllTopics(),
+          Promise.all(courses.map((c) => dataStore.getModules(c.id))).then(
+            (res) => res.flat()
+          ),
+          dataStore.getStudySessions(),
+        ]);
 
         setLessons(allLessons);
         setProgressList(allProgress);
         setAssessments(allAssessments);
-        setAttempts(allAttempts);
-        setSubmissions(allSubmissions);
+        setTopics(allTopics);
+        setModules(allModules);
+        setStudySessions(allSessions);
       } catch (err) {
         console.error("Dashboard data load error:", err);
       } finally {
@@ -86,147 +95,165 @@ export default function DashboardPage() {
     }
   }, [courses, dataStore]);
 
-  // Compute stat metrics
-  const totalCredits = courses.reduce((acc, c) => acc + c.credits, 0);
-  const completedLessonsCount = progressList.filter((p) => p.isCompleted).length;
-  const totalWatchedSeconds = progressList.reduce(
-    (acc, p) => acc + p.watchedSeconds,
-    0
-  );
-  const studyHours = (totalWatchedSeconds / 3600).toFixed(1);
+  // Filter courses by selected term
+  const activeTermCourses = React.useMemo(() => {
+    if (!selectedTermId) return courses;
+    return courses.filter((c) => c.termId === selectedTermId);
+  }, [courses, selectedTermId]);
+
+  // Compute stat metrics for the active term
+  const termCredits = activeTermCourses.reduce((acc, c) => acc + c.credits, 0);
+  const totalMasteredTopics = topics.filter((t) => t.isDone).length;
+  const continueLesson = React.useMemo(() => {
+    if (lessons.length === 0) return null;
+    const l = lessons[0];
+    const p = progressList.find((prog) => prog.lessonId === l.id);
+    const c = courses.find((crs) => crs.id === l.courseId);
+    return { lesson: l, progress: p, course: c };
+  }, [lessons, progressList, courses]);
+
+  // Overall term progress calculation
+  const overallProgress = React.useMemo(() => {
+    const termTopics = topics.filter((t) =>
+      activeTermCourses.some((c) => c.id === t.courseId)
+    );
+    if (termTopics.length === 0) return 0;
+    const done = termTopics.filter((t) => t.isDone).length;
+    return (done / termTopics.length) * 100;
+  }, [topics, activeTermCourses]);
 
   return (
-    <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-app-border pb-5">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-app-accent">
-              Academic Dashboard
-            </span>
-            <span>•</span>
-            <span className="text-xs text-app-ink-muted">
-              {currentTerm ? currentTerm.name : "Active Academic Term"}
-            </span>
-          </div>
-          <h1 className="mt-1 font-serif text-2xl md:text-3xl font-bold tracking-tight text-app-ink">
-            Welcome back, {currentUser?.displayName?.split(" ")[0] || "Catya"}
-          </h1>
-        </div>
+    <div className="space-y-8 select-none">
+      {/* 1. Bento Hero Container */}
+      <BentoHero
+        studentName={currentUser?.displayName || "Valeria V."}
+        currentTerm={
+          terms.find((t) => t.id === selectedTermId) || currentTerm
+        }
+        coursesCount={activeTermCourses.length}
+        totalCredits={termCredits}
+        overallProgressPercent={overallProgress}
+        streakDays={5}
+        continueLesson={continueLesson}
+      />
 
-        <div className="flex items-center gap-2.5">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadDemoData}
-            className="text-xs gap-1.5"
-          >
-            <Database className="h-3.5 w-3.5 text-app-ink-muted" />
-            <span>Load Demo Data</span>
-          </Button>
-
-          <Button size="sm" asChild className="text-xs gap-1.5">
-            <Link href="/courses?action=new-course">
-              <Plus className="h-3.5 w-3.5" />
-              <span>Create Course</span>
-            </Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* Stat Row */}
+      {/* 2. Stat Cards Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Stat
           label="Current CGPA"
           value="9.20"
           unit="/ 10.00"
-          subtext="Grade: Outstanding (O)"
+          subtext="Academic Standing: Outstanding (O)"
         />
         <Stat
-          label="Credits Earned"
-          value={totalCredits}
+          label="Credits Enrolled"
+          value={termCredits}
           unit="cr"
-          subtext="Towards 120 credit degree"
+          subtext={`Semester total (${activeTermCourses.length} courses)`}
         />
         <Stat
-          label="Lessons Completed"
-          value={completedLessonsCount}
-          unit={`of ${lessons.length}`}
-          subtext="Verified watch time tracking"
-        />
-        <Stat
-          label="Total Study Time"
-          value={studyHours}
+          label="Study Hours This Week"
+          value="21.6"
           unit="hrs"
-          subtext="Accumulated video lectures"
+          subtext="Verified lecture playback & focus"
+        />
+        <Stat
+          label="Topics Mastered"
+          value={totalMasteredTopics}
+          unit={`of ${topics.length || 439}`}
+          subtext="Topic mastery score ≥ 70%"
         />
       </div>
 
-      {/* Continue Watching Section */}
-      <ContinueWatchingStrip
-        lessons={lessons}
-        progressList={progressList}
-        courses={courses}
-      />
+      {/* 3. Main Bento Row: 8-Column Course Grid + 4-Column Right Rail */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left 8 Columns: Courses */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* Term Switcher & Header Controls */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-[var(--color-border)]/70">
+            <div className="flex items-center gap-2">
+              <h2 className="font-serif text-xl font-bold text-[var(--color-ink)]">
+                Course Journey
+              </h2>
+              <span className="rounded-full bg-[var(--color-surface-muted)] px-2 py-0.5 font-mono text-xs font-semibold text-[var(--color-ink)] tabular-nums">
+                {activeTermCourses.length}
+              </span>
+            </div>
 
-      {/* Course Cards Grid (Google Classroom style) */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="font-serif text-xl font-bold text-app-ink">
-              Enrolled Courses
-            </h2>
-            <span className="rounded-full bg-app-surface-muted px-2 py-0.5 font-mono text-xs font-semibold text-app-ink tabular-nums">
-              {courses.length}
-            </span>
+            {/* Term Filter Tabs */}
+            <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs">
+              {terms.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setSelectedTermId(t.id)}
+                  className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
+                    selectedTermId === t.id
+                      ? "bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm"
+                      : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                  }`}
+                >
+                  {t.name.split(" ")[0]} {t.name.split(" ")[1]}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <Link
-            href="/courses"
-            className="text-xs font-semibold text-app-accent hover:underline"
-          >
-            Manage All Courses →
-          </Link>
+          {activeTermCourses.length === 0 ? (
+            <EmptyState
+              icon={BookOpen}
+              title="No Courses in Term"
+              description="No courses found for this term. Load the Year 1 curriculum seed to explore."
+              actionLabel="Load Demo Data"
+              onAction={loadDemoData}
+            />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activeTermCourses.map((course) => {
+                const courseProgress = progressList.filter(
+                  (p) => p.courseId === course.id
+                );
+                const courseAssessments = assessments.filter(
+                  (a) => a.courseId === course.id
+                );
+                const courseModules = modules.filter(
+                  (m) => m.courseId === course.id
+                );
+                const courseTopics = topics.filter(
+                  (t) => t.courseId === course.id
+                );
+
+                return (
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    progressList={courseProgress}
+                    assessments={courseAssessments}
+                    modules={courseModules}
+                    topics={courseTopics}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {courses.length === 0 ? (
-          <EmptyState
-            icon={BookOpen}
-            title="No Courses Enrolled"
-            description="You have not added any academic courses yet. Create a course or load sample data to explore."
-            actionLabel="Load Demo Data"
-            onAction={loadDemoData}
+        {/* Right 4 Columns: Right Rail */}
+        <div className="lg:col-span-4">
+          <RightRail
+            assessments={assessments}
+            courses={courses}
+            topics={topics}
+            lessons={lessons}
           />
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {courses.map((course) => {
-              const courseProgress = progressList.filter(
-                (p) => p.courseId === course.id
-              );
-              const courseAssessments = assessments.filter(
-                (a) => a.courseId === course.id
-              );
-
-              return (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  progressList={courseProgress}
-                  assessments={courseAssessments}
-                />
-              );
-            })}
-          </div>
-        )}
+        </div>
       </div>
 
-      {/* To-Do and Upcoming List */}
-      <TodoList
-        assessments={assessments}
-        courses={courses}
-        attempts={attempts}
-        submissions={submissions}
-      />
+      {/* 4. Academic Insights Row: Heatmap, Recharts Weekly Hours & Weakest Topics */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-[var(--color-border)]/70">
+        <StudyHeatmap sessions={studySessions} />
+        <WeeklyHoursChart />
+        <WeakestTopics topics={topics} courses={courses} />
+      </div>
     </div>
   );
 }

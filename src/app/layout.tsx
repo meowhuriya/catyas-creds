@@ -17,9 +17,12 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Catya's Creds — Academic Learning Portal",
+  title: "Valeria’s Creds — Academic Learning Portal",
   description:
     "A university-grade learning portal where students organize YouTube lectures into credit-bearing coursework, complete rigorous assessments, and earn verifiable credentials.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${sourceSerif.variable} antialiased`} suppressHydrationWarning>
-      <body className="min-h-screen bg-app-bg text-app-ink font-sans">
+      <body className="min-h-screen bg-[var(--color-bg)] text-[var(--color-ink)] font-sans">
         <DataStoreProvider>
           <AppShell>{children}</AppShell>
         </DataStoreProvider>

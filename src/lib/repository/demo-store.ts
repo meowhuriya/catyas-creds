@@ -35,9 +35,12 @@ import {
   DEMO_PLANNER_EVENTS,
   DEMO_DEGREE_PLAN,
   DEMO_AUDIT_LOGS,
+  DEMO_TOPICS,
+  DEMO_STUDY_SESSIONS,
 } from "@/lib/demo/seed-data";
+import { Topic, StudySession } from "@/types/schemas";
 
-const STORAGE_PREFIX = "catyas_creds_";
+const STORAGE_PREFIX = "valerias_creds_";
 
 function getStorage<T>(key: string, defaultVal: T): T {
   if (typeof window === "undefined") return defaultVal;
@@ -75,6 +78,8 @@ export class DemoDataStore implements DataStore {
   private degreePlan: DegreePlan | null;
   private snapshots: TranscriptSnapshot[];
   private auditLogs: AuditLog[];
+  private topics: Topic[];
+  private studySessions: StudySession[];
 
   constructor() {
     this.user = getStorage<UserProfile>("user", DEMO_USER);
@@ -93,6 +98,8 @@ export class DemoDataStore implements DataStore {
     this.degreePlan = getStorage<DegreePlan | null>("degreePlan", DEMO_DEGREE_PLAN);
     this.snapshots = getStorage<TranscriptSnapshot[]>("snapshots", []);
     this.auditLogs = getStorage<AuditLog[]>("auditLogs", DEMO_AUDIT_LOGS);
+    this.topics = getStorage<Topic[]>("topics", DEMO_TOPICS);
+    this.studySessions = getStorage<StudySession[]>("studySessions", DEMO_STUDY_SESSIONS);
   }
 
   isDemoMode(): boolean {
@@ -115,6 +122,8 @@ export class DemoDataStore implements DataStore {
     this.plannerEvents = [...DEMO_PLANNER_EVENTS];
     this.degreePlan = { ...DEMO_DEGREE_PLAN };
     this.auditLogs = [...DEMO_AUDIT_LOGS];
+    this.topics = [...DEMO_TOPICS];
+    this.studySessions = [...DEMO_STUDY_SESSIONS];
 
     this.persistAll();
   }
@@ -134,6 +143,8 @@ export class DemoDataStore implements DataStore {
     this.plannerEvents = [];
     this.snapshots = [];
     this.auditLogs = [];
+    this.topics = [];
+    this.studySessions = [];
     this.persistAll();
   }
 
@@ -154,6 +165,8 @@ export class DemoDataStore implements DataStore {
     setStorage("degreePlan", this.degreePlan);
     setStorage("snapshots", this.snapshots);
     setStorage("auditLogs", this.auditLogs);
+    setStorage("topics", this.topics);
+    setStorage("studySessions", this.studySessions);
   }
 
   async getUser(): Promise<UserProfile | null> {
@@ -242,6 +255,73 @@ export class DemoDataStore implements DataStore {
     return this.modules
       .filter((m) => m.courseId === courseId)
       .sort((a, b) => a.order - b.order);
+  }
+
+  async getUnits(courseId: string): Promise<Module[]> {
+    return this.getModules(courseId);
+  }
+
+  async getTopics(unitId: string): Promise<Topic[]> {
+    return this.topics
+      .filter((t) => t.unitId === unitId)
+      .sort((a, b) => a.order - b.order);
+  }
+
+  async getAllTopics(courseId?: string): Promise<Topic[]> {
+    if (courseId) {
+      return this.topics
+        .filter((t) => t.courseId === courseId)
+        .sort((a, b) => a.order - b.order);
+    }
+    return [...this.topics];
+  }
+
+  async createTopic(
+    topicData: Omit<Topic, "id" | "userId" | "createdAt">
+  ): Promise<Topic> {
+    const newTopic: Topic = {
+      ...topicData,
+      id: "topic-" + Date.now(),
+      userId: this.user.uid,
+      createdAt: new Date().toISOString(),
+    };
+    this.topics.push(newTopic);
+    setStorage("topics", this.topics);
+    return newTopic;
+  }
+
+  async updateTopic(
+    topicId: string,
+    updates: Partial<Topic>
+  ): Promise<Topic> {
+    const idx = this.topics.findIndex((t) => t.id === topicId);
+    if (idx === -1) throw new Error("Topic not found");
+    const updated = { ...this.topics[idx], ...updates };
+    if (updates.watchScore !== undefined || updates.checkScore !== undefined) {
+      updated.topicScore = updated.watchScore + updated.checkScore;
+      updated.isDone = updated.topicScore >= 70;
+    }
+    this.topics[idx] = updated;
+    setStorage("topics", this.topics);
+    return updated;
+  }
+
+  async deleteTopic(topicId: string): Promise<void> {
+    this.topics = this.topics.filter((t) => t.id !== topicId);
+    setStorage("topics", this.topics);
+  }
+
+  async resetCourseToOriginalSyllabus(courseId: string): Promise<void> {
+    // Re-seed modules and topics for this course from DEMO_MODULES and DEMO_TOPICS
+    const origModules = DEMO_MODULES.filter((m) => m.courseId === courseId);
+    const origTopics = DEMO_TOPICS.filter((t) => t.courseId === courseId);
+
+    // Remove existing modules and topics for this course
+    this.modules = this.modules.filter((m) => m.courseId !== courseId).concat(origModules);
+    this.topics = this.topics.filter((t) => t.courseId !== courseId).concat(origTopics);
+
+    setStorage("modules", this.modules);
+    setStorage("topics", this.topics);
   }
 
   async createModule(moduleData: Omit<Module, "id" | "userId" | "createdAt">): Promise<Module> {
@@ -618,12 +698,33 @@ export class DemoDataStore implements DataStore {
     return [...this.auditLogs];
   }
 
+  async getStudySessions(courseId?: string): Promise<StudySession[]> {
+    if (courseId) {
+      return this.studySessions.filter((s) => s.courseId === courseId);
+    }
+    return [...this.studySessions];
+  }
+
+  async logStudySession(
+    sessionData: Omit<StudySession, "id" | "userId">
+  ): Promise<StudySession> {
+    const newSession: StudySession = {
+      ...sessionData,
+      id: "session-" + Date.now(),
+      userId: this.user.uid,
+    };
+    this.studySessions.push(newSession);
+    setStorage("studySessions", this.studySessions);
+    return newSession;
+  }
+
   async exportAllDataJson(): Promise<string> {
     const payload = {
       user: this.user,
       terms: this.terms,
       courses: this.courses,
       modules: this.modules,
+      topics: this.topics,
       lessons: this.lessons,
       progress: this.progress,
       assessments: this.assessments,
@@ -633,6 +734,7 @@ export class DemoDataStore implements DataStore {
       submissions: this.submissions,
       notes: this.notes,
       plannerEvents: this.plannerEvents,
+      studySessions: this.studySessions,
       degreePlan: this.degreePlan,
       snapshots: this.snapshots,
       auditLogs: this.auditLogs,
@@ -647,6 +749,7 @@ export class DemoDataStore implements DataStore {
     if (Array.isArray(data.terms)) this.terms = data.terms;
     if (Array.isArray(data.courses)) this.courses = data.courses;
     if (Array.isArray(data.modules)) this.modules = data.modules;
+    if (Array.isArray(data.topics)) this.topics = data.topics;
     if (Array.isArray(data.lessons)) this.lessons = data.lessons;
     if (Array.isArray(data.progress)) this.progress = data.progress;
     if (Array.isArray(data.assessments)) this.assessments = data.assessments;
@@ -656,6 +759,7 @@ export class DemoDataStore implements DataStore {
     if (Array.isArray(data.submissions)) this.submissions = data.submissions;
     if (Array.isArray(data.notes)) this.notes = data.notes;
     if (Array.isArray(data.plannerEvents)) this.plannerEvents = data.plannerEvents;
+    if (Array.isArray(data.studySessions)) this.studySessions = data.studySessions;
     if (data.degreePlan) this.degreePlan = data.degreePlan;
     if (Array.isArray(data.snapshots)) this.snapshots = data.snapshots;
     if (Array.isArray(data.auditLogs)) this.auditLogs = data.auditLogs;
