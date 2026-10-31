@@ -14,7 +14,7 @@ export const CourseBuilderOutputSchema = z.object({
   level: z.number().default(100),
   credits: z.number().default(3),
   description: z.string(),
-  color: z.string().default("#A51C30"),
+  color: z.string().default("#D85870"),
   units: z.array(
     z.object({
       unitNumber: z.number(),

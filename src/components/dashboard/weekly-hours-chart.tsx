@@ -75,7 +75,7 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
                       <span className="font-semibold text-[var(--color-ink)]">
                         {item.day}: {item.hours} hours
                       </span>
-                      <span className="block text-[10px] text-[#C79A3B]">
+                      <span className="block text-[10px] text-[#E5A358]">
                         Target: {item.target}h
                       </span>
                     </div>
@@ -88,7 +88,7 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.hours >= entry.target ? "#A51C30" : "#C79A3B"}
+                  fill={entry.hours >= entry.target ? "#D85870" : "#E5A358"}
                 />
               ))}
             </Bar>
@@ -98,10 +98,10 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
 
       <div className="mt-3 flex items-center justify-between text-[11px] text-[var(--color-ink-muted)] border-t border-[var(--color-border)]/60 pt-2.5">
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#A51C30]" /> Met Daily Target
+          <span className="h-2 w-2 rounded-full bg-[#D85870]" /> Met Daily Target
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#C79A3B]" /> Under Target
+          <span className="h-2 w-2 rounded-full bg-[#E5A358]" /> Under Target
         </span>
       </div>
     </div>

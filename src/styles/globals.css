@@ -3,43 +3,43 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #F6F3EE;
+  --color-bg: #FFF4DE;
   --color-surface: #FFFFFF;
-  --color-surface-muted: #EFEBE4;
-  --color-border: #E2DDD3;
+  --color-surface-muted: #FFDDDD;
+  --color-border: #FFE8C4;
   --color-ink: #14161F;
   --color-ink-muted: #5E6472;
-  --color-accent: #A51C30;
-  --color-accent-hover: #8A1627;
-  --color-burgundy: #3A0F1B;
-  --color-gold: #C79A3B;
+  --color-accent: #D85870;
+  --color-accent-hover: #BF4058;
+  --color-burgundy: #4A1521;
+  --color-gold: #FFE8C4;
   --color-success: #1F7A4D;
   --color-warning: #B7791F;
   --color-danger: #B42318;
   --color-info: #2F5D8A;
 
-  --focus-ring: 0 0 0 2px #F6F3EE, 0 0 0 4px #A51C30;
-  --card-shadow: 0 1px 2px rgba(20, 22, 31, 0.06), 0 8px 24px rgba(20, 22, 31, 0.06);
+  --focus-ring: 0 0 0 2px #FFF4DE, 0 0 0 4px #D85870;
+  --card-shadow: 0 1px 2px rgba(45, 20, 26, 0.05), 0 8px 24px rgba(45, 20, 26, 0.05);
 }
 
 .dark {
-  --color-bg: #0F1117;
-  --color-surface: #171A22;
-  --color-surface-muted: #1F232D;
-  --color-border: #282D3A;
-  --color-ink: #F0EDE6;
-  --color-ink-muted: #9BA1B0;
-  --color-accent: #E0657A;
-  --color-accent-hover: #EA7C8F;
-  --color-burgundy: #2B0D17;
-  --color-gold: #D9B25A;
+  --color-bg: #181113;
+  --color-surface: #22181C;
+  --color-surface-muted: #2D2025;
+  --color-border: #3D2C33;
+  --color-ink: #FFF4DE;
+  --color-ink-muted: #BAA6AA;
+  --color-accent: #FFCED8;
+  --color-accent-hover: #FFDDDD;
+  --color-burgundy: #2D1016;
+  --color-gold: #FFE8C4;
   --color-success: #2E9E68;
   --color-warning: #D9942C;
   --color-danger: #E0483B;
   --color-info: #4E85BD;
 
-  --focus-ring: 0 0 0 2px #0F1117, 0 0 0 4px #E0657A;
-  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --focus-ring: 0 0 0 2px #181113, 0 0 0 4px #FFCED8;
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 body {

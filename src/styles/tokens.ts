@@ -10,40 +10,40 @@ export const TOKENS = {
   tagline: "LEARNING PORTAL",
   colors: {
     light: {
-      background: "#F6F3EE", // Warm parchment
+      background: "#FFF4DE", // Warm cream from Color Hunt
       surface: "#FFFFFF",
-      surfaceMuted: "#EFEBE4", // Surface-2
-      border: "#E2DDD3",
+      surfaceMuted: "#FFDDDD", // Pale blush pink from Color Hunt
+      border: "#FFE8C4", // Soft peach from Color Hunt
       ink: "#14161F",
       inkMuted: "#5E6472",
-      accent: "#A51C30", // Academic Crimson
-      accentHover: "#8A1627",
-      burgundy: "#3A0F1B",
-      gold: "#C79A3B",
+      accent: "#D85870", // Signature Rose derived from #FFCED8
+      accentHover: "#BF4058",
+      burgundy: "#4A1521",
+      gold: "#FFE8C4", // Soft peach gold from Color Hunt
       success: "#1F7A4D",
       warning: "#B7791F",
       danger: "#B42318",
       info: "#2F5D8A",
     },
     dark: {
-      background: "#0F1117",
-      surface: "#171A22",
-      surfaceMuted: "#1F232D", // Surface-2
-      border: "#282D3A",
-      ink: "#F0EDE6",
-      inkMuted: "#9BA1B0",
-      accent: "#E0657A", // Rose Crimson
-      accentHover: "#EA7C8F",
-      burgundy: "#2B0D17",
-      gold: "#D9B25A",
+      background: "#181113",
+      surface: "#22181C",
+      surfaceMuted: "#2D2025",
+      border: "#3D2C33",
+      ink: "#FFF4DE", // Warm cream from Color Hunt
+      inkMuted: "#BAA6AA",
+      accent: "#FFCED8", // Soft Rose from Color Hunt
+      accentHover: "#FFDDDD", // Pale blush pink from Color Hunt
+      burgundy: "#2D1016",
+      gold: "#FFE8C4", // Soft peach gold from Color Hunt
       success: "#2E9E68",
       warning: "#D9942C",
       danger: "#E0483B",
       info: "#4E85BD",
     },
     hero: {
-      gradient: "linear-gradient(135deg, #2B0D17, #5A1426)",
-      goldHairline: "1px solid rgba(199, 154, 59, 0.4)",
+      gradient: "linear-gradient(135deg, #3D141D, #6B2332)",
+      goldHairline: "1px solid rgba(255, 232, 196, 0.45)",
     },
     // 8 Muted Course Color Tags - shown ONLY as a thin 4px bar or small 6px dot
     courseTags: {

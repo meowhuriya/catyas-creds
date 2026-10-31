@@ -34,27 +34,27 @@ export function MilestoneBanner({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-[10px] border border-[#C79A3B]/40 bg-[var(--color-surface)] shadow-sm ${className}`}
+      className={`relative overflow-hidden rounded-[10px] border border-[#FFE8C4] bg-[var(--color-surface)] shadow-sm ${className}`}
     >
-      {/* Top Hairline Gold Rule */}
-      <div className="h-[2px] bg-gradient-to-r from-[#A51C30] via-[#C79A3B] to-[#A51C30]" />
+      {/* Top Hairline Rose-Peach Rule */}
+      <div className="h-[2px] bg-gradient-to-r from-[#D85870] via-[#FFE8C4] to-[#D85870]" />
 
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3.5 min-w-0 flex-1">
-          <div className="h-9 w-9 rounded-full bg-[#C79A3B]/15 border border-[#C79A3B]/30 flex items-center justify-center text-[#C79A3B] shrink-0 mt-0.5">
+          <div className="h-9 w-9 rounded-full bg-[#FFE8C4]/40 border border-[#FFE8C4] flex items-center justify-center text-[#E5A358] shrink-0 mt-0.5">
             <Award className="h-5 w-5" />
           </div>
 
           <div className="min-w-0 flex-1 space-y-0.5">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#A51C30] font-bold">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#D85870] font-bold">
                 {type === "semester"
                   ? "Academic Term Completed"
                   : type === "course"
                   ? "Course Mastered"
                   : "Unit Completed"}
               </span>
-              <span className="text-[10px] text-[#C79A3B] font-bold">•</span>
+              <span className="text-[10px] text-[#E5A358] font-bold">•</span>
               <span className="text-[10px] text-[var(--color-ink-muted)] font-mono">
                 Verified Progress
               </span>
@@ -74,7 +74,7 @@ export function MilestoneBanner({
           {actionLabel && actionHref && (
             <Link
               href={actionHref}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] bg-[#A51C30] hover:bg-[#8B1627] text-white text-xs font-semibold shadow-xs transition-colors"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] bg-[#D85870] hover:bg-[#BF4058] text-white text-xs font-semibold shadow-xs transition-colors"
             >
               <span>{actionLabel}</span>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -93,8 +93,8 @@ export function MilestoneBanner({
         </div>
       </div>
 
-      {/* Bottom Subtle Crimson Double Hairline */}
-      <div className="border-b border-[#A51C30]/20" />
+      {/* Bottom Subtle Rose Double Hairline */}
+      <div className="border-b border-[#D85870]/20" />
     </div>
   );
 }

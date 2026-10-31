@@ -81,7 +81,7 @@ export function UnitJourney({
                     percentage={unit.percent}
                     size={46}
                     strokeWidth={3.5}
-                    color={unit.isFinished ? "#C79A3B" : unit.isActive ? "#A51C30" : "var(--color-ink-muted)"}
+                    color={unit.isFinished ? "#E5A358" : unit.isActive ? "var(--color-accent)" : "var(--color-ink-muted)"}
                     showText={false}
                   />
 
@@ -89,9 +89,9 @@ export function UnitJourney({
                   <div
                     className={`absolute inset-1 rounded-full flex items-center justify-center transition-all ${
                       unit.isFinished
-                        ? "bg-[#C79A3B] text-white shadow-sm"
+                        ? "bg-[#E5A358] text-white shadow-sm"
                         : unit.isActive
-                        ? "bg-[#A51C30] text-white ring-2 ring-[#A51C30]/30 shadow-sm"
+                        ? "bg-[var(--color-accent)] text-white ring-2 ring-[var(--color-accent)]/30 shadow-sm"
                         : "bg-[var(--color-surface)] text-[var(--color-ink)] border border-[var(--color-border)] group-hover:border-[var(--color-ink-muted)]"
                     }`}
                   >

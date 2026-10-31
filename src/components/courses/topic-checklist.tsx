@@ -158,7 +158,7 @@ export function TopicChecklist({
               key={topic.id}
               className={`group flex items-start justify-between gap-3 p-3 rounded-[10px] border transition-all ${
                 isDone
-                  ? "bg-[var(--color-surface)] border-[#C79A3B]/40 shadow-sm"
+                  ? "bg-[var(--color-surface)] border-[#FFE8C4] shadow-sm"
                   : isSelected
                   ? "bg-[var(--color-surface)] border-[var(--color-border)] hover:border-[var(--color-ink-muted)]/40 shadow-sm"
                   : "bg-[var(--color-surface-muted)]/50 border-[var(--color-border)]/50 opacity-60"
@@ -254,7 +254,7 @@ export function TopicChecklist({
                         <span>•</span>
                         <span
                           className={`font-mono font-bold tabular-nums ${
-                            isDone ? "text-[#C79A3B]" : "text-[var(--color-ink)]"
+                            isDone ? "text-[#E5A358]" : "text-[var(--color-ink)]"
                           }`}
                         >
                           Total: {topic.topicScore}/100
@@ -286,7 +286,7 @@ export function TopicChecklist({
                   onClick={() => onStartQuickCheck?.(topic)}
                   className={`inline-flex items-center gap-1 px-2 py-1 rounded-[6px] text-[11px] font-semibold transition-colors ${
                     topic.checkScore >= 40
-                      ? "bg-[#C79A3B]/15 text-[#C79A3B] border border-[#C79A3B]/30"
+                      ? "bg-[#FFE8C4]/40 text-[#E5A358] border border-[#FFE8C4]"
                       : "bg-[var(--color-surface-muted)] text-[var(--color-ink)] border border-[var(--color-border)] hover:bg-[var(--color-surface-muted)]/80"
                   }`}
                   title="Take Quick Check (3-5 questions to earn up to 60 pts)"

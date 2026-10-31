@@ -56,10 +56,10 @@ export function StudyHeatmap({ sessions = [], className = "" }: StudyHeatmapProp
   // Color mapping based on intensity levels
   const levelColors = [
     "bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)] border border-[var(--color-border)]/50",
-    "bg-[#C79A3B]/30 border border-[#C79A3B]/40",
-    "bg-[#C79A3B]/60 border border-[#C79A3B]/70",
-    "bg-[#A51C30]/75 border border-[#A51C30]/80",
-    "bg-[#A51C30] border border-[#A51C30]",
+    "bg-[#FFE8C4] border border-[#FFE8C4]",
+    "bg-[#FFDDDD] border border-[#FFCED8]",
+    "bg-[#FFCED8] border border-[#D85870]/40",
+    "bg-[#D85870] border border-[#D85870]",
   ];
 
   const totalHours = (

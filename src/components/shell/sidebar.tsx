@@ -96,7 +96,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 className={cn(
                   "group relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-[#A51C30]/10 text-[var(--color-accent)] font-semibold"
+                    ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-semibold"
                     : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]",
                   collapsed && "justify-center px-0"
                 )}

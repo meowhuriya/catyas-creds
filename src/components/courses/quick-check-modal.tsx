@@ -246,7 +246,7 @@ export function QuickCheckModal({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-[#C79A3B]" />
+              <Award className="h-5 w-5 text-app-accent" />
               <DialogTitle className="font-serif">Topic Quick Check</DialogTitle>
             </div>
             <span className="font-mono text-xs bg-[var(--color-surface-muted)] px-2 py-0.5 rounded-[4px] border border-[var(--color-border)] text-[var(--color-ink-muted)]">

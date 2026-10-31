@@ -9,13 +9,13 @@ export function LogoMark({ size = 32, className = "" }: { size?: number; classNa
       className={`shrink-0 ${className}`}
       aria-label="Valeria’s Creds Logo"
     >
-      <rect width="64" height="64" rx="14" fill="#A51C30" />
+      <rect width="64" height="64" rx="14" fill="#D85870" />
       <line
         x1="14"
         y1="2"
         x2="50"
         y2="2"
-        stroke="#C79A3B"
+        stroke="#FFE8C4"
         strokeWidth="2.5"
         strokeLinecap="round"
         opacity="0.85"
@@ -31,7 +31,7 @@ export function LogoMark({ size = 32, className = "" }: { size?: number; classNa
       >
         V
       </text>
-      <circle cx="47" cy="45" r="3" fill="#C79A3B" />
+      <circle cx="47" cy="45" r="3" fill="#FFE8C4" />
     </svg>
   );
 }

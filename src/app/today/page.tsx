@@ -195,7 +195,7 @@ export default function TodayPage() {
     <div className="space-y-6">
       {/* Top Academic Hero Banner */}
       <div className="relative overflow-hidden rounded-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-6 shadow-sm">
-        <div className="h-[2px] absolute top-0 left-0 right-0 bg-gradient-to-r from-[#A51C30] via-[#C79A3B] to-[#A51C30]" />
+        <div className="h-[2px] absolute top-0 left-0 right-0 bg-gradient-to-r from-[var(--color-accent)] via-[#FFE8C4] to-[var(--color-accent)]" />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -247,13 +247,13 @@ export default function TodayPage() {
         <div className="lg:col-span-2 space-y-5">
           {/* 1. Suggested Focus Topic of the Day */}
           {suggestedFocusTopic && (
-            <div className="academic-card p-5 relative overflow-hidden border-[#C79A3B]/40 bg-[var(--color-surface)] shadow-sm">
-              <div className="h-[2px] absolute top-0 left-0 right-0 bg-gradient-to-r from-[#A51C30] via-[#C79A3B] to-transparent" />
+            <div className="academic-card p-5 relative overflow-hidden border-[#FFE8C4] bg-[var(--color-surface)] shadow-sm">
+              <div className="h-[2px] absolute top-0 left-0 right-0 bg-gradient-to-r from-[var(--color-accent)] via-[#FFE8C4] to-transparent" />
 
               <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)]/70 mb-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-[#C79A3B]" />
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#A51C30]">
+                  <Sparkles className="h-4 w-4 text-[#E5A358]" />
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--color-accent)]">
                     Recommended Focus Topic
                   </span>
                 </div>
