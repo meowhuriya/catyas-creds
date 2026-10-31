@@ -10,6 +10,8 @@ import {
   Lesson,
   LessonProgress,
   Assessment,
+  Attempt,
+  Submission,
   Note,
 } from "@/types/schemas";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -17,9 +19,16 @@ import { Button } from "@/components/ui/button";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusChip } from "@/components/ui/status-chip";
 import { SortableLessonItem } from "@/components/courses/sortable-lesson-item";
 import { AddLessonsDialog } from "@/components/courses/add-lessons-dialog";
 import { GroupModulesDialog } from "@/components/courses/group-modules-dialog";
+import { GradingSchemeModal } from "@/components/courses/grading-scheme-modal";
+import { CreateAssessmentModal } from "@/components/assessments/create-assessment-modal";
+import { QuizRunnerModal } from "@/components/assessments/quiz-runner-modal";
+import { AssignmentSubmissionModal } from "@/components/assessments/assignment-submission-modal";
+import { AiQuizDraftModal } from "@/components/assessments/ai-quiz-draft-modal";
+import { calculateCourseGrades } from "@/lib/grading/grading-engine";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { formatSecondsToTime } from "@/lib/utils";
 import {
@@ -48,6 +57,10 @@ import {
   Trash2,
   Printer,
   Sparkles,
+  Lock,
+  Sliders,
+  FileCheck,
+  ClipboardList,
 } from "lucide-react";
 
 export default function CourseDetailPage() {
@@ -62,12 +75,19 @@ export default function CourseDetailPage() {
   const [lessons, setLessons] = React.useState<Lesson[]>([]);
   const [progressList, setProgressList] = React.useState<LessonProgress[]>([]);
   const [assessments, setAssessments] = React.useState<Assessment[]>([]);
+  const [attempts, setAttempts] = React.useState<Attempt[]>([]);
+  const [submissions, setSubmissions] = React.useState<Submission[]>([]);
   const [notes, setNotes] = React.useState<Note[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   // Dialog states
   const [addLessonsOpen, setAddLessonsOpen] = React.useState(false);
   const [groupModulesOpen, setGroupModulesOpen] = React.useState(false);
+  const [gradingSchemeOpen, setGradingSchemeOpen] = React.useState(false);
+  const [createAssessmentOpen, setCreateAssessmentOpen] = React.useState(false);
+  const [activeQuizAssessment, setActiveQuizAssessment] = React.useState<Assessment | null>(null);
+  const [activeAssignmentAssessment, setActiveAssignmentAssessment] = React.useState<Assessment | null>(null);
+  const [aiQuizDraftOpen, setAiQuizDraftOpen] = React.useState(false);
 
   // Bulk selection state
   const [selectedLessonIds, setSelectedLessonIds] = React.useState<Set<string>>(
@@ -97,6 +117,19 @@ export default function CourseDetailPage() {
       setProgressList(p);
       setAssessments(a);
       setNotes(n);
+
+      // Load attempts & submissions for all assessments
+      const [allAttempts, allSubmissions] = await Promise.all([
+        Promise.all(a.map((asm) => dataStore.getAttempts(asm.id))).then((res) =>
+          res.flat()
+        ),
+        Promise.all(a.map((asm) => dataStore.getSubmission(asm.id))).then((res) =>
+          res.filter(Boolean) as Submission[]
+        ),
+      ]);
+
+      setAttempts(allAttempts);
+      setSubmissions(allSubmissions);
     } catch (err) {
       console.error("Failed to load course details:", err);
     } finally {
@@ -150,6 +183,16 @@ export default function CourseDetailPage() {
   const suggestedCredits = Math.max(
     0.5,
     Math.round((totalDurationSeconds / 3600 / hoursPerCredit) * 2) / 2
+  );
+
+  const gpaScale = currentUser?.settings?.gradeScale || "10_point";
+  const gradeResult = calculateCourseGrades(
+    course,
+    percentComplete,
+    assessments,
+    attempts,
+    submissions,
+    gpaScale
   );
 
   // Drag-and-drop reordering handler
@@ -309,7 +352,7 @@ export default function CourseDetailPage() {
         <TabsContent value="classwork" className="space-y-6 pt-2">
           {/* Action Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-control border border-app-border bg-app-surface p-3">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -329,6 +372,38 @@ export default function CourseDetailPage() {
                 <Layers className="h-3 w-3" />
                 <span>Group every N lessons</span>
               </Button>
+
+              <div className="h-4 w-px bg-app-border mx-1" />
+
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setCreateAssessmentOpen(true)}
+                className="gap-1 text-xs"
+              >
+                <ClipboardList className="h-3 w-3" />
+                <span>New Assessment</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAiQuizDraftOpen(true)}
+                className="gap-1 text-xs"
+              >
+                <Sparkles className="h-3 w-3" />
+                <span>AI Quiz from Notes</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setGradingSchemeOpen(true)}
+                className="gap-1 text-xs"
+              >
+                <Sliders className="h-3 w-3" />
+                <span>Grading Scheme (100%)</span>
+              </Button>
             </div>
 
             {selectedLessonIds.size > 0 && (
@@ -347,6 +422,179 @@ export default function CourseDetailPage() {
                 </Button>
               </div>
             )}
+          </div>
+
+          {/* Graded Work & Assessments Section */}
+          <div className="rounded-card border border-app-border bg-app-surface overflow-hidden shadow-sm">
+            <div className="flex items-center justify-between border-b border-app-border bg-app-surface-muted/50 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <FileCheck className="h-4 w-4 text-app-accent" />
+                <h3 className="font-serif text-base font-bold text-app-ink">
+                  Graded Work & Assessments
+                </h3>
+                <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-mono tabular-nums border border-app-border/60">
+                  {assessments.length} items
+                </span>
+              </div>
+              <span className="text-xs text-app-ink-muted">
+                Weighted across 5 syllabus categories
+              </span>
+            </div>
+
+            <div className="p-4">
+              {assessments.length === 0 ? (
+                <div className="py-6 text-center text-xs text-app-ink-muted space-y-2">
+                  <p>No assessments configured yet for {course.code}.</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCreateAssessmentOpen(true)}
+                    className="gap-1 text-xs"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Create First Assessment</span>
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {assessments.map((asm) => {
+                    const isLocked = Boolean(
+                      asm.lockedUntilLessonCompletionPercent &&
+                        percentComplete < asm.lockedUntilLessonCompletionPercent
+                    );
+
+                    const asmAttempts = attempts.filter(
+                      (a) => a.assessmentId === asm.id && a.isCompleted
+                    );
+                    const bestAttempt =
+                      asmAttempts.length > 0
+                        ? Math.max(...asmAttempts.map((a) => a.score))
+                        : null;
+
+                    const asmSubmission = submissions.find(
+                      (s) => s.assessmentId === asm.id
+                    );
+
+                    return (
+                      <div
+                        key={asm.id}
+                        className={`rounded-control border p-3.5 flex flex-col justify-between transition-colors ${
+                          isLocked
+                            ? "border-app-border/60 bg-app-surface-muted/30 opacity-75"
+                            : "border-app-border bg-app-surface hover:border-app-border"
+                        }`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="rounded bg-app-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-app-accent">
+                                {asm.type}
+                              </span>
+                              <h4 className="font-semibold text-app-ink text-xs">
+                                {asm.title}
+                              </h4>
+                            </div>
+
+                            <span className="font-mono text-[11px] font-bold text-app-ink tabular-nums shrink-0">
+                              {asm.maxPoints} pts
+                            </span>
+                          </div>
+
+                          {asm.description && (
+                            <p className="text-[11px] text-app-ink-muted line-clamp-2">
+                              {asm.description}
+                            </p>
+                          )}
+
+                          {/* Lock warning badge */}
+                          {isLocked && (
+                            <div className="flex items-center gap-1.5 rounded bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700 dark:text-amber-400 font-medium">
+                              <Lock className="h-3 w-3 shrink-0" />
+                              <span>
+                                Locked: requires {asm.lockedUntilLessonCompletionPercent}% lesson progress (currently {Math.round(percentComplete)}%).
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Score / Attempt status info */}
+                          {!isLocked && (
+                            <div className="flex items-center justify-between text-[11px] pt-1">
+                              {asm.type === "assignment" ? (
+                                asmSubmission ? (
+                                  <span className="font-medium text-app-success flex items-center gap-1">
+                                    <CheckCircle2 className="h-3.5 w-3.5" />
+                                    Submitted: {asmSubmission.finalScore} / {asm.maxPoints} pts
+                                  </span>
+                                ) : (
+                                  <span className="text-app-ink-muted">
+                                    Not yet submitted
+                                  </span>
+                                )
+                              ) : asmAttempts.length > 0 ? (
+                                <span className="font-medium text-app-success flex items-center gap-1">
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                  Score: {bestAttempt} / {asm.maxPoints} pts (Attempt {asmAttempts.length}
+                                  {asm.attemptLimit ? `/${asm.attemptLimit}` : ""})
+                                </span>
+                              ) : (
+                                <span className="text-app-ink-muted">
+                                  {asm.timeLimitMinutes
+                                    ? `Timed: ${asm.timeLimitMinutes} mins`
+                                    : "Untimed"}
+                                </span>
+                              )}
+
+                              {asm.dueDate && (
+                                <span className="text-app-ink-muted font-mono">
+                                  Due {asm.dueDate}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="pt-3 mt-2 border-t border-app-border/60 flex items-center justify-end gap-2">
+                          {isLocked ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled
+                              className="gap-1.5 text-xs opacity-60"
+                            >
+                              <Lock className="h-3 w-3" />
+                              <span>Locked</span>
+                            </Button>
+                          ) : asm.type === "assignment" ? (
+                            <Button
+                              variant={asmSubmission ? "outline" : "primary"}
+                              size="sm"
+                              onClick={() => setActiveAssignmentAssessment(asm)}
+                              className="text-xs"
+                            >
+                              {asmSubmission ? "Update Submission & Rubric" : "Submit Assignment"}
+                            </Button>
+                          ) : (
+                            <Button
+                              variant={asmAttempts.length > 0 ? "outline" : "primary"}
+                              size="sm"
+                              onClick={() => setActiveQuizAssessment(asm)}
+                              className="text-xs"
+                            >
+                              {asmAttempts.length > 0
+                                ? "Review / Retake Quiz"
+                                : asm.type === "midterm" || asm.type === "final"
+                                ? "Take Examination"
+                                : "Start Quiz"}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Module List & Lessons */}
@@ -452,36 +700,253 @@ export default function CourseDetailPage() {
         </TabsContent>
 
         {/* Tab 3: Grades Preview */}
-        <TabsContent value="grades" className="space-y-4 pt-2">
+        <TabsContent value="grades" className="space-y-6 pt-2">
+          {/* Overall Performance Card */}
+          <div className="rounded-card border border-app-border bg-app-surface p-5 space-y-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-app-border pb-3">
+              <div>
+                <h3 className="font-serif text-lg font-bold text-app-ink">
+                  Overall Academic Performance
+                </h3>
+                <p className="text-xs text-app-ink-muted">
+                  Weighted category engine compliant with academic standing rules.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setGradingSchemeOpen(true)}
+                  className="gap-1.5 text-xs"
+                >
+                  <Sliders className="h-3.5 w-3.5" />
+                  <span>Edit Scheme (100%)</span>
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="rounded-control border border-app-border bg-app-surface-muted/40 p-3.5">
+                <span className="text-[11px] font-semibold uppercase text-app-ink-muted block mb-1">
+                  Current Grade (Completed Work)
+                </span>
+                <span className="font-serif text-3xl font-bold text-app-ink tabular-nums">
+                  {gradeResult.currentGrade}%
+                </span>
+                <span className="text-[10px] text-app-ink-muted block mt-1">
+                  Excludes uncompleted categories
+                </span>
+              </div>
+
+              <div className="rounded-control border border-app-border bg-app-surface-muted/40 p-3.5">
+                <span className="text-[11px] font-semibold uppercase text-app-ink-muted block mb-1">
+                  Projected Final Grade
+                </span>
+                <span className="font-serif text-3xl font-bold text-app-accent tabular-nums">
+                  {gradeResult.projectedFinalGrade}%
+                </span>
+                <span className="text-[10px] text-app-ink-muted block mt-1">
+                  Pending categories count as 0
+                </span>
+              </div>
+
+              <div className="rounded-control border border-app-border bg-app-surface-muted/40 p-3.5">
+                <span className="text-[11px] font-semibold uppercase text-app-ink-muted block mb-1">
+                  Letter & Grade Points ({gpaScale === "10_point" ? "10-Pt" : "4.0"})
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="font-serif text-3xl font-bold text-app-ink">
+                    {gradeResult.letter}
+                  </span>
+                  <span className="font-mono text-sm font-semibold text-app-ink-muted tabular-nums">
+                    ({gradeResult.points.toFixed(1)} GP)
+                  </span>
+                </div>
+                <span className="text-[10px] text-app-ink-muted block mt-1">
+                  Collegiate standing scale
+                </span>
+              </div>
+
+              <div className="rounded-control border border-app-border bg-app-surface-muted/40 p-3.5 flex flex-col justify-between">
+                <div>
+                  <span className="text-[11px] font-semibold uppercase text-app-ink-muted block mb-1">
+                    Pass Mark & Status
+                  </span>
+                  <span className="font-mono text-sm font-bold text-app-ink tabular-nums">
+                    Pass Mark: {course.passMark}%
+                  </span>
+                </div>
+                <div className="mt-2">
+                  <StatusChip
+                    status={gradeResult.passed ? "graded" : "overdue"}
+                    label={gradeResult.passed ? "Passing Grade" : "Below Pass Mark"}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Category Weights Grid */}
           <div className="rounded-card border border-app-border bg-app-surface p-5 space-y-4">
             <div className="flex items-center justify-between border-b border-app-border pb-3">
               <div>
                 <h3 className="font-serif text-base font-bold text-app-ink">
-                  Grading Criteria & Weight Scheme
+                  Grading Criteria & Category Weights
                 </h3>
                 <p className="text-xs text-app-ink-muted">
-                  Category weights total 100%. Within each category, scores are calculated proportionally.
+                  Weights sum to exactly 100%. Within each category, scores are calculated proportionally (points earned / max points).
                 </p>
               </div>
-              <span className="font-mono text-xs font-bold text-app-ink">
-                Pass Mark: {course.passMark}%
+              <span className="font-mono text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                Total Weight: 100%
               </span>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {Object.entries(course.gradingScheme).map(([cat, weight]) => (
+              {gradeResult.categories.map((cat) => (
                 <div
-                  key={cat}
-                  className="rounded-control border border-app-border bg-app-surface-muted/50 p-3 text-center"
+                  key={cat.category}
+                  className="rounded-control border border-app-border bg-app-surface-muted/40 p-3.5 space-y-1.5"
                 >
-                  <span className="text-[11px] font-semibold uppercase tracking-wider text-app-ink-muted block truncate">
-                    {cat.replace(/([A-Z])/g, " $1")}
-                  </span>
-                  <span className="font-serif text-xl font-bold text-app-ink tabular-nums mt-1 block">
-                    {weight}%
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-app-ink-muted truncate">
+                      {cat.label}
+                    </span>
+                    <span className="font-mono text-xs font-bold text-app-ink tabular-nums">
+                      {cat.weight}%
+                    </span>
+                  </div>
+
+                  <div className="font-serif text-xl font-bold text-app-ink tabular-nums">
+                    {cat.scorePercent !== null
+                      ? `${Math.round(cat.scorePercent)}%`
+                      : "Pending"}
+                  </div>
+
+                  <span className="text-[10px] text-app-ink-muted block">
+                    {cat.category === "lessonCompletion"
+                      ? `${completedLessons} of ${totalLessons} completed`
+                      : `${cat.itemsCount} assessment items`}
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Graded Items Table */}
+          <div className="rounded-card border border-app-border bg-app-surface overflow-hidden shadow-sm">
+            <div className="flex items-center justify-between border-b border-app-border bg-app-surface-muted/50 px-4 py-3">
+              <h3 className="font-serif text-base font-bold text-app-ink">
+                Course Assessment Gradebook
+              </h3>
+              <span className="text-xs text-app-ink-muted font-mono tabular-nums">
+                {assessments.length} assessment records
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-app-border bg-app-surface-muted/20 text-app-ink-muted">
+                    <th className="px-4 py-2.5 font-medium">Type</th>
+                    <th className="px-4 py-2.5 font-medium">Title</th>
+                    <th className="px-4 py-2.5 font-medium">Category</th>
+                    <th className="px-4 py-2.5 font-medium text-right">Max Pts</th>
+                    <th className="px-4 py-2.5 font-medium text-right">Points Earned</th>
+                    <th className="px-4 py-2.5 font-medium text-right">Score %</th>
+                    <th className="px-4 py-2.5 font-medium text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-app-border">
+                  {assessments.map((asm) => {
+                    const asmAttempts = attempts.filter(
+                      (a) => a.assessmentId === asm.id && a.isCompleted
+                    );
+                    const bestAttempt =
+                      asmAttempts.length > 0
+                        ? Math.max(...asmAttempts.map((a) => a.score))
+                        : null;
+                    const asmSub = submissions.find(
+                      (s) => s.assessmentId === asm.id
+                    );
+
+                    const earned =
+                      asm.type === "assignment"
+                        ? asmSub?.finalScore ?? null
+                        : bestAttempt;
+
+                    const percent =
+                      earned !== null
+                        ? Math.round((earned / asm.maxPoints) * 100)
+                        : null;
+
+                    return (
+                      <tr key={asm.id} className="hover:bg-app-surface-muted/30">
+                        <td className="px-4 py-3">
+                          <span className="rounded bg-app-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-app-accent">
+                            {asm.type}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-app-ink">
+                          {asm.title}
+                        </td>
+                        <td className="px-4 py-3 text-app-ink-muted capitalize">
+                          {asm.type === "quiz"
+                            ? "Quizzes"
+                            : asm.type === "assignment"
+                            ? "Assignments"
+                            : asm.type === "midterm"
+                            ? "Midterm Exam"
+                            : "Final Exam"}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums text-app-ink">
+                          {asm.maxPoints}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums font-semibold text-app-ink">
+                          {earned !== null ? earned : "—"}
+                        </td>
+                        <td className="px-4 py-3 text-right font-mono tabular-nums">
+                          {percent !== null ? (
+                            <span
+                              className={`font-semibold ${
+                                percent >= (course.passMark || 40)
+                                  ? "text-app-success"
+                                  : "text-app-danger"
+                              }`}
+                            >
+                              {percent}%
+                            </span>
+                          ) : (
+                            <span className="text-app-ink-muted">Pending</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {asm.type === "assignment" ? (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setActiveAssignmentAssessment(asm)}
+                              className="text-xs h-7"
+                            >
+                              {asmSub ? "View Rubric" : "Submit"}
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setActiveQuizAssessment(asm)}
+                              className="text-xs h-7"
+                            >
+                              {asmAttempts.length > 0 ? "Review" : "Take"}
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </TabsContent>
@@ -597,6 +1062,52 @@ export default function CourseDetailPage() {
         lessons={lessons}
         open={groupModulesOpen}
         onOpenChange={setGroupModulesOpen}
+        onSuccess={loadData}
+      />
+
+      {/* Grading Scheme Modal */}
+      <GradingSchemeModal
+        course={course}
+        open={gradingSchemeOpen}
+        onOpenChange={setGradingSchemeOpen}
+        onSuccess={loadData}
+      />
+
+      {/* Create Assessment Modal */}
+      <CreateAssessmentModal
+        course={course}
+        open={createAssessmentOpen}
+        onOpenChange={setCreateAssessmentOpen}
+        onSuccess={loadData}
+      />
+
+      {/* Quiz Runner Modal */}
+      {activeQuizAssessment && (
+        <QuizRunnerModal
+          assessment={activeQuizAssessment}
+          open={Boolean(activeQuizAssessment)}
+          onOpenChange={(open) => !open && setActiveQuizAssessment(null)}
+          onSuccess={loadData}
+        />
+      )}
+
+      {/* Assignment Submission & Rubric Modal */}
+      {activeAssignmentAssessment && (
+        <AssignmentSubmissionModal
+          assessment={activeAssignmentAssessment}
+          open={Boolean(activeAssignmentAssessment)}
+          onOpenChange={(open) => !open && setActiveAssignmentAssessment(null)}
+          onSuccess={loadData}
+        />
+      )}
+
+      {/* AI Quiz Drafter Modal */}
+      <AiQuizDraftModal
+        course={course}
+        lessons={lessons}
+        notes={notes}
+        open={aiQuizDraftOpen}
+        onOpenChange={setAiQuizDraftOpen}
         onSuccess={loadData}
       />
     </div>
