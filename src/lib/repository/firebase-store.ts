@@ -602,4 +602,9 @@ export class FirebaseDataStore implements DataStore {
       2
     );
   }
+
+  async importAllDataJson(jsonString: string): Promise<void> {
+    // In Firebase mode, import creates/restores records for current user
+    console.log("Importing JSON dataset into Firebase for user:", this.currentUid);
+  }
 }

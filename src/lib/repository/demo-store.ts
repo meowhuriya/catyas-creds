@@ -640,4 +640,25 @@ export class DemoDataStore implements DataStore {
     };
     return JSON.stringify(payload, null, 2);
   }
+
+  async importAllDataJson(jsonString: string): Promise<void> {
+    const data = JSON.parse(jsonString);
+    if (data.user) this.user = data.user;
+    if (Array.isArray(data.terms)) this.terms = data.terms;
+    if (Array.isArray(data.courses)) this.courses = data.courses;
+    if (Array.isArray(data.modules)) this.modules = data.modules;
+    if (Array.isArray(data.lessons)) this.lessons = data.lessons;
+    if (Array.isArray(data.progress)) this.progress = data.progress;
+    if (Array.isArray(data.assessments)) this.assessments = data.assessments;
+    if (Array.isArray(data.questions)) this.questions = data.questions;
+    if (Array.isArray(data.attempts)) this.attempts = data.attempts;
+    if (Array.isArray(data.rubrics)) this.rubrics = data.rubrics;
+    if (Array.isArray(data.submissions)) this.submissions = data.submissions;
+    if (Array.isArray(data.notes)) this.notes = data.notes;
+    if (Array.isArray(data.plannerEvents)) this.plannerEvents = data.plannerEvents;
+    if (data.degreePlan) this.degreePlan = data.degreePlan;
+    if (Array.isArray(data.snapshots)) this.snapshots = data.snapshots;
+    if (Array.isArray(data.auditLogs)) this.auditLogs = data.auditLogs;
+    this.persistAll();
+  }
 }

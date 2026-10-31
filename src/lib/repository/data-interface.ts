@@ -125,4 +125,5 @@ export interface DataStore {
   clearDemoData(): Promise<void>;
   isDemoMode(): boolean;
   exportAllDataJson(): Promise<string>;
+  importAllDataJson(jsonString: string): Promise<void>;
 }
