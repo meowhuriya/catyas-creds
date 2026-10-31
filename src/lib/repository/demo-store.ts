@@ -133,9 +133,13 @@ export class DemoDataStore implements DataStore {
 
   async loadDemoData(): Promise<void> {
     this.user = { ...DEMO_USER };
-    this.terms = [...DEMO_TERMS];
-    this.courses = [...DEMO_COURSES];
-    this.modules = [...DEMO_MODULES];
+    // Preserve seeded courses if already present; only populate initial list if empty
+    if (!this.courses || this.courses.length === 0) {
+      this.terms = [...DEMO_TERMS];
+      this.courses = [...DEMO_COURSES];
+      this.modules = [...DEMO_MODULES];
+      this.topics = [...DEMO_TOPICS];
+    }
     this.lessons = [...DEMO_LESSONS];
     this.progress = [...DEMO_LESSON_PROGRESS];
     this.assessments = [...DEMO_ASSESSMENTS];
@@ -147,7 +151,6 @@ export class DemoDataStore implements DataStore {
     this.plannerEvents = [...DEMO_PLANNER_EVENTS];
     this.degreePlan = { ...DEMO_DEGREE_PLAN };
     this.auditLogs = [...DEMO_AUDIT_LOGS];
-    this.topics = [...DEMO_TOPICS];
     this.studySessions = [...DEMO_STUDY_SESSIONS];
 
     this.persistAll();

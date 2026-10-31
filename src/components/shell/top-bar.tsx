@@ -54,11 +54,11 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
     if (theme === "light") {
       document.documentElement.classList.add("dark");
       setTheme("dark");
-      localStorage.setItem("catyas_theme", "dark");
+      localStorage.setItem("valerias_theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
       setTheme("light");
-      localStorage.setItem("catyas_theme", "light");
+      localStorage.setItem("valerias_theme", "light");
     }
   };
 
@@ -187,7 +187,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
                 {currentUser?.displayName || "Valeria V."}
               </div>
               <div className="text-xs text-app-ink-muted truncate">
-                {currentUser?.email || "catya.student@catyascreds.edu"}
+                {currentUser?.email || "valeria.student@valeriascreds.edu"}
               </div>
               <div className="mt-1 flex items-center gap-1.5">
                 <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
@@ -203,7 +203,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
                 className="flex w-full items-center gap-2 rounded-control px-2 py-1.5 text-xs text-app-ink hover:bg-app-surface-muted transition-colors"
               >
                 <Database className="h-3.5 w-3.5 text-app-ink-muted" />
-                <span>Reload Demo Data (2 terms, 4 courses)</span>
+                <span>Reload Demo Data</span>
               </button>
 
               <button

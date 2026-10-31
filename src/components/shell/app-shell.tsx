@@ -13,7 +13,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [shortcutOpen, setShortcutOpen] = React.useState(false);
 
   React.useEffect(() => {
-    const saved = localStorage.getItem("catyas_sidebar_collapsed");
+    const saved = localStorage.getItem("valerias_sidebar_collapsed");
     if (saved) {
       setSidebarCollapsed(saved === "true");
     }
@@ -22,7 +22,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => {
       const next = !prev;
-      localStorage.setItem("catyas_sidebar_collapsed", String(next));
+      localStorage.setItem("valerias_sidebar_collapsed", String(next));
       return next;
     });
   };
