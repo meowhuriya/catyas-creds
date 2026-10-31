@@ -1,66 +1,612 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useDataStore } from "@/lib/repository";
+import { Course, DegreePlan, Term, LessonProgress } from "@/types/schemas";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { Stat } from "@/components/ui/stat";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { TOKENS, CourseTagKey } from "@/styles/tokens";
+import {
+  GraduationCap,
+  Layers,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  Edit2,
+  ShieldCheck,
+  ChevronRight,
+} from "lucide-react";
 
 export default function DegreePage() {
-  const { courses } = useDataStore();
-  const earnedCredits = courses.reduce((a, c) => a + c.credits, 0);
-  const targetCredits = 120;
-  const pct = Math.round((earnedCredits / targetCredits) * 100);
+  const { dataStore, currentUser } = useDataStore();
+
+  const [courses, setCourses] = React.useState<Course[]>([]);
+  const [terms, setTerms] = React.useState<Term[]>([]);
+  const [degreePlan, setDegreePlan] = React.useState<DegreePlan | null>(null);
+  const [progressList, setProgressList] = React.useState<LessonProgress[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  // Edit target modal state
+  const [editTargetOpen, setEditTargetOpen] = React.useState(false);
+  const [tempTarget, setTempTarget] = React.useState<number>(120);
+  const [savingTarget, setSavingTarget] = React.useState(false);
+
+  // Audit filter tab
+  const [auditTab, setAuditTab] = React.useState<"completed" | "in_progress" | "remaining">(
+    "completed"
+  );
+
+  const loadData = React.useCallback(async () => {
+    try {
+      setLoading(true);
+      const [c, t, p, prog] = await Promise.all([
+        dataStore.getCourses(),
+        dataStore.getTerms(),
+        dataStore.getDegreePlan(),
+        dataStore.getAllLessonProgress(),
+      ]);
+
+      setCourses(c);
+      setTerms(t);
+      setDegreePlan(p);
+      setProgressList(prog);
+      if (p) {
+        setTempTarget(p.totalCreditsTarget);
+      }
+    } catch (err) {
+      console.error("Failed to load degree progress:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [dataStore]);
+
+  React.useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const targetCredits = degreePlan?.totalCreditsTarget || 120;
+
+  // Active term identification
+  const currentTerm = terms.find((t) => t.isCurrent) || terms[0];
+
+  // Group courses into Completed vs In Progress
+  const { completedCourses, inProgressCourses } = React.useMemo(() => {
+    const completed: Course[] = [];
+    const inProg: Course[] = [];
+
+    courses.forEach((c) => {
+      // In our model, courses in past terms or with >= 90% completed lessons count as completed
+      const courseProg = progressList.filter((p) => p.courseId === c.id);
+      const totalLes = courseProg.length;
+      const doneLes = courseProg.filter((p) => p.isCompleted).length;
+      const isComplete = totalLes > 0 && doneLes >= totalLes;
+
+      if (isComplete || (c.termId !== currentTerm?.id && c.termId)) {
+        completed.push(c);
+      } else {
+        inProg.push(c);
+      }
+    });
+
+    return { completedCourses: completed, inProgressCourses: inProg };
+  }, [courses, progressList, currentTerm]);
+
+  const earnedCredits = completedCourses.reduce((acc, c) => acc + c.credits, 0);
+  const inProgressCredits = inProgressCourses.reduce((acc, c) => acc + c.credits, 0);
+  const remainingCredits = Math.max(0, targetCredits - earnedCredits);
+  const overallPercent = Math.min(100, Math.round((earnedCredits / targetCredits) * 100));
+
+  // Department Requirements
+  const departmentRequirements: Record<string, number> = React.useMemo(() => {
+    return (
+      degreePlan?.departmentRequirements || {
+        "Computer Science": 48,
+        Mathematics: 24,
+        Philosophy: 12,
+        Economics: 12,
+        Electives: 24,
+      }
+    );
+  }, [degreePlan]);
+
+  const departmentBreakdown = React.useMemo(() => {
+    return Object.entries(departmentRequirements).map(([dept, required]) => {
+      const earned = completedCourses
+        .filter((c) => c.department.toLowerCase() === dept.toLowerCase())
+        .reduce((acc, c) => acc + c.credits, 0);
+      const inProg = inProgressCourses
+        .filter((c) => c.department.toLowerCase() === dept.toLowerCase())
+        .reduce((acc, c) => acc + c.credits, 0);
+      const remaining = Math.max(0, required - earned);
+      const pct = Math.min(100, Math.round((earned / required) * 100));
+
+      return { dept, required, earned, inProg, remaining, pct };
+    });
+  }, [departmentRequirements, completedCourses, inProgressCourses]);
+
+  // Level Requirements
+  const levelRequirements: Record<string, number> = React.useMemo(() => {
+    return (
+      degreePlan?.levelRequirements || {
+        "100": 30,
+        "200": 36,
+        "300": 30,
+        "400": 24,
+      }
+    );
+  }, [degreePlan]);
+
+  const levelBreakdown = React.useMemo(() => {
+    return Object.entries(levelRequirements).map(([level, required]) => {
+      const earned = completedCourses
+        .filter((c) => c.level === level)
+        .reduce((acc, c) => acc + c.credits, 0);
+      const inProg = inProgressCourses
+        .filter((c) => c.level === level)
+        .reduce((acc, c) => acc + c.credits, 0);
+      const remaining = Math.max(0, required - earned);
+      const pct = Math.min(100, Math.round((earned / required) * 100));
+
+      return {
+        level,
+        title:
+          level === "100"
+            ? "100-Level Foundation"
+            : level === "200"
+            ? "200-Level Intermediate"
+            : level === "300"
+            ? "300-Level Upper Division"
+            : "400-Level Advanced Seminar",
+        required,
+        earned,
+        inProg,
+        remaining,
+        pct,
+      };
+    });
+  }, [levelRequirements, completedCourses, inProgressCourses]);
+
+  // Find biggest deficit for academic advisor prompt
+  const biggestDeficitDept = React.useMemo(() => {
+    return [...departmentBreakdown].sort((a, b) => b.remaining - a.remaining)[0];
+  }, [departmentBreakdown]);
+
+  const handleSaveTarget = async () => {
+    try {
+      setSavingTarget(true);
+      await dataStore.updateDegreePlan({
+        totalCreditsTarget: Number(tempTarget) || 120,
+      });
+      await loadData();
+      setEditTargetOpen(false);
+    } catch (err) {
+      console.error("Failed to update degree target:", err);
+    } finally {
+      setSavingTarget(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between border-b border-app-border pb-4">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-app-border pb-4">
         <div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-app-ink">
-            Degree Audit & Academic Progress
+            Degree Audit & Curriculum Progress
           </h1>
           <p className="text-xs text-app-ink-muted mt-0.5">
-            Bachelor of Science equivalent curriculum audit (120 Total Credits)
+            Bachelor of Science collegiate curriculum audit ({targetCredits} Total Credits Target).
           </p>
         </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setTempTarget(targetCredits);
+            setEditTargetOpen(true);
+          }}
+          className="gap-1.5 text-xs"
+        >
+          <Edit2 className="h-3.5 w-3.5" />
+          <span>Edit Degree Target ({targetCredits} cr)</span>
+        </Button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <Stat label="Total Credits Completed" value={earnedCredits} unit={`/ ${targetCredits}`} subtext={`${pct}% of degree completed`} />
-        <Stat label="Remaining Requirements" value={targetCredits - earnedCredits} unit="cr" subtext="Upper and lower division coursework" />
-        <Stat label="Estimated Graduation" value="Spring 2028" subtext="At 15 credits / semester pace" />
+      {/* Prominent Stat Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Stat
+          label="Total Credits Completed"
+          value={earnedCredits}
+          unit={`/ ${targetCredits}`}
+          subtext={`${overallPercent}% of degree completed`}
+        />
+
+        <Stat
+          label="Credits In Progress"
+          value={inProgressCredits}
+          unit="cr"
+          subtext={`${inProgressCourses.length} active courses enrolled`}
+        />
+
+        <Stat
+          label="Remaining Requirements"
+          value={remainingCredits}
+          unit="cr"
+          subtext="To complete degree requirements"
+        />
+
+        <Stat
+          label="Estimated Graduation"
+          value="Spring 2028"
+          unit=""
+          subtext="At 15 credits / semester pace"
+        />
       </div>
 
-      <div className="rounded-card border border-app-border bg-app-surface p-6 space-y-4">
-        <h3 className="font-serif text-base font-bold text-app-ink">
-          Core Curriculum Audit
-        </h3>
+      {/* Advisory Guidance Notice */}
+      {biggestDeficitDept && biggestDeficitDept.remaining > 0 && (
+        <div className="flex items-start gap-3 rounded-card border border-app-accent/30 bg-app-accent/5 p-4 text-xs">
+          <GraduationCap className="h-5 w-5 text-app-accent mt-0.5 shrink-0" />
+          <div className="space-y-0.5">
+            <span className="font-semibold text-app-ink block text-sm">
+              Academic Curricular Advisory
+            </span>
+            <p className="text-app-ink-muted">
+              You need <strong className="text-app-accent font-bold tabular-nums">{biggestDeficitDept.remaining} more credits</strong> in{" "}
+              <strong className="text-app-ink font-semibold">{biggestDeficitDept.dept}</strong> and{" "}
+              <strong className="text-app-ink font-semibold">{remainingCredits} credits overall</strong> to fulfill your graduation requirements.
+            </p>
+          </div>
+        </div>
+      )}
 
-        <div className="space-y-3">
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="font-medium text-app-ink">Overall Degree Completion</span>
-              <span className="font-mono tabular-nums text-app-ink">{earnedCredits} / {targetCredits} cr ({pct}%)</span>
+      {/* Department & Level Distributions Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Department Requirements */}
+        <div className="rounded-card border border-app-border bg-app-surface p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-app-border pb-3">
+            <div>
+              <h3 className="font-serif text-base font-bold text-app-ink">
+                Departmental Credit Requirements
+              </h3>
+              <p className="text-[11px] text-app-ink-muted">
+                Core majors, quantitative methods, and general education distribution.
+              </p>
             </div>
-            <ProgressBar value={pct} />
+            <span className="font-mono text-xs font-bold text-app-ink-muted tabular-nums">
+              {earnedCredits} / {targetCredits} cr
+            </span>
           </div>
 
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="font-medium text-app-ink">Computer Science Core (48 Target)</span>
-              <span className="font-mono tabular-nums text-app-ink">4 / 48 cr</span>
+          <div className="space-y-4">
+            {departmentBreakdown.map((item) => (
+              <div key={item.dept} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-app-ink">{item.dept}</span>
+                  <span className="font-mono tabular-nums text-app-ink-muted text-[11px]">
+                    <strong className="text-app-ink font-semibold">{item.earned}</strong> / {item.required} cr ({item.pct}%)
+                  </span>
+                </div>
+                <ProgressBar value={item.pct} />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Division / Level Requirements */}
+        <div className="rounded-card border border-app-border bg-app-surface p-5 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-app-border pb-3">
+            <div>
+              <h3 className="font-serif text-base font-bold text-app-ink">
+                Curricular Level Distribution
+              </h3>
+              <p className="text-[11px] text-app-ink-muted">
+                Progress across lower-division foundations and upper-division seminars.
+              </p>
             </div>
-            <ProgressBar value={(4 / 48) * 100} />
+            <span className="font-mono text-xs font-bold text-app-ink-muted tabular-nums">
+              4 Levels
+            </span>
           </div>
 
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="font-medium text-app-ink">Mathematics & Quantitative Reasoning (24 Target)</span>
-              <span className="font-mono tabular-nums text-app-ink">4 / 24 cr</span>
-            </div>
-            <ProgressBar value={(4 / 24) * 100} />
+          <div className="space-y-4">
+            {levelBreakdown.map((item) => (
+              <div key={item.level} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-app-ink">{item.title}</span>
+                  <span className="font-mono tabular-nums text-app-ink-muted text-[11px]">
+                    <strong className="text-app-ink font-semibold">{item.earned}</strong> / {item.required} cr ({item.pct}%)
+                  </span>
+                </div>
+                <ProgressBar value={item.pct} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Curricular Audit List */}
+      <div className="rounded-card border border-app-border bg-app-surface overflow-hidden shadow-sm">
+        {/* Audit Filter Tabs */}
+        <div className="flex items-center justify-between border-b border-app-border bg-app-surface-muted/50 px-4 py-2.5">
+          <div className="flex items-center gap-1.5 text-xs">
+            <button
+              type="button"
+              onClick={() => setAuditTab("completed")}
+              className={`rounded px-3 py-1 font-medium transition-colors ${
+                auditTab === "completed"
+                  ? "bg-app-accent text-white font-semibold"
+                  : "text-app-ink-muted hover:text-app-ink"
+              }`}
+            >
+              Completed Courses ({completedCourses.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setAuditTab("in_progress")}
+              className={`rounded px-3 py-1 font-medium transition-colors ${
+                auditTab === "in_progress"
+                  ? "bg-app-accent text-white font-semibold"
+                  : "text-app-ink-muted hover:text-app-ink"
+              }`}
+            >
+              In Progress ({inProgressCourses.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setAuditTab("remaining")}
+              className={`rounded px-3 py-1 font-medium transition-colors ${
+                auditTab === "remaining"
+                  ? "bg-app-accent text-white font-semibold"
+                  : "text-app-ink-muted hover:text-app-ink"
+              }`}
+            >
+              Remaining Requirements
+            </button>
+          </div>
+
+          <span className="text-xs text-app-ink-muted font-mono tabular-nums">
+            {auditTab === "completed"
+              ? `${earnedCredits} credits completed`
+              : auditTab === "in_progress"
+              ? `${inProgressCredits} credits active`
+              : `${remainingCredits} credits remaining`}
+          </span>
+        </div>
+
+        {/* Audit Tab Contents */}
+        <div className="p-4">
+          {auditTab === "completed" && (
+            completedCourses.length === 0 ? (
+              <div className="py-8 text-center text-xs text-app-ink-muted">
+                No courses completed yet. Completed courses will appear here with credits and standing.
+              </div>
+            ) : (
+              <div className="divide-y divide-app-border text-xs">
+                {completedCourses.map((c) => {
+                  const tagColor =
+                    TOKENS.colors.courseTags[c.colorTag as CourseTagKey]?.hex ||
+                    TOKENS.colors.courseTags.slate.hex;
+
+                  return (
+                    <div
+                      key={c.id}
+                      className="py-3 flex items-center justify-between hover:bg-app-surface-muted/30 px-2 rounded transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: tagColor }}
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-app-ink">{c.code}</span>
+                            <span className="font-semibold text-app-ink">{c.title}</span>
+                          </div>
+                          <span className="text-[11px] text-app-ink-muted">
+                            Department of {c.department} • {c.level}L • {c.credits} Credits
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                          Satisfied
+                        </span>
+                        <Link
+                          href={`/courses/${c.id}`}
+                          className="text-app-accent hover:underline text-xs flex items-center gap-1 font-medium"
+                        >
+                          <span>View</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          )}
+
+          {auditTab === "in_progress" && (
+            inProgressCourses.length === 0 ? (
+              <div className="py-8 text-center text-xs text-app-ink-muted">
+                No courses currently in progress.
+              </div>
+            ) : (
+              <div className="divide-y divide-app-border text-xs">
+                {inProgressCourses.map((c) => {
+                  const tagColor =
+                    TOKENS.colors.courseTags[c.colorTag as CourseTagKey]?.hex ||
+                    TOKENS.colors.courseTags.slate.hex;
+
+                  return (
+                    <div
+                      key={c.id}
+                      className="py-3 flex items-center justify-between hover:bg-app-surface-muted/30 px-2 rounded transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="h-2 w-2 rounded-full shrink-0"
+                          style={{ backgroundColor: tagColor }}
+                        />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono font-bold text-app-ink">{c.code}</span>
+                            <span className="font-semibold text-app-ink">{c.title}</span>
+                          </div>
+                          <span className="text-[11px] text-app-ink-muted">
+                            Department of {c.department} • {c.level}L • {c.credits} Credits
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="rounded bg-app-accent/10 px-2 py-0.5 text-[10px] font-semibold text-app-accent">
+                          In Progress
+                        </span>
+                        <Link
+                          href={`/courses/${c.id}`}
+                          className="text-app-accent hover:underline text-xs flex items-center gap-1 font-medium"
+                        >
+                          <span>Open</span>
+                          <ChevronRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          )}
+
+          {auditTab === "remaining" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div className="rounded-control border border-app-border p-4 space-y-3 bg-app-surface">
+                <h4 className="font-semibold text-app-ink">Department Deficit Breakdown</h4>
+                <div className="space-y-2">
+                  {departmentBreakdown
+                    .filter((d) => d.remaining > 0)
+                    .map((d) => (
+                      <div key={d.dept} className="flex items-center justify-between border-b border-app-border/60 pb-1.5">
+                        <span className="text-app-ink font-medium">{d.dept}</span>
+                        <span className="font-mono text-app-accent font-bold tabular-nums">
+                          {d.remaining} credits needed
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              <div className="rounded-control border border-app-border p-4 space-y-3 bg-app-surface">
+                <h4 className="font-semibold text-app-ink">Curricular Division Deficit</h4>
+                <div className="space-y-2">
+                  {levelBreakdown
+                    .filter((l) => l.remaining > 0)
+                    .map((l) => (
+                      <div key={l.level} className="flex items-center justify-between border-b border-app-border/60 pb-1.5">
+                        <span className="text-app-ink font-medium">{l.title}</span>
+                        <span className="font-mono text-app-accent font-bold tabular-nums">
+                          {l.remaining} credits needed
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mandatory Official Disclaimer */}
+      <div className="rounded-card border border-app-border bg-app-surface-muted/40 p-4 text-center text-xs text-app-ink-muted">
+        <span className="font-serif font-semibold text-app-ink block text-sm">
+          Self-awarded credits. Not accredited by any institution.
+        </span>
+        <p className="text-[11px] text-app-ink-muted mt-0.5 max-w-xl mx-auto">
+          Catya&apos;s Creds degree audit calculations are mathematically modelled after standard university degree requirements for structured independent study and portfolio evidence.
+        </p>
+      </div>
+
+      {/* Edit Degree Target Dialog */}
+      <Dialog open={editTargetOpen} onOpenChange={setEditTargetOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Configure Degree Credit Target</DialogTitle>
+            <DialogDescription>
+              Set the total credit threshold for your academic curriculum (default 120 credits).
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3 py-2 text-xs">
+            <div>
+              <label className="font-semibold text-app-ink block mb-1">
+                Total Required Credits Target
+              </label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min={30}
+                  max={300}
+                  value={tempTarget}
+                  onChange={(e) => setTempTarget(Number(e.target.value))}
+                  className="font-mono font-bold text-center text-base"
+                />
+                <span className="font-mono text-app-ink-muted">Credits</span>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              {[120, 140, 160, 180].map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setTempTarget(preset)}
+                  className={`flex-1 rounded border py-1.5 text-xs font-mono font-medium transition-colors ${
+                    tempTarget === preset
+                      ? "border-app-accent bg-app-accent/10 text-app-accent font-bold"
+                      : "border-app-border bg-app-surface text-app-ink-muted hover:border-app-ink-muted"
+                  }`}
+                >
+                  {preset} cr
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter className="pt-2 border-t border-app-border">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setEditTargetOpen(false)}
+              disabled={savingTarget}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleSaveTarget}
+              disabled={savingTarget || !tempTarget || tempTarget < 30}
+            >
+              {savingTarget ? "Saving..." : "Save Target"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

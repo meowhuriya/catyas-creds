@@ -7,6 +7,8 @@ import {
   calculateSGPA,
   calculateCGPA,
   calculateWhatIfTarget,
+  calculateWhatIfRequirement,
+  getAcademicStanding,
   CourseTermRecord,
 } from "./grading-engine";
 import { Course } from "@/types/schemas";
@@ -289,5 +291,25 @@ describe("Grading Engine - What-If Projection Calculator", () => {
       85
     );
     expect(requiredFinal).toBe(75.0);
+  });
+
+  it("calculates what-if requirement across remaining weight and achievable flag", () => {
+    // Current projected: 60%, target: 80%, remaining weight: 25%
+    // Deficit = 20%, required on remaining = (20 / 25) * 100 = 80.0%
+    const res = calculateWhatIfRequirement(60, 80, 25);
+    expect(res).toEqual({ requiredScoreOnRemaining: 80, achievable: true });
+
+    // Impossible target: Current projected: 40%, target: 90%, remaining weight: 20%
+    // Deficit = 50%, required on remaining = (50 / 20) * 100 = 250% > 100%
+    const impossible = calculateWhatIfRequirement(40, 90, 20);
+    expect(impossible.achievable).toBe(false);
+  });
+
+  it("determines correct academic standing designations", () => {
+    expect(getAcademicStanding(9.4, "10_point")).toBe("Dean's Honors / Distinction");
+    expect(getAcademicStanding(7.8, "10_point")).toBe("First Class Standing");
+    expect(getAcademicStanding(3.9, "4_point")).toBe("Summa Cum Laude / Honors");
+    expect(getAcademicStanding(3.2, "4_point")).toBe("Good Academic Standing");
+    expect(getAcademicStanding(1.5, "4_point")).toBe("Academic Warning");
   });
 });

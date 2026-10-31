@@ -28,6 +28,7 @@ import { CreateAssessmentModal } from "@/components/assessments/create-assessmen
 import { QuizRunnerModal } from "@/components/assessments/quiz-runner-modal";
 import { AssignmentSubmissionModal } from "@/components/assessments/assignment-submission-modal";
 import { AiQuizDraftModal } from "@/components/assessments/ai-quiz-draft-modal";
+import { WhatIfCalculator } from "@/components/grades/what-if-calculator";
 import { calculateCourseGrades } from "@/lib/grading/grading-engine";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { formatSecondsToTime } from "@/lib/utils";
@@ -949,6 +950,16 @@ export default function CourseDetailPage() {
               </table>
             </div>
           </div>
+
+          {/* Interactive What-If Grade Simulator */}
+          <WhatIfCalculator
+            course={course}
+            assessments={assessments}
+            attempts={attempts}
+            submissions={submissions}
+            lessonCompletionPercent={percentComplete}
+            scale={gpaScale}
+          />
         </TabsContent>
 
         {/* Tab 4: Printable Syllabus */}

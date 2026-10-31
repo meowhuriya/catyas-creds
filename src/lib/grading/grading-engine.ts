@@ -327,3 +327,47 @@ export function calculateWhatIfTarget(
 
   return Math.round(requiredPercent * 10) / 10;
 }
+
+// 8. General What-If Requirement across remaining weight
+export function calculateWhatIfRequirement(
+  currentProjectedScore: number,
+  targetScore: number,
+  remainingWeight: number
+): { requiredScoreOnRemaining: number; achievable: boolean } {
+  if (currentProjectedScore >= targetScore) {
+    return { requiredScoreOnRemaining: 0, achievable: true };
+  }
+
+  if (remainingWeight <= 0) {
+    return { requiredScoreOnRemaining: 100, achievable: false };
+  }
+
+  const deficit = targetScore - currentProjectedScore;
+  const required = (deficit / remainingWeight) * 100;
+
+  return {
+    requiredScoreOnRemaining: Math.round(required * 10) / 10,
+    achievable: required <= 100,
+  };
+}
+
+// 9. Academic Standing Designation
+export function getAcademicStanding(
+  gpa: number,
+  scale: "10_point" | "4_point" = "10_point"
+): string {
+  if (scale === "10_point") {
+    if (gpa >= 9.0) return "Dean's Honors / Distinction";
+    if (gpa >= 7.5) return "First Class Standing";
+    if (gpa >= 6.0) return "Second Class Standing";
+    if (gpa >= 4.0) return "Satisfactory Standing";
+    return "Academic Warning";
+  } else {
+    if (gpa >= 3.8) return "Summa Cum Laude / Honors";
+    if (gpa >= 3.5) return "Magna Cum Laude";
+    if (gpa >= 3.0) return "Good Academic Standing";
+    if (gpa >= 2.0) return "Satisfactory Standing";
+    return "Academic Warning";
+  }
+}
+
