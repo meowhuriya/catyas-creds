@@ -47,6 +47,42 @@ export interface CourseTermRecord {
   termDate?: string; // ISO date for determining recency in retakes
 }
 
+// Standard Default Presets
+export const THEORY_GRADING_PRESET: CourseGradingScheme = {
+  lessonCompletion: 10, // Study progress (topic mastery)
+  quizzes: 25,
+  assignments: 30,
+  midterm: 15,
+  finalExam: 20,
+};
+
+export const LAB_GRADING_PRESET: CourseGradingScheme = {
+  lessonCompletion: 60, // Experiments done
+  quizzes: 20,          // Quizzes or viva
+  assignments: 0,       // Lab reports / assignments
+  midterm: 0,           // Midterm lab evaluation
+  finalExam: 20,        // Final lab test
+};
+
+/**
+ * Determines whether a course is a laboratory/practical course.
+ */
+export function isLabCourse(course: {
+  title: string;
+  code?: string;
+  electiveExperimentsCount?: number | null;
+}): boolean {
+  const t = (course.title || "").toLowerCase();
+  const c = (course.code || "").toUpperCase();
+  return (
+    t.includes("lab") ||
+    t.includes("laboratory") ||
+    c.endsWith("L") ||
+    c.includes("LAB") ||
+    Boolean(course.electiveExperimentsCount && course.electiveExperimentsCount > 0)
+  );
+}
+
 // 1. Scale Mappings
 export function getGradeScaleMapping(
   percentage: number,
@@ -56,6 +92,7 @@ export function getGradeScaleMapping(
 
   if (scale === "10_point") {
     // 90-100 = O (10), 80-89 = A+ (9), 70-79 = A (8), 60-69 = B+ (7), 50-59 = B (6), 40-49 = P (5), <40 = F (0)
+    // Pass mark is 40%
     if (p >= 90) return { letter: "O", points: 10, passed: true };
     if (p >= 80) return { letter: "A+", points: 9, passed: true };
     if (p >= 70) return { letter: "A", points: 8, passed: true };
@@ -104,7 +141,7 @@ export function validateGradingScheme(scheme: CourseGradingScheme): {
 }
 
 // 3. Category Score Calculation
-// User rule #2: Inside a category, score = total points earned / total points available.
+// Score = total points earned / total points available inside category
 export function calculateCategoryPointsScore(
   items: { earnedPoints: number; maxPoints: number }[]
 ): number | null {
@@ -120,13 +157,14 @@ export function calculateCategoryPointsScore(
 // 4. Full Course Grade Calculation
 export function calculateCourseGrades(
   course: Course,
-  lessonCompletionPercent: number,
+  studyProgressScore: number, // topic mastery score (0-100)
   assessments: Assessment[],
   attempts: Attempt[],
   submissions: Submission[],
   scale: "10_point" | "4_point" = "10_point"
 ): CourseGradeResult {
   const scheme = course.gradingScheme;
+  const isLab = isLabCourse(course);
 
   // Group assessments by category
   const quizzes = assessments.filter((a) => a.type === "quiz");
@@ -137,7 +175,6 @@ export function calculateCourseGrades(
   // Calculate quizzes score
   const quizItems = quizzes
     .map((q) => {
-      // Best attempt score for this quiz
       const atts = attempts.filter((a) => a.assessmentId === q.id && a.isCompleted);
       if (atts.length === 0) return null;
       const best = Math.max(...atts.map((a) => a.score));
@@ -182,39 +219,39 @@ export function calculateCourseGrades(
 
   const finalScore = calculateCategoryPointsScore(finalItems);
 
-  // Categories detail
+  // Categories detail with domain labels
   const categories: CategoryScoreDetail[] = [
     {
       category: "lessonCompletion",
-      label: "Lesson Completion",
+      label: isLab ? "Experiments Done" : "Study Progress",
       weight: scheme.lessonCompletion,
-      scorePercent: lessonCompletionPercent,
+      scorePercent: typeof studyProgressScore === "number" ? studyProgressScore : 0,
       itemsCount: 1,
     },
     {
       category: "quizzes",
-      label: "Quizzes",
+      label: isLab ? "Quizzes or Viva" : "Quizzes",
       weight: scheme.quizzes,
       scorePercent: quizScore,
       itemsCount: quizItems.length,
     },
     {
       category: "assignments",
-      label: "Assignments",
+      label: isLab ? "Lab Reports" : "Assignments",
       weight: scheme.assignments,
       scorePercent: assignmentScore,
       itemsCount: assignmentItems.length,
     },
     {
       category: "midterm",
-      label: "Midterm Examination",
+      label: isLab ? "Midterm Evaluation" : "Midterm Exam",
       weight: scheme.midterm,
       scorePercent: midtermScore,
       itemsCount: midtermItems.length,
     },
     {
       category: "finalExam",
-      label: "Final Examination",
+      label: isLab ? "Final Lab Test" : "Final Exam",
       weight: scheme.finalExam,
       scorePercent: finalScore,
       itemsCount: finalItems.length,
@@ -229,7 +266,7 @@ export function calculateCourseGrades(
   let projectedWeightedSum = 0;
 
   for (const cat of categories) {
-    if (cat.scorePercent !== null) {
+    if (cat.weight > 0 && cat.scorePercent !== null) {
       completedWeightedSum += (cat.scorePercent / 100) * cat.weight;
       completedWeights += cat.weight;
       projectedWeightedSum += (cat.scorePercent / 100) * cat.weight;
@@ -258,11 +295,11 @@ export function calculateSGPA(
 ): number {
   if (courses.length === 0) return 0;
 
-  const totalCredits = courses.reduce((acc, c) => acc + c.credits, 0);
+  const totalCredits = courses.reduce((acc, c) => acc + (c.credits || 0), 0);
   if (totalCredits <= 0) return 0;
 
   const totalPoints = courses.reduce(
-    (acc, c) => acc + c.credits * c.gradePoints,
+    (acc, c) => acc + (c.credits || 0) * (c.gradePoints || 0),
     0
   );
 
@@ -278,7 +315,7 @@ export function calculateCGPA(records: CourseTermRecord[]): number {
   const courseHistoryMap = new Map<string, CourseTermRecord[]>();
 
   for (const rec of records) {
-    const key = rec.courseCode || rec.courseId;
+    const key = (rec.courseCode || rec.courseId).trim().toUpperCase();
     const existing = courseHistoryMap.get(key) || [];
     existing.push(rec);
     courseHistoryMap.set(key, existing);
@@ -370,4 +407,3 @@ export function getAcademicStanding(
     return "Academic Warning";
   }
 }
-

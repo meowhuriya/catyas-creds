@@ -20,7 +20,12 @@ import {
   AlertTriangle,
   RotateCcw,
   Award,
+  ShieldAlert,
+  Clock,
+  Play,
+  FileCheck,
 } from "lucide-react";
+import { getGradeScaleMapping } from "@/lib/grading/grading-engine";
 
 interface QuizRunnerModalProps {
   assessment: Assessment;
@@ -35,8 +40,9 @@ export function QuizRunnerModal({
   onOpenChange,
   onSuccess,
 }: QuizRunnerModalProps) {
-  const { dataStore, refreshData } = useDataStore();
+  const { dataStore, refreshData, currentUser } = useDataStore();
 
+  const isExam = assessment.type === "midterm" || assessment.type === "final";
   const [questions, setQuestions] = React.useState<Question[]>([]);
   const [attempts, setAttempts] = React.useState<Attempt[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -48,6 +54,7 @@ export function QuizRunnerModal({
   const [secondsRemaining, setSecondsRemaining] = React.useState<number | null>(null);
   const [isReviewing, setIsReviewing] = React.useState(false);
   const [activeAttempt, setActiveAttempt] = React.useState<Attempt | null>(null);
+  const [hasStartedExam, setHasStartedExam] = React.useState(false);
 
   const loadData = React.useCallback(async () => {
     try {
@@ -64,21 +71,29 @@ export function QuizRunnerModal({
         const latest = atts[atts.length - 1];
         setActiveAttempt(latest);
         setIsReviewing(true);
+        setHasStartedExam(true);
       } else {
-        startNewAttempt();
+        if (isExam) {
+          setHasStartedExam(false);
+          setIsReviewing(false);
+          setActiveAttempt(null);
+        } else {
+          startNewAttempt();
+        }
       }
     } catch (err) {
       console.error("Failed to load quiz runner data:", err);
     } finally {
       setLoading(false);
     }
-  }, [assessment.id, dataStore]);
+  }, [assessment.id, isExam, dataStore]);
 
   const startNewAttempt = React.useCallback(() => {
     setAnswers({});
     setStartedAt(new Date().toISOString());
     setIsReviewing(false);
     setActiveAttempt(null);
+    setHasStartedExam(true);
     if (assessment.timeLimitMinutes && assessment.timeLimitMinutes > 0) {
       setSecondsRemaining(assessment.timeLimitMinutes * 60);
     } else {
@@ -94,7 +109,7 @@ export function QuizRunnerModal({
 
   // Timer countdown
   React.useEffect(() => {
-    if (isReviewing || secondsRemaining === null || secondsRemaining <= 0) return;
+    if (isReviewing || secondsRemaining === null || secondsRemaining <= 0 || !hasStartedExam) return;
 
     const interval = setInterval(() => {
       setSecondsRemaining((prev) => {
@@ -108,7 +123,7 @@ export function QuizRunnerModal({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isReviewing, secondsRemaining]);
+  }, [isReviewing, secondsRemaining, hasStartedExam]);
 
   const handleSelectAnswer = (qId: string, val: string, isMulti: boolean) => {
     if (isReviewing) return;
@@ -213,9 +228,12 @@ export function QuizRunnerModal({
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
+  const effectiveLimit = isExam ? 1 : assessment.attemptLimit;
   const hasExceededAttempts = Boolean(
-    assessment.attemptLimit && attempts.length >= assessment.attemptLimit
+    effectiveLimit && attempts.length >= effectiveLimit
   );
+
+  const scale = currentUser?.settings?.gradeScale || "10_point";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -224,8 +242,14 @@ export function QuizRunnerModal({
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded bg-app-accent/10 px-2 py-0.5 text-[11px] font-semibold uppercase text-app-accent">
-                  {assessment.type}
+                <span
+                  className={`rounded px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
+                    isExam
+                      ? "bg-app-accent text-white"
+                      : "bg-app-accent/10 text-app-accent"
+                  }`}
+                >
+                  {isExam ? `Official ${assessment.type} Exam` : assessment.type}
                 </span>
                 <DialogTitle>{assessment.title}</DialogTitle>
               </div>
@@ -235,7 +259,7 @@ export function QuizRunnerModal({
             </div>
 
             {/* Timer Header Indicator */}
-            {!isReviewing && secondsRemaining !== null && (
+            {!isReviewing && hasStartedExam && secondsRemaining !== null && (
               <div
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control border font-mono text-xs font-bold tabular-nums ${
                   secondsRemaining < 60
@@ -253,6 +277,74 @@ export function QuizRunnerModal({
         {loading ? (
           <div className="py-12 text-center text-xs text-app-ink-muted">
             Loading examination questions...
+          </div>
+        ) : isExam && !hasStartedExam && !isReviewing ? (
+          /* Official Exam Pre-Flight Briefing */
+          <div className="space-y-5 py-4 text-xs">
+            <div className="rounded-card border border-app-accent/30 bg-app-accent/5 p-5 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-app-accent text-white shrink-0">
+                  <ShieldAlert className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-serif text-base font-bold text-app-ink">
+                    Official Proctored Examination Mode
+                  </h3>
+                  <p className="text-xs text-app-ink-muted">
+                    Please review examination rules carefully before beginning.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 border-t border-app-accent/15 pt-3">
+                <div className="rounded-control border border-app-border bg-app-surface p-2.5">
+                  <span className="text-[10px] font-semibold uppercase text-app-ink-muted block">
+                    Total Time Allowed
+                  </span>
+                  <div className="flex items-center gap-1 font-mono font-bold text-app-ink mt-0.5">
+                    <Clock className="h-3.5 w-3.5 text-app-accent" />
+                    <span>{assessment.timeLimitMinutes || 90} Minutes</span>
+                  </div>
+                </div>
+
+                <div className="rounded-control border border-app-border bg-app-surface p-2.5">
+                  <span className="text-[10px] font-semibold uppercase text-app-ink-muted block">
+                    Attempt Policy
+                  </span>
+                  <span className="font-mono font-bold text-app-ink block mt-0.5">
+                    Strictly 1 Attempt
+                  </span>
+                </div>
+
+                <div className="rounded-control border border-app-border bg-app-surface p-2.5">
+                  <span className="text-[10px] font-semibold uppercase text-app-ink-muted block">
+                    Assessment Questions
+                  </span>
+                  <span className="font-mono font-bold text-app-ink block mt-0.5">
+                    {questions.length} Items ({assessment.maxPoints} pts)
+                  </span>
+                </div>
+              </div>
+
+              <div className="rounded-control bg-amber-500/10 border border-amber-500/20 p-3 text-[11px] text-amber-800 dark:text-amber-300 space-y-1">
+                <p className="font-semibold">Important Examination Notice:</p>
+                <p>
+                  Once you begin, the timer starts immediately and cannot be paused. Your answers will be automatically marked and saved upon timer expiration or early submission.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="primary"
+                onClick={startNewAttempt}
+                className="gap-2"
+              >
+                <Play className="h-4 w-4" />
+                <span>Begin Examination Now</span>
+              </Button>
+            </div>
           </div>
         ) : questions.length === 0 ? (
           <div className="py-8 text-center text-xs text-app-ink-muted space-y-2">
@@ -272,7 +364,7 @@ export function QuizRunnerModal({
                       <span className="text-[11px] font-semibold uppercase text-app-ink-muted">
                         Attempt Result (
                         {attempts.findIndex((a) => a.id === activeAttempt.id) + 1} of{" "}
-                        {assessment.attemptLimit || "unlimited"})
+                        {effectiveLimit || "unlimited"})
                       </span>
                       <div className="flex items-baseline gap-2">
                         <span className="font-serif text-2xl font-bold text-app-ink tabular-nums">
@@ -281,11 +373,14 @@ export function QuizRunnerModal({
                         <span className="font-mono text-sm font-semibold text-app-accent tabular-nums">
                           ({activeAttempt.percentage}%)
                         </span>
+                        <span className="rounded bg-app-surface px-1.5 py-0.5 text-[11px] font-serif font-bold text-app-ink border border-app-border">
+                          Grade {getGradeScaleMapping(activeAttempt.percentage, scale).letter}
+                        </span>
                       </div>
                     </div>
                   </div>
 
-                  {!hasExceededAttempts && (
+                  {!hasExceededAttempts && !isExam && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -300,8 +395,8 @@ export function QuizRunnerModal({
 
                 {hasExceededAttempts && (
                   <p className="text-[11px] text-app-ink-muted italic">
-                    Maximum attempt limit reached ({assessment.attemptLimit}/
-                    {assessment.attemptLimit}).
+                    Maximum attempt limit reached ({effectiveLimit}/
+                    {effectiveLimit}).
                   </p>
                 )}
               </div>
@@ -491,14 +586,14 @@ export function QuizRunnerModal({
             {isReviewing ? "Close" : "Cancel"}
           </Button>
 
-          {!isReviewing && (
+          {!isReviewing && hasStartedExam && (
             <Button
               type="button"
               variant="primary"
               disabled={submitting || questions.length === 0}
               onClick={handleSubmit}
             >
-              {submitting ? "Grading..." : "Submit Answers"}
+              {submitting ? "Grading..." : isExam ? "Submit Final Examination" : "Submit Answers"}
             </Button>
           )}
         </DialogFooter>

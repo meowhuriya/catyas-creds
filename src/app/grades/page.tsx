@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useDataStore } from "@/lib/repository";
-import { Course, Term, Assessment, Attempt, Submission, LessonProgress } from "@/types/schemas";
+import { Course, Term, Assessment, Attempt, Submission, LessonProgress, Module, Topic } from "@/types/schemas";
 import {
   calculateCourseGrades,
   calculateSGPA,
@@ -11,6 +11,7 @@ import {
   getAcademicStanding,
   CourseTermRecord,
 } from "@/lib/grading/grading-engine";
+import { calculateUnitMastery, calculateCourseMastery } from "@/lib/mastery/mastery-engine";
 import { Stat } from "@/components/ui/stat";
 import { Button } from "@/components/ui/button";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
@@ -22,6 +23,8 @@ export default function GradesPage() {
   const [terms, setTerms] = React.useState<Term[]>([]);
   const [selectedTermId, setSelectedTermId] = React.useState<string>("all");
   const [courses, setCourses] = React.useState<Course[]>([]);
+  const [modules, setModules] = React.useState<Module[]>([]);
+  const [topics, setTopics] = React.useState<Topic[]>([]);
   const [assessments, setAssessments] = React.useState<Assessment[]>([]);
   const [attempts, setAttempts] = React.useState<Attempt[]>([]);
   const [submissions, setSubmissions] = React.useState<Submission[]>([]);
@@ -44,15 +47,23 @@ export default function GradesPage() {
     async function loadAllGradesData() {
       try {
         setLoading(true);
-        const [allTerms, allCourses, allProgress] = await Promise.all([
+        const [allTerms, allCourses, allProgress, allTopics] = await Promise.all([
           dataStore.getTerms(),
           dataStore.getCourses(),
           dataStore.getAllLessonProgress(),
+          dataStore.getAllTopics(),
         ]);
+
+        const nestedModules = await Promise.all(
+          allCourses.map((c) => dataStore.getModules(c.id))
+        );
+        const allModules = nestedModules.flat();
 
         setTerms(allTerms);
         setCourses(allCourses);
         setProgressList(allProgress);
+        setModules(allModules);
+        setTopics(allTopics);
 
         const currentT = allTerms.find((t) => t.isCurrent) || allTerms[0];
         if (currentT) {
@@ -92,15 +103,21 @@ export default function GradesPage() {
   const courseGradeRecords = React.useMemo(() => {
     return courses.map((course) => {
       const courseAsms = assessments.filter((a) => a.courseId === course.id);
-      const courseProgress = progressList.filter((p) => p.courseId === course.id);
-      const totalLessons = courseProgress.length;
-      const completedLessons = courseProgress.filter((p) => p.isCompleted).length;
-      const lessonCompletionPercent =
-        totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+      const courseModules = modules.filter((m) => m.courseId === course.id);
+      const courseTopics = topics.filter((t) => t.courseId === course.id);
+
+      const unitScores = courseModules.map((m) => {
+        const mTopics = courseTopics.filter((t) => t.unitId === m.id);
+        return calculateUnitMastery(
+          mTopics,
+          m.electiveExperimentsCount || course.electiveExperimentsCount
+        ).score;
+      });
+      const courseMasteryScore = calculateCourseMastery(unitScores).courseScore;
 
       const gradeRes = calculateCourseGrades(
         course,
-        lessonCompletionPercent,
+        courseMasteryScore,
         courseAsms,
         attempts,
         submissions,
@@ -112,7 +129,7 @@ export default function GradesPage() {
         gradeResult: gradeRes,
       };
     });
-  }, [courses, assessments, attempts, submissions, progressList, scale]);
+  }, [courses, assessments, attempts, submissions, modules, topics, scale]);
 
   // Detect retakes (courses with matching codes)
   const codeOccurrences = React.useMemo(() => {

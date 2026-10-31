@@ -41,7 +41,7 @@ import { ResetSyllabusDialog } from "@/components/courses/reset-syllabus-dialog"
 import { TidyTopicsDialog } from "@/components/courses/tidy-topics-dialog";
 import { QuickCheckModal } from "@/components/courses/quick-check-modal";
 import { MilestoneBanner } from "@/components/ui/milestone-banner";
-import { calculateUnitMastery } from "@/lib/mastery/mastery-engine";
+import { calculateUnitMastery, calculateCourseMastery } from "@/lib/mastery/mastery-engine";
 import {
   DndContext,
   closestCenter,
@@ -82,6 +82,7 @@ export default function CourseDetailPage() {
 
   const { dataStore, currentUser } = useDataStore();
 
+  const [activeTab, setActiveTab] = React.useState("units");
   const [course, setCourse] = React.useState<Course | null>(null);
   const [modules, setModules] = React.useState<Module[]>([]);
   const [topics, setTopics] = React.useState<Topic[]>([]);
@@ -118,7 +119,9 @@ export default function CourseDetailPage() {
 
   const loadData = React.useCallback(async () => {
     try {
-      setLoading(true);
+      if (!course) {
+        setLoading(true);
+      }
       const [c, m, top, l, p, a, n] = await Promise.all([
         dataStore.getCourse(courseId),
         dataStore.getModules(courseId),
@@ -208,10 +211,22 @@ export default function CourseDetailPage() {
     Math.round((totalDurationSeconds / 3600 / hoursPerCredit) * 2) / 2
   );
 
+  // Calculate Course Topic Mastery score (0–100) & topic completion
+  const unitScores = modules.map((m) => {
+    const unitTopics = topics.filter((t) => t.unitId === m.id);
+    return calculateUnitMastery(unitTopics, m.electiveExperimentsCount || course.electiveExperimentsCount).score;
+  });
+  const courseMasteryScore = calculateCourseMastery(unitScores).courseScore;
+
+  const totalTopicsCount = topics.length;
+  const completedTopicsCount = topics.filter((t) => t.isDone).length;
+  const topicCompletionPercent =
+    totalTopicsCount > 0 ? (completedTopicsCount / totalTopicsCount) * 100 : 0;
+
   const gpaScale = currentUser?.settings?.gradeScale || "10_point";
   const gradeResult = calculateCourseGrades(
     course,
-    percentComplete,
+    courseMasteryScore,
     assessments,
     attempts,
     submissions,
@@ -499,7 +514,7 @@ export default function CourseDetailPage() {
       )}
 
       {/* Course Navigation Tabs */}
-      <Tabs defaultValue="units" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
           <TabsTrigger value="units">Units & Topics</TabsTrigger>
           <TabsTrigger value="classwork">Classwork & Modules</TabsTrigger>
@@ -678,7 +693,7 @@ export default function CourseDetailPage() {
                   {assessments.map((asm) => {
                     const isLocked = Boolean(
                       asm.lockedUntilLessonCompletionPercent &&
-                        percentComplete < asm.lockedUntilLessonCompletionPercent
+                        topicCompletionPercent < asm.lockedUntilLessonCompletionPercent
                     );
 
                     const asmAttempts = attempts.filter(
@@ -729,7 +744,7 @@ export default function CourseDetailPage() {
                             <div className="flex items-center gap-1.5 rounded bg-amber-500/10 px-2 py-1 text-[11px] text-amber-700 dark:text-amber-400 font-medium">
                               <Lock className="h-3 w-3 shrink-0" />
                               <span>
-                                Locked: requires {asm.lockedUntilLessonCompletionPercent}% lesson progress (currently {Math.round(percentComplete)}%).
+                                Locked: requires {asm.lockedUntilLessonCompletionPercent}% topic completion (currently {Math.round(topicCompletionPercent)}%).
                               </span>
                             </div>
                           )}
@@ -1044,7 +1059,7 @@ export default function CourseDetailPage() {
 
                   <span className="text-[10px] text-app-ink-muted block">
                     {cat.category === "lessonCompletion"
-                      ? `${completedLessons} of ${totalLessons} completed`
+                      ? `${completedTopicsCount} of ${totalTopicsCount} topics done`
                       : `${cat.itemsCount} assessment items`}
                   </span>
                 </div>
@@ -1174,7 +1189,7 @@ export default function CourseDetailPage() {
             assessments={assessments}
             attempts={attempts}
             submissions={submissions}
-            lessonCompletionPercent={percentComplete}
+            lessonCompletionPercent={courseMasteryScore}
             scale={gpaScale}
           />
         </TabsContent>

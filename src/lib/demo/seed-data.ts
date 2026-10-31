@@ -8923,6 +8923,33 @@ export const DEMO_ASSESSMENTS: Assessment[] = [
     "timeLimitMinutes": 30,
     "attemptLimit": 1,
     "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "assess-cs105-midterm",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "type": "midterm",
+    "title": "Midterm Examination: C Programming & Algorithms",
+    "description": "Official timed midterm exam covering syntax, control structures, functions, pointers, and memory.",
+    "maxPoints": 100,
+    "dueDate": "2025-10-15",
+    "timeLimitMinutes": 45,
+    "attemptLimit": 1,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "assess-cs105-final",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "type": "final",
+    "title": "Final Examination: Comprehensive Systems Programming",
+    "description": "Comprehensive proctored exam covering all 5 syllabus units.",
+    "maxPoints": 100,
+    "dueDate": "2025-12-10",
+    "timeLimitMinutes": 90,
+    "attemptLimit": 1,
+    "lockedUntilLessonCompletionPercent": 80,
+    "createdAt": "2025-08-01T08:00:00.000Z"
   }
 ];
 
@@ -8966,6 +8993,62 @@ export const DEMO_QUESTIONS: Question[] = [
     ],
     "points": 50,
     "explanation": "In C, logical operators are && (AND), || (OR), and ! (NOT)."
+  },
+  {
+    "id": "q-cs105-m1",
+    "userId": "valeria-student",
+    "assessmentId": "assess-cs105-midterm",
+    "courseId": "course-cs105es",
+    "prompt": "What is the memory size in bytes of a pointer variable on a standard 64-bit architecture?",
+    "type": "multiple_choice",
+    "options": [
+      "2 bytes",
+      "4 bytes",
+      "8 bytes",
+      "Depends on pointed type"
+    ],
+    "correctAnswers": [
+      "8 bytes"
+    ],
+    "points": 30,
+    "explanation": "On a 64-bit computer architecture, virtual memory addresses are 64 bits wide, which corresponds to exactly 8 bytes."
+  },
+  {
+    "id": "q-cs105-m2",
+    "userId": "valeria-student",
+    "assessmentId": "assess-cs105-midterm",
+    "courseId": "course-cs105es",
+    "prompt": "Which of the following functions are part of stdlib.h for dynamic heap memory management? (Select all that apply)",
+    "type": "multiple_select",
+    "options": [
+      "malloc",
+      "calloc",
+      "printf",
+      "realloc",
+      "free"
+    ],
+    "correctAnswers": [
+      "malloc",
+      "calloc",
+      "realloc",
+      "free"
+    ],
+    "points": 40,
+    "explanation": "malloc, calloc, realloc, and free manage dynamic memory on the heap in stdlib.h. printf is part of stdio.h."
+  },
+  {
+    "id": "q-cs105-m3",
+    "userId": "valeria-student",
+    "assessmentId": "assess-cs105-midterm",
+    "courseId": "course-cs105es",
+    "prompt": "Which C keyword is used to declare a variable whose value cannot be modified after initial declaration?",
+    "type": "short_answer",
+    "options": [],
+    "correctAnswers": [
+      "const"
+    ],
+    "points": 30,
+    "explanation": "The const type qualifier prevents reassignment or mutation of a variable after declaration."
   }
 ];
 

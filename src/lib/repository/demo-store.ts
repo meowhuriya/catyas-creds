@@ -88,8 +88,25 @@ export class DemoDataStore implements DataStore {
     this.modules = getStorage<Module[]>("modules", DEMO_MODULES);
     this.lessons = getStorage<Lesson[]>("lessons", DEMO_LESSONS);
     this.progress = getStorage<LessonProgress[]>("progress", DEMO_LESSON_PROGRESS);
-    this.assessments = getStorage<Assessment[]>("assessments", DEMO_ASSESSMENTS);
-    this.questions = getStorage<Question[]>("questions", DEMO_QUESTIONS);
+    const storedAsms = getStorage<Assessment[]>("assessments", DEMO_ASSESSMENTS);
+    const existingAsmIds = new Set(storedAsms.map((a) => a.id));
+    const mergedAsms = [...storedAsms];
+    for (const d of DEMO_ASSESSMENTS) {
+      if (!existingAsmIds.has(d.id)) {
+        mergedAsms.push(d);
+      }
+    }
+    this.assessments = mergedAsms;
+
+    const storedQs = getStorage<Question[]>("questions", DEMO_QUESTIONS);
+    const existingQIds = new Set(storedQs.map((q) => q.id));
+    const mergedQs = [...storedQs];
+    for (const q of DEMO_QUESTIONS) {
+      if (!existingQIds.has(q.id)) {
+        mergedQs.push(q);
+      }
+    }
+    this.questions = mergedQs;
     this.attempts = getStorage<Attempt[]>("attempts", DEMO_ATTEMPTS);
     this.rubrics = getStorage<Rubric[]>("rubrics", DEMO_RUBRICS);
     this.submissions = getStorage<Submission[]>("submissions", DEMO_SUBMISSIONS);
