@@ -12,6 +12,12 @@ import { RightRail } from "@/components/dashboard/right-rail";
 import { StudyHeatmap } from "@/components/dashboard/study-heatmap";
 import { WeeklyHoursChart } from "@/components/dashboard/weekly-hours-chart";
 import { WeakestTopics } from "@/components/dashboard/weakest-topics";
+import { QuickCheckModal } from "@/components/courses/quick-check-modal";
+import {
+  calculateSemesterProgress,
+  calculateCourseMastery,
+  calculateUnitMastery,
+} from "@/lib/mastery/mastery-engine";
 import { Plus, BookOpen, Database, Filter } from "lucide-react";
 import {
   Lesson,
@@ -38,6 +44,7 @@ export default function DashboardPage() {
   const [topics, setTopics] = React.useState<Topic[]>([]);
   const [modules, setModules] = React.useState<Module[]>([]);
   const [studySessions, setStudySessions] = React.useState<StudySession[]>([]);
+  const [quickCheckTopic, setQuickCheckTopic] = React.useState<Topic | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [selectedTermId, setSelectedTermId] = React.useState<string>(
     currentTerm?.id || "term-sem-1"
@@ -112,15 +119,25 @@ export default function DashboardPage() {
     return { lesson: l, progress: p, course: c };
   }, [lessons, progressList, courses]);
 
-  // Overall term progress calculation
+  // Overall term progress calculation (credit-weighted average of course scores)
   const overallProgress = React.useMemo(() => {
-    const termTopics = topics.filter((t) =>
-      activeTermCourses.some((c) => c.id === t.courseId)
-    );
-    if (termTopics.length === 0) return 0;
-    const done = termTopics.filter((t) => t.isDone).length;
-    return (done / termTopics.length) * 100;
-  }, [topics, activeTermCourses]);
+    if (activeTermCourses.length === 0) return 0;
+    const courseInputs = activeTermCourses.map((c) => {
+      const cModules = modules.filter((m) => m.courseId === c.id);
+      const unitScores = cModules.map((m) => {
+        const mTopics = topics.filter((t) => t.unitId === m.id);
+        const { score } = calculateUnitMastery(
+          mTopics,
+          m.electiveExperimentsCount || c.electiveExperimentsCount
+        );
+        return score;
+      });
+      const { courseScore } = calculateCourseMastery(unitScores);
+      return { credits: c.credits, score: courseScore };
+    });
+    const { progressPercent } = calculateSemesterProgress(courseInputs);
+    return progressPercent;
+  }, [activeTermCourses, modules, topics]);
 
   return (
     <div className="space-y-8 select-none">
@@ -252,8 +269,25 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-[var(--color-border)]/70">
         <StudyHeatmap sessions={studySessions} />
         <WeeklyHoursChart />
-        <WeakestTopics topics={topics} courses={courses} />
+        <WeakestTopics
+          topics={topics}
+          courses={courses}
+          onStartQuickCheck={(topic) => setQuickCheckTopic(topic)}
+        />
       </div>
+
+      {/* Quick Check Modal */}
+      <QuickCheckModal
+        topic={quickCheckTopic}
+        open={Boolean(quickCheckTopic)}
+        onOpenChange={(open) => {
+          if (!open) setQuickCheckTopic(null);
+        }}
+        onSuccess={async () => {
+          const allTops = await dataStore.getAllTopics();
+          setTopics(allTops);
+        }}
+      />
     </div>
   );
 }

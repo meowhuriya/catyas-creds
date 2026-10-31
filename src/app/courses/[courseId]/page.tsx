@@ -39,6 +39,9 @@ import { TopicChecklist } from "@/components/courses/topic-checklist";
 import { UnitVideoGallery } from "@/components/courses/unit-video-gallery";
 import { ResetSyllabusDialog } from "@/components/courses/reset-syllabus-dialog";
 import { TidyTopicsDialog } from "@/components/courses/tidy-topics-dialog";
+import { QuickCheckModal } from "@/components/courses/quick-check-modal";
+import { MilestoneBanner } from "@/components/ui/milestone-banner";
+import { calculateUnitMastery } from "@/lib/mastery/mastery-engine";
 import {
   DndContext,
   closestCenter,
@@ -98,6 +101,7 @@ export default function CourseDetailPage() {
   const [createAssessmentOpen, setCreateAssessmentOpen] = React.useState(false);
   const [resetSyllabusOpen, setResetSyllabusOpen] = React.useState(false);
   const [tidyTopicsOpen, setTidyTopicsOpen] = React.useState(false);
+  const [quickCheckTopic, setQuickCheckTopic] = React.useState<Topic | null>(null);
   const [activeQuizAssessment, setActiveQuizAssessment] = React.useState<Assessment | null>(null);
   const [activeAssignmentAssessment, setActiveAssignmentAssessment] = React.useState<Assessment | null>(null);
   const [aiQuizDraftOpen, setAiQuizDraftOpen] = React.useState(false);
@@ -369,6 +373,11 @@ export default function CourseDetailPage() {
     ? topics.filter((t) => t.unitId === activeUnit.id).sort((a, b) => a.order - b.order)
     : [];
 
+  const activeUnitMastery = calculateUnitMastery(
+    activeUnitTopics,
+    activeUnit?.electiveExperimentsCount || course.electiveExperimentsCount
+  );
+
   return (
     <div className="space-y-6 select-none">
       {/* 160px Algorithmic Cover Banner */}
@@ -480,6 +489,15 @@ export default function CourseDetailPage() {
         />
       )}
 
+      {/* Milestone Banner when active unit is mastered */}
+      {activeUnitMastery.isCompleted && (
+        <MilestoneBanner
+          type="unit"
+          title={`${activeUnit?.title || "Unit"} Mastered!`}
+          subtitle={`All ${activeUnitMastery.completedTopics} of ${activeUnitMastery.totalTopics} curricular topics are completed with verified watch progress and check mastery.`}
+        />
+      )}
+
       {/* Course Navigation Tabs */}
       <Tabs defaultValue="units" className="w-full">
         <TabsList>
@@ -528,13 +546,7 @@ export default function CourseDetailPage() {
                     onDeleteTopic={handleDeleteTopic}
                     onSplitTopic={handleSplitTopic}
                     onMergeTopics={handleMergeTopics}
-                    onStartQuickCheck={() => {
-                      if (assessments.length > 0) {
-                        setActiveQuizAssessment(assessments[0]);
-                      } else {
-                        setCreateAssessmentOpen(true);
-                      }
-                    }}
+                    onStartQuickCheck={(topic) => setQuickCheckTopic(topic)}
                   />
                 </div>
               </div>
@@ -1346,6 +1358,17 @@ export default function CourseDetailPage() {
         open={tidyTopicsOpen}
         onOpenChange={setTidyTopicsOpen}
         onApplyTidy={handleApplyTidy}
+      />
+
+      {/* Quick Check Modal */}
+      <QuickCheckModal
+        topic={quickCheckTopic}
+        courseCode={course.code}
+        open={Boolean(quickCheckTopic)}
+        onOpenChange={(open) => {
+          if (!open) setQuickCheckTopic(null);
+        }}
+        onSuccess={loadData}
       />
     </div>
   );

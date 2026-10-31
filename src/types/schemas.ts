@@ -387,7 +387,14 @@ export type TranscriptSnapshot = z.infer<typeof TranscriptSnapshotSchema>;
 export const AuditLogSchema = z.object({
   id: z.string(),
   userId: z.string(),
-  action: z.enum(["lesson_watched", "exam_started", "exam_submitted", "grade_updated"]),
+  action: z.enum([
+    "lesson_watched",
+    "exam_started",
+    "exam_submitted",
+    "grade_updated",
+    "topic_checked",
+    "session_completed",
+  ]),
   entityId: z.string(),
   details: z.string(),
   timestamp: z.string(),
