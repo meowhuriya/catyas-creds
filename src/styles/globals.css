@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #F3F2EE;
+  --color-border: #E4E2DC;
+  --color-ink: #1B1F2A;
+  --color-ink-muted: #5B6070;
+  --color-accent: #A51C30;
+  --color-accent-hover: #8A1627;
+  --color-success: #1F7A4D;
+  --color-warning: #B7791F;
+  --color-danger: #B42318;
+  --color-info: #2F5D8A;
+
+  --focus-ring: 0 0 0 2px #FAFAF8, 0 0 0 4px #A51C30;
+}
+
+.dark {
+  --color-bg: #14161B;
+  --color-surface: #1B1E25;
+  --color-surface-muted: #232731;
+  --color-border: #2E3340;
+  --color-ink: #ECEAE4;
+  --color-ink-muted: #9AA0AE;
+  --color-accent: #D4586B;
+  --color-accent-hover: #E06D7E;
+  --color-success: #2E9E68;
+  --color-warning: #D9942C;
+  --color-danger: #E0483B;
+  --color-info: #4E85BD;
+
+  --focus-ring: 0 0 0 2px #14161B, 0 0 0 4px #D4586B;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enforce tabular figures for all numeric, grade, credit and metrics */
+.tabular-nums,
+[data-tabular-nums="true"],
+.metric-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Accessible crimson focus ring */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: inherit;
+}
+
+/* Print Stylesheet for Official Transcript and Syllabus */
+@media print {
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 15mm 20mm;
+  }
+}

@@ -1,0 +1,784 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // This security rules file assumes the following data structures:
+    //
+    // Collection: users
+    // Document ID: {userId} (matches Firebase Auth UID)
+    // Fields:
+    //   - uid: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - email: string (optional, 3-254 chars, valid email format)
+    //   - displayName: string (optional, 1-100 chars)
+    //   - photoURL: string (optional, 1-2048 chars)
+    //   - currentTermId: string (optional, 1-100 chars)
+    //   - settings: map (optional, max 20 keys)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: terms
+    // Document ID: {termId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - name: string (required, 1-100 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - startDate: string | timestamp (optional, max 50 chars)
+    //   - endDate: string | timestamp (optional, max 50 chars)
+    //   - isCurrent: bool (optional)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: courses
+    // Document ID: {courseId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - termId: string (required, 1-100 chars)
+    //   - code: string (required, 1-50 chars)
+    //   - title: string (required, 1-200 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - department: string (optional, 1-100 chars)
+    //   - level: string (optional, 1-50 chars)
+    //   - credits: number (optional, 0-50)
+    //   - description: string (optional, 0-5000 chars)
+    //   - colorTag: string (optional, 1-50 chars)
+    //   - gradingScheme: map (optional, max 20 keys)
+    //   - passMark: number (optional, 0-100)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: modules
+    // Document ID: {moduleId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - courseId: string (required, 1-100 chars)
+    //   - title: string (required, 1-200 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - order: number (optional)
+    //   - isCollapsed: bool (optional)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: lessons
+    // Document ID: {lessonId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - courseId: string (required, 1-100 chars)
+    //   - title: string (required, 1-300 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - moduleId: string (optional, 1-100 chars)
+    //   - youtubeVideoId: string (optional, 1-32 chars)
+    //   - originalUrl: string (optional, 1-2048 chars)
+    //   - channelTitle: string (optional, 1-200 chars)
+    //   - thumbnailUrl: string (optional, 1-2048 chars)
+    //   - durationSeconds: number (optional, 0-864000)
+    //   - manualDuration: string (optional, 1-20 chars)
+    //   - startTimeSeconds: number (optional, 0-864000)
+    //   - canEmbed: bool (optional)
+    //   - order: number (optional)
+    //   - cachedAt: string | timestamp (optional)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: lessonProgress
+    // Document ID: {progressId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - lessonId: string (required, 1-100 chars)
+    //   - courseId: string (required, 1-100 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - watchedSeconds: number (optional, 0-864000)
+    //   - totalDurationSeconds: number (optional, 0-864000)
+    //   - percentWatched: number (optional, 0-100)
+    //   - isCompleted: bool (optional)
+    //   - lastPositionSeconds: number (optional, 0-864000)
+    //   - completedAt: string | timestamp (optional)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: assessments
+    // Document ID: {assessmentId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - courseId: string (required, 1-100 chars)
+    //   - title: string (required, 1-300 chars)
+    //   - type: string (required, 1-50 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - moduleId: string (optional, 1-100 chars)
+    //   - description: string (optional, 0-10000 chars)
+    //   - maxPoints: number (optional, 0-10000)
+    //   - dueDate: string | timestamp (optional)
+    //   - timeLimitMinutes: number (optional, 0-1440)
+    //   - attemptLimit: number (optional, 0-1000)
+    //   - lockedUntilLessonCompletionPercent: number (optional, 0-100)
+    //   - rubricId: string (optional, 1-100 chars)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: questions
+    // Document ID: {questionId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - assessmentId: string (required, 1-100 chars)
+    //   - courseId: string (required, 1-100 chars)
+    //   - prompt: string (required, 1-10000 chars)
+    //   - type: string (required, 1-50 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - options: list (optional, max 50 items)
+    //   - correctAnswers: list (optional, max 50 items)
+    //   - points: number (optional, 0-1000)
+    //   - explanation: string (optional, 0-5000 chars)
+    //   - order: number (optional)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: attempts
+    // Document ID: {attemptId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - assessmentId: string (required, 1-100 chars)
+    //   - courseId: string (required, 1-100 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - answers: map (optional, max 200 entries)
+    //   - score: number (optional, 0-10000)
+    //   - maxPoints: number (optional, 0-10000)
+    //   - percentage: number (optional, 0-100)
+    //   - startedAt: string | timestamp (optional)
+    //   - submittedAt: string | timestamp (optional)
+    //   - isCompleted: bool (optional)
+    //   - status: string (optional, 1-50 chars)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: rubrics
+    // Document ID: {rubricId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - assessmentId: string (required, 1-100 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - title: string (optional, 1-200 chars)
+    //   - criteria: list (optional, max 50 items)
+    //   - totalPoints: number (optional, 0-10000)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: submissions
+    // Document ID: {submissionId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - assessmentId: string (required, 1-100 chars)
+    //   - courseId: string (required, 1-100 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - submissionType: string (optional, 1-50 chars)
+    //   - content: string (optional, 0-50000 chars)
+    //   - selfAssessment: map (optional, max 50 keys)
+    //   - finalScore: number (optional, 0-10000)
+    //   - gradedAt: string | timestamp (optional)
+    //   - justification: string (optional, 0-5000 chars)
+    //   - status: string (optional, 1-50 chars)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: notes
+    // Document ID: {noteId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - courseId: string (optional, 1-100 chars)
+    //   - lessonId: string (optional, 1-100 chars)
+    //   - title: string (optional, 0-300 chars)
+    //   - content: string (optional, 0-50000 chars)
+    //   - timestamps: list (optional, max 200 items)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: plannerEvents
+    // Document ID: {eventId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - title: string (required, 1-300 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - date: string | timestamp (optional, max 50 chars)
+    //   - startTime: string (optional, 1-20 chars)
+    //   - endTime: string (optional, 1-20 chars)
+    //   - type: string (optional, 1-50 chars)
+    //   - courseId: string (optional, 1-100 chars)
+    //   - assessmentId: string (optional, 1-100 chars)
+    //   - isDone: bool (optional)
+    //   - description: string (optional, 0-2000 chars)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: degreePlans
+    // Document ID: {planId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - title: string (optional, 1-200 chars)
+    //   - totalCreditsTarget: number (optional, 0-1000)
+    //   - currentCredits: number (optional, 0-1000)
+    //   - major: string (optional, 1-100 chars)
+    //   - departmentRequirements: map (optional, max 50 keys)
+    //   - levelRequirements: map (optional, max 50 keys)
+    //   - requirements: list (optional, max 100 items)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // Collection: auditLog
+    // Document ID: {logId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - action: string (required, 1-100 chars)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - entityId: string (optional, 1-100 chars)
+    //   - details: string (optional, 0-10000 chars)
+    //   - timestamp: string | timestamp (optional)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //
+    // Collection: transcriptSnapshots
+    // Document ID: {snapshotId}
+    // Fields:
+    //   - userId: string (required, 1-128 chars, matches auth.uid, immutable)
+    //   - isPublic: bool (required, controls unauthenticated public verification read)
+    //   - id: string (optional, 1-100 chars, immutable)
+    //   - studentName: string (optional, 1-200 chars)
+    //   - issuedAt: string | timestamp (optional)
+    //   - termsSnapshot: list (optional, max 50 items)
+    //   - cgpa: number (optional, 0-10)
+    //   - totalCredits: number (optional, 0-1000)
+    //   - verificationHash: string (optional, 1-256 chars)
+    //   - revokedAt: string | timestamp (optional)
+    //   - createdAt: string | timestamp (optional, immutable)
+    //   - updatedAt: string | timestamp (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Default Deny Root
+    // ===============================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function validString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function validOptionalString(data, field, minLen, maxLen) {
+      return !(field in data) || data[field] == null ||
+             (data[field] is string && data[field].size() >= minLen && data[field].size() <= maxLen);
+    }
+
+    function validOptionalNumber(data, field, minVal, maxVal) {
+      return !(field in data) || data[field] == null ||
+             (data[field] is number && data[field] >= minVal && data[field] <= maxVal);
+    }
+
+    function validOptionalBool(data, field) {
+      return !(field in data) || data[field] == null || data[field] is bool;
+    }
+
+    function validOptionalList(data, field, maxItems) {
+      return !(field in data) || data[field] == null ||
+             (data[field] is list && data[field].size() <= maxItems);
+    }
+
+    function validOptionalMap(data, field, maxKeys) {
+      return !(field in data) || data[field] == null ||
+             (data[field] is map && data[field].size() <= maxKeys);
+    }
+
+    function validOptionalDate(data, field) {
+      return !(field in data) || data[field] == null ||
+             data[field] is timestamp ||
+             (data[field] is string && data[field].size() >= 1 && data[field].size() <= 50);
+    }
+
+    // Ensures userId cannot be tampered with on update, and creation timestamps/IDs remain immutable
+    function areImmutableDocFieldsUnchanged() {
+      return request.resource.data.userId == resource.data.userId &&
+             request.resource.data.userId == request.auth.uid &&
+             (!('createdAt' in resource.data) || request.resource.data.createdAt == resource.data.createdAt) &&
+             (!('id' in resource.data) || request.resource.data.id == resource.data.id);
+    }
+
+    function areImmutableUserFieldsUnchanged() {
+      return request.resource.data.uid == resource.data.uid &&
+             request.resource.data.uid == request.auth.uid &&
+             (!('userId' in resource.data) || request.resource.data.userId == resource.data.userId) &&
+             (!('id' in resource.data) || request.resource.data.id == resource.data.id) &&
+             (!('createdAt' in resource.data) || request.resource.data.createdAt == resource.data.createdAt);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return ('uid' in data && validString(data.uid, 1, 128)) &&
+             validOptionalString(data, 'id', 1, 128) &&
+             validOptionalString(data, 'userId', 1, 128) &&
+             validOptionalString(data, 'email', 3, 254) &&
+             validOptionalString(data, 'displayName', 1, 100) &&
+             validOptionalString(data, 'photoURL', 1, 2048) &&
+             validOptionalString(data, 'currentTermId', 1, 100) &&
+             validOptionalMap(data, 'settings', 20) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidTerm(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('name' in data && validString(data.name, 1, 100)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalDate(data, 'startDate') &&
+             validOptionalDate(data, 'endDate') &&
+             validOptionalBool(data, 'isCurrent') &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidCourse(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('termId' in data && validString(data.termId, 1, 100)) &&
+             ('code' in data && validString(data.code, 1, 50)) &&
+             ('title' in data && validString(data.title, 1, 200)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'department', 1, 100) &&
+             validOptionalString(data, 'level', 1, 50) &&
+             validOptionalNumber(data, 'credits', 0, 50) &&
+             validOptionalString(data, 'description', 0, 5000) &&
+             validOptionalString(data, 'colorTag', 1, 50) &&
+             validOptionalMap(data, 'gradingScheme', 20) &&
+             validOptionalNumber(data, 'passMark', 0, 100) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidModule(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             ('title' in data && validString(data.title, 1, 200)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalNumber(data, 'order', -1000, 100000) &&
+             validOptionalBool(data, 'isCollapsed') &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidLesson(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             ('title' in data && validString(data.title, 1, 300)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'moduleId', 1, 100) &&
+             validOptionalString(data, 'youtubeVideoId', 1, 32) &&
+             validOptionalString(data, 'originalUrl', 1, 2048) &&
+             validOptionalString(data, 'channelTitle', 1, 200) &&
+             validOptionalString(data, 'thumbnailUrl', 1, 2048) &&
+             validOptionalNumber(data, 'durationSeconds', 0, 864000) &&
+             validOptionalString(data, 'manualDuration', 1, 20) &&
+             validOptionalNumber(data, 'startTimeSeconds', 0, 864000) &&
+             validOptionalBool(data, 'canEmbed') &&
+             validOptionalNumber(data, 'order', -1000, 100000) &&
+             validOptionalDate(data, 'cachedAt') &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidLessonProgress(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('lessonId' in data && validString(data.lessonId, 1, 100)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalNumber(data, 'watchedSeconds', 0, 864000) &&
+             validOptionalNumber(data, 'totalDurationSeconds', 0, 864000) &&
+             validOptionalNumber(data, 'percentWatched', 0, 100) &&
+             validOptionalBool(data, 'isCompleted') &&
+             validOptionalNumber(data, 'lastPositionSeconds', 0, 864000) &&
+             validOptionalDate(data, 'completedAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidAssessment(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             ('title' in data && validString(data.title, 1, 300)) &&
+             ('type' in data && validString(data.type, 1, 50)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'moduleId', 1, 100) &&
+             validOptionalString(data, 'description', 0, 10000) &&
+             validOptionalNumber(data, 'maxPoints', 0, 10000) &&
+             validOptionalDate(data, 'dueDate') &&
+             validOptionalNumber(data, 'timeLimitMinutes', 0, 1440) &&
+             validOptionalNumber(data, 'attemptLimit', 0, 1000) &&
+             validOptionalNumber(data, 'lockedUntilLessonCompletionPercent', 0, 100) &&
+             validOptionalString(data, 'rubricId', 1, 100) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidQuestion(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('assessmentId' in data && validString(data.assessmentId, 1, 100)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             ('prompt' in data && validString(data.prompt, 1, 10000)) &&
+             ('type' in data && validString(data.type, 1, 50)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalList(data, 'options', 50) &&
+             validOptionalList(data, 'correctAnswers', 50) &&
+             validOptionalNumber(data, 'points', 0, 1000) &&
+             validOptionalString(data, 'explanation', 0, 5000) &&
+             validOptionalNumber(data, 'order', -1000, 100000) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidAttempt(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('assessmentId' in data && validString(data.assessmentId, 1, 100)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalMap(data, 'answers', 200) &&
+             validOptionalNumber(data, 'score', 0, 10000) &&
+             validOptionalNumber(data, 'maxPoints', 0, 10000) &&
+             validOptionalNumber(data, 'percentage', 0, 100) &&
+             validOptionalDate(data, 'startedAt') &&
+             validOptionalDate(data, 'submittedAt') &&
+             validOptionalBool(data, 'isCompleted') &&
+             validOptionalString(data, 'status', 1, 50) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidRubric(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('assessmentId' in data && validString(data.assessmentId, 1, 100)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'title', 1, 200) &&
+             validOptionalList(data, 'criteria', 50) &&
+             validOptionalNumber(data, 'totalPoints', 0, 10000) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidSubmission(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('assessmentId' in data && validString(data.assessmentId, 1, 100)) &&
+             ('courseId' in data && validString(data.courseId, 1, 100)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'submissionType', 1, 50) &&
+             validOptionalString(data, 'content', 0, 50000) &&
+             validOptionalMap(data, 'selfAssessment', 50) &&
+             validOptionalNumber(data, 'finalScore', 0, 10000) &&
+             validOptionalDate(data, 'gradedAt') &&
+             validOptionalString(data, 'justification', 0, 5000) &&
+             validOptionalString(data, 'status', 1, 50) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidNote(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'courseId', 1, 100) &&
+             validOptionalString(data, 'lessonId', 1, 100) &&
+             validOptionalString(data, 'title', 0, 300) &&
+             validOptionalString(data, 'content', 0, 50000) &&
+             validOptionalList(data, 'timestamps', 200) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidPlannerEvent(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('title' in data && validString(data.title, 1, 300)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalDate(data, 'date') &&
+             validOptionalString(data, 'startTime', 1, 20) &&
+             validOptionalString(data, 'endTime', 1, 20) &&
+             validOptionalString(data, 'type', 1, 50) &&
+             validOptionalString(data, 'courseId', 1, 100) &&
+             validOptionalString(data, 'assessmentId', 1, 100) &&
+             validOptionalBool(data, 'isDone') &&
+             validOptionalString(data, 'description', 0, 2000) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidDegreePlan(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'title', 1, 200) &&
+             validOptionalNumber(data, 'totalCreditsTarget', 0, 1000) &&
+             validOptionalNumber(data, 'currentCredits', 0, 1000) &&
+             validOptionalString(data, 'major', 1, 100) &&
+             validOptionalMap(data, 'departmentRequirements', 50) &&
+             validOptionalMap(data, 'levelRequirements', 50) &&
+             validOptionalList(data, 'requirements', 100) &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    function isValidAuditLog(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('action' in data && validString(data.action, 1, 100)) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'entityId', 1, 100) &&
+             validOptionalString(data, 'details', 0, 10000) &&
+             validOptionalDate(data, 'timestamp') &&
+             validOptionalDate(data, 'createdAt');
+    }
+
+    function isValidTranscriptSnapshot(data) {
+      return ('userId' in data && validString(data.userId, 1, 128)) &&
+             ('isPublic' in data && data.isPublic is bool) &&
+             validOptionalString(data, 'id', 1, 100) &&
+             validOptionalString(data, 'studentName', 1, 200) &&
+             validOptionalDate(data, 'issuedAt') &&
+             validOptionalList(data, 'termsSnapshot', 50) &&
+             validOptionalNumber(data, 'cgpa', 0, 10) &&
+             validOptionalNumber(data, 'totalCredits', 0, 1000) &&
+             validOptionalString(data, 'verificationHash', 1, 256) &&
+             validOptionalDate(data, 'revokedAt') &&
+             validOptionalDate(data, 'createdAt') &&
+             validOptionalDate(data, 'updatedAt');
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // 1. users: Strict owner isolation, zero public or blanket-authenticated read
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) &&
+                       isValidUser(request.resource.data) &&
+                       (!('uid' in request.resource.data) || request.resource.data.uid == userId);
+      allow update: if isOwner(userId) &&
+                       isValidUser(request.resource.data) &&
+                       areImmutableUserFieldsUnchanged();
+      allow delete: if isOwner(userId);
+    }
+
+    // 2. terms: Academic terms (user-isolated)
+    match /terms/{termId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidTerm(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidTerm(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 3. courses: Courses (user-isolated)
+    match /courses/{courseId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidCourse(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidCourse(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 4. modules: Course modules (user-isolated)
+    match /modules/{moduleId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidModule(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidModule(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 5. lessons: Lessons (user-isolated)
+    match /lessons/{lessonId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidLesson(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidLesson(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 6. lessonProgress: Watch progress & verification (user-isolated)
+    match /lessonProgress/{progressId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidLessonProgress(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidLessonProgress(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 7. assessments: Quizzes, assignments, exams (user-isolated)
+    match /assessments/{assessmentId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidAssessment(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidAssessment(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 8. questions: Assessment question bank (user-isolated)
+    match /questions/{questionId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidQuestion(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidQuestion(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 9. attempts: Student quiz and exam attempts (user-isolated)
+    match /attempts/{attemptId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidAttempt(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidAttempt(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 10. rubrics: Assignment rubrics (user-isolated)
+    match /rubrics/{rubricId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidRubric(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidRubric(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 11. submissions: Assignment self-assessment submissions (user-isolated)
+    match /submissions/{submissionId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidSubmission(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidSubmission(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 12. notes: Lesson & course study notes (user-isolated)
+    match /notes/{noteId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidNote(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidNote(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 13. plannerEvents: Study blocks, due dates, milestones (user-isolated)
+    match /plannerEvents/{eventId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidPlannerEvent(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidPlannerEvent(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 14. degreePlans: Degree targets and graduation distributions (user-isolated)
+    match /degreePlans/{planId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidDegreePlan(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidDegreePlan(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 15. auditLog: Immutable student audit trail (user-isolated)
+    match /auditLog/{logId} {
+      allow read: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidAuditLog(request.resource.data);
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidAuditLog(request.resource.data);
+      allow delete: if isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+
+    // 16. transcriptSnapshots: Opt-in public verification & owner management
+    match /transcriptSnapshots/{snapshotId} {
+      // Opt-in public verification: readable by anyone ONLY IF isPublic is true.
+      // Owner can always read their own snapshot regardless of isPublic flag.
+      allow read: if ('isPublic' in resource.data && resource.data.isPublic == true) ||
+                     (isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid);
+
+      // Owner can create their own snapshot
+      allow create: if isAuthenticated() &&
+                       request.resource.data.userId == request.auth.uid &&
+                       isValidTranscriptSnapshot(request.resource.data);
+
+      // Owner can update their own snapshot (e.g., toggle isPublic, revoke).
+      // userId is immutable and cannot be tampered with.
+      allow update: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid &&
+                       areImmutableDocFieldsUnchanged() &&
+                       isValidTranscriptSnapshot(request.resource.data);
+
+      // Owner can delete their own snapshot
+      allow delete: if isAuthenticated() &&
+                       'userId' in resource.data && resource.data.userId == request.auth.uid;
+    }
+  }
+}
