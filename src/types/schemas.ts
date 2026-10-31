@@ -87,6 +87,7 @@ export const CourseSchema = z.object({
     finalExam: 20,
   }),
   passMark: z.number().default(40),
+  electiveExperimentsCount: z.number().nullable().optional(),
   createdAt: z.string(),
 });
 export type Course = z.infer<typeof CourseSchema>;

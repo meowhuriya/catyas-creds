@@ -13,6 +13,7 @@ import {
   Attempt,
   Submission,
   Note,
+  Topic,
 } from "@/types/schemas";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,12 @@ import { WhatIfCalculator } from "@/components/grades/what-if-calculator";
 import { calculateCourseGrades } from "@/lib/grading/grading-engine";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { formatSecondsToTime } from "@/lib/utils";
+import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
+import { UnitJourney } from "@/components/courses/unit-journey";
+import { TopicChecklist } from "@/components/courses/topic-checklist";
+import { UnitVideoGallery } from "@/components/courses/unit-video-gallery";
+import { ResetSyllabusDialog } from "@/components/courses/reset-syllabus-dialog";
+import { TidyTopicsDialog } from "@/components/courses/tidy-topics-dialog";
 import {
   DndContext,
   closestCenter,
@@ -62,6 +69,7 @@ import {
   Sliders,
   FileCheck,
   ClipboardList,
+  RotateCcw,
 } from "lucide-react";
 
 export default function CourseDetailPage() {
@@ -73,12 +81,14 @@ export default function CourseDetailPage() {
 
   const [course, setCourse] = React.useState<Course | null>(null);
   const [modules, setModules] = React.useState<Module[]>([]);
+  const [topics, setTopics] = React.useState<Topic[]>([]);
   const [lessons, setLessons] = React.useState<Lesson[]>([]);
   const [progressList, setProgressList] = React.useState<LessonProgress[]>([]);
   const [assessments, setAssessments] = React.useState<Assessment[]>([]);
   const [attempts, setAttempts] = React.useState<Attempt[]>([]);
   const [submissions, setSubmissions] = React.useState<Submission[]>([]);
   const [notes, setNotes] = React.useState<Note[]>([]);
+  const [activeUnitId, setActiveUnitId] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   // Dialog states
@@ -86,6 +96,8 @@ export default function CourseDetailPage() {
   const [groupModulesOpen, setGroupModulesOpen] = React.useState(false);
   const [gradingSchemeOpen, setGradingSchemeOpen] = React.useState(false);
   const [createAssessmentOpen, setCreateAssessmentOpen] = React.useState(false);
+  const [resetSyllabusOpen, setResetSyllabusOpen] = React.useState(false);
+  const [tidyTopicsOpen, setTidyTopicsOpen] = React.useState(false);
   const [activeQuizAssessment, setActiveQuizAssessment] = React.useState<Assessment | null>(null);
   const [activeAssignmentAssessment, setActiveAssignmentAssessment] = React.useState<Assessment | null>(null);
   const [aiQuizDraftOpen, setAiQuizDraftOpen] = React.useState(false);
@@ -103,9 +115,10 @@ export default function CourseDetailPage() {
   const loadData = React.useCallback(async () => {
     try {
       setLoading(true);
-      const [c, m, l, p, a, n] = await Promise.all([
+      const [c, m, top, l, p, a, n] = await Promise.all([
         dataStore.getCourse(courseId),
         dataStore.getModules(courseId),
+        dataStore.getAllTopics(courseId),
         dataStore.getLessons(courseId),
         dataStore.getAllLessonProgress(courseId),
         dataStore.getAssessments(courseId),
@@ -114,10 +127,15 @@ export default function CourseDetailPage() {
 
       setCourse(c);
       setModules(m);
+      setTopics(top);
       setLessons(l);
       setProgressList(p);
       setAssessments(a);
       setNotes(n);
+
+      if (m.length > 0 && !activeUnitId) {
+        setActiveUnitId(m[0].id);
+      }
 
       // Load attempts & submissions for all assessments
       const [allAttempts, allSubmissions] = await Promise.all([
@@ -136,7 +154,7 @@ export default function CourseDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [courseId, dataStore]);
+  }, [courseId, dataStore, activeUnitId]);
 
   React.useEffect(() => {
     if (courseId) {
@@ -265,23 +283,114 @@ export default function CourseDetailPage() {
     }
   };
 
-  return (
-    <div className="space-y-6">
-      {/* 4px Thin Course Color Tag Bar (Strictly 4px, not a big block) */}
-      <div
-        className="h-1 w-full rounded-full"
-        style={{ backgroundColor: tagColor }}
-      />
+  const handleUpdateTopic = async (topicId: string, updates: Partial<Topic>) => {
+    await dataStore.updateTopic(topicId, updates);
+    await loadData();
+  };
 
-      {/* Course Hero Banner */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 border-b border-app-border pb-6">
+  const handleCreateTopic = async (title: string) => {
+    const currentUnitId = activeUnitId || (modules[0] ? modules[0].id : "");
+    const unitTopics = topics.filter((t) => t.unitId === currentUnitId);
+    await dataStore.createTopic({
+      courseId,
+      unitId: currentUnitId,
+      title,
+      order: unitTopics.length,
+      isDone: false,
+      watchScore: 0,
+      checkScore: 0,
+      topicScore: 0,
+      isStudiedManually: false,
+      isExperiment: false,
+      isSelectedExperiment: true,
+    });
+    await loadData();
+  };
+
+  const handleDeleteTopic = async (topicId: string) => {
+    if (confirm("Are you sure you want to delete this topic from the syllabus?")) {
+      await dataStore.deleteTopic(topicId);
+      await loadData();
+    }
+  };
+
+  const handleSplitTopic = async (topicId: string, title1: string, title2: string) => {
+    const t = topics.find((item) => item.id === topicId);
+    if (!t) return;
+    await dataStore.updateTopic(topicId, { title: title1 });
+    await dataStore.createTopic({
+      courseId: t.courseId,
+      unitId: t.unitId,
+      title: title2,
+      order: t.order + 1,
+      isDone: false,
+      watchScore: 0,
+      checkScore: 0,
+      topicScore: 0,
+      isStudiedManually: false,
+      isExperiment: t.isExperiment,
+      isSelectedExperiment: t.isSelectedExperiment,
+    });
+    await loadData();
+  };
+
+  const handleMergeTopics = async (primaryId: string, secondaryId: string, combinedTitle: string) => {
+    const t1 = topics.find((item) => item.id === primaryId);
+    const t2 = topics.find((item) => item.id === secondaryId);
+    if (!t1 || !t2) return;
+    const higherWatch = Math.max(t1.watchScore, t2.watchScore);
+    const higherCheck = Math.max(t1.checkScore, t2.checkScore);
+    const totalScore = higherWatch + higherCheck;
+    await dataStore.updateTopic(primaryId, {
+      title: combinedTitle,
+      watchScore: higherWatch,
+      checkScore: higherCheck,
+      topicScore: totalScore,
+      isDone: totalScore >= 70,
+    });
+    await dataStore.deleteTopic(secondaryId);
+    await loadData();
+  };
+
+  const handleResetSyllabus = async () => {
+    await dataStore.resetCourseToOriginalSyllabus(courseId);
+    await loadData();
+  };
+
+  const handleApplyTidy = async (cleanedTopics: { id: string; title: string }[]) => {
+    for (const item of cleanedTopics) {
+      await dataStore.updateTopic(item.id, { title: item.title });
+    }
+    await loadData();
+  };
+
+  const activeUnit = modules.find((m) => m.id === activeUnitId) || modules[0];
+  const activeUnitTopics = activeUnit
+    ? topics.filter((t) => t.unitId === activeUnit.id).sort((a, b) => a.order - b.order)
+    : [];
+
+  return (
+    <div className="space-y-6 select-none">
+      {/* 160px Algorithmic Cover Banner */}
+      <div className="rounded-[14px] overflow-hidden shadow-card border border-[var(--color-border)]">
+        <AlgorithmicCover
+          courseCode={course.code}
+          courseTitle={course.title}
+          department={course.department}
+          colorTag={course.colorTag}
+          height={160}
+        />
+      </div>
+
+      {/* Course Hero Meta & Actions */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 border-b border-[var(--color-border)] pb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs text-app-ink-muted">
+          <div className="flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
             <span
               className="h-2 w-2 rounded-full"
               style={{ backgroundColor: tagColor }}
             />
-            <span className="font-mono uppercase font-bold text-app-accent">
+            <span className="font-mono uppercase font-bold text-[var(--color-accent)]">
               {course.code}
             </span>
             <span>•</span>
@@ -292,17 +401,16 @@ export default function CourseDetailPage() {
             <span className="font-mono">Level {course.level}</span>
           </div>
 
-          <h1 className="mt-1.5 font-serif text-2xl md:text-3xl font-bold tracking-tight text-app-ink">
+          <h1 className="mt-1.5 font-serif text-2xl md:text-3xl font-bold tracking-tight text-[var(--color-ink)]">
             {course.title}
           </h1>
 
-          <p className="mt-2 text-xs text-app-ink-muted max-w-2xl leading-relaxed">
-            {course.description || "No course description provided."}
+          <p className="mt-2 text-xs text-[var(--color-ink-muted)] max-w-2xl leading-relaxed">
+            {course.description || "Foundational academic curriculum in engineering."}
           </p>
 
-          {/* Credit suggestion indicator */}
-          <div className="mt-3 flex items-center gap-2 text-xs text-app-ink-muted">
-            <span className="font-mono font-semibold text-app-ink tabular-nums">
+          <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
+            <span className="font-mono font-semibold text-[var(--color-ink)] tabular-nums">
               {course.credits} Credits Assigned
             </span>
             <span>•</span>
@@ -310,44 +418,141 @@ export default function CourseDetailPage() {
               Total Watch Time: {totalKnownHours} hrs
             </span>
             {suggestedCredits !== course.credits && (
-              <span className="rounded bg-app-surface-muted px-1.5 py-0.5 text-[11px] text-app-info font-medium">
+              <span className="rounded bg-[var(--color-surface-muted)] px-1.5 py-0.5 text-[11px] text-[var(--color-info)] font-medium">
                 Watch time suggestion: {suggestedCredits} cr (at {hoursPerCredit}h/cr)
               </span>
             )}
           </div>
         </div>
 
-        {/* Top Right Action & Progress Ring */}
-        <div className="flex items-center gap-4 shrink-0">
-          <ProgressRing
-            percentage={percentComplete}
-            size={56}
-            strokeWidth={4.5}
-            color={tagColor}
-          />
+        {/* Action Buttons Row */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setResetSyllabusOpen(true)}
+            className="gap-1.5 text-xs text-[#B7791F] border-[#B7791F]/30 hover:bg-[#B7791F]/10"
+            title="Reset this course to the original syllabus definition"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span>Reset Syllabus</span>
+          </Button>
 
-          <div className="flex flex-col gap-1.5">
-            <Button
-              size="sm"
-              onClick={() => setAddLessonsOpen(true)}
-              className="gap-1.5 text-xs shadow-sm"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Add Lessons</span>
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setTidyTopicsOpen(true)}
+            className="gap-1.5 text-xs text-[var(--color-accent)] border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/10"
+            title="Clean raw syllabus topics with AI"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>Tidy Topics</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setGradingSchemeOpen(true)}
+            className="gap-1.5 text-xs"
+          >
+            <Sliders className="h-3.5 w-3.5" />
+            <span>Grading Scheme</span>
+          </Button>
+
+          <Button
+            size="sm"
+            onClick={() => setAddLessonsOpen(true)}
+            className="gap-1.5 text-xs shadow-sm"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Videos</span>
+          </Button>
         </div>
       </div>
 
+      {/* Unit Journey Visual Roadmap */}
+      {modules.length > 0 && (
+        <UnitJourney
+          units={modules}
+          topics={topics}
+          activeUnitId={activeUnit?.id}
+          onSelectUnit={(uId) => setActiveUnitId(uId)}
+        />
+      )}
+
       {/* Course Navigation Tabs */}
-      <Tabs defaultValue="classwork" className="w-full">
+      <Tabs defaultValue="units" className="w-full">
         <TabsList>
+          <TabsTrigger value="units">Units & Topics</TabsTrigger>
           <TabsTrigger value="classwork">Classwork & Modules</TabsTrigger>
-          <TabsTrigger value="stream">Stream</TabsTrigger>
           <TabsTrigger value="grades">Gradebook</TabsTrigger>
           <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
           <TabsTrigger value="notes">Notes ({notes.length})</TabsTrigger>
         </TabsList>
+
+        {/* Tab 0: Units & Topics (Primary split view) */}
+        <TabsContent value="units" className="space-y-6 pt-2">
+          {modules.length === 0 ? (
+            <EmptyState
+              icon={BookOpen}
+              title="No Units in Course"
+              description="This course does not have any units or modules configured."
+              actionLabel="Reset to Official Syllabus"
+              onAction={handleResetSyllabus}
+            />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+              {/* Left Column (7 cols): Topic Checklist */}
+              <div className="lg:col-span-7">
+                <div className="academic-card p-5">
+                  <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)]/70 mb-4">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--color-accent)]">
+                        Unit {activeUnit?.unitNumber || 1}
+                      </span>
+                      <h3 className="font-serif text-lg font-bold text-[var(--color-ink)]">
+                        {activeUnit?.title || "Curricular Unit Topics"}
+                      </h3>
+                    </div>
+                    <span className="text-xs text-[var(--color-ink-muted)] font-mono tabular-nums">
+                      {activeUnitTopics.filter((t) => t.isDone).length} / {activeUnitTopics.length} Done
+                    </span>
+                  </div>
+
+                  <TopicChecklist
+                    course={course}
+                    unit={activeUnit || modules[0]}
+                    topics={activeUnitTopics}
+                    onUpdateTopic={handleUpdateTopic}
+                    onCreateTopic={handleCreateTopic}
+                    onDeleteTopic={handleDeleteTopic}
+                    onSplitTopic={handleSplitTopic}
+                    onMergeTopics={handleMergeTopics}
+                    onStartQuickCheck={() => {
+                      if (assessments.length > 0) {
+                        setActiveQuizAssessment(assessments[0]);
+                      } else {
+                        setCreateAssessmentOpen(true);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Right Column (5 cols): Unit Video Gallery */}
+              <div className="lg:col-span-5">
+                <UnitVideoGallery
+                  course={course}
+                  unit={activeUnit || modules[0]}
+                  videos={lessons}
+                  progressList={progressList}
+                  topics={topics}
+                  onOpenAddVideos={() => setAddLessonsOpen(true)}
+                />
+              </div>
+            </div>
+          )}
+        </TabsContent>
 
         {/* Tab 1: Classwork */}
         <TabsContent value="classwork" className="space-y-6 pt-2">
@@ -1120,6 +1325,25 @@ export default function CourseDetailPage() {
         open={aiQuizDraftOpen}
         onOpenChange={setAiQuizDraftOpen}
         onSuccess={loadData}
+      />
+
+      {/* Reset Syllabus Dialog */}
+      <ResetSyllabusDialog
+        courseCode={course.code}
+        courseTitle={course.title}
+        open={resetSyllabusOpen}
+        onOpenChange={setResetSyllabusOpen}
+        onConfirm={handleResetSyllabus}
+      />
+
+      {/* Tidy Topics Dialog */}
+      <TidyTopicsDialog
+        courseCode={course.code}
+        courseTitle={course.title}
+        topics={topics}
+        open={tidyTopicsOpen}
+        onOpenChange={setTidyTopicsOpen}
+        onApplyTidy={handleApplyTidy}
       />
     </div>
   );
