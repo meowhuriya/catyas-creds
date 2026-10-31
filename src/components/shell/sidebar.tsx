@@ -103,7 +103,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 )}
                 title={collapsed ? item.label : undefined}
               >
-                {/* 4px Harvard crimson active indicator */}
+                {/* 4px crimson active indicator */}
                 {isActive && (
                   <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-app-accent" />
                 )}

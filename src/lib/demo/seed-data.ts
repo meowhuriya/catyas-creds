@@ -18,7 +18,7 @@ import {
 
 export const DEMO_USER: UserProfile = {
   uid: "demo-student-catya",
-  email: "catya.student@meridian.edu",
+  email: "catya.student@catyascreds.edu",
   displayName: "Catya V.",
   currentTermId: "term-spring-2026",
   settings: {
@@ -240,7 +240,7 @@ export const DEMO_LESSONS: Lesson[] = [
     userId: "demo-student-catya",
     courseId: "course-phil140",
     moduleId: "mod-phil140-1",
-    youtubeVideoId: "kBdfcR-8hEY", // Harvard Justice: The Moral Side of Murder
+    youtubeVideoId: "kBdfcR-8hEY", // Justice: The Moral Side of Murder
     originalUrl: "https://www.youtube.com/watch?v=kBdfcR-8hEY",
     title: "Justice: What's The Right Thing To Do? Episode 01",
     channelTitle: "Harvard Justice",

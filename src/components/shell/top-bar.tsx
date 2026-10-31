@@ -187,7 +187,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
                 {currentUser?.displayName || "Catya V."}
               </div>
               <div className="text-xs text-app-ink-muted truncate">
-                {currentUser?.email || "catya.student@meridian.edu"}
+                {currentUser?.email || "catya.student@catyascreds.edu"}
               </div>
               <div className="mt-1 flex items-center gap-1.5">
                 <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />

@@ -22,13 +22,12 @@ export function ShortcutDialog({
   onOpenCommand,
 }: ShortcutDialogProps) {
   const router = useRouter();
-  const [lastKey, setLastKey] = React.useState<string | null>(null);
+  const lastKeyRef = React.useRef<string | null>(null);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
-    let keyTimeout: NodeJS.Timeout;
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if typing inside input, textarea, or contentEditable
+      // Ignore if typing inside input, textarea, select, or contentEditable
       const target = e.target as HTMLElement;
       if (
         ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) ||
@@ -37,7 +36,7 @@ export function ShortcutDialog({
         return;
       }
 
-      // '?' triggers shortcut dialog
+      // '?' triggers shortcut dialog (Shift + / or just ?)
       if (e.key === "?" && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
         onOpenChange(true);
@@ -52,7 +51,7 @@ export function ShortcutDialog({
       }
 
       // Sequence: 'g' then another key
-      if (lastKey === "g") {
+      if (lastKeyRef.current === "g") {
         if (e.key === "d") {
           e.preventDefault();
           router.push("/");
@@ -65,32 +64,41 @@ export function ShortcutDialog({
         } else if (e.key === "g") {
           e.preventDefault();
           router.push("/grades");
+        } else if (e.key === "t") {
+          e.preventDefault();
+          router.push("/transcript");
+        } else if (e.key === "s") {
+          e.preventDefault();
+          router.push("/settings");
         }
-        setLastKey(null);
-        clearTimeout(keyTimeout);
+        lastKeyRef.current = null;
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
         return;
       }
 
       if (e.key === "g") {
-        setLastKey("g");
-        keyTimeout = setTimeout(() => {
-          setLastKey(null);
-        }, 1200);
+        lastKeyRef.current = "g";
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+          lastKeyRef.current = null;
+        }, 1500);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      clearTimeout(keyTimeout);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [lastKey, router, onOpenChange, onOpenCommand]);
+  }, [router, onOpenChange, onOpenCommand]);
 
   const shortcuts = [
     { key: "g then d", desc: "Go to Dashboard" },
     { key: "g then c", desc: "Go to Courses" },
     { key: "g then p", desc: "Go to Academic Planner" },
-    { key: "g then g", desc: "Go to Grades & SGPA" },
+    { key: "g then g", desc: "Go to Grades & Standing" },
+    { key: "g then t", desc: "Go to Official Transcript" },
+    { key: "g then s", desc: "Go to Academic Settings" },
     { key: "⌘K / Ctrl+K / /", desc: "Open Command Palette / Search" },
     { key: "?", desc: "Open Keyboard Shortcuts Help" },
     { key: "j", desc: "Next lesson (in Lesson Player)" },

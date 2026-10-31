@@ -49,6 +49,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           className="flex-1 overflow-y-auto px-4 py-6 md:px-8 max-w-content w-full mx-auto pb-24 md:pb-12"
         >
           {children}
+
+          {/* Academic Portal Footer */}
+          <footer className="mt-16 border-t border-app-border pt-6 pb-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-medium text-app-ink">Catya's Creds</span>
+              <span>·</span>
+              <span>Self-awarded credits. Not accredited by any institution.</span>
+            </div>
+            <div className="flex items-center gap-4 text-app-ink-muted">
+              <a
+                href="https://www.youtube.com/t/terms"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:underline hover:text-app-ink transition-colors"
+              >
+                YouTube Terms of Service
+              </a>
+              <span>·</span>
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noreferrer"
+                className="hover:underline hover:text-app-ink transition-colors"
+              >
+                Google Privacy Policy
+              </a>
+            </div>
+          </footer>
         </main>
       </div>
 
