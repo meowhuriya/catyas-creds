@@ -15,6 +15,7 @@ import {
   Note,
   Topic,
   CourseAttendance,
+  ExamDate,
 } from "@/types/schemas";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ import { TopicAiChatModal } from "@/components/topics/topic-ai-chat-modal";
 import { MilestoneBanner } from "@/components/ui/milestone-banner";
 import { calculateUnitMastery, calculateCourseMastery } from "@/lib/mastery/mastery-engine";
 import { AttendanceTracker } from "@/components/courses/attendance-tracker";
+import { ExamPrepMode } from "@/components/courses/exam-prep-mode";
 import { calculateAttendanceStats, AttendanceStats } from "@/lib/attendance/attendance-engine";
 import {
   DndContext,
@@ -99,6 +101,7 @@ export default function CourseDetailPage() {
   const [submissions, setSubmissions] = React.useState<Submission[]>([]);
   const [notes, setNotes] = React.useState<Note[]>([]);
   const [attendanceRecord, setAttendanceRecord] = React.useState<CourseAttendance | null>(null);
+  const [courseExamDate, setCourseExamDate] = React.useState<ExamDate | null>(null);
   const [attStats, setAttStats] = React.useState<AttendanceStats>(calculateAttendanceStats(0, 0, 75));
   const [activeUnitId, setActiveUnitId] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
@@ -131,7 +134,7 @@ export default function CourseDetailPage() {
       if (!course) {
         setLoading(true);
       }
-      const [c, m, top, l, p, a, n, att] = await Promise.all([
+      const [c, m, top, l, p, a, n, att, exm] = await Promise.all([
         dataStore.getCourse(courseId),
         dataStore.getModules(courseId),
         dataStore.getAllTopics(courseId),
@@ -140,6 +143,7 @@ export default function CourseDetailPage() {
         dataStore.getAssessments(courseId),
         dataStore.getAllNotes(courseId),
         dataStore.getCourseAttendance(courseId),
+        dataStore.getCourseExamDate(courseId),
       ]);
 
       setCourse(c);
@@ -150,6 +154,7 @@ export default function CourseDetailPage() {
       setAssessments(a);
       setNotes(n);
       setAttendanceRecord(att);
+      setCourseExamDate(exm);
       setAttStats(calculateAttendanceStats(att.classesHeld, att.classesAttended, att.minimumPercentage));
 
       if (m.length > 0 && !activeUnitId) {
@@ -445,7 +450,7 @@ export default function CourseDetailPage() {
             {course.description || "Foundational academic curriculum in engineering."}
           </p>
 
-          <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--color-ink-muted)]">
             <span className="font-sans font-semibold text-[var(--color-ink)] tabular-nums">
               {course.credits} Credits Assigned
             </span>
@@ -484,6 +489,20 @@ export default function CourseDetailPage() {
                   </span>
                 </>
               )}
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setActiveTab("exam-prep")}
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] border text-[11px] font-sans font-semibold transition-colors cursor-pointer bg-[var(--color-surface-muted)] text-[var(--color-ink)] border-[var(--color-border)] hover:bg-[var(--color-surface)]"
+              title="Click to view and manage exam preparation targets"
+            >
+              <Calendar className="h-3 w-3 text-[#A51C30]" />
+              <span>
+                {courseExamDate
+                  ? `Exam: ${courseExamDate.date} (${courseExamDate.examTitle})`
+                  : "Exam Prep: Set Date"}
+              </span>
             </button>
           </div>
         </div>
@@ -556,6 +575,12 @@ export default function CourseDetailPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
           <TabsTrigger value="units">Units & Topics</TabsTrigger>
+          <TabsTrigger value="exam-prep" className="gap-1.5">
+            <span>Exam Prep</span>
+            {courseExamDate && (
+              <span className="h-1.5 w-1.5 rounded-full bg-[#A51C30]" />
+            )}
+          </TabsTrigger>
           <TabsTrigger value="classwork">Classwork & Modules</TabsTrigger>
           <TabsTrigger value="attendance" className="gap-1.5">
             <span>Attendance</span>
@@ -990,6 +1015,17 @@ export default function CourseDetailPage() {
               </div>
             </DndContext>
           )}
+        </TabsContent>
+
+        {/* Tab: Exam Prep Mode */}
+        <TabsContent value="exam-prep" className="space-y-6 pt-2">
+          <ExamPrepMode
+            course={course}
+            modules={modules}
+            topics={topics}
+            onTopicUpdate={loadData}
+            onOpenQuickCheck={(top) => setQuickCheckTopic(top)}
+          />
         </TabsContent>
 
         {/* Tab: Attendance Tracker */}

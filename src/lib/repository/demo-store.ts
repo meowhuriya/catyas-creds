@@ -20,6 +20,7 @@ import {
   AuditLog,
   CourseAttendance,
   AttendanceLogEntry,
+  ExamDate,
 } from "@/types/schemas";
 import {
   CLEAN_USER,
@@ -81,6 +82,7 @@ export class DemoDataStore implements DataStore {
   private topics: Topic[];
   private studySessions: StudySession[];
   private attendance: CourseAttendance[];
+  private examDates: ExamDate[];
 
   constructor() {
     const isSample = getStorage<boolean>("is_sample_active", false);
@@ -110,6 +112,7 @@ export class DemoDataStore implements DataStore {
     this.auditLogs = getStorage<AuditLog[]>("auditLogs", []);
     this.studySessions = getStorage<StudySession[]>("studySessions", isSample ? SAMPLE_STUDY_SESSIONS : []);
     this.attendance = getStorage<CourseAttendance[]>("attendance", isSample ? SAMPLE_ATTENDANCE : []);
+    this.examDates = getStorage<ExamDate[]>("exam_dates", []);
   }
 
   isDemoMode(): boolean {
@@ -146,6 +149,7 @@ export class DemoDataStore implements DataStore {
     this.plannerEvents = [];
     this.studySessions = [];
     this.attendance = [];
+    this.examDates = [];
     this.snapshots = [];
     this.auditLogs = [];
     this.persistAll();
@@ -186,6 +190,7 @@ export class DemoDataStore implements DataStore {
     setStorage("topics", this.topics);
     setStorage("studySessions", this.studySessions);
     setStorage("attendance", this.attendance);
+    setStorage("exam_dates", this.examDates);
   }
 
   async getUser(): Promise<UserProfile | null> {
@@ -834,6 +839,42 @@ export class DemoDataStore implements DataStore {
     });
   }
 
+  async getCourseExamDate(courseId: string): Promise<ExamDate | null> {
+    const exam = this.examDates.find((e) => e.courseId === courseId);
+    return exam ? { ...exam } : null;
+  }
+
+  async getAllExamDates(): Promise<ExamDate[]> {
+    return [...this.examDates];
+  }
+
+  async saveCourseExamDate(
+    courseId: string,
+    data: { examTitle: string; date: string; targetScore?: number }
+  ): Promise<ExamDate> {
+    const existingIdx = this.examDates.findIndex((e) => e.courseId === courseId);
+    const exam: ExamDate = {
+      id: existingIdx !== -1 ? this.examDates[existingIdx].id : `exam-${courseId}-${Date.now()}`,
+      userId: this.user.uid,
+      courseId,
+      examTitle: data.examTitle || "Final Examination",
+      date: data.date,
+      targetScore: data.targetScore ?? 85,
+    };
+    if (existingIdx !== -1) {
+      this.examDates[existingIdx] = exam;
+    } else {
+      this.examDates.push(exam);
+    }
+    setStorage("exam_dates", this.examDates);
+    return { ...exam };
+  }
+
+  async deleteCourseExamDate(courseId: string): Promise<void> {
+    this.examDates = this.examDates.filter((e) => e.courseId !== courseId);
+    setStorage("exam_dates", this.examDates);
+  }
+
   async exportAllDataJson(): Promise<string> {
     const payload = {
       user: this.user,
@@ -852,6 +893,7 @@ export class DemoDataStore implements DataStore {
       plannerEvents: this.plannerEvents,
       studySessions: this.studySessions,
       attendance: this.attendance,
+      examDates: this.examDates,
       degreePlan: this.degreePlan,
       snapshots: this.snapshots,
       auditLogs: this.auditLogs,
@@ -878,6 +920,7 @@ export class DemoDataStore implements DataStore {
     if (Array.isArray(data.plannerEvents)) this.plannerEvents = data.plannerEvents;
     if (Array.isArray(data.studySessions)) this.studySessions = data.studySessions;
     if (Array.isArray(data.attendance)) this.attendance = data.attendance;
+    if (Array.isArray(data.examDates)) this.examDates = data.examDates;
     if (data.degreePlan) this.degreePlan = data.degreePlan;
     if (Array.isArray(data.snapshots)) this.snapshots = data.snapshots;
     if (Array.isArray(data.auditLogs)) this.auditLogs = data.auditLogs;

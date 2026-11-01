@@ -20,6 +20,7 @@ import {
   Topic,
   StudySession,
   CourseAttendance,
+  ExamDate,
 } from "@/types/schemas";
 
 export interface DataStore {
@@ -162,6 +163,15 @@ export interface DataStore {
     status: "present" | "absent",
     note?: string
   ): Promise<CourseAttendance>;
+
+  // Exam Prep Mode & Milestone
+  getCourseExamDate(courseId: string): Promise<ExamDate | null>;
+  getAllExamDates(): Promise<ExamDate[]>;
+  saveCourseExamDate(
+    courseId: string,
+    exam: { examTitle: string; date: string; targetScore?: number }
+  ): Promise<ExamDate>;
+  deleteCourseExamDate(courseId: string): Promise<void>;
 
   // Demo / Sample Data Controls
   loadDemoData(): Promise<void>;

@@ -22,6 +22,7 @@ import {
   StudySession,
   CourseAttendance,
   AttendanceLogEntry,
+  ExamDate,
 } from "@/types/schemas";
 import { db, auth } from "@/lib/firebase/config";
 import {
@@ -798,6 +799,56 @@ export class FirebaseDataStore implements DataStore {
       classesAttended: newAttended,
       logs: updatedLogs,
     });
+  }
+
+  async getCourseExamDate(courseId: string): Promise<ExamDate | null> {
+    if (!db) return null;
+    const q = query(
+      collection(db, "examDates"),
+      where("userId", "==", this.currentUid),
+      where("courseId", "==", courseId)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs[0].data() as ExamDate;
+    }
+    return null;
+  }
+
+  async getAllExamDates(): Promise<ExamDate[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "examDates"),
+      where("userId", "==", this.currentUid)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as ExamDate);
+  }
+
+  async saveCourseExamDate(
+    courseId: string,
+    data: { examTitle: string; date: string; targetScore?: number }
+  ): Promise<ExamDate> {
+    if (!db) throw new Error("Firestore not configured");
+    const existing = await this.getCourseExamDate(courseId);
+    const exam: ExamDate = {
+      id: existing ? existing.id : `exam-${this.currentUid}-${courseId}`,
+      userId: this.currentUid,
+      courseId,
+      examTitle: data.examTitle || "Final Examination",
+      date: data.date,
+      targetScore: data.targetScore ?? 85,
+    };
+    await setDoc(doc(db, "examDates", exam.id), exam);
+    return exam;
+  }
+
+  async deleteCourseExamDate(courseId: string): Promise<void> {
+    if (!db) return;
+    const existing = await this.getCourseExamDate(courseId);
+    if (existing) {
+      await deleteDoc(doc(db, "examDates", existing.id));
+    }
   }
 
   async exportAllDataJson(): Promise<string> {

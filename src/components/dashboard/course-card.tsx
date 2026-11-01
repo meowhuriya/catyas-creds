@@ -2,10 +2,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Course, LessonProgress, Assessment, Module, Topic, CourseAttendance } from "@/types/schemas";
+import { Course, LessonProgress, Assessment, Module, Topic, CourseAttendance, ExamDate } from "@/types/schemas";
 import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { ArrowRight, BookOpen, AlertTriangle } from "lucide-react";
+import { ArrowRight, BookOpen, AlertTriangle, Calendar } from "lucide-react";
 import { cleanSyllabusTitle } from "@/lib/utils";
 import { calculateAttendanceStats } from "@/lib/attendance/attendance-engine";
 
@@ -16,6 +16,7 @@ interface CourseCardProps {
   modules?: Module[];
   topics?: Topic[];
   attendance?: CourseAttendance;
+  examDate?: ExamDate;
 }
 
 export function CourseCard({
@@ -25,6 +26,7 @@ export function CourseCard({
   modules = [],
   topics = [],
   attendance,
+  examDate,
 }: CourseCardProps) {
   // Compute course mastery / progress percentage
   const courseTopics = topics.filter((t) => t.courseId === course.id);
@@ -40,6 +42,14 @@ export function CourseCard({
 
   const attStats = attendance && attendance.classesHeld > 0
     ? calculateAttendanceStats(attendance.classesHeld, attendance.classesAttended, attendance.minimumPercentage)
+    : null;
+
+  const daysUntilExam = examDate?.date
+    ? Math.ceil(
+        (new Date(examDate.date + "T00:00:00").getTime() -
+          new Date(new Date().toDateString()).getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
     : null;
 
   // Next unit calculation
@@ -73,6 +83,15 @@ export function CourseCard({
               {course.code}
             </span>
             <div className="flex items-center gap-1.5">
+              {daysUntilExam !== null && daysUntilExam >= 0 && (
+                <span
+                  title={`${examDate?.examTitle || "Exam"} in ${daysUntilExam} days (${examDate?.date})`}
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#A51C30]/10 border border-[#A51C30]/30 text-[11px] font-sans font-semibold text-[#A51C30]"
+                >
+                  <Calendar className="h-2.5 w-2.5" />
+                  <span>{daysUntilExam === 0 ? "Exam Today" : `Exam: ${daysUntilExam}d`}</span>
+                </span>
+              )}
               {attStats && (
                 attStats.isBelowLimit ? (
                   <span

@@ -28,6 +28,7 @@ import {
   Module,
   StudySession,
   CourseAttendance,
+  ExamDate,
 } from "@/types/schemas";
 
 export default function DashboardPage() {
@@ -48,6 +49,7 @@ export default function DashboardPage() {
   const [modules, setModules] = React.useState<Module[]>([]);
   const [studySessions, setStudySessions] = React.useState<StudySession[]>([]);
   const [allAttendance, setAllAttendance] = React.useState<CourseAttendance[]>([]);
+  const [allExamDates, setAllExamDates] = React.useState<ExamDate[]>([]);
   const [quickCheckTopic, setQuickCheckTopic] = React.useState<Topic | null>(null);
   const [weeklyReviewOpen, setWeeklyReviewOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
@@ -73,6 +75,7 @@ export default function DashboardPage() {
           allModules,
           allSessions,
           attList,
+          examList,
         ] = await Promise.all([
           Promise.all(courses.map((c) => dataStore.getLessons(c.id))).then((res) =>
             res.flat()
@@ -87,6 +90,7 @@ export default function DashboardPage() {
           ),
           dataStore.getStudySessions(),
           dataStore.getAllAttendance(),
+          dataStore.getAllExamDates(),
         ]);
 
         setLessons(allLessons);
@@ -96,6 +100,7 @@ export default function DashboardPage() {
         setModules(allModules);
         setStudySessions(allSessions);
         setAllAttendance(attList);
+        setAllExamDates(examList);
       } catch (err) {
         console.error("Dashboard data load error:", err);
       } finally {
@@ -323,6 +328,9 @@ export default function DashboardPage() {
                 const courseAtt = allAttendance.find(
                   (a) => a.courseId === course.id
                 );
+                const courseExamDate = allExamDates.find(
+                  (e) => e.courseId === course.id
+                );
 
                 return (
                   <CourseCard
@@ -333,6 +341,7 @@ export default function DashboardPage() {
                     modules={courseModules}
                     topics={courseTopics}
                     attendance={courseAtt}
+                    examDate={courseExamDate}
                   />
                 );
               })}

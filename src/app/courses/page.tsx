@@ -10,7 +10,7 @@ import { CreateCourseDialog } from "@/components/courses/create-course-dialog";
 import { CreateTermDialog } from "@/components/courses/create-term-dialog";
 import { AiCourseBuilderModal } from "@/components/courses/ai-course-builder-modal";
 import { Plus, Calendar, BookOpen, Filter, Sparkles } from "lucide-react";
-import { LessonProgress, Assessment, Module, Topic, CourseAttendance } from "@/types/schemas";
+import { LessonProgress, Assessment, Module, Topic, CourseAttendance, ExamDate } from "@/types/schemas";
 
 function CoursesContent() {
   const searchParams = useSearchParams();
@@ -21,6 +21,7 @@ function CoursesContent() {
   const [modules, setModules] = React.useState<Module[]>([]);
   const [topics, setTopics] = React.useState<Topic[]>([]);
   const [attendanceList, setAttendanceList] = React.useState<CourseAttendance[]>([]);
+  const [examDatesList, setExamDatesList] = React.useState<ExamDate[]>([]);
   const [selectedTermId, setSelectedTermId] = React.useState<string>("all");
   const [createCourseOpen, setCreateCourseOpen] = React.useState(false);
   const [createTermOpen, setCreateTermOpen] = React.useState(false);
@@ -34,7 +35,7 @@ function CoursesContent() {
 
   React.useEffect(() => {
     async function load() {
-      const [allProg, allAsm, allMods, allTops, allAtt] = await Promise.all([
+      const [allProg, allAsm, allMods, allTops, allAtt, allExams] = await Promise.all([
         dataStore.getAllLessonProgress(),
         Promise.all(courses.map((c) => dataStore.getAssessments(c.id))).then((r) =>
           r.flat()
@@ -44,12 +45,14 @@ function CoursesContent() {
         ),
         dataStore.getAllTopics(),
         dataStore.getAllAttendance(),
+        dataStore.getAllExamDates(),
       ]);
       setProgressList(allProg);
       setAssessments(allAsm);
       setModules(allMods);
       setTopics(allTops);
       setAttendanceList(allAtt);
+      setExamDatesList(allExams);
     }
     if (courses.length > 0) {
       load();
@@ -173,6 +176,7 @@ function CoursesContent() {
               modules={modules.filter((m) => m.courseId === course.id)}
               topics={topics.filter((t) => t.courseId === course.id)}
               attendance={attendanceList.find((a) => a.courseId === course.id)}
+              examDate={examDatesList.find((e) => e.courseId === course.id)}
             />
           ))}
         </div>
