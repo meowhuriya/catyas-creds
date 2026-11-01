@@ -10,22 +10,45 @@ import {
   Tooltip,
   Cell,
 } from "recharts";
+import { StudySession, Lesson } from "@/types/schemas";
 
 interface WeeklyHoursChartProps {
+  sessions?: StudySession[];
+  lessons?: Lesson[];
   className?: string;
 }
 
-export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
-  // 7 days of the current week (Mon-Sun)
-  const data = [
-    { day: "Mon", hours: 2.8, target: 3.0 },
-    { day: "Tue", hours: 3.5, target: 3.0 },
-    { day: "Wed", hours: 1.5, target: 3.0 },
-    { day: "Thu", hours: 4.2, target: 3.0 },
-    { day: "Fri", hours: 3.0, target: 3.0 },
-    { day: "Sat", hours: 5.1, target: 3.0 },
-    { day: "Sun", hours: 2.4, target: 3.0 },
-  ];
+export function WeeklyHoursChart({
+  sessions = [],
+  className = "",
+}: WeeklyHoursChartProps) {
+  // Real study sessions calculated for 7 days of the current week (Mon-Sun)
+  const data = React.useMemo(() => {
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 is Sun, 1 is Mon...
+    const diffToMon = currentDay === 0 ? -6 : 1 - currentDay;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diffToMon);
+    monday.setHours(0, 0, 0, 0);
+
+    return days.map((day, idx) => {
+      const dayDate = new Date(monday);
+      dayDate.setDate(monday.getDate() + idx);
+      const yyyyMmDd = dayDate.toISOString().split("T")[0];
+
+      const dayMinutes = (sessions || [])
+        .filter((s) => s.completedAt && s.completedAt.startsWith(yyyyMmDd))
+        .reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+
+      const hours = Number((dayMinutes / 60).toFixed(1));
+      return {
+        day,
+        hours,
+        target: 3.0,
+      };
+    });
+  }, [sessions]);
 
   const totalWeekHours = data.reduce((acc, d) => acc + d.hours, 0).toFixed(1);
 
@@ -36,15 +59,15 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
           <h3 className="font-serif text-base font-bold text-[var(--color-ink)]">
             Weekly Study Hours
           </h3>
-          <p className="text-xs text-[var(--color-ink-muted)]">
+          <p className="text-sm text-[var(--color-secondary)]">
             Verified lecture time & focus session logs
           </p>
         </div>
         <div className="text-right">
-          <span className="font-serif text-lg font-bold text-[var(--color-accent)] tabular-nums">
+          <span className="font-serif text-lg font-bold text-[var(--color-crimson)] tabular-nums">
             {totalWeekHours} hrs
           </span>
-          <span className="block text-[10px] text-[var(--color-ink-muted)] uppercase tracking-wider">
+          <span className="block eyebrow-label">
             This Week
           </span>
         </div>
@@ -57,12 +80,12 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
               dataKey="day"
               tickLine={false}
               axisLine={{ stroke: "var(--color-border)" }}
-              tick={{ fill: "var(--color-ink-muted)", fontSize: 11 }}
+              tick={{ fill: "var(--color-secondary)", fontSize: 12 }}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
-              tick={{ fill: "var(--color-ink-muted)", fontSize: 11 }}
+              tick={{ fill: "var(--color-secondary)", fontSize: 12 }}
               tickFormatter={(v) => `${v}h`}
             />
             <Tooltip
@@ -71,11 +94,11 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
                 if (active && payload && payload.length) {
                   const item = payload[0].payload;
                   return (
-                    <div className="rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 shadow-sm text-xs">
-                      <span className="font-semibold text-[var(--color-ink)]">
+                    <div className="rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 shadow-sm text-sm">
+                      <span className="font-medium text-[var(--color-ink)]">
                         {item.day}: {item.hours} hours
                       </span>
-                      <span className="block text-[10px] text-[#D89520]">
+                      <span className="block text-xs text-[#D9A441] font-semibold mt-0.5">
                         Target: {item.target}h
                       </span>
                     </div>
@@ -88,7 +111,7 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.hours >= entry.target ? "#A6192E" : "#D89520"}
+                  fill={entry.hours >= entry.target ? "#5E7B5B" : "#C62F3C"}
                 />
               ))}
             </Bar>
@@ -96,12 +119,14 @@ export function WeeklyHoursChart({ className = "" }: WeeklyHoursChartProps) {
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-[11px] text-[var(--color-ink-muted)] border-t border-[var(--color-border)]/60 pt-2.5">
+      <div className="mt-3 flex items-center justify-between text-xs text-[var(--color-secondary)] border-t border-[var(--color-border)]/60 pt-2.5">
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#A6192E]" /> Met Daily Target
+          <span className="h-2 w-2 rounded-full bg-[#5E7B5B]" />
+          Target met (≥ 3h)
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#D89520]" /> Under Target
+          <span className="h-2 w-2 rounded-full bg-[#C62F3C]" />
+          Under target
         </span>
       </div>
     </div>

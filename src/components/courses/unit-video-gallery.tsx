@@ -9,14 +9,11 @@ import {
   ExternalLink,
   CheckCircle2,
   Tag,
-  ArrowUpDown,
   ChevronUp,
   ChevronDown,
-  GripVertical,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Lesson, LessonProgress, Course, Module, Topic } from "@/types/schemas";
-import { formatSecondsToTime } from "@/lib/utils";
+import { formatSecondsToTime, cleanSyllabusTitle, getYoutubeSearchUrl } from "@/lib/utils";
 import { YouTubeThumbnail } from "@/components/courses/youtube-thumbnail";
 import { LinkTopicsModal } from "@/components/courses/link-topics-modal";
 import { useDataStore } from "@/lib/repository";
@@ -112,43 +109,42 @@ export function UnitVideoGallery({
     await refreshData();
   };
 
-  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-    `${course.title} ${unit.title}`
-  )}`;
+  const searchUrl = getYoutubeSearchUrl(course.title, cleanSyllabusTitle(unit.title));
 
   return (
     <div className={`academic-card p-4 sm:p-5 select-none ${className}`}>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[var(--color-border)]/70 mb-4">
-        <div>
-          <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--color-accent)]">
-            Verified Lecture Gallery
-          </span>
-          <h3 className="font-serif text-base font-bold text-[var(--color-ink)]">
-            Unit Lectures & Media
+      {/* Header: One heading "Lectures" with count; two buttons in one row that never wrap */}
+      <div className="flex items-center justify-between gap-3 pb-3 border-b border-[#E5D5C5]/70 mb-4">
+        <div className="flex items-center gap-2">
+          <h3 className="font-serif text-lg font-bold text-[#14161F] dark:text-[#F6EBD3]">
+            Lectures
           </h3>
+          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#F6EBD3] text-[#8A1627] border border-[#E5D5C5] tabular-nums">
+            {unitVideos.length}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Two buttons in one row that never wrap or get cut off */}
+        <div className="flex items-center gap-2 shrink-0 flex-nowrap">
           <a
             href={searchUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-ink)] hover:bg-[var(--color-surface-muted)] transition-colors shadow-xs"
+            className="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap"
             title="Search YouTube for recommended lectures on this unit"
           >
-            <Search className="h-3 w-3 text-[var(--color-ink-muted)]" />
-            <span className="hidden sm:inline">Find on YouTube</span>
+            <Search className="h-3.5 w-3.5 text-[#4B5160]" />
+            <span>Find videos</span>
           </a>
 
-          <Button
-            size="sm"
+          <button
+            type="button"
             onClick={onOpenAddVideos}
-            className="text-xs gap-1.5 shadow-xs"
+            className="btn-primary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Add Videos</span>
-          </Button>
+            <span>Add videos</span>
+          </button>
         </div>
       </div>
 
@@ -160,8 +156,8 @@ export function UnitVideoGallery({
             onClick={() => setActiveFilter("all")}
             className={`px-2.5 py-1 rounded-full font-medium transition-colors ${
               activeFilter === "all"
-                ? "bg-[var(--color-ink)] text-[var(--color-bg)] font-semibold shadow-xs"
-                : "bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                ? "bg-[#14161F] text-white font-semibold shadow-xs"
+                : "bg-[var(--color-surface-muted)] text-[#4B5160] hover:text-[#14161F]"
             }`}
           >
             All ({counts.all})
@@ -171,8 +167,8 @@ export function UnitVideoGallery({
             onClick={() => setActiveFilter("not_started")}
             className={`px-2.5 py-1 rounded-full font-medium transition-colors ${
               activeFilter === "not_started"
-                ? "bg-[var(--color-ink)] text-[var(--color-bg)] font-semibold shadow-xs"
-                : "bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                ? "bg-[#14161F] text-white font-semibold shadow-xs"
+                : "bg-[var(--color-surface-muted)] text-[#4B5160] hover:text-[#14161F]"
             }`}
           >
             Not Started ({counts.notStarted})
@@ -182,8 +178,8 @@ export function UnitVideoGallery({
             onClick={() => setActiveFilter("in_progress")}
             className={`px-2.5 py-1 rounded-full font-medium transition-colors ${
               activeFilter === "in_progress"
-                ? "bg-[var(--color-ink)] text-[var(--color-bg)] font-semibold shadow-xs"
-                : "bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                ? "bg-[#14161F] text-white font-semibold shadow-xs"
+                : "bg-[var(--color-surface-muted)] text-[#4B5160] hover:text-[#14161F]"
             }`}
           >
             In Progress ({counts.inProgress})
@@ -193,8 +189,8 @@ export function UnitVideoGallery({
             onClick={() => setActiveFilter("completed")}
             className={`px-2.5 py-1 rounded-full font-medium transition-colors ${
               activeFilter === "completed"
-                ? "bg-[var(--color-ink)] text-[var(--color-bg)] font-semibold shadow-xs"
-                : "bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                ? "bg-[#14161F] text-white font-semibold shadow-xs"
+                : "bg-[var(--color-surface-muted)] text-[#4B5160] hover:text-[#14161F]"
             }`}
           >
             Completed ({counts.completed})
@@ -202,36 +198,37 @@ export function UnitVideoGallery({
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Compact Empty State */}
       {unitVideos.length === 0 ? (
-        <div className="py-8 text-center flex flex-col items-center justify-center border border-dashed border-[var(--color-border)] rounded-[10px] bg-[var(--color-surface-muted)]/30">
-          <div className="h-10 w-10 rounded-full bg-[var(--color-surface-muted)] flex items-center justify-center text-[var(--color-ink-muted)] mb-2">
-            <Play className="h-5 w-5 ml-0.5" />
-          </div>
-          <h4 className="font-serif text-sm font-bold text-[var(--color-ink)]">
-            No Lectures Added to {unit.title}
-          </h4>
-          <p className="text-xs text-[var(--color-ink-muted)] max-w-sm mt-1 mb-4">
-            Add YouTube lectures by pasting links to track verified watch duration and connect videos to syllabus topics.
+        <div className="p-4 text-center border border-dashed border-[#E5D5C5] rounded-[10px] bg-[#FAF7F2]/60 dark:bg-[#251A1D]/30">
+          <p className="text-sm font-medium text-[#14161F] dark:text-[#F6EBD3]">
+            No lectures added yet.
           </p>
-          <div className="flex items-center gap-2.5">
-            <Button size="sm" onClick={onOpenAddVideos} className="text-xs gap-1.5">
-              <Plus className="h-3.5 w-3.5" />
-              <span>Paste YouTube Links</span>
-            </Button>
+          <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-0.5 mb-3">
+            Search YouTube or paste lecture URLs to start learning.
+          </p>
+          <div className="flex items-center justify-center gap-2">
             <a
               href={searchUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] border border-[var(--color-border)] text-xs font-semibold text-[var(--color-ink)] hover:bg-[var(--color-surface-muted)]"
+              className="btn-secondary text-xs py-1 px-3 inline-flex items-center gap-1"
             >
-              <span>Search YouTube</span>
-              <ExternalLink className="h-3 w-3 ml-0.5 text-[var(--color-ink-muted)]" />
+              <Search className="h-3 w-3" />
+              <span>Find videos</span>
             </a>
+            <button
+              type="button"
+              onClick={onOpenAddVideos}
+              className="btn-primary text-xs py-1 px-3 inline-flex items-center gap-1"
+            >
+              <Plus className="h-3 w-3" />
+              <span>Add videos</span>
+            </button>
           </div>
         </div>
       ) : filteredVideos.length === 0 ? (
-        <div className="py-8 text-center text-xs text-[var(--color-ink-muted)]">
+        <div className="py-6 text-center text-xs text-[#4B5160]">
           No videos match the selected filter &ldquo;{activeFilter.replace("_", " ")}&rdquo;.
         </div>
       ) : (
@@ -245,7 +242,6 @@ export function UnitVideoGallery({
               ? formatSecondsToTime(video.durationSeconds)
               : video.manualDuration || "Lecture";
 
-            // Find linked topic names
             const linkedTopics = unitTopics.filter((t) =>
               video.linkedTopicIds?.includes(t.id)
             );
@@ -253,7 +249,7 @@ export function UnitVideoGallery({
             return (
               <div
                 key={video.id}
-                className="group relative flex flex-col overflow-hidden rounded-[10px] border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-ink-muted)]/50 transition-all shadow-sm"
+                className="group relative flex flex-col overflow-hidden rounded-[10px] border border-[#E5D5C5] bg-white dark:bg-[#1E1416] hover:border-[#14161F]/40 transition-all shadow-sm"
               >
                 {/* 16:9 Thumbnail Container */}
                 <Link
@@ -274,13 +270,13 @@ export function UnitVideoGallery({
                   </div>
 
                   {/* Duration Badge */}
-                  <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded-[4px] bg-black/80 font-mono text-[10px] font-semibold text-white tabular-nums">
+                  <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded-[4px] bg-black/80 font-sans text-xs font-semibold text-white tabular-nums">
                     {duration}
                   </span>
 
                   {/* 90% Completed Check Overlay */}
                   {isCompleted && (
-                    <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#1F7A4D]/90 text-white text-[10px] font-bold shadow-xs">
+                    <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#5E7B5B] text-white text-xs font-bold shadow-xs">
                       <CheckCircle2 className="h-3 w-3" />
                       <span>Completed</span>
                     </div>
@@ -290,7 +286,7 @@ export function UnitVideoGallery({
                   {percent > 0 && (
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40">
                       <div
-                        className="h-full bg-[var(--color-accent)] transition-all"
+                        className="h-full bg-[#A51C30] transition-all"
                         style={{ width: `${percent}%` }}
                       />
                     </div>
@@ -300,13 +296,11 @@ export function UnitVideoGallery({
                 {/* Card Info */}
                 <div className="p-3 flex flex-col flex-1 justify-between gap-2">
                   <div>
-                    {/* Channel name in muted ink */}
-                    <span className="text-[10px] text-[var(--color-ink-muted)] font-semibold truncate block">
+                    <span className="text-xs text-[#4B5160] font-medium truncate block">
                       {video.channelTitle}
                     </span>
 
-                    {/* Title in 2 lines */}
-                    <h4 className="font-serif text-xs font-bold text-[var(--color-ink)] line-clamp-2 mt-0.5 group-hover:text-[var(--color-accent)] transition-colors">
+                    <h4 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3] line-clamp-2 mt-0.5 group-hover:text-[#A51C30] transition-colors">
                       <Link href={`/courses/${course.id}/player/${video.id}`}>
                         {video.title}
                       </Link>
@@ -318,15 +312,15 @@ export function UnitVideoGallery({
                         linkedTopics.map((top) => (
                           <span
                             key={top.id}
-                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] font-medium border border-[var(--color-accent)]/20 truncate max-w-[140px]"
+                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#A51C30]/10 text-[#A51C30] text-xs font-medium border border-[#A51C30]/20 truncate max-w-[140px]"
                             title={top.title}
                           >
-                            <Tag className="h-2.5 w-2.5 shrink-0" />
-                            <span className="truncate">{top.title}</span>
+                            <Tag className="h-3 w-3 shrink-0" />
+                            <span className="truncate">{cleanSyllabusTitle(top.title)}</span>
                           </span>
                         ))
                       ) : (
-                        <span className="text-[10px] text-[var(--color-ink-muted)] italic">
+                        <span className="text-xs text-[#4B5160] italic">
                           No topics linked
                         </span>
                       )}
@@ -334,7 +328,7 @@ export function UnitVideoGallery({
                       <button
                         type="button"
                         onClick={() => setEditingLessonForTopics(video)}
-                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] text-[10px] font-medium border border-[var(--color-border)] transition-colors"
+                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] text-[#4B5160] hover:text-[#14161F] text-xs font-medium border border-[var(--color-border)] transition-colors"
                         title="Link or edit syllabus topics for this video"
                       >
                         <span>{linkedTopics.length > 0 ? "Edit" : "+ Link Topics"}</span>
@@ -342,53 +336,52 @@ export function UnitVideoGallery({
                     </div>
                   </div>
 
-                  {/* Footer & Actions: Player link, Reorder arrows, Watch on YouTube fallback */}
-                  <div className="pt-2 border-t border-[var(--color-border)]/60 flex items-center justify-between text-[11px]">
+                  {/* Footer & Actions */}
+                  <div className="pt-2 border-t border-[#E5D5C5]/60 flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/courses/${course.id}/player/${video.id}`}
-                        className="font-semibold text-[var(--color-accent)] hover:underline flex items-center gap-1"
+                        className="font-semibold text-[#A51C30] hover:underline flex items-center gap-1"
                       >
                         <span>Open Player</span>
-                        <span className="text-xs">→</span>
+                        <span>→</span>
                       </Link>
                       {percent > 0 && !isCompleted && (
-                        <span className="text-[10px] font-mono tabular-nums text-[var(--color-ink-muted)]">
+                        <span className="text-xs tabular-nums text-[#4B5160]">
                           ({percent}%)
                         </span>
                       )}
                     </div>
 
                     <div className="flex items-center gap-1">
-                      {/* Reorder Up/Down */}
                       <button
                         type="button"
                         onClick={() => handleMoveOrder(video.id, "up")}
                         disabled={idx === 0}
-                        className="rounded p-0.5 text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                        className="rounded p-0.5 text-[#4B5160] hover:text-[#14161F] disabled:opacity-30 disabled:pointer-events-none transition-colors"
                         title="Move up"
                       >
-                        <ChevronUp className="h-3.5 w-3.5" />
+                        <ChevronUp className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
                         onClick={() => handleMoveOrder(video.id, "down")}
                         disabled={idx === filteredVideos.length - 1}
-                        className="rounded p-0.5 text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] disabled:opacity-30 disabled:pointer-events-none transition-colors"
+                        className="rounded p-0.5 text-[#4B5160] hover:text-[#14161F] disabled:opacity-30 disabled:pointer-events-none transition-colors"
                         title="Move down"
                       >
-                        <ChevronDown className="h-3.5 w-3.5" />
+                        <ChevronDown className="h-4 w-4" />
                       </button>
 
                       <a
                         href={video.originalUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] inline-flex items-center gap-0.5 text-[10px] ml-1"
+                        className="text-[#4B5160] hover:text-[#14161F] inline-flex items-center gap-0.5 text-xs ml-1"
                         title="Watch on YouTube (external fallback)"
                       >
                         <span>YouTube</span>
-                        <ExternalLink className="h-2.5 w-2.5" />
+                        <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
                   </div>

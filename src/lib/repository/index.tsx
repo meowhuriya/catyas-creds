@@ -11,6 +11,7 @@ import { UserProfile, Term, Course } from "@/types/schemas";
 interface DataStoreContextValue {
   dataStore: DataStore;
   isDemo: boolean;
+  isSampleActive: boolean;
   currentUser: UserProfile | null;
   firebaseUser: User | null;
   currentTerm: Term | null;
@@ -21,6 +22,7 @@ interface DataStoreContextValue {
   signOut: () => Promise<void>;
   loadDemoData: () => Promise<void>;
   clearDemoData: () => Promise<void>;
+  restoreOriginalSyllabus: (courseId?: string) => Promise<void>;
 }
 
 const DataStoreContext = createContext<DataStoreContextValue | null>(null);
@@ -108,10 +110,18 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
     setVersion((v) => v + 1);
   };
 
+  const restoreOriginalSyllabus = async (courseId?: string) => {
+    await dataStore.restoreOriginalSyllabus(courseId);
+    setVersion((v) => v + 1);
+  };
+
+  const isSampleActive = dataStore.isSampleDataActive();
+
   const value = useMemo(
     () => ({
       dataStore,
       isDemo,
+      isSampleActive,
       currentUser,
       firebaseUser,
       currentTerm,
@@ -122,10 +132,12 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
       signOut,
       loadDemoData,
       clearDemoData,
+      restoreOriginalSyllabus,
     }),
     [
       dataStore,
       isDemo,
+      isSampleActive,
       currentUser,
       firebaseUser,
       currentTerm,

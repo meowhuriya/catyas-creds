@@ -149,10 +149,12 @@ export interface DataStore {
     session: Omit<StudySession, "id" | "userId">
   ): Promise<StudySession>;
 
-  // Demo Data Controls
+  // Demo / Sample Data Controls
   loadDemoData(): Promise<void>;
   clearDemoData(): Promise<void>;
+  restoreOriginalSyllabus(courseId?: string): Promise<void>;
   isDemoMode(): boolean;
+  isSampleDataActive(): boolean;
   exportAllDataJson(): Promise<string>;
   importAllDataJson(jsonString: string): Promise<void>;
 }

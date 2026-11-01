@@ -3,55 +3,143 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #FAF4EC;
+  --check-alpha: 0.12;
+  --color-bg: #F6EBD3;
   --color-surface: #FFFFFF;
-  --color-surface-muted: #F3E8DC;
+  --color-surface-muted: #FBF6EC;
   --color-border: #E5D5C5;
-  --color-ink: #1D1618;
-  --color-ink-muted: #6B575A;
-  --color-accent: #A6192E;
+  --color-border-secondary: #CFC8BB;
+  --color-ink: #14161F;
+  --color-ink-muted: #4B5160;
+  --color-eyebrow: #8A1627;
+  --color-accent: #A51C30;
   --color-accent-hover: #881324;
-  --color-burgundy: #3D0D14;
-  --color-gold: #D89520;
-  --color-success: #44724E;
-  --color-warning: #D89520;
-  --color-danger: #B3202C;
-  --color-info: #4A7A96;
+  --color-tomato: #C62F3C;
+  --color-mustard: #D9A441;
+  --color-sage: #5E7B5B;
+  --color-teal: #2F7F86;
+  --color-burgundy: #380C13;
+  --color-gold: #D9A441;
+  --color-success: #5E7B5B;
+  --color-warning: #D9A441;
+  --color-danger: #C62F3C;
+  --color-info: #2F7F86;
 
-  --focus-ring: 0 0 0 2px #FAF4EC, 0 0 0 4px #A6192E;
-  --card-shadow: 0 1px 2px rgba(29, 22, 24, 0.05), 0 8px 24px rgba(29, 22, 24, 0.06);
+  --focus-ring: 0 0 0 2px #F6EBD3, 0 0 0 4px #A51C30;
+  --card-shadow: 0 1px 3px rgba(20, 22, 31, 0.05), 0 8px 24px rgba(20, 22, 31, 0.04);
 }
 
 .dark {
-  --color-bg: #161113;
-  --color-surface: #201A1C;
-  --color-surface-muted: #2B2225;
-  --color-border: #3B2E32;
-  --color-ink: #FAF4EC;
-  --color-ink-muted: #AB9A9D;
+  --check-alpha: 0.10;
+  --color-bg: #1A1214;
+  --color-surface: #221A1C;
+  --color-surface-muted: #2B2124;
+  --color-border: #3D2D31;
+  --color-border-secondary: #524045;
+  --color-ink: #F6EBD3;
+  --color-ink-muted: #A89B9E;
+  --color-eyebrow: #F07B88;
   --color-accent: #E25F70;
   --color-accent-hover: #EE7584;
+  --color-tomato: #E84D58;
+  --color-mustard: #F0B533;
+  --color-sage: #6E936B;
+  --color-teal: #449EA6;
   --color-burgundy: #280A0E;
   --color-gold: #F0B533;
-  --color-success: #558B61;
+  --color-success: #6E936B;
   --color-warning: #F0B533;
   --color-danger: #E84D58;
-  --color-info: #6BA7C7;
+  --color-info: #449EA6;
 
-  --focus-ring: 0 0 0 2px #161113, 0 0 0 4px #E25F70;
-  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --focus-ring: 0 0 0 2px #1A1214, 0 0 0 4px #E25F70;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
+/* Page Gingham Background (Pure CSS - No image file) */
 body {
   background-color: var(--color-bg);
+  background-image: repeating-linear-gradient(0deg, rgba(198, 47, 60, var(--check-alpha)) 0 16px, transparent 16px 32px),
+                    repeating-linear-gradient(90deg, rgba(198, 47, 60, var(--check-alpha)) 0 16px, transparent 16px 32px);
   color: var(--color-ink);
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  line-height: 1.6;
+  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Academic Card Styling */
+/* Background Variations: Plain Paper */
+html[data-bg="plain"] body,
+.bg-plain-paper-body {
+  background-color: var(--color-surface-muted) !important;
+  background-image: none !important;
+}
+
+/* Background Variations: Custom User Wallpaper with Dim & Blur */
+html[data-bg="custom"] body::before {
+  content: "";
+  position: fixed;
+  inset: -12px;
+  background-image: var(--custom-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(var(--custom-blur, 0px));
+  z-index: -2;
+  pointer-events: none;
+}
+
+html[data-bg="custom"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, var(--custom-dim, 0.20));
+  z-index: -1;
+  pointer-events: none;
+}
+
+html[data-bg="custom"] body {
+  background-image: none !important;
+  position: relative;
+}
+
+/* Accent Color Overrides */
+html[data-accent="tomato"] {
+  --color-accent: #C62F3C;
+  --color-accent-hover: #A51C30;
+}
+html[data-accent="mustard"] {
+  --color-accent: #D9A441;
+  --color-accent-hover: #B8821F;
+}
+html[data-accent="sage"] {
+  --color-accent: #5E7B5B;
+  --color-accent-hover: #486145;
+}
+html[data-accent="plum"] {
+  --color-accent: #7A3F6E;
+  --color-accent-hover: #602D56;
+}
+
+/* Text Size Variations */
+html[data-text-size="large"] {
+  font-size: 17px;
+}
+
+/* Headings: Fraunces */
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+/* 10px Gingham Trim Strip (used on Hero and Course Cards) */
+.gingham-trim {
+  height: 10px;
+  background-color: #F6EBD3;
+  background-image: repeating-linear-gradient(0deg, rgba(198, 47, 60, var(--check-alpha, 0.16)) 0 5px, transparent 5px 10px),
+                    repeating-linear-gradient(90deg, rgba(198, 47, 60, var(--check-alpha, 0.16)) 0 5px, transparent 5px 10px);
+}
+
+/* Academic Card Styling - Solid, high readability */
 .academic-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -65,7 +153,55 @@ body {
   box-shadow: 0 2px 4px rgba(20, 22, 31, 0.08), 0 12px 28px rgba(20, 22, 31, 0.09);
 }
 
-/* Enforce tabular figures for all numeric, grade, credit and metrics */
+/* Primary Button: Solid crimson #A51C30 with white text */
+.btn-primary {
+  background-color: #A51C30 !important;
+  color: #FFFFFF !important;
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+.btn-primary:hover {
+  background-color: #881324 !important;
+}
+
+/* Secondary Button: Solid white with 1px #CFC8BB border */
+.btn-secondary {
+  background-color: #FFFFFF !important;
+  color: #14161F !important;
+  border: 1px solid #CFC8BB !important;
+  font-weight: 600;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.btn-secondary:hover {
+  background-color: #FBF6EC !important;
+  border-color: #B5ACA0 !important;
+}
+
+/* Topic Checklist Typography */
+.topic-text {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #14161F;
+}
+
+/* Eyebrow Labels: 12px Bold Uppercase Letter-spaced */
+.eyebrow-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-eyebrow);
+}
+
+/* Course Codes: Plus Jakarta Sans 600 with slight letter-spacing */
+.course-code {
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+/* Enforce tabular figures for all numeric metrics */
 .tabular-nums,
 [data-tabular-nums="true"],
 .metric-num {
@@ -84,6 +220,7 @@ body {
 @media print {
   body {
     background-color: #FFFFFF !important;
+    background-image: none !important;
     color: #000000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

@@ -20,23 +20,20 @@ import {
   AuditLog,
 } from "@/types/schemas";
 import {
-  DEMO_USER,
-  DEMO_TERMS,
-  DEMO_COURSES,
-  DEMO_MODULES,
-  DEMO_LESSONS,
-  DEMO_LESSON_PROGRESS,
-  DEMO_ASSESSMENTS,
-  DEMO_QUESTIONS,
-  DEMO_ATTEMPTS,
-  DEMO_RUBRICS,
-  DEMO_SUBMISSIONS,
-  DEMO_NOTES,
-  DEMO_PLANNER_EVENTS,
+  CLEAN_USER,
+  SEED_TERMS,
+  SEED_COURSES,
+  SEED_MODULES,
+  SEED_TOPICS,
+  SAMPLE_USER,
+  SAMPLE_LESSONS,
+  SAMPLE_LESSON_PROGRESS,
+  SAMPLE_ASSESSMENTS,
+  SAMPLE_STUDY_SESSIONS,
+  SAMPLE_PLANNER_EVENTS,
   DEMO_DEGREE_PLAN,
-  DEMO_AUDIT_LOGS,
+  DEMO_MODULES,
   DEMO_TOPICS,
-  DEMO_STUDY_SESSIONS,
 } from "@/lib/demo/seed-data";
 import { Topic, StudySession } from "@/types/schemas";
 
@@ -82,84 +79,49 @@ export class DemoDataStore implements DataStore {
   private studySessions: StudySession[];
 
   constructor() {
-    this.user = getStorage<UserProfile>("user", DEMO_USER);
-    this.terms = getStorage<Term[]>("terms", DEMO_TERMS);
-    this.courses = getStorage<Course[]>("courses", DEMO_COURSES);
-    this.modules = getStorage<Module[]>("modules", DEMO_MODULES);
-    this.lessons = getStorage<Lesson[]>("lessons", DEMO_LESSONS);
-    this.progress = getStorage<LessonProgress[]>("progress", DEMO_LESSON_PROGRESS);
-    const storedAsms = getStorage<Assessment[]>("assessments", DEMO_ASSESSMENTS);
-    const existingAsmIds = new Set(storedAsms.map((a) => a.id));
-    const mergedAsms = [...storedAsms];
-    for (const d of DEMO_ASSESSMENTS) {
-      if (!existingAsmIds.has(d.id)) {
-        mergedAsms.push(d);
-      }
-    }
-    this.assessments = mergedAsms;
-
-    const storedQs = getStorage<Question[]>("questions", DEMO_QUESTIONS);
-    const existingQIds = new Set(storedQs.map((q) => q.id));
-    const mergedQs = [...storedQs];
-    for (const q of DEMO_QUESTIONS) {
-      if (!existingQIds.has(q.id)) {
-        mergedQs.push(q);
-      }
-    }
-    this.questions = mergedQs;
-    this.attempts = getStorage<Attempt[]>("attempts", DEMO_ATTEMPTS);
-    this.rubrics = getStorage<Rubric[]>("rubrics", DEMO_RUBRICS);
-    this.submissions = getStorage<Submission[]>("submissions", DEMO_SUBMISSIONS);
-    this.notes = getStorage<Note[]>("notes", DEMO_NOTES);
-    const storedEvents = getStorage<PlannerEvent[]>("plannerEvents", DEMO_PLANNER_EVENTS);
-    const existingEvtIds = new Set(storedEvents.map((e) => e.id));
-    const mergedEvents = [...storedEvents];
-    for (const d of DEMO_PLANNER_EVENTS) {
-      if (!existingEvtIds.has(d.id)) {
-        mergedEvents.push(d);
-      }
-    }
-    this.plannerEvents = mergedEvents;
+    const isSample = getStorage<boolean>("is_sample_active", false);
+    this.user = getStorage<UserProfile>("user", isSample ? SAMPLE_USER : CLEAN_USER);
+    this.terms = getStorage<Term[]>("terms", SEED_TERMS);
+    this.courses = getStorage<Course[]>("courses", SEED_COURSES);
+    this.modules = getStorage<Module[]>("modules", SEED_MODULES);
+    this.topics = getStorage<Topic[]>("topics", SEED_TOPICS);
+    this.lessons = getStorage<Lesson[]>("lessons", isSample ? SAMPLE_LESSONS : []);
+    this.progress = getStorage<LessonProgress[]>("progress", isSample ? SAMPLE_LESSON_PROGRESS : []);
+    this.assessments = getStorage<Assessment[]>("assessments", isSample ? SAMPLE_ASSESSMENTS : []);
+    this.questions = getStorage<Question[]>("questions", []);
+    this.attempts = getStorage<Attempt[]>("attempts", []);
+    this.rubrics = getStorage<Rubric[]>("rubrics", []);
+    this.submissions = getStorage<Submission[]>("submissions", []);
+    this.notes = getStorage<Note[]>("notes", []);
+    this.plannerEvents = getStorage<PlannerEvent[]>("plannerEvents", isSample ? SAMPLE_PLANNER_EVENTS : []);
     this.degreePlan = getStorage<DegreePlan | null>("degreePlan", DEMO_DEGREE_PLAN);
     this.snapshots = getStorage<TranscriptSnapshot[]>("snapshots", []);
-    this.auditLogs = getStorage<AuditLog[]>("auditLogs", DEMO_AUDIT_LOGS);
-    this.topics = getStorage<Topic[]>("topics", DEMO_TOPICS);
-    this.studySessions = getStorage<StudySession[]>("studySessions", DEMO_STUDY_SESSIONS);
+    this.auditLogs = getStorage<AuditLog[]>("auditLogs", []);
+    this.studySessions = getStorage<StudySession[]>("studySessions", isSample ? SAMPLE_STUDY_SESSIONS : []);
   }
 
   isDemoMode(): boolean {
     return true;
   }
 
-  async loadDemoData(): Promise<void> {
-    this.user = { ...DEMO_USER };
-    // Preserve seeded courses if already present; only populate initial list if empty
-    if (!this.courses || this.courses.length === 0) {
-      this.terms = [...DEMO_TERMS];
-      this.courses = [...DEMO_COURSES];
-      this.modules = [...DEMO_MODULES];
-      this.topics = [...DEMO_TOPICS];
-    }
-    this.lessons = [...DEMO_LESSONS];
-    this.progress = [...DEMO_LESSON_PROGRESS];
-    this.assessments = [...DEMO_ASSESSMENTS];
-    this.questions = [...DEMO_QUESTIONS];
-    this.attempts = [...DEMO_ATTEMPTS];
-    this.rubrics = [...DEMO_RUBRICS];
-    this.submissions = [...DEMO_SUBMISSIONS];
-    this.notes = [...DEMO_NOTES];
-    this.plannerEvents = [...DEMO_PLANNER_EVENTS];
-    this.degreePlan = { ...DEMO_DEGREE_PLAN };
-    this.auditLogs = [...DEMO_AUDIT_LOGS];
-    this.studySessions = [...DEMO_STUDY_SESSIONS];
+  isSampleDataActive(): boolean {
+    return getStorage<boolean>("is_sample_active", false);
+  }
 
+  async loadDemoData(): Promise<void> {
+    setStorage("is_sample_active", true);
+    this.user = { ...SAMPLE_USER };
+    this.lessons = [...SAMPLE_LESSONS];
+    this.progress = [...SAMPLE_LESSON_PROGRESS];
+    this.assessments = [...SAMPLE_ASSESSMENTS];
+    this.plannerEvents = [...SAMPLE_PLANNER_EVENTS];
+    this.studySessions = [...SAMPLE_STUDY_SESSIONS];
     this.persistAll();
   }
 
   async clearDemoData(): Promise<void> {
-    this.terms = [];
-    this.courses = [];
-    this.modules = [];
+    setStorage("is_sample_active", false);
+    this.user = { ...CLEAN_USER };
     this.lessons = [];
     this.progress = [];
     this.assessments = [];
@@ -169,11 +131,25 @@ export class DemoDataStore implements DataStore {
     this.submissions = [];
     this.notes = [];
     this.plannerEvents = [];
+    this.studySessions = [];
     this.snapshots = [];
     this.auditLogs = [];
-    this.topics = [];
-    this.studySessions = [];
     this.persistAll();
+  }
+
+  async restoreOriginalSyllabus(courseId?: string): Promise<void> {
+    if (courseId) {
+      await this.resetCourseToOriginalSyllabus(courseId);
+    } else {
+      this.terms = [...SEED_TERMS];
+      this.courses = [...SEED_COURSES];
+      this.modules = [...SEED_MODULES];
+      this.topics = [...SEED_TOPICS];
+      setStorage("terms", this.terms);
+      setStorage("courses", this.courses);
+      setStorage("modules", this.modules);
+      setStorage("topics", this.topics);
+    }
   }
 
   private persistAll() {

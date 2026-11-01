@@ -32,7 +32,7 @@ import { AiQuizDraftModal } from "@/components/assessments/ai-quiz-draft-modal";
 import { WhatIfCalculator } from "@/components/grades/what-if-calculator";
 import { calculateCourseGrades } from "@/lib/grading/grading-engine";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
-import { formatSecondsToTime } from "@/lib/utils";
+import { formatSecondsToTime, cleanSyllabusTitle } from "@/lib/utils";
 import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
 import { UnitJourney } from "@/components/courses/unit-journey";
 import { TopicChecklist } from "@/components/courses/topic-checklist";
@@ -416,7 +416,7 @@ export default function CourseDetailPage() {
               className="h-2 w-2 rounded-full"
               style={{ backgroundColor: tagColor }}
             />
-            <span className="font-mono uppercase font-bold text-[var(--color-accent)]">
+            <span className="course-code text-[var(--color-crimson)]">
               {course.code}
             </span>
             <span>•</span>
@@ -424,7 +424,7 @@ export default function CourseDetailPage() {
               {course.department}
             </span>
             <span>•</span>
-            <span className="font-mono">Level {course.level}</span>
+            <span className="font-sans font-semibold">Level {course.level}</span>
           </div>
 
           <h1 className="mt-1.5 font-serif text-2xl md:text-3xl font-bold tracking-tight text-[var(--color-ink)]">
@@ -436,7 +436,7 @@ export default function CourseDetailPage() {
           </p>
 
           <div className="mt-3 flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
-            <span className="font-mono font-semibold text-[var(--color-ink)] tabular-nums">
+            <span className="font-sans font-semibold text-[var(--color-ink)] tabular-nums">
               {course.credits} Credits Assigned
             </span>
             <span>•</span>
@@ -536,24 +536,64 @@ export default function CourseDetailPage() {
               onAction={handleResetSyllabus}
             />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Column (7 cols): Topic Checklist */}
-              <div className="lg:col-span-7">
+            <div className="space-y-6">
+              {/* Unit Header: Eyebrow, Title, Small ring, Thin full-width progress bar */}
+              {activeUnit && (
                 <div className="academic-card p-5">
-                  <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)]/70 mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--color-accent)]">
-                        Unit {activeUnit?.unitNumber || 1}
+                      <span className="eyebrow-label text-[#8A1627] block mb-1">
+                        {course.code} · UNIT {activeUnit.unitNumber || 1}
                       </span>
-                      <h3 className="font-serif text-lg font-bold text-[var(--color-ink)]">
-                        {activeUnit?.title || "Curricular Unit Topics"}
-                      </h3>
+                      <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#14161F] dark:text-[#F6EBD3]">
+                        {cleanSyllabusTitle(activeUnit.title)}
+                      </h2>
                     </div>
-                    <span className="text-xs text-[var(--color-ink-muted)] font-mono tabular-nums">
-                      {activeUnitTopics.filter((t) => t.isDone).length} / {activeUnitTopics.length} Done
-                    </span>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                      <ProgressRing
+                        percentage={
+                          activeUnitTopics.length > 0
+                            ? Math.round(
+                                (activeUnitTopics.filter((t) => t.isDone).length /
+                                  activeUnitTopics.length) *
+                                  100
+                              )
+                            : 0
+                        }
+                        size={36}
+                        strokeWidth={3.5}
+                        color="#A51C30"
+                        showText={false}
+                      />
+                      <span className="text-sm font-semibold text-[#14161F] dark:text-[#F6EBD3] tabular-nums">
+                        {activeUnitTopics.filter((t) => t.isDone).length}/{activeUnitTopics.length} topics done
+                      </span>
+                    </div>
                   </div>
 
+                  {/* Thin full-width progress bar */}
+                  <div className="h-1 w-full bg-[#E5D5C5]/50 rounded-full overflow-hidden mt-4">
+                    <div
+                      className="h-full bg-[#A51C30] transition-all"
+                      style={{
+                        width: `${
+                          activeUnitTopics.length > 0
+                            ? (activeUnitTopics.filter((t) => t.isDone).length /
+                                activeUnitTopics.length) *
+                              100
+                            : 0
+                        }%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Layout columns: minmax(0, 1.5fr) and minmax(360px, 1fr), stack below 1100px */}
+              <div className="grid grid-cols-1 min-[1100px]:grid-cols-[minmax(0,1.5fr)_minmax(360px,1fr)] gap-6 items-start">
+                {/* Left Column: Topic Checklist */}
+                <div>
                   <TopicChecklist
                     course={course}
                     unit={activeUnit || modules[0]}
@@ -567,18 +607,18 @@ export default function CourseDetailPage() {
                     onOpenTopicAi={(topic) => setAiChatTopic(topic)}
                   />
                 </div>
-              </div>
 
-              {/* Right Column (5 cols): Unit Video Gallery */}
-              <div className="lg:col-span-5">
-                <UnitVideoGallery
-                  course={course}
-                  unit={activeUnit || modules[0]}
-                  videos={lessons}
-                  progressList={progressList}
-                  topics={topics}
-                  onOpenAddVideos={() => setAddLessonsOpen(true)}
-                />
+                {/* Right Column: Sticky Lecture Panel */}
+                <div className="min-[1100px]:sticky min-[1100px]:top-20">
+                  <UnitVideoGallery
+                    course={course}
+                    unit={activeUnit || modules[0]}
+                    videos={lessons}
+                    progressList={progressList}
+                    topics={topics}
+                    onOpenAddVideos={() => setAddLessonsOpen(true)}
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -668,7 +708,7 @@ export default function CourseDetailPage() {
                 <h3 className="font-serif text-base font-bold text-app-ink">
                   Graded Work & Assessments
                 </h3>
-                <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-mono tabular-nums border border-app-border/60">
+                <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-sans tabular-nums border border-app-border/60">
                   {assessments.length} items
                 </span>
               </div>
@@ -731,7 +771,7 @@ export default function CourseDetailPage() {
                               </h4>
                             </div>
 
-                            <span className="font-mono text-[11px] font-bold text-app-ink tabular-nums shrink-0">
+                            <span className="font-sans text-[11px] font-bold text-app-ink tabular-nums shrink-0">
                               {asm.maxPoints} pts
                             </span>
                           </div>
@@ -781,7 +821,7 @@ export default function CourseDetailPage() {
                               )}
 
                               {asm.dueDate && (
-                                <span className="text-app-ink-muted font-mono">
+                                <span className="text-app-ink-muted font-sans">
                                   Due {asm.dueDate}
                                 </span>
                               )}
@@ -863,7 +903,7 @@ export default function CourseDetailPage() {
                           <h3 className="font-serif text-base font-bold text-app-ink">
                             {mod.title}
                           </h3>
-                          <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-mono tabular-nums border border-app-border/60">
+                          <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-sans tabular-nums border border-app-border/60">
                             {modLessons.length} lessons
                           </span>
                         </div>
@@ -995,7 +1035,7 @@ export default function CourseDetailPage() {
                   <span className="font-serif text-3xl font-bold text-app-ink">
                     {gradeResult.letter}
                   </span>
-                  <span className="font-mono text-sm font-semibold text-app-ink-muted tabular-nums">
+                  <span className="font-sans text-sm font-semibold text-app-ink-muted tabular-nums">
                     ({gradeResult.points.toFixed(1)} GP)
                   </span>
                 </div>
@@ -1009,7 +1049,7 @@ export default function CourseDetailPage() {
                   <span className="text-[11px] font-semibold uppercase text-app-ink-muted block mb-1">
                     Pass Mark & Status
                   </span>
-                  <span className="font-mono text-sm font-bold text-app-ink tabular-nums">
+                  <span className="font-sans text-sm font-bold text-app-ink tabular-nums">
                     Pass Mark: {course.passMark}%
                   </span>
                 </div>
@@ -1034,7 +1074,7 @@ export default function CourseDetailPage() {
                   Weights sum to exactly 100%. Within each category, scores are calculated proportionally (points earned / max points).
                 </p>
               </div>
-              <span className="font-mono text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+              <span className="font-sans text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
                 Total Weight: 100%
               </span>
             </div>
@@ -1049,7 +1089,7 @@ export default function CourseDetailPage() {
                     <span className="text-[11px] font-semibold uppercase tracking-wider text-app-ink-muted truncate">
                       {cat.label}
                     </span>
-                    <span className="font-mono text-xs font-bold text-app-ink tabular-nums">
+                    <span className="font-sans text-xs font-bold text-app-ink tabular-nums">
                       {cat.weight}%
                     </span>
                   </div>
@@ -1076,7 +1116,7 @@ export default function CourseDetailPage() {
               <h3 className="font-serif text-base font-bold text-app-ink">
                 Course Assessment Gradebook
               </h3>
-              <span className="text-xs text-app-ink-muted font-mono tabular-nums">
+              <span className="text-xs text-app-ink-muted font-sans tabular-nums">
                 {assessments.length} assessment records
               </span>
             </div>
@@ -1136,13 +1176,13 @@ export default function CourseDetailPage() {
                             ? "Midterm Exam"
                             : "Final Exam"}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono tabular-nums text-app-ink">
+                        <td className="px-4 py-3 text-right font-sans tabular-nums text-app-ink">
                           {asm.maxPoints}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono tabular-nums font-semibold text-app-ink">
+                        <td className="px-4 py-3 text-right font-sans tabular-nums font-semibold text-app-ink">
                           {earned !== null ? earned : "—"}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono tabular-nums">
+                        <td className="px-4 py-3 text-right font-sans tabular-nums">
                           {percent !== null ? (
                             <span
                               className={`font-semibold ${
@@ -1281,7 +1321,7 @@ export default function CourseDetailPage() {
                         </Link>
                       )}
                     </div>
-                    <p className="text-xs text-app-ink-muted whitespace-pre-wrap line-clamp-4 font-mono bg-app-surface-muted/40 p-2 rounded">
+                    <p className="text-xs text-app-ink-muted whitespace-pre-wrap line-clamp-4 font-sans bg-app-surface-muted/40 p-2 rounded">
                       {note.content}
                     </p>
                   </div>

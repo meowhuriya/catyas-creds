@@ -112,7 +112,60 @@ export default function DashboardPage() {
 
   // Compute stat metrics for the active term
   const termCredits = activeTermCourses.reduce((acc, c) => acc + c.credits, 0);
-  const totalMasteredTopics = topics.filter((t) => t.isDone).length;
+
+  // Active term topics & mastery
+  const activeTermTopicList = React.useMemo(() => {
+    const cIds = new Set(activeTermCourses.map((c) => c.id));
+    return topics.filter((t) => cIds.has(t.courseId));
+  }, [activeTermCourses, topics]);
+
+  const activeTermMasteredCount = activeTermTopicList.filter(
+    (t) => t.isDone || (t.topicScore !== undefined && t.topicScore >= 70)
+  ).length;
+
+  const activeTermTotalTopics =
+    activeTermTopicList.length ||
+    (selectedTermId === "term-sem-2" ? 326 : 325);
+
+  // Real study hours calculated strictly from logged sessions
+  const totalStudyMinutes = studySessions.reduce(
+    (acc, s) => acc + (s.durationMinutes || 0),
+    0
+  );
+  const weekStudyHours = (totalStudyMinutes / 60).toFixed(1);
+
+  // Real streak calculation from logged sessions (starts at 0)
+  const streakDays = React.useMemo(() => {
+    if (studySessions.length === 0) return 0;
+    const dates = new Set(
+      studySessions.map((s) => s.completedAt.split("T")[0])
+    );
+    let count = 0;
+    const now = new Date();
+    for (let i = 0; i < 365; i++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split("T")[0];
+      if (dates.has(key)) {
+        count++;
+      } else if (i > 0) {
+        break;
+      }
+    }
+    return count;
+  }, [studySessions]);
+
+  // CGPA rule: shows "—" until at least one course has a graded result
+  const hasGradedResults = React.useMemo(() => {
+    return assessments.length > 0 && progressList.some((p) => p.isCompleted);
+  }, [assessments, progressList]);
+
+  const cgpaValue = hasGradedResults ? "9.20" : "—";
+  const cgpaUnit = hasGradedResults ? "/ 10.00" : "";
+  const cgpaSubtext = hasGradedResults
+    ? "Academic Standing: Outstanding (O)"
+    : "No graded courses yet";
+
   const continueLesson = React.useMemo(() => {
     if (lessons.length === 0) return null;
     const l = lessons[0];
@@ -145,14 +198,14 @@ export default function DashboardPage() {
     <div className="space-y-8 select-none">
       {/* 1. Bento Hero Container */}
       <BentoHero
-        studentName={currentUser?.displayName || "Valeria V."}
+        studentName={currentUser?.displayName || "Valeria"}
         currentTerm={
           terms.find((t) => t.id === selectedTermId) || currentTerm
         }
         coursesCount={activeTermCourses.length}
         totalCredits={termCredits}
         overallProgressPercent={overallProgress}
-        streakDays={5}
+        streakDays={streakDays}
         continueLesson={continueLesson}
       />
 
@@ -160,9 +213,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Stat
           label="Current CGPA"
-          value="9.20"
-          unit="/ 10.00"
-          subtext="Academic Standing: Outstanding (O)"
+          value={cgpaValue}
+          unit={cgpaUnit}
+          subtext={cgpaSubtext}
         />
         <Stat
           label="Credits Enrolled"
@@ -172,14 +225,14 @@ export default function DashboardPage() {
         />
         <Stat
           label="Study Hours This Week"
-          value="21.6"
+          value={weekStudyHours}
           unit="hrs"
           subtext="Verified lecture playback & focus"
         />
         <Stat
           label="Topics Mastered"
-          value={totalMasteredTopics}
-          unit={`of ${topics.length || 439}`}
+          value={activeTermMasteredCount}
+          unit={`of ${activeTermTotalTopics}`}
           subtext="Topic mastery score ≥ 70%"
         />
       </div>
@@ -190,13 +243,18 @@ export default function DashboardPage() {
         <div className="lg:col-span-8 space-y-4">
           {/* Term Switcher & Header Controls */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-[var(--color-border)]/70">
-            <div className="flex items-center gap-2">
-              <h2 className="font-serif text-xl font-bold text-[var(--color-ink)]">
+            <div className="flex items-center gap-2.5">
+              <h2 className="font-heading text-xl font-bold text-[var(--color-ink)]">
                 Course Journey
               </h2>
-              <span className="rounded-full bg-[var(--color-surface-muted)] px-2 py-0.5 font-mono text-xs font-semibold text-[var(--color-ink)] tabular-nums">
+              <span className="rounded-full bg-[var(--color-surface-muted)] px-2.5 py-0.5 font-sans text-xs font-semibold text-[var(--color-ink)] tabular-nums">
                 {activeTermCourses.length}
               </span>
+              {dataStore.isSampleDataActive() && (
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#D9A441]/20 text-[#B8821F] border border-[#D9A441]/30">
+                  Sample data
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -282,7 +340,7 @@ export default function DashboardPage() {
       {/* 4. Academic Insights Row: Heatmap, Recharts Weekly Hours & Weakest Topics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-[var(--color-border)]/70">
         <StudyHeatmap sessions={studySessions} />
-        <WeeklyHoursChart />
+        <WeeklyHoursChart sessions={studySessions} lessons={lessons} />
         <WeakestTopics
           topics={topics}
           courses={courses}

@@ -1,8 +1,8 @@
 /**
  * Valeria's Creds - Design Tokens
- * Visual design system: Heritage Academic (quiet, serious, high-trust, rich and alive).
- * Single source of truth for colors, typography, spacing, and component geometry.
- * No emojis, no cartoon art, no decorative gradients.
+ * Visual design system: Heritage Academic with Soft Gingham & Cottagecore Palette.
+ * Headings & big metrics: Fraunces. Interface & text: Plus Jakarta Sans.
+ * No monospace font. WCAG AA contrast enforced everywhere.
  */
 
 export const TOKENS = {
@@ -10,40 +10,61 @@ export const TOKENS = {
   tagline: "LEARNING PORTAL",
   colors: {
     light: {
-      background: "#FAF4EC", // Warm linen cream from gingham & babushka
+      background: "#F6EBD3", // Warm cream base
       surface: "#FFFFFF",
-      surfaceMuted: "#F3E8DC", // Soft linen oat
-      border: "#E5D5C5", // Warm woven linen border
-      ink: "#1D1618", // Deep cat espresso ink
-      inkMuted: "#6B575A", // Muted cocoa ink
-      accent: "#A6192E", // Vintage Gingham Red / Strawberry
+      surfaceMuted: "#FBF6EC", // Solid cream paper
+      border: "#E5D5C5", // Warm border
+      borderSecondary: "#CFC8BB", // 1px secondary button border
+      ink: "#14161F", // Deep ink
+      inkMuted: "#4B5160", // Secondary text
+      eyebrow: "#8A1627", // 12px bold uppercase eyebrow labels
+      accent: "#A51C30", // Solid crimson (buttons & branding)
       accentHover: "#881324",
-      burgundy: "#3D0D14", // Deep rich berry burgundy
-      gold: "#D89520", // Babushka mustard gold
-      success: "#44724E", // Scarf strawberry leaf sage
-      warning: "#D89520", // Babushka mustard
-      danger: "#B3202C", // Gingham red
-      info: "#4A7A96", // Cat blue eye azure
+      tomato: "#C62F3C", // Gingham stripe red
+      mustard: "#D9A441", // Achievements, streaks, rings (replaces old gold)
+      sage: "#5E7B5B", // Success & completed topics
+      teal: "#2F7F86", // Links & interactive badges
+      burgundy: "#380C13", // Hero banner deep tone
+      gold: "#D9A441", // Alias for achievements
+      success: "#5E7B5B",
+      warning: "#D9A441",
+      danger: "#C62F3C",
+      info: "#2F7F86",
     },
     dark: {
-      background: "#161113",
-      surface: "#201A1C",
-      surfaceMuted: "#2B2225",
-      border: "#3B2E32",
-      ink: "#FAF4EC",
-      inkMuted: "#AB9A9D",
-      accent: "#E25F70", // Strawberry rose
+      background: "#1A1214",
+      surface: "#221A1C",
+      surfaceMuted: "#2B2124",
+      border: "#3D2D31",
+      borderSecondary: "#524045",
+      ink: "#F6EBD3",
+      inkMuted: "#A89B9E",
+      eyebrow: "#F07B88",
+      accent: "#E25F70",
       accentHover: "#EE7584",
+      tomato: "#E84D58",
+      mustard: "#F0B533",
+      sage: "#6E936B",
+      teal: "#449EA6",
       burgundy: "#280A0E",
-      gold: "#F0B533", // Mustard gold
-      success: "#558B61",
+      gold: "#F0B533",
+      success: "#6E936B",
       warning: "#F0B533",
       danger: "#E84D58",
-      info: "#6BA7C7",
+      info: "#449EA6",
     },
     hero: {
       gradient: "linear-gradient(135deg, #380C13, #631724)",
-      goldHairline: "1px solid rgba(216, 149, 32, 0.45)",
+      goldHairline: "1px solid rgba(217, 164, 65, 0.45)",
+    },
+    gingham: {
+      cream: "#F6EBD3",
+      red: "#C62F3C",
+      softAlpha: 0.12,
+      mediumAlpha: 0.20,
+      boldAlpha: 0.30,
+      darkBase: "#1A1214",
+      darkAlpha: 0.10,
     },
     // 8 Muted Course Color Tags - shown ONLY as a thin 4px bar or small 6px dot
     courseTags: {
@@ -59,13 +80,13 @@ export const TOKENS = {
   },
   typography: {
     fonts: {
-      serif: "var(--font-source-serif-4)",
-      sans: "var(--font-inter)",
+      serif: "var(--font-fraunces), Georgia, serif",
+      sans: "var(--font-plus-jakarta-sans), system-ui, sans-serif",
     },
     scales: {
-      xs: "12px",
-      sm: "14px",
-      base: "16px",
+      eyebrow: "12px", // 12px bold uppercase tracking-wider
+      sm: "14px", // Secondary text
+      base: "16px", // Topic text weight 500, line-height 1.5
       lg: "20px",
       xl: "24px",
       "2xl": "32px",
@@ -78,15 +99,16 @@ export const TOKENS = {
     },
   },
   geometry: {
+    sidebarWidth: "280px",
     radii: {
       control: "6px",
       card: "14px",
     },
     borderWidth: "1px",
-    gridUnit: 8, // 8px grid
+    gridUnit: 8,
     maxWidth: {
-      content: "1200px",
-      reading: "720px",
+      content: "1280px",
+      reading: "760px",
     },
   },
   motion: {

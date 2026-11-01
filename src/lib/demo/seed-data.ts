@@ -16,13 +16,12 @@ import {
   AuditLog,
   Topic,
   StudySession,
-  ExamDate,
 } from "@/types/schemas";
 
-export const DEMO_USER: UserProfile = {
+export const CLEAN_USER: UserProfile = {
   uid: "valeria-student",
-  email: "valeria.student@valeriascreds.edu",
-  displayName: "Valeria V.",
+  email: "valeria@valeriascreds.edu",
+  displayName: "Valeria",
   currentTermId: "term-sem-1",
   settings: {
     gradeScale: "10_point",
@@ -32,28 +31,28 @@ export const DEMO_USER: UserProfile = {
   createdAt: "2025-08-01T08:00:00.000Z",
 };
 
-export const DEMO_TERMS: Term[] = [
+export const SEED_TERMS: Term[] = [
   {
     "id": "term-sem-1",
+    "userId": "valeria-student",
     "name": "Semester 1 (AY 2025-2026)",
     "startDate": "2025-08-01",
     "endDate": "2025-12-15",
     "isCurrent": true,
-    "userId": "valeria-student",
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
     "id": "term-sem-2",
+    "userId": "valeria-student",
     "name": "Semester 2 (AY 2025-2026)",
     "startDate": "2026-01-05",
     "endDate": "2026-05-20",
     "isCurrent": false,
-    "userId": "valeria-student",
     "createdAt": "2025-08-01T08:00:00.000Z"
   }
 ];
 
-export const DEMO_COURSES: Course[] = [
+export const SEED_COURSES: Course[] = [
   {
     "id": "course-ma101bs",
     "userId": "valeria-student",
@@ -455,7 +454,7 @@ export const DEMO_COURSES: Course[] = [
   }
 ];
 
-export const DEMO_MODULES: Module[] = [
+export const SEED_MODULES: Module[] = [
   {
     "id": "unit-ma101bs-u1",
     "userId": "valeria-student",
@@ -520,7 +519,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ch102bs-u1",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
-    "title": "Water and its treatment: [8]",
+    "title": "Water and its treatment",
     "order": 0,
     "unitNumber": 1,
     "isSection": false,
@@ -532,7 +531,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ch102bs-u2",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
-    "title": "Electrochemistry and Corrosion: [8]",
+    "title": "Electrochemistry and Corrosion",
     "order": 1,
     "unitNumber": 2,
     "isSection": false,
@@ -544,7 +543,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ch102bs-u3",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
-    "title": "Energy sources: [8]",
+    "title": "Energy sources",
     "order": 2,
     "unitNumber": 3,
     "isSection": false,
@@ -556,7 +555,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ch102bs-u4",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
-    "title": "Polymers: [8]",
+    "title": "Polymers",
     "order": 3,
     "unitNumber": 4,
     "isSection": false,
@@ -568,7 +567,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ch102bs-u5",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
-    "title": "- Advanced Functional Materials: [8]",
+    "title": "Advanced Functional Materials",
     "order": 4,
     "unitNumber": 5,
     "isSection": false,
@@ -580,7 +579,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en103hs-u1",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "title": "Theme:  Perspectives",
+    "title": "Theme: Perspectives",
     "order": 0,
     "unitNumber": 1,
     "isSection": false,
@@ -592,7 +591,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en103hs-u2",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "title": "Theme:  Digital Transformation",
+    "title": "Theme: Digital Transformation",
     "order": 1,
     "unitNumber": 2,
     "isSection": false,
@@ -604,7 +603,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en103hs-u3",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "title": "Theme:  Attitude and Gratitude",
+    "title": "Theme: Attitude and Gratitude",
     "order": 2,
     "unitNumber": 3,
     "isSection": false,
@@ -616,7 +615,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en103hs-u4",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "title": "Theme:  Entrepreneurship",
+    "title": "Theme: Entrepreneurship",
     "order": 3,
     "unitNumber": 4,
     "isSection": false,
@@ -628,7 +627,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en103hs-u5",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "title": "Theme:  Integrity and Professionalism",
+    "title": "Theme: Integrity and Professionalism",
     "order": 4,
     "unitNumber": 5,
     "isSection": false,
@@ -784,7 +783,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ch106bs-u3",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
-    "title": "VII. Corrosion:  Determination of rate of corrosion of mild steel in the presence and absence of",
+    "title": "VII. Corrosion: Determination of rate of corrosion of mild steel in the presence and absence of",
     "order": 2,
     "unitNumber": 3,
     "isSection": true,
@@ -892,7 +891,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en108hs-u2",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
-    "title": "Instruction:  Spoken and Written language - Formal and Informal English - Greetings - Introducing",
+    "title": "Instruction: Spoken and Written language - Formal and Informal English - Greetings - Introducing",
     "order": 1,
     "unitNumber": 2,
     "isSection": true,
@@ -916,7 +915,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en108hs-u4",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
-    "title": "Practice: Role Play Activity -  Situational Dialogues \u2013Expressions used in Various Situations \u2013Making",
+    "title": "Practice: Role Play Activity - Situational Dialogues \u2013Expressions used in Various Situations \u2013Making",
     "order": 3,
     "unitNumber": 4,
     "isSection": true,
@@ -940,7 +939,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-en108hs-u6",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
-    "title": "Practice:  Activity on Telling and Retelling Stories - Collage",
+    "title": "Practice: Activity on Telling and Retelling Stories - Collage",
     "order": 5,
     "unitNumber": 6,
     "isSection": true,
@@ -1012,7 +1011,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-me109es-u2",
     "userId": "valeria-student",
     "courseId": "course-me109es",
-    "title": "2. TRADES FOR DEMONSTRATION AND EXPOSURE:  Plumbing, Machine Shop, Metal Cutting",
+    "title": "2. TRADES FOR DEMONSTRATION AND EXPOSURE: Plumbing, Machine Shop, Metal Cutting",
     "order": 1,
     "unitNumber": 2,
     "isSection": true,
@@ -1405,36 +1404,12 @@ export const DEMO_MODULES: Module[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "unit-ph206bs-u4",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "title": "Note: Any 8 experiments are to be performed.",
-    "order": 3,
-    "unitNumber": 4,
-    "isSection": true,
-    "electiveExperimentsCount": 8,
-    "isCollapsed": false,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
     "id": "unit-ph206bs-u5",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "2. It introduces searching and sorting algorithms",
-    "order": 4,
+    "order": 3,
     "unitNumber": 5,
-    "isSection": true,
-    "electiveExperimentsCount": 8,
-    "isCollapsed": false,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "unit-ph206bs-u6",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "title": "Course Outcomes",
-    "order": 5,
-    "unitNumber": 6,
     "isSection": true,
     "electiveExperimentsCount": 8,
     "isCollapsed": false,
@@ -1445,7 +1420,7 @@ export const DEMO_MODULES: Module[] = [
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "1. Write a program that uses functions to perform the following operations on singly linked list.",
-    "order": 6,
+    "order": 4,
     "unitNumber": 7,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1457,7 +1432,7 @@ export const DEMO_MODULES: Module[] = [
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "2. Write a program that uses functions to perform the following operations on doubly linked list.",
-    "order": 7,
+    "order": 5,
     "unitNumber": 8,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1469,7 +1444,7 @@ export const DEMO_MODULES: Module[] = [
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "3. Write a program that uses functions to perform the following operations on circular linked list.",
-    "order": 8,
+    "order": 6,
     "unitNumber": 9,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1480,8 +1455,8 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-ph206bs-u10",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
-    "title": "4. Write a  program that implement stack (its operations) using",
-    "order": 9,
+    "title": "4. Write a program that implement stack (its operations) using",
+    "order": 7,
     "unitNumber": 10,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1493,7 +1468,7 @@ export const DEMO_MODULES: Module[] = [
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "5. Write a program that implement Queue (its operations) using",
-    "order": 10,
+    "order": 8,
     "unitNumber": 11,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1505,7 +1480,7 @@ export const DEMO_MODULES: Module[] = [
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "8. Write a program to implement",
-    "order": 11,
+    "order": 9,
     "unitNumber": 12,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1517,7 +1492,7 @@ export const DEMO_MODULES: Module[] = [
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "title": "10. Write a program to implement the following Hash Functions: i) Division Method, ii) Multiplication",
-    "order": 12,
+    "order": 10,
     "unitNumber": 13,
     "isSection": true,
     "electiveExperimentsCount": 8,
@@ -1564,7 +1539,7 @@ export const DEMO_MODULES: Module[] = [
     "id": "unit-cs207es-u4",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
-    "title": "4. Write a  program that implement stack (its operations) using",
+    "title": "4. Write a program that implement stack (its operations) using",
     "order": 3,
     "unitNumber": 4,
     "isSection": true,
@@ -1753,47 +1728,46 @@ export const DEMO_MODULES: Module[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   }
 ];
-export const DEMO_UNITS = DEMO_MODULES;
 
-export const DEMO_TOPICS: Topic[] = [
+export const SEED_TOPICS: Topic[] = [
   {
-    "id": "topic-ma101bs-u1-t1",
+    "id": "ma101bs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u1",
-    "title": "Rank of a matrix by Echelon form and Normal form \u2013 Inverse of Non-singular matrices by Gauss-Jordan method",
+    "title": "Rank of a matrix by Echelon form and Normal form",
     "order": 0,
-    "isDone": true,
-    "watchScore": 40,
-    "checkScore": 50,
-    "topicScore": 90,
-    "isStudiedManually": true,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
     "isExperiment": false,
     "isSelectedExperiment": true,
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u1-t2",
+    "id": "ma101bs-u1-t2",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u1",
+    "title": "Inverse of Non-singular matrices by Gauss-Jordan method",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u1",
     "title": "System of linear equations",
-    "order": 1,
-    "isDone": true,
-    "watchScore": 40,
-    "checkScore": 50,
-    "topicScore": 90,
-    "isStudiedManually": true,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ma101bs-u1-t3",
-    "userId": "valeria-student",
-    "courseId": "course-ma101bs",
-    "unitId": "unit-ma101bs-u1",
-    "title": "Solving system of Homogeneous and Non-Homogeneous equations",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -1805,11 +1779,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u1-t4",
+    "id": "ma101bs-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u1",
-    "title": "Gauss Seidel Iteration Method.",
+    "title": "Solving system of Homogeneous and Non-Homogeneous equations",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -1821,7 +1795,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u2-t1",
+    "id": "ma101bs-u1-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u1",
+    "title": "Gauss Seidel Iteration Method.",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u2",
@@ -1837,11 +1827,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u2-t2",
+    "id": "ma101bs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u2",
-    "title": "Eigen values \u2013 Eigen vectors and their properties \u2013 Diagonalization of a matrix \u2013 Cayley-Hamilton Theorem (without proof) \u2013 Fnding inverse and power of a matrix by Cayley-Hamilton Theorem",
+    "title": "Eigen values",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -1853,11 +1843,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u2-t3",
+    "id": "ma101bs-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u2",
-    "title": "Quadratic forms and Nature of the Quadratic Forms \u2013 Reduction of Quadratic form to canonical form by Orthogonal Transformation.",
+    "title": "Eigen vectors and their properties",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -1869,7 +1859,87 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u3-t1",
+    "id": "ma101bs-u2-t4",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u2",
+    "title": "Diagonalization of a matrix",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u2-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u2",
+    "title": "Cayley-Hamilton Theorem (without proof)",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u2-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u2",
+    "title": "Fnding inverse and power of a matrix by Cayley-Hamilton Theorem",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u2-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u2",
+    "title": "Quadratic forms and Nature of the Quadratic Forms",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u2-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u2",
+    "title": "Reduction of Quadratic form to canonical form by Orthogonal Transformation.",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u3",
@@ -1885,7 +1955,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u3-t2",
+    "id": "ma101bs-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u3",
@@ -1901,11 +1971,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u3-t3",
+    "id": "ma101bs-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u3",
-    "title": "Rolle\u2019s theorem \u2013 Lagrange\u2019s Mean value theorem with their Geometrical Interpretation and applications \u2013 Cauchy\u2019s Mean value Theorem \u2013 Taylor\u2019s Series (All the theorems without proof)",
+    "title": "Rolle\u2019s theorem",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -1917,11 +1987,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u3-t4",
+    "id": "ma101bs-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u3",
-    "title": "Curve Tracing",
+    "title": "Lagrange\u2019s Mean value theorem with their Geometrical Interpretation and applications",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -1933,11 +2003,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u3-t5",
+    "id": "ma101bs-u3-t5",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u3",
-    "title": "Curve tracing in cartesian coordinates.",
+    "title": "Cauchy\u2019s Mean value Theorem",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -1949,11 +2019,59 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u4-t1",
+    "id": "ma101bs-u3-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u3",
+    "title": "Taylor\u2019s Series (All the theorems without proof)",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u3-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u3",
+    "title": "Curve Tracing",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u3-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u3",
+    "title": "Curve tracing in cartesian coordinates.",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u4",
-    "title": "Definitions of Limit and continuity \u2013 Partial Differentiation",
+    "title": "Definitions of Limit and continuity",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -1965,11 +2083,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u4-t2",
+    "id": "ma101bs-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u4",
-    "title": "Euler\u2019s Theorem \u2013 Total derivative \u2013 Jacobian \u2013 Functional dependence & independence",
+    "title": "Partial Differentiation",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -1981,11 +2099,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u4-t3",
+    "id": "ma101bs-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u4",
-    "title": "Applications",
+    "title": "Euler\u2019s Theorem",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -1997,12 +2115,76 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u4-t4",
+    "id": "ma101bs-u4-t4",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u4",
+    "title": "Total derivative",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u4-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u4",
+    "title": "Jacobian",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u4-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u4",
+    "title": "Functional dependence & independence",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u4-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u4",
+    "title": "Applications",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u4-t8",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u4",
     "title": "Maxima and minima of functions of two variables and three variables using method of Lagrange multipliers.",
-    "order": 3,
+    "order": 7,
     "isDone": false,
     "watchScore": 0,
     "checkScore": 0,
@@ -2013,11 +2195,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u5-t1",
+    "id": "ma101bs-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u5",
-    "title": "Evaluation of Double Integrals (Cartesian and polar coordinates) \u2013 change of order of integration (only Cartesian form) \u2013 Change of variables for double integrals (Cartesian to polar)",
+    "title": "Evaluation of Double Integrals (Cartesian and polar coordinates)",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -2029,11 +2211,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u5-t2",
+    "id": "ma101bs-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u5",
-    "title": "Evaluation of Triple Integrals \u2013 Change of variables for triple integrals (Cartesian to Spherical and Cylindrical polar coordinates)",
+    "title": "change of order of integration (only Cartesian form)",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -2045,11 +2227,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u5-t3",
+    "id": "ma101bs-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u5",
-    "title": "Applications",
+    "title": "Change of variables for double integrals (Cartesian to polar)",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -2061,11 +2243,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma101bs-u5-t4",
+    "id": "ma101bs-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-ma101bs",
     "unitId": "unit-ma101bs-u5",
-    "title": "Areas by double integrals and volumes by triple integrals.",
+    "title": "Evaluation of Triple Integrals",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2077,7 +2259,55 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t1",
+    "id": "ma101bs-u5-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u5",
+    "title": "Change of variables for triple integrals (Cartesian to Spherical and Cylindrical polar coordinates)",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u5-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u5",
+    "title": "Applications",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma101bs-u5-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma101bs",
+    "unitId": "unit-ma101bs-u5",
+    "title": "Areas by double integrals and volumes by triple integrals.",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
@@ -2093,11 +2323,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t2",
+    "id": "ch102bs-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Estimation of hardness of water by complexometric method - Numerical problems",
+    "title": "Estimation of hardness of water by complexometric method",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -2109,11 +2339,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t3",
+    "id": "ch102bs-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Potable water and its specifications (WHO) - Steps involved in the treatment of potable water - Disinfection of potable water by chlorination and break- point chlorination",
+    "title": "Numerical problems",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -2125,11 +2355,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t4",
+    "id": "ch102bs-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Defluoridation - Nalgonda technique",
+    "title": "Potable water and its specifications (WHO)",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2141,11 +2371,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t5",
+    "id": "ch102bs-u1-t5",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Boiler troubles",
+    "title": "Steps involved in the treatment of potable water",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -2157,11 +2387,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t6",
+    "id": "ch102bs-u1-t6",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Scales, Sludges and Caustic embrittlement",
+    "title": "Disinfection of potable water by chlorination and break- point chlorination",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -2173,11 +2403,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t7",
+    "id": "ch102bs-u1-t7",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Internal treatment of boiler feed water - Calgon conditioning, Phosphate conditioning, Colloidal conditioning",
+    "title": "Defluoridation",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -2189,11 +2419,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t8",
+    "id": "ch102bs-u1-t8",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "External treatment methods - Softening of water by ion- exchange processes",
+    "title": "Nalgonda technique",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -2205,11 +2435,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u1-t9",
+    "id": "ch102bs-u1-t9",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u1",
-    "title": "Desalination of brackish water \u2013 Reverse osmosis.",
+    "title": "Boiler troubles",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -2221,11 +2451,123 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t1",
+    "id": "ch102bs-u1-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "Scales, Sludges and Caustic embrittlement",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "Internal treatment of boiler feed water",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "Calgon conditioning, Phosphate conditioning, Colloidal conditioning",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "External treatment methods",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "Softening of water by ion- exchange processes",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "Desalination of brackish water",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u1-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u1",
+    "title": "Reverse osmosis.",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Introduction- Electrode potential, standard electrode potential, Nernst equation (no derivation), electrochemical cell - Galvanic cell, cell representation, EMF of cell - Numerical problems",
+    "title": "Introduction- Electrode potential, standard electrode potential, Nernst equation (no derivation), electrochemical cell",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -2237,11 +2579,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t2",
+    "id": "ch102bs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Types of electrodes, reference electrodes - Primary reference electrode - Standard Hydrogen Electrode (SHE), Secondary reference electrode - Calomel electrode",
+    "title": "Galvanic cell, cell representation, EMF of cell",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -2253,11 +2595,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t3",
+    "id": "ch102bs-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Construction, working and determination of pH of unknown solution using SHE and Calomel electrode",
+    "title": "Numerical problems",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -2269,11 +2611,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t4",
+    "id": "ch102bs-u2-t4",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Corrosion",
+    "title": "Types of electrodes, reference electrodes",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2285,11 +2627,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t5",
+    "id": "ch102bs-u2-t5",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Introduction- Definition, causes and effects of corrosion \u2013 Theories of corrosion, chemical and electrochemical theories of corrosion, Types of corrosion",
+    "title": "Primary reference electrode",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -2301,11 +2643,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t6",
+    "id": "ch102bs-u2-t6",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "galvanic, water-line and pitting corrosion",
+    "title": "Standard Hydrogen Electrode (SHE), Secondary reference electrode",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -2317,11 +2659,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t7",
+    "id": "ch102bs-u2-t7",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Factors affecting rate of corrosion - Nature of the metal, Nature of the corroding environment",
+    "title": "Calomel electrode",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -2333,11 +2675,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u2-t8",
+    "id": "ch102bs-u2-t8",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u2",
-    "title": "Corrosion control methods - Cathodic protection Methods - Sacrificial anode and impressed current methods.",
+    "title": "Construction, working and determination of pH of unknown solution using SHE and Calomel electrode",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -2349,7 +2691,151 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t1",
+    "id": "ch102bs-u2-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Corrosion",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Introduction- Definition, causes and effects of corrosion",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Theories of corrosion, chemical and electrochemical theories of corrosion, Types of corrosion",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "galvanic, water-line and pitting corrosion",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Factors affecting rate of corrosion",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Nature of the metal, Nature of the corroding environment",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Corrosion control methods",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Cathodic protection Methods",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u2-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u2",
+    "title": "Sacrificial anode and impressed current methods.",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
@@ -2365,11 +2851,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t2",
+    "id": "ch102bs-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Introduction \u2013 Classification of batteries - Primary, secondary and reserve batteries with examples",
+    "title": "Introduction",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -2381,11 +2867,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t3",
+    "id": "ch102bs-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Construction, working and applications of Zn-air and Lithium ion battery",
+    "title": "Classification of batteries",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -2397,11 +2883,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t4",
+    "id": "ch102bs-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Fuel Cells \u2013 Differences between a battery and a fuel cell, Construction and applications of Direct Methanol Fuel Cell (DMFC)",
+    "title": "Primary, secondary and reserve batteries with examples",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2413,11 +2899,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t5",
+    "id": "ch102bs-u3-t5",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "formula - Numerical problems",
+    "title": "Construction, working and applications of Zn-air and Lithium ion battery",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -2429,11 +2915,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t6",
+    "id": "ch102bs-u3-t6",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Fossil fuels",
+    "title": "Fuel Cells",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -2445,11 +2931,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t7",
+    "id": "ch102bs-u3-t7",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Introduction, Classification, Petroleum - Refining of Crude oil, Cracking - Types of cracking - Moving bed catalytic cracking",
+    "title": "Differences between a battery and a fuel cell, Construction and applications of Direct Methanol Fuel Cell (DMFC)",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -2461,11 +2947,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t8",
+    "id": "ch102bs-u3-t8",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "LPG and CNG composition and uses",
+    "title": "formula",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -2477,11 +2963,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t9",
+    "id": "ch102bs-u3-t9",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Synthetic Fuels",
+    "title": "Numerical problems",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -2493,11 +2979,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u3-t10",
+    "id": "ch102bs-u3-t10",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u3",
-    "title": "Fischer-Tropsch process, Introduction and applications of Hythane and Green Hydrogen.",
+    "title": "Fossil fuels",
     "order": 9,
     "isDone": false,
     "watchScore": 0,
@@ -2509,11 +2995,123 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t1",
+    "id": "ch102bs-u3-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "Introduction, Classification, Petroleum",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "Refining of Crude oil, Cracking",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "Types of cracking",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "Moving bed catalytic cracking",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "LPG and CNG composition and uses",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "Synthetic Fuels",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u3-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u3",
+    "title": "Fischer-Tropsch process, Introduction and applications of Hythane and Green Hydrogen.",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Definition - Classification of polymers",
+    "title": "Definition",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -2525,11 +3123,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t2",
+    "id": "ch102bs-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Based on origin and tacticity with examples \u2013 Types of polymerization - Addition (free radical addition mechanism) and condensation polymerization",
+    "title": "Classification of polymers",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -2541,11 +3139,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t3",
+    "id": "ch102bs-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Plastics, Elastomers and Fibers",
+    "title": "Based on origin and tacticity with examples",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -2557,11 +3155,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t4",
+    "id": "ch102bs-u4-t4",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Definition and applications (PVC, Buna-S, Nylon-6,6)",
+    "title": "Types of polymerization",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2573,11 +3171,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t5",
+    "id": "ch102bs-u4-t5",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Differences between themoplastics and thermo setting plastics, Fiber reinforced plastics (FRP)",
+    "title": "Addition (free radical addition mechanism) and condensation polymerization",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -2589,11 +3187,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t6",
+    "id": "ch102bs-u4-t6",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Conducting polymers",
+    "title": "Plastics, Elastomers and Fibers",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -2605,11 +3203,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t7",
+    "id": "ch102bs-u4-t7",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Definition and Classification with examples - Mechanism of conduction in trans- poly-acetylene and applications of conducting polymers",
+    "title": "Definition and applications (PVC, Buna-S, Nylon-6,6)",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -2621,11 +3219,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t8",
+    "id": "ch102bs-u4-t8",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Biodegradable polymers",
+    "title": "Differences between themoplastics and thermo setting plastics, Fiber reinforced plastics (FRP)",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -2637,11 +3235,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u4-t9",
+    "id": "ch102bs-u4-t9",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u4",
-    "title": "Polylactic acid and its applications.",
+    "title": "Conducting polymers",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -2653,7 +3251,71 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u5-t1",
+    "id": "ch102bs-u4-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u4",
+    "title": "Definition and Classification with examples",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u4-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u4",
+    "title": "Mechanism of conduction in trans- poly-acetylene and applications of conducting polymers",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u4-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u4",
+    "title": "Biodegradable polymers",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u4-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u4",
+    "title": "Polylactic acid and its applications.",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u5",
@@ -2669,11 +3331,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u5-t2",
+    "id": "ch102bs-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u5",
-    "title": "Introduction, Classification with examples - Shape Memory Alloys \u2013 Nitinol, Piezoelectric materials \u2013 quartz and their engineering applications",
+    "title": "Introduction, Classification with examples",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -2685,11 +3347,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u5-t3",
+    "id": "ch102bs-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u5",
-    "title": "Biosensor - Definition, Amperometric Glucose monitor sensor",
+    "title": "Shape Memory Alloys",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -2701,11 +3363,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch102bs-u5-t4",
+    "id": "ch102bs-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-ch102bs",
     "unitId": "unit-ch102bs-u5",
-    "title": "Interpretative spectroscopic applications of UV-Visible spectroscopy for Analysis of pollutants in dye industry, IR spectroscopy in night vision-security, Pollution Under Control- CO sensor (Passive Infrared detection), Raman spectroscopy (application) - Tumour detection in medical applications.",
+    "title": "Nitinol, Piezoelectric materials",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2717,7 +3379,87 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t1",
+    "id": "ch102bs-u5-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u5",
+    "title": "quartz and their engineering applications",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u5-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u5",
+    "title": "Biosensor",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u5-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u5",
+    "title": "Definition, Amperometric Glucose monitor sensor",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u5-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u5",
+    "title": "Interpretative spectroscopic applications of UV-Visible spectroscopy for Analysis of pollutants in dye industry, IR spectroscopy in night vision-security, Pollution Under Control- CO sensor (Passive Infrared detection), Raman spectroscopy (application)",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch102bs-u5-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ch102bs",
+    "unitId": "unit-ch102bs-u5",
+    "title": "Tumour detection in medical applications.",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
@@ -2733,7 +3475,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t2",
+    "id": "en103hs-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
@@ -2749,7 +3491,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t3",
+    "id": "en103hs-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
@@ -2765,11 +3507,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t4",
+    "id": "en103hs-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
-    "title": "The Concept of Word Formation -The Use of Prefixes and Suffixes - Words Often Misspelt - Synonyms and Antonyms Grammar",
+    "title": "The Concept of Word Formation -The Use of Prefixes and Suffixes",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -2781,11 +3523,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t5",
+    "id": "en103hs-u1-t5",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
-    "title": "Identifying Common Errors in Writing with Reference to Parts of Speech particularly Reading",
+    "title": "Words Often Misspelt",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -2797,11 +3539,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t6",
+    "id": "en103hs-u1-t6",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
-    "title": "Reading and Its Importance- Sub Skills of Reading \u2013 Skimming and Scanning",
+    "title": "Synonyms and Antonyms Grammar",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -2813,11 +3555,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t7",
+    "id": "en103hs-u1-t7",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
-    "title": "Writing",
+    "title": "Identifying Common Errors in Writing with Reference to Parts of Speech particularly Reading",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -2829,11 +3571,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u1-t8",
+    "id": "en103hs-u1-t8",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u1",
-    "title": "Sentence Structures and Types -Use of Phrases and Clauses in Sentences- Importance of Proper Punctuation- Techniques for Writing Precisely \u2013Nature and Style of Formal Writing.",
+    "title": "Reading and Its Importance- Sub Skills of Reading",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -2845,7 +3587,71 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t1",
+    "id": "en103hs-u1-t9",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u1",
+    "title": "Skimming and Scanning",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u1-t10",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u1",
+    "title": "Writing",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u1-t11",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u1",
+    "title": "Sentence Structures and Types -Use of Phrases and Clauses in Sentences- Importance of Proper Punctuation- Techniques for Writing Precisely",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u1-t12",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u1",
+    "title": "Nature and Style of Formal Writing.",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
@@ -2861,7 +3667,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t2",
+    "id": "en103hs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
@@ -2877,7 +3683,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t3",
+    "id": "en103hs-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
@@ -2893,7 +3699,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t4",
+    "id": "en103hs-u2-t4",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
@@ -2909,7 +3715,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t5",
+    "id": "en103hs-u2-t5",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
@@ -2925,11 +3731,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t6",
+    "id": "en103hs-u2-t6",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
-    "title": "Reading Strategies-Guessing Meaning from Context \u2013 Identifying Main Ideas \u2013 Exercises for Practice Writing",
+    "title": "Reading Strategies-Guessing Meaning from Context",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -2941,11 +3747,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u2-t7",
+    "id": "en103hs-u2-t7",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u2",
-    "title": "Paragraph Writing \u2013 Types, Structures and Features of a Paragraph - Creating Coherence \u2013 Linkers and Connectives - Organizing Principles in a Paragraph \u2013 Defining- Describing People, Objects, Places and Events \u2013 Classifying- Providing Examples or Evidence - Essay Writing - Writing Introduction and Conclusion.",
+    "title": "Identifying Main Ideas",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -2957,123 +3763,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u3-t1",
+    "id": "en103hs-u2-t8",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Poems on \u2018Leisure\u2019 by William Henry Davies  and \u2018 Be Thankful\u2019  - Unknown Author from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t2",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Vocabulary",
-    "order": 1,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t3",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Words Often Confused - Words from Foreign Languages and their Use in English",
-    "order": 2,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t4",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Grammar",
-    "order": 3,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t5",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Identifying Common Errors in Writing with Reference to Misplaced Modifiers and Tenses",
-    "order": 4,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t6",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Reading",
-    "order": 5,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t7",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Sub-Skills of Reading \u2013 Identifying Topic Sentence and Providing Supporting Ideas - Exercises for Practice",
-    "order": 6,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en103hs-u3-t8",
-    "userId": "valeria-student",
-    "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Writing",
+    "unitId": "unit-en103hs-u2",
+    "title": "Exercises for Practice Writing",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -3085,11 +3779,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u3-t9",
+    "id": "en103hs-u2-t9",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
-    "unitId": "unit-en103hs-u3",
-    "title": "Format of a Formal Letter-Writing Formal Letters E.g.., Letter of Complaint, Letter of Requisition, Job Application with CV/Resume \u2013Difference between Writing a Letter and an Email - Email Etiquette.",
+    "unitId": "unit-en103hs-u2",
+    "title": "Paragraph Writing",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -3101,7 +3795,375 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t1",
+    "id": "en103hs-u2-t10",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Types, Structures and Features of a Paragraph",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t11",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Creating Coherence",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t12",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Linkers and Connectives",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t13",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Organizing Principles in a Paragraph",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t14",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Defining- Describing People, Objects, Places and Events",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t15",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Classifying- Providing Examples or Evidence",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t16",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Essay Writing",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u2-t17",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u2",
+    "title": "Writing Introduction and Conclusion.",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t1",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Poems on \u2018Leisure\u2019 by William Henry Davies and \u2018 Be Thankful\u2019",
+    "order": 0,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t2",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Unknown Author from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t3",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Vocabulary",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t4",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Words Often Confused",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t5",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Words from Foreign Languages and their Use in English",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t6",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Grammar",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t7",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Identifying Common Errors in Writing with Reference to Misplaced Modifiers and Tenses",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t8",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Reading",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t9",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Sub-Skills of Reading",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t10",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Identifying Topic Sentence and Providing Supporting Ideas",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t11",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Exercises for Practice",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t12",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Writing",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t13",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Format of a Formal Letter-Writing Formal Letters E.g.., Letter of Complaint, Letter of Requisition, Job Application with CV/Resume",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t14",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Difference between Writing a Letter and an Email",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u3-t15",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u3",
+    "title": "Email Etiquette.",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
@@ -3117,7 +4179,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t2",
+    "id": "en103hs-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
@@ -3133,11 +4195,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t3",
+    "id": "en103hs-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
-    "title": "Standard Abbreviations in English \u2013 Inferring Meanings of Words through Context \u2013 Phrasal Verbs \u2013 Idioms",
+    "title": "Standard Abbreviations in English",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -3149,11 +4211,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t4",
+    "id": "en103hs-u4-t4",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
-    "title": "Grammar",
+    "title": "Inferring Meanings of Words through Context",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -3165,11 +4227,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t5",
+    "id": "en103hs-u4-t5",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
-    "title": "Redundancies and Clich\u00e9s in Written Communication \u2013 Converting Passive to Active Voice and Vice-Versa",
+    "title": "Phrasal Verbs",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -3181,11 +4243,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t6",
+    "id": "en103hs-u4-t6",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
-    "title": "Reading",
+    "title": "Idioms",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -3197,11 +4259,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t7",
+    "id": "en103hs-u4-t7",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
-    "title": "Prompt Engineering Techniques\u2013 Comprehending and Generating Appropriate Prompts - Exercises for Practice Writing",
+    "title": "Grammar",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -3213,11 +4275,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u4-t8",
+    "id": "en103hs-u4-t8",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u4",
-    "title": "Writing Practices- Note Making-Pr\u00e9cis Writing.",
+    "title": "Redundancies and Clich\u00e9s in Written Communication",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -3229,7 +4291,103 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t1",
+    "id": "en103hs-u4-t9",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u4",
+    "title": "Converting Passive to Active Voice and Vice-Versa",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u4-t10",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u4",
+    "title": "Reading",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u4-t11",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u4",
+    "title": "Prompt Engineering Techniques",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u4-t12",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u4",
+    "title": "Comprehending and Generating Appropriate Prompts",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u4-t13",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u4",
+    "title": "Exercises for Practice Writing",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u4-t14",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u4",
+    "title": "Writing Practices- Note Making-Pr\u00e9cis Writing.",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
@@ -3245,7 +4403,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t2",
+    "id": "en103hs-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
@@ -3261,11 +4419,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t3",
+    "id": "en103hs-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Technical Vocabulary and their Usage\u2013 One Word Substitutes \u2013 Collocations",
+    "title": "Technical Vocabulary and their Usage",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -3277,11 +4435,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t4",
+    "id": "en103hs-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Grammar",
+    "title": "One Word Substitutes",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -3293,11 +4451,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t5",
+    "id": "en103hs-u5-t5",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Direct and Indirect Speech - Common Errors in English (Covering all the other aspects Reading",
+    "title": "Collocations",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -3309,11 +4467,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t6",
+    "id": "en103hs-u5-t6",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Survey, Question, Read, Recite and Review (SQ3R Method) \u2013 Inferring the Meaning and Evaluating a Text- Exercises for Practice Writing",
+    "title": "Grammar",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -3325,11 +4483,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t7",
+    "id": "en103hs-u5-t7",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Report Writing - Technical Reports- Introduction \u2013 Characteristics of a Report \u2013 Categories of Reports Formats- Structure of Reports (Manuscript Format) -Types of Reports - Writing a Technical Report",
+    "title": "Direct and Indirect Speech",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -3341,11 +4499,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t8",
+    "id": "en103hs-u5-t8",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Note",
+    "title": "Common Errors in English (Covering all the other aspects Reading",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -3357,11 +4515,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t9",
+    "id": "en103hs-u5-t9",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Listening and Speaking skills which are given under Unit-6 in AICTE Model Curriculum are covered in the syllabus of ELCS Lab Course",
+    "title": "Survey, Question, Read, Recite and Review (SQ3R Method)",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -3373,11 +4531,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t10",
+    "id": "en103hs-u5-t10",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "\uf0d8 ( Note",
+    "title": "Inferring the Meaning and Evaluating a Text- Exercises for Practice Writing",
     "order": 9,
     "isDone": false,
     "watchScore": 0,
@@ -3389,11 +4547,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t11",
+    "id": "en103hs-u5-t11",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "As the syllabus of English given in AICTE  Model Curriculum-2018 for B.Tech",
+    "title": "Report Writing",
     "order": 10,
     "isDone": false,
     "watchScore": 0,
@@ -3405,11 +4563,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t12",
+    "id": "en103hs-u5-t12",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "First Year is Open-ended, besides following the prescribed textbook, it is required to prepare teaching/learning materials by the teachers collectively in the form of handouts based on the needs of the students in their respective colleges for effective teaching/learning in the class.) TEXT BOOK",
+    "title": "Technical Reports- Introduction",
     "order": 11,
     "isDone": false,
     "watchScore": 0,
@@ -3421,11 +4579,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t13",
+    "id": "en103hs-u5-t13",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Board of Editors",
+    "title": "Characteristics of a Report",
     "order": 12,
     "isDone": false,
     "watchScore": 0,
@@ -3437,11 +4595,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t14",
+    "id": "en103hs-u5-t14",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "2025",
+    "title": "Categories of Reports Formats- Structure of Reports (Manuscript Format) -Types of Reports",
     "order": 13,
     "isDone": false,
     "watchScore": 0,
@@ -3453,11 +4611,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t15",
+    "id": "en103hs-u5-t15",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "English for the Young in the Digital World",
+    "title": "Writing a Technical Report",
     "order": 14,
     "isDone": false,
     "watchScore": 0,
@@ -3469,11 +4627,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t16",
+    "id": "en103hs-u5-t16",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Orient Black Swan Pvt",
+    "title": "Note",
     "order": 15,
     "isDone": false,
     "watchScore": 0,
@@ -3485,11 +4643,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en103hs-u5-t17",
+    "id": "en103hs-u5-t17",
     "userId": "valeria-student",
     "courseId": "course-en103hs",
     "unitId": "unit-en103hs-u5",
-    "title": "Ltd.",
+    "title": "Listening and Speaking skills which are given under Unit-6 in AICTE Model Curriculum are covered in the syllabus of ELCS Lab Course",
     "order": 16,
     "isDone": false,
     "watchScore": 0,
@@ -3501,11 +4659,139 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u1-t1",
+    "id": "en103hs-u5-t18",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "\uf0d8 ( Note",
+    "order": 17,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t19",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "As the syllabus of English given in AICTE Model Curriculum-2018 for B.Tech",
+    "order": 18,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t20",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "First Year is Open-ended, besides following the prescribed textbook, it is required to prepare teaching/learning materials by the teachers collectively in the form of handouts based on the needs of the students in their respective colleges for effective teaching/learning in the class.) TEXT BOOK",
+    "order": 19,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t21",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "Board of Editors",
+    "order": 20,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t22",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "2025",
+    "order": 21,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t23",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "English for the Young in the Digital World",
+    "order": 22,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t24",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "Orient Black Swan Pvt",
+    "order": 23,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en103hs-u5-t25",
+    "userId": "valeria-student",
+    "courseId": "course-en103hs",
+    "unitId": "unit-en103hs-u5",
+    "title": "Ltd.",
+    "order": 24,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ec104es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u1",
-    "title": "and capacitance, Diode models (Ideal, Simplified, Piecewise Linear), Rectifiers \u2013 Half-wave, Full-wave (Center-tap and bridge), Capacitor filter for rectifiers, Clippers and clampers, Zener diode \u2013 I-V characteristics and voltage regulation.",
+    "title": "and capacitance, Diode models (Ideal, Simplified, Piecewise Linear), Rectifiers",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -3517,7 +4803,39 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u2-t1",
+    "id": "ec104es-u1-t2",
+    "userId": "valeria-student",
+    "courseId": "course-ec104es",
+    "unitId": "unit-ec104es-u1",
+    "title": "Half-wave, Full-wave (Center-tap and bridge), Capacitor filter for rectifiers, Clippers and clampers, Zener diode",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ec104es-u1-t3",
+    "userId": "valeria-student",
+    "courseId": "course-ec104es",
+    "unitId": "unit-ec104es-u1",
+    "title": "I-V characteristics and voltage regulation.",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ec104es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u2",
@@ -3533,7 +4851,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u2-t2",
+    "id": "ec104es-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u2",
@@ -3549,7 +4867,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u3-t1",
+    "id": "ec104es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u3",
@@ -3565,11 +4883,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u4-t1",
+    "id": "ec104es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u4",
-    "title": "CC amplifier analysis using h-parameters, Approximate CE model \u2013 with and without emitter bypass",
+    "title": "CC amplifier analysis using h-parameters, Approximate CE model",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -3581,7 +4899,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t1",
+    "id": "ec104es-u4-t2",
+    "userId": "valeria-student",
+    "courseId": "course-ec104es",
+    "unitId": "unit-ec104es-u4",
+    "title": "with and without emitter bypass",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ec104es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
@@ -3597,7 +4931,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t2",
+    "id": "ec104es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
@@ -3613,7 +4947,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t3",
+    "id": "ec104es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
@@ -3629,11 +4963,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t4",
+    "id": "ec104es-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
-    "title": "Enhancement and Depletion modes \u2013 Structure, operation, and characteristics, Advanced Devices",
+    "title": "Enhancement and Depletion modes",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -3645,11 +4979,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t5",
+    "id": "ec104es-u5-t5",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
-    "title": "FinFETs - 3D structure, Scaling advantages, CNTFETs - Structure, ballistic transport, fabrication, Comparison",
+    "title": "Structure, operation, and characteristics, Advanced Devices",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -3661,11 +4995,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t6",
+    "id": "ec104es-u5-t6",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
-    "title": "CMOS vs",
+    "title": "FinFETs",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -3677,11 +5011,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t7",
+    "id": "ec104es-u5-t7",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
-    "title": "FinFET vs",
+    "title": "3D structure, Scaling advantages, CNTFETs",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -3693,11 +5027,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ec104es-u5-t8",
+    "id": "ec104es-u5-t8",
     "userId": "valeria-student",
     "courseId": "course-ec104es",
     "unitId": "unit-ec104es-u5",
-    "title": "CNTFET.",
+    "title": "Structure, ballistic transport, fabrication, Comparison",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -3709,59 +5043,107 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u1-t1",
+    "id": "ec104es-u5-t9",
     "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "unitId": "unit-cs105es-u1",
-    "title": "Statements, General Form of a C Program, Arithmetic Expressions, Formatting Numbers in Program Output",
-    "order": 0,
-    "isDone": true,
-    "watchScore": 40,
-    "checkScore": 48,
-    "topicScore": 88,
-    "isStudiedManually": true,
+    "courseId": "course-ec104es",
+    "unitId": "unit-ec104es-u5",
+    "title": "CMOS vs",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
     "isExperiment": false,
     "isSelectedExperiment": true,
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u1-t2",
+    "id": "ec104es-u5-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ec104es",
+    "unitId": "unit-ec104es-u5",
+    "title": "FinFET vs",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ec104es-u5-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ec104es",
+    "unitId": "unit-ec104es-u5",
+    "title": "CNTFET.",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs105es-u1-t1",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "unitId": "unit-cs105es-u1",
+    "title": "General Form of a C Program",
+    "order": 0,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs105es-u1-t2",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "unitId": "unit-cs105es-u1",
+    "title": "Arithmetic Expressions",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs105es-u1-t3",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "unitId": "unit-cs105es-u1",
+    "title": "Formatting Numbers in Program Output",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs105es-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u1",
     "title": "Selection Structures",
-    "order": 1,
-    "isDone": true,
-    "watchScore": 40,
-    "checkScore": 48,
-    "topicScore": 88,
-    "isStudiedManually": true,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs105es-u1-t3",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "unitId": "unit-cs105es-u1",
-    "title": "Control Structures, Conditions, if Statement, if Statements with Compound Statements, Decision Steps in Algorithms",
-    "order": 2,
-    "isDone": true,
-    "watchScore": 40,
-    "checkScore": 48,
-    "topicScore": 88,
-    "isStudiedManually": true,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs105es-u1-t4",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "unitId": "unit-cs105es-u1",
-    "title": "Repetition and Loop Statements",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -3773,11 +5155,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u1-t5",
+    "id": "cs105es-u1-t5",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u1",
-    "title": "Repetition in Programs, Counting Loops and the while Statement, Computing a Sum or Product in a Loop, for Statement, Conditional Loops, Loop Design, Nested Loops, do-while Statement.",
+    "title": "Control Structures, Conditions, if Statement, if Statements with Compound Statements, Decision Steps in Algorithms",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -3789,7 +5171,39 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u2-t1",
+    "id": "cs105es-u1-t6",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "unitId": "unit-cs105es-u1",
+    "title": "Repetition and Loop Statements",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs105es-u1-t7",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "unitId": "unit-cs105es-u1",
+    "title": "Repetition in Programs, Counting Loops and the while Statement, Computing a Sum or Product in a Loop, for Statement, Conditional Loops, Loop Design, Nested Loops, do-while Statement.",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs105es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u2",
@@ -3805,7 +5219,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u2-t2",
+    "id": "cs105es-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u2",
@@ -3821,7 +5235,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u2-t3",
+    "id": "cs105es-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u2",
@@ -3837,7 +5251,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u3-t1",
+    "id": "cs105es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u3",
@@ -3853,7 +5267,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u3-t2",
+    "id": "cs105es-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u3",
@@ -3869,7 +5283,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u3-t3",
+    "id": "cs105es-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u3",
@@ -3885,7 +5299,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u3-t4",
+    "id": "cs105es-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u3",
@@ -3901,7 +5315,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u3-t5",
+    "id": "cs105es-u3-t5",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u3",
@@ -3917,7 +5331,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u4-t1",
+    "id": "cs105es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u4",
@@ -3933,7 +5347,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u4-t2",
+    "id": "cs105es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u4",
@@ -3949,7 +5363,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u5-t1",
+    "id": "cs105es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u5",
@@ -3965,7 +5379,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u5-t2",
+    "id": "cs105es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u5",
@@ -3981,11 +5395,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs105es-u5-t3",
+    "id": "cs105es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-cs105es",
     "unitId": "unit-cs105es-u5",
-    "title": "Basic searching in an array of elements (linear and binary search techniques), Basic algorithms to sort array of elements (Bubble, Insertion and Selection sort algorithms).",
+    "title": "Linear and Binary Search Techniques in Arrays",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -3997,7 +5411,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch106bs-u1-t1",
+    "id": "cs105es-u5-t4",
+    "userId": "valeria-student",
+    "courseId": "course-cs105es",
+    "unitId": "unit-cs105es-u5",
+    "title": "Bubble, Insertion and Selection Sort Algorithms",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ch106bs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
     "unitId": "unit-ch106bs-u1",
@@ -4013,7 +5443,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch106bs-u1-t2",
+    "id": "ch106bs-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
     "unitId": "unit-ch106bs-u1",
@@ -4029,7 +5459,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch106bs-u2-t1",
+    "id": "ch106bs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
     "unitId": "unit-ch106bs-u2",
@@ -4045,7 +5475,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch106bs-u2-t2",
+    "id": "ch106bs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
     "unitId": "unit-ch106bs-u2",
@@ -4061,7 +5491,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch106bs-u2-t3",
+    "id": "ch106bs-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
     "unitId": "unit-ch106bs-u2",
@@ -4077,7 +5507,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ch106bs-u3-t1",
+    "id": "ch106bs-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ch106bs",
     "unitId": "unit-ch106bs-u3",
@@ -4093,7 +5523,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t1",
+    "id": "cs107es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4109,7 +5539,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t2",
+    "id": "cs107es-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4125,7 +5555,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t3",
+    "id": "cs107es-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4141,11 +5571,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t4",
+    "id": "cs107es-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
-    "title": "the table. For example, for a number 5 and rows = 3, the output should be:",
+    "title": "the table. For example, for a number 5 and rows = 3, the output should be",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -4157,7 +5587,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t5",
+    "id": "cs107es-u1-t5",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4173,7 +5603,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t6",
+    "id": "cs107es-u1-t6",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4189,7 +5619,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t7",
+    "id": "cs107es-u1-t7",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4205,7 +5635,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u1-t8",
+    "id": "cs107es-u1-t8",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u1",
@@ -4221,7 +5651,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t1",
+    "id": "cs107es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4237,7 +5667,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t2",
+    "id": "cs107es-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4253,7 +5683,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t3",
+    "id": "cs107es-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4269,7 +5699,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t4",
+    "id": "cs107es-u2-t4",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4285,7 +5715,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t5",
+    "id": "cs107es-u2-t5",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4301,7 +5731,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t6",
+    "id": "cs107es-u2-t6",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4317,7 +5747,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t7",
+    "id": "cs107es-u2-t7",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4333,7 +5763,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t8",
+    "id": "cs107es-u2-t8",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4349,11 +5779,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t9",
+    "id": "cs107es-u2-t9",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
-    "title": "Arrays, Pointers and Functions:",
+    "title": "Arrays, Pointers and Functions",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -4365,7 +5795,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t10",
+    "id": "cs107es-u2-t10",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
@@ -4381,11 +5811,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u2-t11",
+    "id": "cs107es-u2-t11",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u2",
-    "title": "b) Write a C program that uses functions to perform the following:",
+    "title": "b) Write a C program that uses functions to perform the following",
     "order": 10,
     "isDone": false,
     "watchScore": 0,
@@ -4397,7 +5827,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u3-t1",
+    "id": "cs107es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u3",
@@ -4413,7 +5843,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u3-t2",
+    "id": "cs107es-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u3",
@@ -4429,7 +5859,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u3-t3",
+    "id": "cs107es-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u3",
@@ -4445,7 +5875,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u4-t1",
+    "id": "cs107es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u4",
@@ -4461,7 +5891,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u4-t2",
+    "id": "cs107es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u4",
@@ -4477,7 +5907,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u4-t3",
+    "id": "cs107es-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u4",
@@ -4493,7 +5923,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u4-t4",
+    "id": "cs107es-u4-t4",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u4",
@@ -4509,11 +5939,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u5-t1",
+    "id": "cs107es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u5",
-    "title": "a) Write a C program that uses functions to perform the following operations:",
+    "title": "a) Write a C program that uses functions to perform the following operations",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -4525,7 +5955,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u5-t2",
+    "id": "cs107es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u5",
@@ -4541,7 +5971,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u6-t1",
+    "id": "cs107es-u6-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u6",
@@ -4557,7 +5987,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u6-t2",
+    "id": "cs107es-u6-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u6",
@@ -4573,11 +6003,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u6-t3",
+    "id": "cs107es-u6-t3",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u6",
-    "title": "c) Write a C program that displays the position of a character ch in the string S or \u2013 1 if S doesn\u2019t",
+    "title": "c) Write a C program that displays the position of a character ch in the string S or",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -4589,11 +6019,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u6-t4",
+    "id": "cs107es-u6-t4",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u6",
-    "title": "contain ch.",
+    "title": "1 if S doesn\u2019t",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -4605,11 +6035,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u6-t5",
+    "id": "cs107es-u6-t5",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u6",
-    "title": "d) Write a C program to count the lines, words and characters in a given text.",
+    "title": "contain ch.",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -4621,7 +6051,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t1",
+    "id": "cs107es-u6-t6",
+    "userId": "valeria-student",
+    "courseId": "course-cs107es",
+    "unitId": "unit-cs107es-u6",
+    "title": "d) Write a C program to count the lines, words and characters in a given text.",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs107es-u7-t1",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4637,7 +6083,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t2",
+    "id": "cs107es-u7-t2",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4653,7 +6099,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t3",
+    "id": "cs107es-u7-t3",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4669,7 +6115,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t4",
+    "id": "cs107es-u7-t4",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4685,7 +6131,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t5",
+    "id": "cs107es-u7-t5",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4701,7 +6147,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t6",
+    "id": "cs107es-u7-t6",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4717,7 +6163,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t7",
+    "id": "cs107es-u7-t7",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4733,7 +6179,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t8",
+    "id": "cs107es-u7-t8",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4749,7 +6195,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs107es-u7-t9",
+    "id": "cs107es-u7-t9",
     "userId": "valeria-student",
     "courseId": "course-cs107es",
     "unitId": "unit-cs107es-u7",
@@ -4765,11 +6211,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u1-t1",
+    "id": "en108hs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u1",
-    "title": "\uf076 Diagnostic Test \u2013 Activity titled \u2018Express Your View\u2019",
+    "title": "\uf076 Diagnostic Test",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -4781,7 +6227,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u2-t1",
+    "id": "en108hs-u1-t2",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u1",
+    "title": "Activity titled \u2018Express Your View\u2019",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u2",
@@ -4797,11 +6259,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u3-t1",
+    "id": "en108hs-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u3",
-    "title": "Exercise \u2013 II",
+    "title": "Exercise",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -4813,27 +6275,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u4-t1",
+    "id": "en108hs-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
-    "unitId": "unit-en108hs-u4",
-    "title": "Requests and Seeking Permissions \u2013 Taking Leave - Telephone Etiquette",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": true,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-en108hs-u4-t2",
-    "userId": "valeria-student",
-    "courseId": "course-en108hs",
-    "unitId": "unit-en108hs-u4",
-    "title": "Exercise - III",
+    "unitId": "unit-en108hs-u3",
+    "title": "II",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -4845,7 +6291,87 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u5-t1",
+    "id": "en108hs-u4-t1",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u4",
+    "title": "Requests and Seeking Permissions",
+    "order": 0,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u4-t2",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u4",
+    "title": "Taking Leave",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u4-t3",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u4",
+    "title": "Telephone Etiquette",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u4-t4",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u4",
+    "title": "Exercise",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u4-t5",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u4",
+    "title": "III",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u5",
@@ -4861,11 +6387,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u5-t2",
+    "id": "en108hs-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u5",
-    "title": "Exercise \u2013 IV",
+    "title": "Exercise",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -4877,11 +6403,27 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u6-t1",
+    "id": "en108hs-u5-t3",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u5",
+    "title": "IV",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u6-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u6",
-    "title": "Exercise \u2013 V",
+    "title": "Exercise",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -4893,7 +6435,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u7-t1",
+    "id": "en108hs-u6-t2",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u6",
+    "title": "V",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u7-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u7",
@@ -4909,7 +6467,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t1",
+    "id": "en108hs-u8-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
@@ -4925,7 +6483,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t2",
+    "id": "en108hs-u8-t2",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
@@ -4941,7 +6499,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t3",
+    "id": "en108hs-u8-t3",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
@@ -4957,11 +6515,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t4",
+    "id": "en108hs-u8-t4",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
-    "title": "System Requirement (Hardware component):",
+    "title": "System Requirement (Hardware component)",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -4973,7 +6531,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t5",
+    "id": "en108hs-u8-t5",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
@@ -4989,11 +6547,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t6",
+    "id": "en108hs-u8-t6",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
-    "title": "specifications:",
+    "title": "specifications",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -5005,7 +6563,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t7",
+    "id": "en108hs-u8-t7",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
@@ -5021,7 +6579,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u8-t8",
+    "id": "en108hs-u8-t8",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u8",
@@ -5037,11 +6595,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u9-t1",
+    "id": "en108hs-u9-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u9",
-    "title": "visual aids with a Public Address System, a T. V. or LCD, a digital stereo \u2013 audio & video system",
+    "title": "visual aids with a Public Address System, a T. V. or LCD, a digital stereo",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -5053,11 +6611,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u9-t2",
+    "id": "en108hs-u9-t2",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u9",
-    "title": "and camcorder etc.",
+    "title": "audio & video system",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -5069,11 +6627,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u9-t3",
+    "id": "en108hs-u9-t3",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u9",
-    "title": "\uf040 Note: English Language Teachers are requested to prepare Materials / Handouts for each",
+    "title": "and camcorder etc.",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -5085,11 +6643,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u9-t4",
+    "id": "en108hs-u9-t4",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u9",
-    "title": "Activity for the Use of those Materials in CALL & ICS Labs.",
+    "title": "\uf040 Note: English Language Teachers are requested to prepare Materials / Handouts for each",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -5101,7 +6659,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t1",
+    "id": "en108hs-u9-t5",
+    "userId": "valeria-student",
+    "courseId": "course-en108hs",
+    "unitId": "unit-en108hs-u9",
+    "title": "Activity for the Use of those Materials in CALL & ICS Labs.",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "en108hs-u10-t1",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5117,7 +6691,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t2",
+    "id": "en108hs-u10-t2",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5133,7 +6707,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t3",
+    "id": "en108hs-u10-t3",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5149,7 +6723,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t4",
+    "id": "en108hs-u10-t4",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5165,7 +6739,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t5",
+    "id": "en108hs-u10-t5",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5181,7 +6755,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t6",
+    "id": "en108hs-u10-t6",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5197,7 +6771,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t7",
+    "id": "en108hs-u10-t7",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5213,7 +6787,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-en108hs-u10-t8",
+    "id": "en108hs-u10-t8",
     "userId": "valeria-student",
     "courseId": "course-en108hs",
     "unitId": "unit-en108hs-u10",
@@ -5229,7 +6803,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t1",
+    "id": "me109es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
@@ -5245,11 +6819,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t2",
+    "id": "me109es-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
-    "title": "ii. Fitting:  V- Fit, Dovetail Fit and Semi- circular fit",
+    "title": "ii. Fitting: V- Fit, Dovetail Fit and Semi- circular fit",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -5261,7 +6835,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t3",
+    "id": "me109es-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
@@ -5277,7 +6851,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t4",
+    "id": "me109es-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
@@ -5293,7 +6867,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t5",
+    "id": "me109es-u1-t5",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
@@ -5309,7 +6883,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t6",
+    "id": "me109es-u1-t6",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
@@ -5325,7 +6899,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u1-t7",
+    "id": "me109es-u1-t7",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u1",
@@ -5341,7 +6915,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me109es-u2-t1",
+    "id": "me109es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-me109es",
     "unitId": "unit-me109es-u2",
@@ -5357,11 +6931,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u1-t1",
+    "id": "ma201bs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u1",
-    "title": "Exact differential equations \u2013 Equations reducible to exact differential equations \u2013 linear and Bernoulli\u2019s equations \u2013 Orthogonal Trajectories (only in Cartesian Coordinates)",
+    "title": "Exact differential equations",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -5373,11 +6947,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u1-t2",
+    "id": "ma201bs-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u1",
-    "title": "Applications",
+    "title": "Equations reducible to exact differential equations",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -5389,11 +6963,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u1-t3",
+    "id": "ma201bs-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u1",
-    "title": "Newton\u2019s law of cooling \u2013 Law of natural growth and decay.",
+    "title": "linear and Bernoulli\u2019s equations",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -5405,7 +6979,71 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u2-t1",
+    "id": "ma201bs-u1-t4",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u1",
+    "title": "Orthogonal Trajectories (only in Cartesian Coordinates)",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u1-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u1",
+    "title": "Applications",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u1-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u1",
+    "title": "Newton\u2019s law of cooling",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u1-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u1",
+    "title": "Law of natural growth and decay.",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u2",
@@ -5421,11 +7059,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u2-t2",
+    "id": "ma201bs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u2",
-    "title": "Non-Homogeneous terms of the type \ud835\udc52\u0bd4\u0beb, sin\ud835\udc4e\ud835\udc65 , cos\ud835\udc4e\ud835\udc65,  polynomials in \ud835\udc65, \ud835\udc52\u0bd4\u0beb\ud835\udc49(\ud835\udc65) and \ud835\udc65 \ud835\udc49(\ud835\udc65) \u2013 Method of variation of parameters.",
+    "title": "Non-Homogeneous terms of the type \ud835\udc52\u0bd4\u0beb, sin\ud835\udc4e\ud835\udc65 , cos\ud835\udc4e\ud835\udc65, polynomials in \ud835\udc65, \ud835\udc52\u0bd4\u0beb\ud835\udc49(\ud835\udc65) and \ud835\udc65 \ud835\udc49(\ud835\udc65)",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -5437,7 +7075,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u3-t1",
+    "id": "ma201bs-u2-t3",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u2",
+    "title": "Method of variation of parameters.",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u3",
@@ -5453,11 +7107,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u3-t2",
+    "id": "ma201bs-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u3",
-    "title": "Laplace Transform of standard functions \u2013 First shifting theorem \u2013 Laplace transforms of functions multiplied by \u2018t\u2019 and divided by \u2018t\u2019 \u2013 Laplace transforms of derivatives and integrals of function \u2013 Evaluation of integrals by Laplace transforms \u2013 Laplace transform of periodic functions \u2013 Inverse Laplace transform by different methods, convolution theorem (without proof)",
+    "title": "Laplace Transform of standard functions",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -5469,11 +7123,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u3-t3",
+    "id": "ma201bs-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u3",
-    "title": "Applications",
+    "title": "First shifting theorem",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -5485,11 +7139,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u3-t4",
+    "id": "ma201bs-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u3",
-    "title": "solving Initial value problems by Laplace Transform method.",
+    "title": "Laplace transforms of functions multiplied by \u2018t\u2019 and divided by \u2018t\u2019",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -5501,11 +7155,107 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u4-t1",
+    "id": "ma201bs-u3-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u3",
+    "title": "Laplace transforms of derivatives and integrals of function",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u3-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u3",
+    "title": "Evaluation of integrals by Laplace transforms",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u3-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u3",
+    "title": "Laplace transform of periodic functions",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u3-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u3",
+    "title": "Inverse Laplace transform by different methods, convolution theorem (without proof)",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u3-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u3",
+    "title": "Applications",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u3-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u3",
+    "title": "solving Initial value problems by Laplace Transform method.",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u4",
-    "title": "Vector point functions and scalar point functions \u2013 Gradient \u2013 Divergence and Curl \u2013 Directional derivatives \u2013 Vector Identities \u2013 Scalar potential functions \u2013 Solenoidal and Irrotational vectors.",
+    "title": "Vector point functions and scalar point functions",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -5517,7 +7267,103 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u5-t1",
+    "id": "ma201bs-u4-t2",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u4",
+    "title": "Gradient",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u4-t3",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u4",
+    "title": "Divergence and Curl",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u4-t4",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u4",
+    "title": "Directional derivatives",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u4-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u4",
+    "title": "Vector Identities",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u4-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u4",
+    "title": "Scalar potential functions",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u4-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ma201bs",
+    "unitId": "unit-ma201bs-u4",
+    "title": "Solenoidal and Irrotational vectors.",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ma201bs-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u5",
@@ -5533,7 +7379,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u5-t2",
+    "id": "ma201bs-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u5",
@@ -5549,7 +7395,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t1",
+    "id": "ma201bs-u6-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5565,7 +7411,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t2",
+    "id": "ma201bs-u6-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5581,7 +7427,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t3",
+    "id": "ma201bs-u6-t3",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5597,7 +7443,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t4",
+    "id": "ma201bs-u6-t4",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5613,7 +7459,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t5",
+    "id": "ma201bs-u6-t5",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5629,7 +7475,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t6",
+    "id": "ma201bs-u6-t6",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5645,7 +7491,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t7",
+    "id": "ma201bs-u6-t7",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5661,7 +7507,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t8",
+    "id": "ma201bs-u6-t8",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5677,7 +7523,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t9",
+    "id": "ma201bs-u6-t9",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5693,7 +7539,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t10",
+    "id": "ma201bs-u6-t10",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5709,7 +7555,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u6-t11",
+    "id": "ma201bs-u6-t11",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u6",
@@ -5725,7 +7571,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u7-t1",
+    "id": "ma201bs-u7-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u7",
@@ -5741,7 +7587,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u7-t2",
+    "id": "ma201bs-u7-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u7",
@@ -5757,7 +7603,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u7-t3",
+    "id": "ma201bs-u7-t3",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u7",
@@ -5773,7 +7619,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u7-t4",
+    "id": "ma201bs-u7-t4",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u7",
@@ -5789,7 +7635,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u8-t1",
+    "id": "ma201bs-u8-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u8",
@@ -5805,7 +7651,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u8-t2",
+    "id": "ma201bs-u8-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u8",
@@ -5821,7 +7667,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u9-t1",
+    "id": "ma201bs-u9-t1",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u9",
@@ -5837,7 +7683,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ma201bs-u9-t2",
+    "id": "ma201bs-u9-t2",
     "userId": "valeria-student",
     "courseId": "course-ma201bs",
     "unitId": "unit-ma201bs-u9",
@@ -5853,7 +7699,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t1",
+    "id": "ph202bs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
@@ -5869,11 +7715,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t2",
+    "id": "ph202bs-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "Unit cell, space lattice, basis, lattice parameters",
+    "title": "Unit cell",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -5885,11 +7731,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t3",
+    "id": "ph202bs-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "crystal structures, Bravais lattices, packing factor",
+    "title": "space lattice",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -5901,11 +7747,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t4",
+    "id": "ph202bs-u1-t4",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "SC, BCC, FCC",
+    "title": "basis",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -5917,11 +7763,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t5",
+    "id": "ph202bs-u1-t5",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "Miller indices, inter-planar distance",
+    "title": "lattice parameters",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -5933,11 +7779,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t6",
+    "id": "ph202bs-u1-t6",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "defects in crystals (Qualitative)",
+    "title": "crystal structures",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -5949,11 +7795,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t7",
+    "id": "ph202bs-u1-t7",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "point defects, line defects, surface defects and volume defects",
+    "title": "Bravais lattices",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -5965,11 +7811,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t8",
+    "id": "ph202bs-u1-t8",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "concept of nanomaterials",
+    "title": "packing factor",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -5981,11 +7827,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t9",
+    "id": "ph202bs-u1-t9",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "surface to volume ratio, X -ray diffraction",
+    "title": "SC, BCC, FCC",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -5997,11 +7843,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t10",
+    "id": "ph202bs-u1-t10",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "Bragg\u2019s law, powder method, calculation of average crystallite size using Debye Scherrer\u2019s formula, scanning electron microscopy (SEM)",
+    "title": "Miller indices",
     "order": 9,
     "isDone": false,
     "watchScore": 0,
@@ -6013,11 +7859,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u1-t11",
+    "id": "ph202bs-u1-t11",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u1",
-    "title": "block diagram, working principle.",
+    "title": "inter-planar distance",
     "order": 10,
     "isDone": false,
     "watchScore": 0,
@@ -6029,11 +7875,219 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u2-t1",
+    "id": "ph202bs-u1-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "defects in crystals (Qualitative)",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "point defects",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "line defects",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "surface defects and volume defects",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "concept of nanomaterials",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "surface to volume ratio",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t18",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "X -ray diffraction",
+    "order": 17,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t19",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "Bragg\u2019s law",
+    "order": 18,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t20",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "powder method",
+    "order": 19,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t21",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "calculation of average crystallite size using Debye Scherrer\u2019s formula",
+    "order": 20,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t22",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "scanning electron microscopy (SEM)",
+    "order": 21,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t23",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "block diagram",
+    "order": 22,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u1-t24",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u1",
+    "title": "working principle.",
+    "order": 23,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u2",
-    "title": "Introduction, de-Broglie hypothesis, Heisenberg uncertainty principle, physical significance of wave function, postulates of quantum mechanics",
+    "title": "Introduction",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6045,11 +8099,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u2-t2",
+    "id": "ph202bs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u2",
-    "title": "operators in quantum mechanics, eigen values and eigen functions, expectation value",
+    "title": "de-Broglie hypothesis",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -6061,11 +8115,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u2-t3",
+    "id": "ph202bs-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u2",
-    "title": "Schr\u00f6dinger\u2019s time independent wave equation, particle in a 1D box, Bloch\u2019s theorem (qualitative), Kronig-Penney model (qualitative)",
+    "title": "Heisenberg uncertainty principle",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -6077,11 +8131,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u2-t4",
+    "id": "ph202bs-u2-t4",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
     "unitId": "unit-ph202bs-u2",
-    "title": "E-k diagram, effective mass of electron, formation of energy bands, origin of bandgap, classification of solids, concept of discrete energy levels and quantum confinement in nanomaterials.",
+    "title": "physical significance of wave function",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -6093,107 +8147,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u3-t1",
+    "id": "ph202bs-u2-t5",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u3",
-    "title": "Introduction, linear algebra for quantum computation, Dirac\u2019s Bra and Ket notation and their properties, Hilbert space, Bloch\u2019s sphere, concept of quantum computer, classical bits, Qubits, multiple Qubit system, quantum computing system for information processing, evolution of quantum systems, quantum measurements, entanglement, quantum gates, challenges and advantages of quantum computing over classical computation, quantum algorithms",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph202bs-u3-t2",
-    "userId": "valeria-student",
-    "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u3",
-    "title": "Deutsch-Jozsa, Shor, Grover.",
-    "order": 1,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph202bs-u4-t1",
-    "userId": "valeria-student",
-    "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u4",
-    "title": "Introduction to magnetic materials, origin of magnetic moment-classification of magnetic materials, hysteresis, Weiss domain theory of ferromagnetism, soft and hard magnetic materials, synthesis of ferrimagnetic materials using sol-gel method, applications",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph202bs-u4-t2",
-    "userId": "valeria-student",
-    "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u4",
-    "title": "magnetic hyperthermia for cancer treatment, Introduction to dielectric materials, types of polarization (qualitative)",
-    "order": 1,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph202bs-u4-t3",
-    "userId": "valeria-student",
-    "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u4",
-    "title": "electronics, ionic & orientation",
-    "order": 2,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph202bs-u4-t4",
-    "userId": "valeria-student",
-    "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u4",
-    "title": "ferroelectric, piezoelectric, pyroelectric materials and their applications",
-    "order": 3,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph202bs-u4-t5",
-    "userId": "valeria-student",
-    "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u4",
-    "title": "Ferroelectric Random-Access Memory (Fe-RAM), load cell and fire sensor.",
+    "unitId": "unit-ph202bs-u2",
+    "title": "postulates of quantum mechanics",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -6205,11 +8163,219 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u5-t1",
+    "id": "ph202bs-u2-t6",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u5",
-    "title": "Introduction to laser, characteristics of laser, Einstein coefficients and their relations, metastable state, population inversion, pumping, lasing action, Ruby laser, He-Ne laser, CO2 laser, semiconductor diode laser, applications",
+    "unitId": "unit-ph202bs-u2",
+    "title": "operators in quantum mechanics",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "eigen values and eigen functions",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "expectation value",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "Schr\u00f6dinger\u2019s time independent wave equation",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "particle in a 1D box",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "Bloch\u2019s theorem (qualitative)",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "Kronig-Penney model (qualitative)",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "E-k diagram",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "effective mass of electron",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "formation of energy bands",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "origin of bandgap",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "classification of solids",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u2-t18",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u2",
+    "title": "concept of discrete energy levels and quantum confinement in nanomaterials.",
+    "order": 17,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t1",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Introduction",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6221,11 +8387,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u5-t2",
+    "id": "ph202bs-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u5",
-    "title": "Bar code scanner, LIDAR for autonomous vehicle",
+    "unitId": "unit-ph202bs-u3",
+    "title": "linear algebra for quantum computation",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -6237,11 +8403,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u5-t3",
+    "id": "ph202bs-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u5",
-    "title": "Introduction to fibre optics, total internal reflection, construction of optical fibre, acceptance angle, numerical aperture, classification of optical fibres, losses in optical fibre, applications",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Dirac\u2019s Bra and Ket notation and their properties",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -6253,11 +8419,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph202bs-u5-t4",
+    "id": "ph202bs-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-ph202bs",
-    "unitId": "unit-ph202bs-u5",
-    "title": "optical fibre for communication system, sensor for structural health monitoring.",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Hilbert space",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -6269,11 +8435,251 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u1-t1",
+    "id": "ph202bs-u3-t5",
     "userId": "valeria-student",
-    "courseId": "course-me203es",
-    "unitId": "unit-me203es-u1",
-    "title": "Principles of Engineering Graphics and their Significance, Geometrical Constructions, Scales, Plain and Diagonal, Conic Sections including the Rectangular Hyperbola, General method only",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Bloch\u2019s sphere",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "concept of quantum computer",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "classical bits",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Qubits",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "multiple Qubit system",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "quantum computing system for information processing",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "evolution of quantum systems",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "quantum measurements",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "entanglement",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "quantum gates",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "challenges and advantages of quantum computing over classical computation",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "quantum algorithms",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Deutsch-Jozsa",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t18",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Shor",
+    "order": 17,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u3-t19",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u3",
+    "title": "Grover.",
+    "order": 18,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t1",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "Introduction to magnetic materials",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6285,11 +8691,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u1-t2",
+    "id": "ph202bs-u4-t2",
     "userId": "valeria-student",
-    "courseId": "course-me203es",
-    "unitId": "unit-me203es-u1",
-    "title": "Cycloid, Epicycloid and Hypocycloid.",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "origin of magnetic moment-classification of magnetic materials",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -6301,11 +8707,251 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u2-t1",
+    "id": "ph202bs-u4-t3",
     "userId": "valeria-student",
-    "courseId": "course-me203es",
-    "unitId": "unit-me203es-u2",
-    "title": "Principles of Orthographic Projections, Conventions, Projections of Points and Lines, Projections of Plane regular geometric figures",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "hysteresis",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t4",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "Weiss domain theory of ferromagnetism",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "soft and hard magnetic materials",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "synthesis of ferrimagnetic materials using sol-gel method",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "applications",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "magnetic hyperthermia for cancer treatment",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "Introduction to dielectric materials",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "types of polarization (qualitative)",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "electronics",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "ionic & orientation",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "ferroelectric",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "piezoelectric",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "pyroelectric materials and their applications",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "Ferroelectric Random-Access Memory (Fe-RAM)",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u4-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u4",
+    "title": "load cell and fire sensor.",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t1",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "Introduction to laser",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6317,11 +8963,699 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u2-t2",
+    "id": "ph202bs-u5-t2",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "characteristics of laser",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t3",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "Einstein coefficients and their relations",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t4",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "metastable state",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t5",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "population inversion",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t6",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "pumping",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t7",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "lasing action",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t8",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "Ruby laser",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t9",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "He-Ne laser",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t10",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "CO2 laser",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t11",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "semiconductor diode laser",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t12",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "applications",
+    "order": 11,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t13",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "Bar code scanner",
+    "order": 12,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t14",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "LIDAR for autonomous vehicle",
+    "order": 13,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t15",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "Introduction to fibre optics",
+    "order": 14,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t16",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "total internal reflection",
+    "order": 15,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t17",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "construction of optical fibre",
+    "order": 16,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t18",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "acceptance angle",
+    "order": 17,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t19",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "numerical aperture",
+    "order": 18,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t20",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "classification of optical fibres",
+    "order": 19,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t21",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "losses in optical fibre",
+    "order": 20,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t22",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "applications",
+    "order": 21,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t23",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "optical fibre for communication system",
+    "order": 22,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph202bs-u5-t24",
+    "userId": "valeria-student",
+    "courseId": "course-ph202bs",
+    "unitId": "unit-ph202bs-u5",
+    "title": "sensor for structural health monitoring.",
+    "order": 23,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t1",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Principles of Engineering Graphics and their Significance",
+    "order": 0,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t2",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Geometrical Constructions",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t3",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Scales",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t4",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Plain and Diagonal",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t5",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Conic Sections including the Rectangular Hyperbola",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t6",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "General method only",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t7",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Cycloid",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u1-t8",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u1",
+    "title": "Epicycloid and Hypocycloid.",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t1",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "Principles of Orthographic Projections",
+    "order": 0,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t2",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "Conventions",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t3",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "Projections of Points and Lines",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t4",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "Projections of Plane regular geometric figures",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t5",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u2",
     "title": "Auxiliary Planes",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t6",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "Computer aided orthographic projections",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t7",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "points",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t8",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "lines and planes",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t9",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "Introduction to Computer aided drafting",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t10",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "views",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u2-t11",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u2",
+    "title": "commands and conics.",
+    "order": 10,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u3-t1",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u3",
+    "title": "Auxiliary Views",
+    "order": 0,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u3-t2",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u3",
+    "title": "Sections or Sectional views of Right Regular Solids",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -6333,11 +9667,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u2-t3",
+    "id": "me203es-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-me203es",
-    "unitId": "unit-me203es-u2",
-    "title": "Computer aided orthographic projections, points, lines and planes",
+    "unitId": "unit-me203es-u3",
+    "title": "Prism",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -6349,11 +9683,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u2-t4",
+    "id": "me203es-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-me203es",
-    "unitId": "unit-me203es-u2",
-    "title": "Introduction to Computer aided drafting, views, commands and conics.",
+    "unitId": "unit-me203es-u3",
+    "title": "Cylinder",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -6365,11 +9699,91 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u3-t1",
+    "id": "me203es-u3-t5",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u3",
-    "title": "Auxiliary Views, Sections or Sectional views of Right Regular Solids, Prism, Cylinder, Pyramid, Cone, Auxiliary views, Computer aided projections of solids, sectional views",
+    "title": "Pyramid",
+    "order": 4,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u3-t6",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u3",
+    "title": "Cone",
+    "order": 5,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u3-t7",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u3",
+    "title": "Auxiliary views",
+    "order": 6,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u3-t8",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u3",
+    "title": "Computer aided projections of solids",
+    "order": 7,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u3-t9",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u3",
+    "title": "sectional views",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u4-t1",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u4",
+    "title": "Foundations of Development of Surfaces (Conventional): Prism",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6381,27 +9795,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u4-t1",
+    "id": "me203es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u4",
-    "title": "Foundations of Development of Surfaces (Conventional): Prism, Cylinder, Pyramid and Cone.",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-me203es-u4-t2",
-    "userId": "valeria-student",
-    "courseId": "course-me203es",
-    "unitId": "unit-me203es-u4",
-    "title": "Advanced concepts in Development of Surfaces (Conventional): Prism, Cylinder, Pyramid and Cone.",
+    "title": "Cylinder",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -6413,7 +9811,39 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t1",
+    "id": "me203es-u4-t3",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u4",
+    "title": "Pyramid and Cone.",
+    "order": 2,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u4-t4",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u4",
+    "title": "Advanced concepts in Development of Surfaces (Conventional): Prism, Cylinder, Pyramid and Cone.",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
@@ -6429,7 +9859,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t2",
+    "id": "me203es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
@@ -6445,7 +9875,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t3",
+    "id": "me203es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
@@ -6461,7 +9891,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t4",
+    "id": "me203es-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
@@ -6477,7 +9907,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t5",
+    "id": "me203es-u5-t5",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
@@ -6493,7 +9923,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t6",
+    "id": "me203es-u5-t6",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
@@ -6509,11 +9939,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t7",
+    "id": "me203es-u5-t7",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
-    "title": "CIE \u2013 I will be in conventional mode",
+    "title": "CIE",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -6525,11 +9955,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-me203es-u5-t8",
+    "id": "me203es-u5-t8",
     "userId": "valeria-student",
     "courseId": "course-me203es",
     "unitId": "unit-me203es-u5",
-    "title": "CIE \u2013 II will be using Computer.",
+    "title": "I will be in conventional mode",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -6541,7 +9971,39 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u1-t1",
+    "id": "me203es-u5-t9",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u5",
+    "title": "CIE",
+    "order": 8,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "me203es-u5-t10",
+    "userId": "valeria-student",
+    "courseId": "course-me203es",
+    "unitId": "unit-me203es-u5",
+    "title": "II will be using Computer.",
+    "order": 9,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ee204es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u1",
@@ -6557,7 +10019,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u1-t2",
+    "id": "ee204es-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u1",
@@ -6573,7 +10035,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u1-t3",
+    "id": "ee204es-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u1",
@@ -6589,7 +10051,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u2-t1",
+    "id": "ee204es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u2",
@@ -6605,7 +10067,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u2-t2",
+    "id": "ee204es-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u2",
@@ -6621,7 +10083,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u3-t1",
+    "id": "ee204es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u3",
@@ -6637,7 +10099,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u3-t2",
+    "id": "ee204es-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u3",
@@ -6653,7 +10115,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u4-t1",
+    "id": "ee204es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u4",
@@ -6669,7 +10131,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u4-t2",
+    "id": "ee204es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u4",
@@ -6685,7 +10147,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u4-t3",
+    "id": "ee204es-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u4",
@@ -6701,7 +10163,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u4-t4",
+    "id": "ee204es-u4-t4",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u4",
@@ -6717,7 +10179,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u5-t1",
+    "id": "ee204es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u5",
@@ -6733,7 +10195,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u5-t2",
+    "id": "ee204es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u5",
@@ -6749,7 +10211,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee204es-u5-t3",
+    "id": "ee204es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-ee204es",
     "unitId": "unit-ee204es-u5",
@@ -6765,11 +10227,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u1-t1",
+    "id": "cs205es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u1",
-    "title": "Structures, abstract data types, selecting a Data Structure, Linear list \u2013 Introduction, singly linked list, Circular Linked Lists, Doubly Linked List, Stacks- Operations, Stack algorithm, Stack ADT, Stack applications, Queues- operations, Queue Algorithm, Queue ADT, Queue Applications.",
+    "title": "Structures, abstract data types, selecting a Data Structure, Linear list",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6781,11 +10243,27 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u2-t1",
+    "id": "cs205es-u1-t2",
+    "userId": "valeria-student",
+    "courseId": "course-cs205es",
+    "unitId": "unit-cs205es-u1",
+    "title": "Introduction, singly linked list, Circular Linked Lists, Doubly Linked List, Stacks- Operations, Stack algorithm, Stack ADT, Stack applications, Queues- operations, Queue Algorithm, Queue ADT, Queue Applications.",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs205es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u2",
-    "title": "Tree, Binary Search Trees (BST), BST Operations- Searching, Insertion and Deletion, BST ADT, BST Applications, Threaded Binary Trees, AVL Trees, Red \u2013Black Trees, Splay Trees",
+    "title": "Tree, Binary Search Trees (BST), BST Operations- Searching, Insertion and Deletion, BST ADT, BST Applications, Threaded Binary Trees, AVL Trees, Red",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -6797,7 +10275,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u3-t1",
+    "id": "cs205es-u2-t2",
+    "userId": "valeria-student",
+    "courseId": "course-cs205es",
+    "unitId": "unit-cs205es-u2",
+    "title": "Black Trees, Splay Trees",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": false,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs205es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u3",
@@ -6813,7 +10307,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u3-t2",
+    "id": "cs205es-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u3",
@@ -6829,7 +10323,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u3-t3",
+    "id": "cs205es-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u3",
@@ -6845,7 +10339,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u4-t1",
+    "id": "cs205es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u4",
@@ -6861,7 +10355,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u4-t2",
+    "id": "cs205es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u4",
@@ -6877,7 +10371,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t1",
+    "id": "cs205es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
@@ -6893,7 +10387,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t2",
+    "id": "cs205es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
@@ -6909,7 +10403,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t3",
+    "id": "cs205es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
@@ -6925,11 +10419,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t4",
+    "id": "cs205es-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Introduction, Data hierarchy, File Attributes, Text and Binary Files, Basic File Operations, File Organization, Indexing TEXTBOOKS",
+    "title": "Data Structures",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -6941,11 +10435,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t5",
+    "id": "cs205es-u5-t5",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Data Structures",
+    "title": "A Pseudocode Approach with C, 2 nd Edition, R",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -6957,11 +10451,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t6",
+    "id": "cs205es-u5-t6",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "A Pseudocode Approach with C, 2 nd Edition, R",
+    "title": "Data Structures using C",
     "order": 5,
     "isDone": false,
     "watchScore": 0,
@@ -6973,11 +10467,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t7",
+    "id": "cs205es-u5-t7",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Gilberg and B.A.Forouzan, Cengage Learning 2",
+    "title": "A",
     "order": 6,
     "isDone": false,
     "watchScore": 0,
@@ -6989,11 +10483,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t8",
+    "id": "cs205es-u5-t8",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Data Structure using C\u2013 Reema Thareja, 3 rd Edition, Oxford University Press",
+    "title": "S.Tanenbaum, Y",
     "order": 7,
     "isDone": false,
     "watchScore": 0,
@@ -7005,11 +10499,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t9",
+    "id": "cs205es-u5-t9",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "REFERENCE",
+    "title": "Langsam, and M.J",
     "order": 8,
     "isDone": false,
     "watchScore": 0,
@@ -7021,11 +10515,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t10",
+    "id": "cs205es-u5-t10",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Data Structures using C \u2013 A",
+    "title": "I Year II Sem",
     "order": 9,
     "isDone": false,
     "watchScore": 0,
@@ -7037,11 +10531,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t11",
+    "id": "cs205es-u5-t11",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "S.Tanenbaum, Y",
+    "title": "To provide practical exposure to advanced concepts in solid-state and modern physics",
     "order": 10,
     "isDone": false,
     "watchScore": 0,
@@ -7053,11 +10547,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t12",
+    "id": "cs205es-u5-t12",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Langsam, and M.J",
+    "title": "To synthesize and study the physical properties of materials like semiconductors, ferromagnetic, and ferroelectric substances",
     "order": 11,
     "isDone": false,
     "watchScore": 0,
@@ -7069,11 +10563,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t13",
+    "id": "cs205es-u5-t13",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "Augenstein, PHI/Pearson PH206BS",
+    "title": "To perform semiconductor characterization using Hall effect and band gap experiments",
     "order": 12,
     "isDone": false,
     "watchScore": 0,
@@ -7085,11 +10579,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t14",
+    "id": "cs205es-u5-t14",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "ADVANCED ENGINEERING PHYSICS LAB B.Tech",
+    "title": "To explore the working principles of lasers and optical fibers through hands-on experiments",
     "order": 13,
     "isDone": false,
     "watchScore": 0,
@@ -7101,11 +10595,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t15",
+    "id": "cs205es-u5-t15",
     "userId": "valeria-student",
     "courseId": "course-cs205es",
     "unitId": "unit-cs205es-u5",
-    "title": "I Year II Sem",
+    "title": "To develop skills in data analysis, interpretation, and scientific reporting.",
     "order": 14,
     "isDone": false,
     "watchScore": 0,
@@ -7117,103 +10611,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs205es-u5-t16",
-    "userId": "valeria-student",
-    "courseId": "course-cs205es",
-    "unitId": "unit-cs205es-u5",
-    "title": "L   T    P   C 0    0    2   1 Course Objectives",
-    "order": 15,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs205es-u5-t17",
-    "userId": "valeria-student",
-    "courseId": "course-cs205es",
-    "unitId": "unit-cs205es-u5",
-    "title": "To provide practical exposure to advanced concepts in solid-state and modern physics",
-    "order": 16,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs205es-u5-t18",
-    "userId": "valeria-student",
-    "courseId": "course-cs205es",
-    "unitId": "unit-cs205es-u5",
-    "title": "To synthesize and study the physical properties of materials like semiconductors, ferromagnetic, and ferroelectric substances",
-    "order": 17,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs205es-u5-t19",
-    "userId": "valeria-student",
-    "courseId": "course-cs205es",
-    "unitId": "unit-cs205es-u5",
-    "title": "To perform semiconductor characterization using Hall effect and band gap experiments",
-    "order": 18,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs205es-u5-t20",
-    "userId": "valeria-student",
-    "courseId": "course-cs205es",
-    "unitId": "unit-cs205es-u5",
-    "title": "To explore the working principles of lasers and optical fibers through hands-on experiments",
-    "order": 19,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-cs205es-u5-t21",
-    "userId": "valeria-student",
-    "courseId": "course-cs205es",
-    "unitId": "unit-cs205es-u5",
-    "title": "To develop skills in data analysis, interpretation, and scientific reporting.",
-    "order": 20,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": false,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph206bs-u1-t1",
+    "id": "ph206bs-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u1",
@@ -7229,7 +10627,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u1-t2",
+    "id": "ph206bs-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u1",
@@ -7245,7 +10643,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u2-t1",
+    "id": "ph206bs-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u2",
@@ -7261,7 +10659,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u2-t2",
+    "id": "ph206bs-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u2",
@@ -7277,7 +10675,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u2-t3",
+    "id": "ph206bs-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u2",
@@ -7293,7 +10691,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u3-t1",
+    "id": "ph206bs-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u3",
@@ -7309,39 +10707,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u4-t1",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "unitId": "unit-ph206bs-u4",
-    "title": "B.Tech. I Year II Sem.         L   T    P   C",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": true,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph206bs-u4-t2",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "unitId": "unit-ph206bs-u4",
-    "title": "0    0    2   1",
-    "order": 1,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": true,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph206bs-u5-t1",
+    "id": "ph206bs-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u5",
@@ -7357,59 +10723,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u6-t1",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "unitId": "unit-ph206bs-u6",
-    "title": "1. Ability to develop C programs for computing and real-life applications using basic elements like",
-    "order": 0,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": true,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph206bs-u6-t2",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "unitId": "unit-ph206bs-u6",
-    "title": "control statements, arrays, functions, pointers and strings, and data structures like stacks,",
-    "order": 1,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": true,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph206bs-u6-t3",
-    "userId": "valeria-student",
-    "courseId": "course-ph206bs",
-    "unitId": "unit-ph206bs-u6",
-    "title": "queues and linked lists.",
-    "order": 2,
-    "isDone": false,
-    "watchScore": 0,
-    "checkScore": 0,
-    "topicScore": 0,
-    "isStudiedManually": false,
-    "isExperiment": true,
-    "isSelectedExperiment": true,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "topic-ph206bs-u7-t1",
+    "id": "ph206bs-u7-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u7",
-    "title": "i) Creation   ii) Insertion   iii) Deletion    iv) Traversal",
+    "title": "i) Creation ii) Insertion iii) Deletion iv) Traversal",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7421,11 +10739,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u8-t1",
+    "id": "ph206bs-u8-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u8",
-    "title": "i) Creation   ii) Insertion   iii) Deletion    iv) Traversal",
+    "title": "i) Creation ii) Insertion iii) Deletion iv) Traversal",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7437,11 +10755,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u9-t1",
+    "id": "ph206bs-u9-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u9",
-    "title": "i) Creation   ii) Insertion    iii) Deletion   iv) Traversal",
+    "title": "i) Creation ii) Insertion iii) Deletion iv) Traversal",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7453,11 +10771,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u10-t1",
+    "id": "ph206bs-u10-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u10",
-    "title": "i) Arrays     ii) ADT",
+    "title": "i) Arrays ii) ADT",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7469,11 +10787,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u11-t1",
+    "id": "ph206bs-u11-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u11",
-    "title": "i) Arrays     ii) ADT",
+    "title": "i) Arrays ii) ADT",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7485,7 +10803,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u11-t2",
+    "id": "ph206bs-u11-t2",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u11",
@@ -7501,7 +10819,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u11-t3",
+    "id": "ph206bs-u11-t3",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u11",
@@ -7517,7 +10835,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u11-t4",
+    "id": "ph206bs-u11-t4",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u11",
@@ -7533,11 +10851,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u11-t5",
+    "id": "ph206bs-u11-t5",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u11",
-    "title": "7.  Write a program to implement the tree traversal methods (Recursive and Non-Recursive).",
+    "title": "7. Write a program to implement the tree traversal methods (Recursive and Non-Recursive).",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -7549,11 +10867,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u12-t1",
+    "id": "ph206bs-u12-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u12",
-    "title": "i) Binary Search tree ii) B Trees iii) B+ Trees  iv) AVL trees v) Red - Black trees",
+    "title": "i) Binary Search tree ii) B Trees iii) B+ Trees iv) AVL trees v) Red",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7565,7 +10883,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ph206bs-u13-t1",
+    "id": "ph206bs-u12-t2",
+    "userId": "valeria-student",
+    "courseId": "course-ph206bs",
+    "unitId": "unit-ph206bs-u12",
+    "title": "Black trees",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ph206bs-u13-t1",
     "userId": "valeria-student",
     "courseId": "course-ph206bs",
     "unitId": "unit-ph206bs-u13",
@@ -7581,11 +10915,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u1-t1",
+    "id": "cs207es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u1",
-    "title": "i) Creation   ii) Insertion   iii) Deletion    iv) Traversal",
+    "title": "i) Creation ii) Insertion iii) Deletion iv) Traversal",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7597,11 +10931,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u2-t1",
+    "id": "cs207es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u2",
-    "title": "i) Creation   ii) Insertion   iii) Deletion    iv) Traversal",
+    "title": "i) Creation ii) Insertion iii) Deletion iv) Traversal",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7613,11 +10947,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u3-t1",
+    "id": "cs207es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u3",
-    "title": "i) Creation   ii) Insertion    iii) Deletion   iv) Traversal",
+    "title": "i) Creation ii) Insertion iii) Deletion iv) Traversal",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7629,11 +10963,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u4-t1",
+    "id": "cs207es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u4",
-    "title": "i) Arrays     ii) ADT",
+    "title": "i) Arrays ii) ADT",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7645,11 +10979,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u5-t1",
+    "id": "cs207es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u5",
-    "title": "i) Arrays     ii) ADT",
+    "title": "i) Arrays ii) ADT",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7661,7 +10995,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u5-t2",
+    "id": "cs207es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u5",
@@ -7677,7 +11011,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u5-t3",
+    "id": "cs207es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u5",
@@ -7693,7 +11027,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u5-t4",
+    "id": "cs207es-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u5",
@@ -7709,11 +11043,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u5-t5",
+    "id": "cs207es-u5-t5",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u5",
-    "title": "7.  Write a program to implement the tree traversal methods (Recursive and Non-Recursive).",
+    "title": "7. Write a program to implement the tree traversal methods (Recursive and Non-Recursive).",
     "order": 4,
     "isDone": false,
     "watchScore": 0,
@@ -7725,11 +11059,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u6-t1",
+    "id": "cs207es-u6-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u6",
-    "title": "i) Binary Search tree ii) B Trees iii) B+ Trees  iv) AVL trees v) Red - Black trees",
+    "title": "i) Binary Search tree ii) B Trees iii) B+ Trees iv) AVL trees v) Red",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -7741,7 +11075,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs207es-u7-t1",
+    "id": "cs207es-u6-t2",
+    "userId": "valeria-student",
+    "courseId": "course-cs207es",
+    "unitId": "unit-cs207es-u6",
+    "title": "Black trees",
+    "order": 1,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "cs207es-u7-t1",
     "userId": "valeria-student",
     "courseId": "course-cs207es",
     "unitId": "unit-cs207es-u7",
@@ -7757,7 +11107,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u1-t1",
+    "id": "cs208es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u1",
@@ -7773,7 +11123,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u1-t2",
+    "id": "cs208es-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u1",
@@ -7789,7 +11139,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u1-t3",
+    "id": "cs208es-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u1",
@@ -7805,7 +11155,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u2-t1",
+    "id": "cs208es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u2",
@@ -7821,7 +11171,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u2-t2",
+    "id": "cs208es-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u2",
@@ -7837,7 +11187,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u2-t3",
+    "id": "cs208es-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u2",
@@ -7853,7 +11203,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u2-t4",
+    "id": "cs208es-u2-t4",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u2",
@@ -7869,7 +11219,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u3-t1",
+    "id": "cs208es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u3",
@@ -7885,7 +11235,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u3-t2",
+    "id": "cs208es-u3-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u3",
@@ -7901,7 +11251,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u3-t3",
+    "id": "cs208es-u3-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u3",
@@ -7917,7 +11267,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u3-t4",
+    "id": "cs208es-u3-t4",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u3",
@@ -7933,7 +11283,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u3-t5",
+    "id": "cs208es-u3-t5",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u3",
@@ -7949,7 +11299,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t1",
+    "id": "cs208es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -7965,7 +11315,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t2",
+    "id": "cs208es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -7981,7 +11331,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t3",
+    "id": "cs208es-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -7997,11 +11347,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t4",
+    "id": "cs208es-u4-t4",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
-    "title": "11. Write a function called is_sorted that takes a list as a parameter and returns True if the list  is",
+    "title": "11. Write a function called is_sorted that takes a list as a parameter and returns True if the list is",
     "order": 3,
     "isDone": false,
     "watchScore": 0,
@@ -8013,7 +11363,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t5",
+    "id": "cs208es-u4-t5",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8029,7 +11379,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t6",
+    "id": "cs208es-u4-t6",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8045,7 +11395,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t7",
+    "id": "cs208es-u4-t7",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8061,7 +11411,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t8",
+    "id": "cs208es-u4-t8",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8077,7 +11427,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t9",
+    "id": "cs208es-u4-t9",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8093,7 +11443,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t10",
+    "id": "cs208es-u4-t10",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8109,7 +11459,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t11",
+    "id": "cs208es-u4-t11",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8125,7 +11475,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t12",
+    "id": "cs208es-u4-t12",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8141,7 +11491,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u4-t13",
+    "id": "cs208es-u4-t13",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u4",
@@ -8157,7 +11507,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u5-t1",
+    "id": "cs208es-u5-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u5",
@@ -8173,11 +11523,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u5-t2",
+    "id": "cs208es-u5-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u5",
-    "title": "every word with the corresponding upper case letter and the rest of the letters in  the word by",
+    "title": "every word with the corresponding upper case letter and the rest of the letters in the word by",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -8189,11 +11539,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u5-t3",
+    "id": "cs208es-u5-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u5",
-    "title": "corresponding letters in lower  case without using a built-in function?",
+    "title": "corresponding letters in lower case without using a built-in function?",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -8205,7 +11555,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u5-t4",
+    "id": "cs208es-u5-t4",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u5",
@@ -8221,7 +11571,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t1",
+    "id": "cs208es-u6-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8237,7 +11587,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t2",
+    "id": "cs208es-u6-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8253,7 +11603,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t3",
+    "id": "cs208es-u6-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8269,7 +11619,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t4",
+    "id": "cs208es-u6-t4",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8285,7 +11635,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t5",
+    "id": "cs208es-u6-t5",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8301,7 +11651,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t6",
+    "id": "cs208es-u6-t6",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8317,7 +11667,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t7",
+    "id": "cs208es-u6-t7",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8333,7 +11683,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t8",
+    "id": "cs208es-u6-t8",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8349,7 +11699,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t9",
+    "id": "cs208es-u6-t9",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8365,7 +11715,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t10",
+    "id": "cs208es-u6-t10",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8381,11 +11731,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t11",
+    "id": "cs208es-u6-t11",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
-    "title": "27. Define a new class called Circle with appropriate attributes and instantiate a few   Circle objects.",
+    "title": "27. Define a new class called Circle with appropriate attributes and instantiate a few Circle objects.",
     "order": 10,
     "isDone": false,
     "watchScore": 0,
@@ -8397,7 +11747,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t12",
+    "id": "cs208es-u6-t12",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8413,7 +11763,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t13",
+    "id": "cs208es-u6-t13",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8429,7 +11779,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t14",
+    "id": "cs208es-u6-t14",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8445,7 +11795,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t15",
+    "id": "cs208es-u6-t15",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8461,7 +11811,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t16",
+    "id": "cs208es-u6-t16",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8477,7 +11827,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t17",
+    "id": "cs208es-u6-t17",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8493,7 +11843,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t18",
+    "id": "cs208es-u6-t18",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8509,7 +11859,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t19",
+    "id": "cs208es-u6-t19",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8525,7 +11875,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u6-t20",
+    "id": "cs208es-u6-t20",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u6",
@@ -8541,11 +11891,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u7-t1",
+    "id": "cs208es-u7-t1",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u7",
-    "title": "35. Write a program to implement Digital Logic Gates \u2013 AND, OR, NOT, EX-OR",
+    "title": "35. Write a program to implement Digital Logic Gates",
     "order": 0,
     "isDone": false,
     "watchScore": 0,
@@ -8557,11 +11907,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u7-t2",
+    "id": "cs208es-u7-t2",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u7",
-    "title": "36. Write a GUI program to create a window wizard having two text labels, two text fields and two",
+    "title": "AND, OR, NOT, EX-OR",
     "order": 1,
     "isDone": false,
     "watchScore": 0,
@@ -8573,11 +11923,11 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs208es-u7-t3",
+    "id": "cs208es-u7-t3",
     "userId": "valeria-student",
     "courseId": "course-cs208es",
     "unitId": "unit-cs208es-u7",
-    "title": "buttons as Submit and Reset.",
+    "title": "36. Write a GUI program to create a window wizard having two text labels, two text fields and two",
     "order": 2,
     "isDone": false,
     "watchScore": 0,
@@ -8589,7 +11939,23 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u1-t1",
+    "id": "cs208es-u7-t4",
+    "userId": "valeria-student",
+    "courseId": "course-cs208es",
+    "unitId": "unit-cs208es-u7",
+    "title": "buttons as Submit and Reset.",
+    "order": 3,
+    "isDone": false,
+    "watchScore": 0,
+    "checkScore": 0,
+    "topicScore": 0,
+    "isStudiedManually": false,
+    "isExperiment": true,
+    "isSelectedExperiment": true,
+    "createdAt": "2025-08-01T08:00:00.000Z"
+  },
+  {
+    "id": "ee209es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u1",
@@ -8605,7 +11971,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u2-t1",
+    "id": "ee209es-u2-t1",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u2",
@@ -8621,7 +11987,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u2-t2",
+    "id": "ee209es-u2-t2",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u2",
@@ -8637,7 +12003,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u2-t3",
+    "id": "ee209es-u2-t3",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u2",
@@ -8653,7 +12019,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u2-t4",
+    "id": "ee209es-u2-t4",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u2",
@@ -8669,7 +12035,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u3-t1",
+    "id": "ee209es-u3-t1",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u3",
@@ -8685,7 +12051,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u4-t1",
+    "id": "ee209es-u4-t1",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u4",
@@ -8701,7 +12067,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u4-t2",
+    "id": "ee209es-u4-t2",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u4",
@@ -8717,7 +12083,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-ee209es-u4-t3",
+    "id": "ee209es-u4-t3",
     "userId": "valeria-student",
     "courseId": "course-ee209es",
     "unitId": "unit-ee209es-u4",
@@ -8733,7 +12099,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs210es-u1-t1",
+    "id": "cs210es-u1-t1",
     "userId": "valeria-student",
     "courseId": "course-cs210es",
     "unitId": "unit-cs210es-u1",
@@ -8749,7 +12115,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs210es-u1-t2",
+    "id": "cs210es-u1-t2",
     "userId": "valeria-student",
     "courseId": "course-cs210es",
     "unitId": "unit-cs210es-u1",
@@ -8765,7 +12131,7 @@ export const DEMO_TOPICS: Topic[] = [
     "createdAt": "2025-08-01T08:00:00.000Z"
   },
   {
-    "id": "topic-cs210es-u1-t3",
+    "id": "cs210es-u1-t3",
     "userId": "valeria-student",
     "courseId": "course-cs210es",
     "unitId": "unit-cs210es-u1",
@@ -8782,616 +12148,119 @@ export const DEMO_TOPICS: Topic[] = [
   }
 ];
 
-export const DEMO_LESSONS: Lesson[] = [
-  {
-    "id": "lesson-cs105-01",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "moduleId": "unit-cs105es-u1",
-    "unitId": "unit-cs105es-u1",
-    "youtubeVideoId": "irq7c66G7i8",
-    "originalUrl": "https://www.youtube.com/watch?v=irq7c66G7i8",
-    "title": "C Programming Tutorial 1 - Introduction to C Elements & Syntax",
-    "channelTitle": "freeCodeCamp.org",
-    "thumbnailUrl": "https://i.ytimg.com/vi/irq7c66G7i8/mqdefault.jpg",
-    "durationSeconds": 1440,
-    "startTimeSeconds": 0,
-    "canEmbed": true,
-    "linkedTopicIds": [
-      "topic-cs105es-u1-t1",
-      "topic-cs105es-u1-t2"
-    ],
-    "order": 0,
-    "cachedAt": "2025-08-01T08:00:00.000Z",
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "lesson-cs105-02",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "moduleId": "unit-cs105es-u1",
-    "unitId": "unit-cs105es-u1",
-    "youtubeVideoId": "kJEsTjH5mVg",
-    "originalUrl": "https://www.youtube.com/watch?v=kJEsTjH5mVg",
-    "title": "C Control Structures & Decision Statements",
-    "channelTitle": "Neso Academy",
-    "thumbnailUrl": "https://i.ytimg.com/vi/kJEsTjH5mVg/mqdefault.jpg",
-    "durationSeconds": 1820,
-    "startTimeSeconds": 0,
-    "canEmbed": true,
-    "linkedTopicIds": [
-      "topic-cs105es-u1-t3"
-    ],
-    "order": 1,
-    "cachedAt": "2025-08-01T08:00:00.000Z",
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "lesson-ma101-01",
-    "userId": "valeria-student",
-    "courseId": "course-ma101bs",
-    "moduleId": "unit-ma101bs-u1",
-    "unitId": "unit-ma101bs-u1",
-    "youtubeVideoId": "fNk_zzaMoSs",
-    "originalUrl": "https://www.youtube.com/watch?v=fNk_zzaMoSs",
-    "title": "Matrices: Rank of Matrix by Echelon Form and Normal Form",
-    "channelTitle": "3Blue1Brown",
-    "thumbnailUrl": "https://i.ytimg.com/vi/fNk_zzaMoSs/mqdefault.jpg",
-    "durationSeconds": 1250,
-    "startTimeSeconds": 0,
-    "canEmbed": true,
-    "linkedTopicIds": [
-      "topic-ma101bs-u1-t1"
-    ],
-    "order": 0,
-    "cachedAt": "2025-08-01T08:00:00.000Z",
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  }
-];
-export const DEMO_VIDEOS = DEMO_LESSONS;
-
-export const DEMO_LESSON_PROGRESS: LessonProgress[] = [
-  {
-    "id": "prog-cs105-01",
-    "userId": "valeria-student",
-    "lessonId": "lesson-cs105-01",
-    "videoId": "lesson-cs105-01",
-    "courseId": "course-cs105es",
-    "watchedSeconds": 1350,
-    "totalDurationSeconds": 1440,
-    "percentWatched": 93.75,
-    "isCompleted": true,
-    "lastPositionSeconds": 1350,
-    "completedAt": "2025-08-05T14:30:00.000Z",
-    "updatedAt": "2025-08-05T14:30:00.000Z"
-  },
-  {
-    "id": "prog-ma101-01",
-    "userId": "valeria-student",
-    "lessonId": "lesson-ma101-01",
-    "videoId": "lesson-ma101-01",
-    "courseId": "course-ma101bs",
-    "watchedSeconds": 1200,
-    "totalDurationSeconds": 1250,
-    "percentWatched": 96.0,
-    "isCompleted": true,
-    "lastPositionSeconds": 1200,
-    "completedAt": "2025-08-06T11:20:00.000Z",
-    "updatedAt": "2025-08-06T11:20:00.000Z"
-  }
-];
-export const DEMO_VIDEO_PROGRESS = DEMO_LESSON_PROGRESS;
-
-export const DEMO_ASSESSMENTS: Assessment[] = [
-  {
-    "id": "assess-cs105-quiz1",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "moduleId": "unit-cs105es-u1",
-    "type": "quiz",
-    "title": "Quiz 1: C Syntax, Data Types & Branching",
-    "description": "Foundational assessment covering C language elements and if/else decision logic.",
-    "maxPoints": 100,
-    "dueDate": "2025-09-15",
-    "timeLimitMinutes": 20,
-    "attemptLimit": 2,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "assess-cs105-assign1",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "moduleId": "unit-cs105es-u1",
-    "type": "assignment",
-    "title": "Assignment 1: Structured Numeric Problem Solver",
-    "description": "Implement an interactive CLI calculator in C adhering to proper formatting.",
-    "maxPoints": 100,
-    "dueDate": "2025-09-22",
-    "rubricId": "rubric-cs105-a1",
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "assess-ma101-quiz1",
-    "userId": "valeria-student",
-    "courseId": "course-ma101bs",
-    "moduleId": "unit-ma101bs-u1",
-    "type": "quiz",
-    "title": "Quiz 1: Rank and Linear Systems",
-    "description": "Assesses row echelon reduction, consistency tests, and Gauss elimination.",
-    "maxPoints": 100,
-    "dueDate": "2025-09-18",
-    "timeLimitMinutes": 30,
-    "attemptLimit": 1,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "assess-cs105-midterm",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "type": "midterm",
-    "title": "Midterm Examination: C Programming & Algorithms",
-    "description": "Official timed midterm exam covering syntax, control structures, functions, pointers, and memory.",
-    "maxPoints": 100,
-    "dueDate": "2025-10-15",
-    "timeLimitMinutes": 45,
-    "attemptLimit": 1,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  },
-  {
-    "id": "assess-cs105-final",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "type": "final",
-    "title": "Final Examination: Comprehensive Systems Programming",
-    "description": "Comprehensive proctored exam covering all 5 syllabus units.",
-    "maxPoints": 100,
-    "dueDate": "2025-12-10",
-    "timeLimitMinutes": 90,
-    "attemptLimit": 1,
-    "lockedUntilLessonCompletionPercent": 80,
-    "createdAt": "2025-08-01T08:00:00.000Z"
-  }
-];
-
-export const DEMO_QUESTIONS: Question[] = [
-  {
-    "id": "q-cs105-1",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-quiz1",
-    "courseId": "course-cs105es",
-    "prompt": "What is the return type of the main function in standard C99/C11?",
-    "type": "multiple_choice",
-    "options": [
-      "void",
-      "int",
-      "char",
-      "float"
-    ],
-    "correctAnswers": [
-      "int"
-    ],
-    "points": 50,
-    "explanation": "Standard C specification requires main() to return an integer exit code to the operating system."
-  },
-  {
-    "id": "q-cs105-2",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-quiz1",
-    "courseId": "course-cs105es",
-    "prompt": "Which of the following are valid logical operators in C? (Select all that apply)",
-    "type": "multiple_select",
-    "options": [
-      "&&",
-      "||",
-      "and",
-      "!"
-    ],
-    "correctAnswers": [
-      "&&",
-      "||",
-      "!"
-    ],
-    "points": 50,
-    "explanation": "In C, logical operators are && (AND), || (OR), and ! (NOT)."
-  },
-  {
-    "id": "q-cs105-m1",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-midterm",
-    "courseId": "course-cs105es",
-    "prompt": "What is the memory size in bytes of a pointer variable on a standard 64-bit architecture?",
-    "type": "multiple_choice",
-    "options": [
-      "2 bytes",
-      "4 bytes",
-      "8 bytes",
-      "Depends on pointed type"
-    ],
-    "correctAnswers": [
-      "8 bytes"
-    ],
-    "points": 30,
-    "explanation": "On a 64-bit computer architecture, virtual memory addresses are 64 bits wide, which corresponds to exactly 8 bytes."
-  },
-  {
-    "id": "q-cs105-m2",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-midterm",
-    "courseId": "course-cs105es",
-    "prompt": "Which of the following functions are part of stdlib.h for dynamic heap memory management? (Select all that apply)",
-    "type": "multiple_select",
-    "options": [
-      "malloc",
-      "calloc",
-      "printf",
-      "realloc",
-      "free"
-    ],
-    "correctAnswers": [
-      "malloc",
-      "calloc",
-      "realloc",
-      "free"
-    ],
-    "points": 40,
-    "explanation": "malloc, calloc, realloc, and free manage dynamic memory on the heap in stdlib.h. printf is part of stdio.h."
-  },
-  {
-    "id": "q-cs105-m3",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-midterm",
-    "courseId": "course-cs105es",
-    "prompt": "Which C keyword is used to declare a variable whose value cannot be modified after initial declaration?",
-    "type": "short_answer",
-    "options": [],
-    "correctAnswers": [
-      "const"
-    ],
-    "points": 30,
-    "explanation": "The const type qualifier prevents reassignment or mutation of a variable after declaration."
-  }
-];
-
-export const DEMO_ATTEMPTS: Attempt[] = [
-  {
-    "id": "att-cs105-1",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-quiz1",
-    "courseId": "course-cs105es",
-    "answers": {
-      "q-cs105-1": "int",
-      "q-cs105-2": [
-        "&&",
-        "||",
-        "!"
-      ]
-    },
-    "score": 100,
-    "maxPoints": 100,
-    "percentage": 100,
-    "startedAt": "2025-09-10T10:00:00.000Z",
-    "submittedAt": "2025-09-10T10:14:20.000Z",
-    "isCompleted": true
-  }
-];
-
-export const DEMO_RUBRICS: Rubric[] = [
-  {
-    "id": "rubric-cs105-a1",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-assign1",
-    "criteria": [
-      {
-        "id": "crit-correctness",
-        "title": "Code Correctness & Functionality",
-        "description": "Calculates math correctly and handles invalid inputs gracefully.",
-        "maxPoints": 50,
-        "levels": [
-          {
-            "level": "Exemplary",
-            "points": 50,
-            "description": "All test cases pass, error states handled."
-          },
-          {
-            "level": "Proficient",
-            "points": 40,
-            "description": "Passes primary tests, minor edge flaw."
-          },
-          {
-            "level": "Developing",
-            "points": 25,
-            "description": "Fails multiple tests."
-          },
-          {
-            "level": "Unacceptable",
-            "points": 0,
-            "description": "Does not compile."
-          }
-        ]
-      },
-      {
-        "id": "crit-structure",
-        "title": "Structure & Modularity",
-        "description": "Proper functions, header files, and readability.",
-        "maxPoints": 50,
-        "levels": [
-          {
-            "level": "Exemplary",
-            "points": 50,
-            "description": "Well factored functions with clean headers."
-          },
-          {
-            "level": "Proficient",
-            "points": 40,
-            "description": "Reasonable function breakdown."
-          },
-          {
-            "level": "Developing",
-            "points": 25,
-            "description": "Monolithic main function."
-          },
-          {
-            "level": "Unacceptable",
-            "points": 0,
-            "description": "Unreadable spaghetti code."
-          }
-        ]
-      }
-    ]
-  }
-];
-
-export const DEMO_SUBMISSIONS: Submission[] = [
-  {
-    "id": "sub-cs105-a1",
-    "userId": "valeria-student",
-    "assessmentId": "assess-cs105-assign1",
-    "courseId": "course-cs105es",
-    "submissionType": "text",
-    "content": "#include <stdio.h>\nint main() { printf(\"Calculator v1.0\\n\"); return 0; }",
-    "selfAssessment": {
-      "criteriaMarks": [
-        {
-          "criterionId": "crit-correctness",
-          "level": "Exemplary",
-          "points": 50,
-          "justification": "Tested with edge negative inputs and verified zero divisor checks."
-        },
-        {
-          "criterionId": "crit-structure",
-          "level": "Proficient",
-          "points": 40,
-          "justification": "Modular design with functions for add, subtract, multiply, and divide."
-        }
-      ]
-    },
-    "finalScore": 90,
-    "gradedAt": "2025-09-20T16:00:00.000Z"
-  }
-];
-
-export const DEMO_NOTES: Note[] = [
-  {
-    "id": "note-cs105-01",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "lessonId": "lesson-cs105-01",
-    "content": "Key takeaways from C elements:\n- Standard variables must be declared before use.\n- Remember that integer division truncates decimal values.",
-    "timestamps": [
-      {
-        "seconds": 120,
-        "label": "Structure of C program"
-      },
-      {
-        "seconds": 450,
-        "label": "Data types and sizing"
-      }
-    ],
-    "updatedAt": "2025-08-05T14:35:00.000Z"
-  }
-];
-
-export const DEMO_PLANNER_EVENTS: PlannerEvent[] = [
-  {
-    "id": "event-1",
-    "userId": "valeria-student",
-    "title": "CS105ES Quiz 1: C Syntax & Branching",
-    "date": "2025-09-15",
-    "startTime": "10:00",
-    "endTime": "11:00",
-    "type": "due_date",
-    "courseId": "course-cs105es",
-    "assessmentId": "assess-cs105-quiz1",
-    "isDone": true
-  },
-  {
-    "id": "event-2",
-    "userId": "valeria-student",
-    "title": "MA101BS Quiz 1: Matrices & Rank",
-    "date": "2025-09-18",
-    "startTime": "14:00",
-    "endTime": "15:00",
-    "type": "due_date",
-    "courseId": "course-ma101bs",
-    "assessmentId": "assess-ma101-quiz1",
-    "isDone": false
-  },
-  {
-    "id": "event-3",
-    "userId": "valeria-student",
-    "title": "Study Block: Matrices Eigenvalues Practice",
-    "date": "2025-09-17",
-    "startTime": "09:00",
-    "endTime": "11:30",
-    "type": "study_block",
-    "courseId": "course-ma101bs",
-    "isDone": false
-  },
-  {
-    "id": "event-4",
-    "userId": "valeria-student",
-    "title": "Focus Block: C Pointers & Dynamic Memory",
-    "date": "2026-10-31",
-    "startTime": "14:00",
-    "endTime": "15:30",
-    "type": "study_block",
-    "courseId": "course-cs105es",
-    "isDone": false
-  },
-  {
-    "id": "event-5",
-    "userId": "valeria-student",
-    "title": "Exam Milestone: Midterm Examination",
-    "date": "2026-11-05",
-    "startTime": "10:00",
-    "endTime": "11:30",
-    "type": "exam",
-    "courseId": "course-cs105es",
-    "isDone": false
-  },
-  {
-    "id": "event-6",
-    "userId": "valeria-student",
-    "title": "Revision: Rank & Homogeneous Systems",
-    "date": "2026-11-08",
-    "startTime": "16:00",
-    "endTime": "17:00",
-    "type": "revision",
-    "courseId": "course-ma101bs",
-    "isDone": false
-  },
-  {
-    "id": "event-7",
-    "userId": "valeria-student",
-    "title": "Assignment Due: Structured Numeric Problem Solver",
-    "date": "2026-11-12",
-    "startTime": "23:59",
-    "type": "due_date",
-    "courseId": "course-cs105es",
-    "isDone": false
-  },
-  {
-    "id": "event-8",
-    "userId": "valeria-student",
-    "title": "Study Block: Physics Harmonic Motion Lab Prep",
-    "date": "2026-11-15",
-    "startTime": "11:00",
-    "endTime": "13:00",
-    "type": "study_block",
-    "courseId": "course-ph102bs",
-    "isDone": false
-  }
-];
-
-export const DEMO_DEGREE_PLAN: DegreePlan = {
-  "id": "deg-plan-valeria",
-  "userId": "valeria-student",
-  "totalCreditsTarget": 160,
-  "departmentRequirements": {
-    "Computer Science": 70,
-    "Mathematics": 20,
-    "Basic Sciences": 20,
-    "Humanities": 15,
-    "Engineering Sciences": 35
-  },
-  "levelRequirements": {
-    "100": 40,
-    "200": 42,
-    "300": 41,
-    "400": 37
-  }
+// SAMPLE DATA - ONLY LOADED WHEN EXPLICITLY REQUESTED VIA SETTINGS
+export const SAMPLE_USER: UserProfile = {
+  ...CLEAN_USER,
+  displayName: "Valeria (Sample)",
 };
 
-export const DEMO_AUDIT_LOGS: AuditLog[] = [
+export const SAMPLE_STUDY_SESSIONS: StudySession[] = [
   {
-    "id": "log-1",
-    "userId": "valeria-student",
-    "action": "lesson_watched",
-    "entityId": "lesson-cs105-01",
-    "details": "Completed verified watch session (1350 / 1440 sec) for C Programming Tutorial 1",
-    "timestamp": "2025-08-05T14:30:00.000Z"
+    id: "session-1",
+    userId: "valeria-student",
+    courseId: "course-ma101bs",
+    durationMinutes: 90,
+    mode: "pomodoro",
+    completedAt: "2025-09-18T10:30:00.000Z",
   },
   {
-    "id": "log-2",
-    "userId": "valeria-student",
-    "action": "exam_submitted",
-    "entityId": "assess-cs105-quiz1",
-    "details": "Submitted Quiz 1: C Syntax, Data Types & Branching - scored 100/100",
-    "timestamp": "2025-09-10T10:14:20.000Z"
+    id: "session-2",
+    userId: "valeria-student",
+    courseId: "course-cs105es",
+    durationMinutes: 120,
+    mode: "pomodoro",
+    completedAt: "2025-09-19T14:00:00.000Z",
   }
 ];
 
-export const DEMO_STUDY_SESSIONS: StudySession[] = [
+export const SAMPLE_LESSONS: Lesson[] = [
   {
-    "id": "ss-1",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-2",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-3",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-4",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-5",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-6",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-7",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-8",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
-  },
-  {
-    "id": "ss-9",
-    "userId": "valeria-student",
-    "courseId": "course-cs105es",
-    "durationMinutes": 45,
-    "mode": "pomodoro",
-    "completedAt": "2025-09-01T10:00:00.000Z"
+    id: "lesson-ma101-1",
+    userId: "valeria-student",
+    courseId: "course-ma101bs",
+    moduleId: "unit-ma101bs-u1",
+    unitId: "unit-ma101bs-u1",
+    title: "Matrices: Rank of Matrix by Echelon Form",
+    originalUrl: "https://www.youtube.com/watch?v=fNk_zzaMoSs",
+    youtubeVideoId: "fNk_zzaMoSs",
+    durationSeconds: 1560,
+    order: 0,
+    channelTitle: "MIT OpenCourseWare",
+    thumbnailUrl: "https://i.ytimg.com/vi/fNk_zzaMoSs/hqdefault.jpg",
+    startTimeSeconds: 0,
+    canEmbed: true,
+    linkedTopicIds: ["ma101bs-u1-t1"],
+    cachedAt: "2025-08-05T08:00:00.000Z",
+    createdAt: "2025-08-05T08:00:00.000Z",
   }
 ];
+
+export const SAMPLE_LESSON_PROGRESS: LessonProgress[] = [
+  {
+    id: "progress-ma101-1",
+    userId: "valeria-student",
+    lessonId: "lesson-ma101-1",
+    courseId: "course-ma101bs",
+    watchedSeconds: 1560,
+    totalDurationSeconds: 1560,
+    percentWatched: 100,
+    isCompleted: true,
+    lastPositionSeconds: 1560,
+    updatedAt: "2025-09-18T10:30:00.000Z",
+  }
+];
+
+export const SAMPLE_ASSESSMENTS: Assessment[] = [
+  {
+    id: "asm-ma101-q1",
+    userId: "valeria-student",
+    courseId: "course-ma101bs",
+    moduleId: "unit-ma101bs-u1",
+    title: "Quiz 1: Rank and Linear Systems",
+    type: "quiz",
+    description: "Evaluates elementary row transformations and echelon forms.",
+    maxPoints: 100,
+    timeLimitMinutes: 30,
+    dueDate: "2025-09-18T23:59:59.000Z",
+    createdAt: "2025-08-10T08:00:00.000Z",
+  }
+];
+
+export const SAMPLE_PLANNER_EVENTS: PlannerEvent[] = [
+  {
+    id: "evt-sample-1",
+    userId: "valeria-student",
+    courseId: "course-ma101bs",
+    title: "Review Linear Equations",
+    date: "2025-09-20",
+    startTime: "10:00",
+    endTime: "11:30",
+    type: "study_block",
+    isDone: false,
+  }
+];
+
+// Compatibility aliases for legacy imports
+export const DEMO_USER = CLEAN_USER;
+export const DEMO_TERMS = SEED_TERMS;
+export const DEMO_COURSES = SEED_COURSES;
+export const DEMO_MODULES = SEED_MODULES;
+export const DEMO_TOPICS = SEED_TOPICS;
+export const DEMO_LESSONS = SAMPLE_LESSONS;
+export const DEMO_LESSON_PROGRESS = SAMPLE_LESSON_PROGRESS;
+export const DEMO_ASSESSMENTS = SAMPLE_ASSESSMENTS;
+export const DEMO_QUESTIONS: Question[] = [];
+export const DEMO_ATTEMPTS: Attempt[] = [];
+export const DEMO_RUBRICS: Rubric[] = [];
+export const DEMO_SUBMISSIONS: Submission[] = [];
+export const DEMO_NOTES: Note[] = [];
+export const DEMO_PLANNER_EVENTS = SAMPLE_PLANNER_EVENTS;
+export const DEMO_DEGREE_PLAN: DegreePlan = {
+  id: "degree-cse-2025",
+  userId: "valeria-student",
+  totalCreditsTarget: 160,
+  departmentRequirements: {},
+  levelRequirements: {},
+};
+export const DEMO_AUDIT_LOGS: AuditLog[] = [];
+export const DEMO_STUDY_SESSIONS = SAMPLE_STUDY_SESSIONS;

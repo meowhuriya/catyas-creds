@@ -34,7 +34,7 @@ export function Wordmark({
   return (
     <div className={`flex flex-col leading-none ${className}`}>
       <span
-        className={`font-serif font-semibold tracking-tight text-ink dark:text-ink-dark ${
+        className={`font-heading font-semibold tracking-tight text-[var(--color-ink)] ${
           isSmall ? "text-base" : isLarge ? "text-2xl" : "text-lg"
         }`}
       >
@@ -42,8 +42,8 @@ export function Wordmark({
       </span>
       {showTagline && (
         <span
-          className={`font-sans tracking-[0.2em] uppercase font-medium text-ink-muted dark:text-ink-muted-dark ${
-            isSmall ? "text-[8px] mt-0.5" : isLarge ? "text-[10px] mt-1" : "text-[9px] mt-0.5"
+          className={`font-sans tracking-[0.18em] uppercase font-bold text-[var(--color-eyebrow)] ${
+            isSmall ? "text-[10px] mt-0.5" : isLarge ? "text-xs mt-1" : "text-[11px] mt-0.5"
           }`}
         >
           Learning Portal

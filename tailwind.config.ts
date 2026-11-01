@@ -37,8 +37,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ["var(--font-source-serif-4)", "Georgia", "serif"],
-        sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
+        serif: ["var(--font-fraunces)", "Fraunces", "Georgia", "serif"],
+        sans: ["var(--font-plus-jakarta-sans)", "Plus Jakarta Sans", "system-ui", "-apple-system", "sans-serif"],
       },
       borderRadius: {
         control: "6px",

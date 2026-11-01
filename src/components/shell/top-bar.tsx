@@ -119,11 +119,11 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
             <Button
               variant="outline"
               size="sm"
-              className="text-xs h-8 gap-1.5 font-medium"
+              className="text-xs h-8 gap-1.5 font-medium px-2.5"
             >
               <Calendar className="h-3.5 w-3.5 text-app-accent" />
-              <span className="hidden md:inline max-w-[130px] truncate">
-                {currentTerm ? currentTerm.name : "Select Term"}
+              <span className="font-sans font-semibold text-xs whitespace-nowrap">
+                {currentTerm?.name?.includes("2") ? "Sem 2 · 2025-26" : "Sem 1 · 2025-26"}
               </span>
               <ChevronDown className="h-3 w-3 text-app-ink-muted" />
             </Button>
@@ -173,10 +173,10 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
           <PopoverTrigger asChild>
             <button className="flex h-8 items-center gap-2 rounded-control border border-app-border bg-app-surface px-2 text-xs text-app-ink hover:bg-app-surface-muted transition-colors">
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-app-accent text-[11px] font-bold text-white">
-                {currentUser?.displayName?.charAt(0) || "C"}
+                {currentUser?.displayName?.charAt(0) || "V"}
               </div>
               <span className="hidden md:inline font-medium">
-                {currentUser?.displayName || "Student"}
+                {currentUser?.displayName || "Valeria"}
               </span>
               <ChevronDown className="h-3 w-3 text-app-ink-muted" />
             </button>

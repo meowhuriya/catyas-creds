@@ -6,18 +6,36 @@ import { TopBar } from "./top-bar";
 import { MobileTabBar } from "./mobile-nav";
 import { CommandPalette } from "./command-palette";
 import { ShortcutDialog } from "./shortcut-dialog";
+import { useToast } from "@/components/ui/toast";
+import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@/lib/appearance";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [shortcutOpen, setShortcutOpen] = React.useState(false);
+  const { info } = useToast();
 
   React.useEffect(() => {
+    // Apply saved appearance
+    const apper = loadSavedAppearance();
+    getCustomWallpaper().then((img) => {
+      applyAppearanceToDOM(apper, img);
+    });
+
     const saved = localStorage.getItem("valerias_sidebar_collapsed");
     if (saved) {
       setSidebarCollapsed(saved === "true");
     }
-  }, []);
+
+    const notified = localStorage.getItem("valerias_creds_syllabus_notified");
+    if (!notified) {
+      info(
+        "Syllabus loaded: 19 courses, 651 topics",
+        "Sem 1 = 9 courses, 20 credits, 325 topics. Sem 2 = 10 courses, 20 credits, 326 topics."
+      );
+      localStorage.setItem("valerias_creds_syllabus_notified", "true");
+    }
+  }, [info]);
 
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => {

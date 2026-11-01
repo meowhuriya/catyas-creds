@@ -46,8 +46,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "relative hidden md:flex flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200 select-none",
-        collapsed ? "w-16" : "w-64"
+        "relative hidden md:flex flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200 select-none shrink-0",
+        collapsed ? "w-16" : "w-[280px]"
       )}
     >
       {/* Brand Header */}
@@ -156,10 +156,12 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         className="h-1.5 w-1.5 rounded-full shrink-0"
                         style={{ backgroundColor: tagColor }}
                       />
-                      <span className="font-mono font-semibold uppercase text-[var(--color-ink)]/80 shrink-0">
+                      <span className="font-sans font-semibold tracking-wide uppercase text-[var(--color-ink)]/90 shrink-0 text-[11px]">
                         {c.code}
                       </span>
-                      <span className="truncate">{c.title}</span>
+                      <span className="line-clamp-2 leading-tight" title={c.title}>
+                        {c.title}
+                      </span>
                     </Link>
                   </li>
                 );
@@ -173,8 +175,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {!collapsed && (
         <div className="border-t border-[var(--color-border)] p-3 text-[11px] text-[var(--color-ink-muted)] flex flex-col gap-1">
           <div className="flex items-center justify-between text-[var(--color-ink-muted)]/80">
-            <span>Valeria's Creds v1.0</span>
-            <span className="font-mono text-[10px]">Academic</span>
+            <span className="font-medium">Valeria's Creds v1.0</span>
+            <span className="font-sans text-[11px] font-semibold">Academic</span>
           </div>
           <div className="flex items-center gap-2 text-[10px]">
             <a

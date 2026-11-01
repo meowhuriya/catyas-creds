@@ -7,9 +7,6 @@ import {
   Calendar,
   RotateCcw,
   ChevronRight,
-  CheckCircle2,
-  AlertCircle,
-  Play,
   ArrowRight,
 } from "lucide-react";
 import { Assessment, Course, Topic, Lesson } from "@/types/schemas";
@@ -34,7 +31,7 @@ export function RightRail({
     [courses]
   );
 
-  // 1. Today tasks
+  // 1. Today tasks - real only
   const todayTasks = React.useMemo(() => {
     const list: Array<{
       id: string;
@@ -44,27 +41,27 @@ export function RightRail({
       href: string;
     }> = [];
 
-    // Prioritize first active lesson
+    // Prioritize first active lesson if lessons exist
     if (lessons.length > 0) {
-      const l = lessons[0];
-      const c = courseMap.get(l.courseId);
+      const activeLesson = lessons[0];
+      const c = courseMap.get(activeLesson.courseId);
       list.push({
         id: "task-lec",
-        title: l.title,
-        courseCode: c?.code || "CS105ES",
+        title: activeLesson.title,
+        courseCode: c?.code || "COURSE",
         type: "lecture",
-        href: `/courses/${l.courseId}/player/${l.id}`,
+        href: `/courses/${activeLesson.courseId}/player/${activeLesson.id}`,
       });
     }
 
-    // Next pending assessment
+    // Pending assessments with valid future dueDate
     const pendingAsm = assessments.find((a) => a.dueDate);
     if (pendingAsm) {
       const c = courseMap.get(pendingAsm.courseId);
       list.push({
         id: "task-asm",
         title: pendingAsm.title,
-        courseCode: c?.code || "MA101BS",
+        courseCode: c?.code || "ASSESSMENT",
         type: "quiz",
         href: `/courses/${pendingAsm.courseId}`,
       });
@@ -73,7 +70,7 @@ export function RightRail({
     return list;
   }, [lessons, assessments, courseMap]);
 
-  // 2. Upcoming Deadlines
+  // 2. Upcoming Deadlines (real due dates only)
   const upcomingDeadlines = React.useMemo(() => {
     return assessments
       .filter((a) => a.dueDate)
@@ -84,7 +81,7 @@ export function RightRail({
       }));
   }, [assessments, courseMap]);
 
-  // 3. Revision Due (Topics completed 1, 3, 7, 21 days ago)
+  // 3. Revision Due (real completed topics only)
   const revisionItems = React.useMemo(() => {
     return topics
       .filter((t) => t.isDone)
@@ -101,14 +98,14 @@ export function RightRail({
       <div className="academic-card p-4">
         <div className="flex items-center justify-between pb-2.5 border-b border-[var(--color-border)]/70 mb-3">
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-[var(--color-accent)]" />
+            <Clock className="h-4 w-4 text-[var(--color-crimson)]" />
             <h3 className="font-serif text-sm font-bold text-[var(--color-ink)]">
               Today’s Priority
             </h3>
           </div>
           <Link
             href="/today"
-            className="text-[11px] font-semibold text-[var(--color-accent)] hover:underline inline-flex items-center gap-0.5"
+            className="text-xs font-semibold text-[var(--color-crimson)] hover:underline inline-flex items-center gap-0.5"
           >
             <span>Open Today</span>
             <ChevronRight className="h-3 w-3" />
@@ -117,25 +114,25 @@ export function RightRail({
 
         <div className="space-y-2">
           {todayTasks.length === 0 ? (
-            <p className="text-xs text-[var(--color-ink-muted)]">
-              All tasks for today are completed.
+            <p className="text-sm text-[var(--color-secondary)] py-1">
+              No active tasks today. Pick a course to start learning.
             </p>
           ) : (
             todayTasks.map((task) => (
               <Link
                 key={task.id}
                 href={task.href}
-                className="group flex items-center justify-between p-2.5 rounded-[8px] bg-[var(--color-surface-muted)]/70 hover:bg-[var(--color-surface-muted)] transition-colors text-xs"
+                className="group flex items-center justify-between p-2.5 rounded-[8px] bg-[var(--color-surface-muted)]/70 hover:bg-[var(--color-surface-muted)] transition-colors text-sm"
               >
                 <div className="min-w-0 pr-2">
-                  <span className="font-mono text-[10px] font-semibold text-[var(--color-accent)] uppercase block">
+                  <span className="eyebrow-label block">
                     {task.courseCode}
                   </span>
-                  <span className="font-medium text-[var(--color-ink)] truncate block group-hover:text-[var(--color-accent)] transition-colors">
+                  <span className="font-medium text-[var(--color-ink)] truncate block group-hover:text-[var(--color-crimson)] transition-colors">
                     {task.title}
                   </span>
                 </div>
-                <ArrowRight className="h-3.5 w-3.5 text-[var(--color-ink-muted)] group-hover:text-[var(--color-accent)] shrink-0 transition-colors" />
+                <ArrowRight className="h-4 w-4 text-[var(--color-secondary)] group-hover:text-[var(--color-crimson)] shrink-0 transition-colors" />
               </Link>
             ))
           )}
@@ -146,14 +143,14 @@ export function RightRail({
       <div className="academic-card p-4">
         <div className="flex items-center justify-between pb-2.5 border-b border-[var(--color-border)]/70 mb-3">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-[#B7791F]" />
+            <Calendar className="h-4 w-4 text-[#C62F3C]" />
             <h3 className="font-serif text-sm font-bold text-[var(--color-ink)]">
               Upcoming Deadlines
             </h3>
           </div>
           <Link
             href="/planner"
-            className="text-[11px] font-semibold text-[var(--color-accent)] hover:underline inline-flex items-center gap-0.5"
+            className="text-xs font-semibold text-[var(--color-crimson)] hover:underline inline-flex items-center gap-0.5"
           >
             <span>Planner</span>
             <ChevronRight className="h-3 w-3" />
@@ -162,24 +159,24 @@ export function RightRail({
 
         <div className="space-y-2.5">
           {upcomingDeadlines.length === 0 ? (
-            <p className="text-xs text-[var(--color-ink-muted)]">
-              No upcoming assessments scheduled.
+            <p className="text-sm text-[var(--color-secondary)] py-1">
+              No upcoming deadlines scheduled.
             </p>
           ) : (
             upcomingDeadlines.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between text-xs"
+                className="flex items-center justify-between text-sm"
               >
                 <div className="min-w-0 pr-2">
-                  <span className="font-mono text-[10px] font-semibold text-[var(--color-ink-muted)] uppercase block">
+                  <span className="eyebrow-label block">
                     {item.course?.code || "COURSE"}
                   </span>
                   <p className="font-medium text-[var(--color-ink)] truncate">
                     {item.title}
                   </p>
                 </div>
-                <span className="font-mono text-[11px] font-semibold text-[#B7791F] tabular-nums shrink-0">
+                <span className="text-xs font-semibold text-[#C62F3C] tabular-nums shrink-0">
                   {item.dueDate}
                 </span>
               </div>
@@ -192,29 +189,29 @@ export function RightRail({
       <div className="academic-card p-4">
         <div className="flex items-center justify-between pb-2.5 border-b border-[var(--color-border)]/70 mb-3">
           <div className="flex items-center gap-2">
-            <RotateCcw className="h-4 w-4 text-[var(--color-info)]" />
+            <RotateCcw className="h-4 w-4 text-[var(--color-teal)]" />
             <h3 className="font-serif text-sm font-bold text-[var(--color-ink)]">
               Revision Due
             </h3>
           </div>
-          <span className="text-[10px] uppercase tracking-wider text-[var(--color-ink-muted)]">
+          <span className="eyebrow-label">
             Spaced Retain
           </span>
         </div>
 
         <div className="space-y-2">
           {revisionItems.length === 0 ? (
-            <p className="text-xs text-[var(--color-ink-muted)]">
-              No topics due for spaced revision today.
+            <p className="text-sm text-[var(--color-secondary)] py-1">
+              No topics due for revision yet.
             </p>
           ) : (
             revisionItems.map((item) => (
               <div
                 key={item.id}
-                className="p-2 rounded-[6px] bg-[var(--color-surface-muted)]/50 border border-[var(--color-border)]/50 text-xs flex items-center justify-between"
+                className="p-2.5 rounded-[6px] bg-[var(--color-surface-muted)]/50 border border-[var(--color-border)]/50 text-sm flex items-center justify-between"
               >
                 <div className="min-w-0 pr-2">
-                  <span className="font-mono text-[10px] text-[var(--color-ink-muted)] uppercase block">
+                  <span className="eyebrow-label block">
                     {item.course?.code}
                   </span>
                   <p className="font-medium text-[var(--color-ink)] truncate">
@@ -223,7 +220,7 @@ export function RightRail({
                 </div>
                 <Link
                   href={`/courses/${item.courseId}?topic=${item.id}&review=true`}
-                  className="text-[11px] font-semibold text-[var(--color-accent)] hover:underline shrink-0"
+                  className="text-xs font-semibold text-[var(--color-crimson)] hover:underline shrink-0"
                 >
                   Review
                 </Link>

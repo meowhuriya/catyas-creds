@@ -6,6 +6,7 @@ import { Course, LessonProgress, Assessment, Module, Topic } from "@/types/schem
 import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { cleanSyllabusTitle } from "@/lib/utils";
 
 interface CourseCardProps {
   course: Course;
@@ -40,16 +41,19 @@ export function CourseCard({
     .sort((a, b) => a.order - b.order);
   const nextUnit = courseModules[0];
   const nextUnitTitle = nextUnit
-    ? `Unit ${nextUnit.unitNumber || 1}: ${nextUnit.title}`
+    ? `Unit ${nextUnit.unitNumber || 1}: ${cleanSyllabusTitle(nextUnit.title)}`
     : "Unit 1: Foundations & Core Concepts";
 
   return (
     <div className="group relative flex flex-col justify-between overflow-hidden academic-card academic-card-hover select-none">
+      {/* 10px Gingham Trim above the Course Card Cover */}
+      <div className="gingham-trim w-full" />
+
       {/* Top Algorithmic Cover Art (96px height) */}
       <Link href={`/courses/${course.id}`} className="block focus:outline-none">
         <AlgorithmicCover
           courseCode={course.code}
-          courseTitle={course.title}
+          courseTitle={cleanSyllabusTitle(course.title)}
           department={course.department}
           colorTag={course.colorTag}
           height={96}
@@ -59,20 +63,20 @@ export function CourseCard({
       {/* Card Body */}
       <div className="flex flex-col flex-1 p-5 justify-between">
         <div>
-          {/* Header row: Course Code & Credits Chip */}
+          {/* Header row: Course Code & Credits Chip (No monospace font) */}
           <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">
+            <span className="font-sans text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">
               {course.code}
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-[11px] font-mono font-semibold text-[var(--color-ink)] tabular-nums">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs font-sans font-semibold text-[var(--color-ink)] tabular-nums">
               {course.credits} Credits
             </span>
           </div>
 
-          {/* Course Title (Serif, max 2 lines) */}
-          <h3 className="font-serif text-lg font-bold leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors line-clamp-2">
+          {/* Course Title (Fraunces, max 2 lines) */}
+          <h3 className="font-heading text-lg font-bold leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors line-clamp-2">
             <Link href={`/courses/${course.id}`} className="focus:outline-none">
-              {course.title}
+              {cleanSyllabusTitle(course.title)}
             </Link>
           </h3>
 
@@ -87,10 +91,10 @@ export function CourseCard({
         {/* Progress Section & Next Unit Pointer */}
         <div className="mt-4 pt-3 border-t border-[var(--color-border)]/70 space-y-2.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-[11px] font-medium text-[var(--color-ink-muted)]">
+            <span className="text-xs font-medium text-[var(--color-ink-muted)]">
               Curricular Mastery
             </span>
-            <span className="font-mono text-xs font-semibold text-[var(--color-ink)] tabular-nums">
+            <span className="font-sans text-xs font-semibold text-[var(--color-ink)] tabular-nums">
               {percentComplete}%
             </span>
           </div>
@@ -102,16 +106,16 @@ export function CourseCard({
           />
 
           {/* Next Unit Due Badge */}
-          <div className="flex items-center justify-between text-[11px] text-[var(--color-ink-muted)] pt-1">
+          <div className="flex items-center justify-between text-xs text-[var(--color-ink-muted)] pt-1">
             <div className="flex items-center gap-1.5 min-w-0 pr-2">
               <BookOpen className="h-3 w-3 text-[var(--color-accent)] shrink-0" />
-              <span className="font-medium text-[var(--color-ink)] truncate">
+              <span className="font-medium text-[var(--color-ink)] truncate text-xs">
                 Next: {nextUnitTitle}
               </span>
             </div>
             <Link
               href={`/courses/${course.id}`}
-              className="inline-flex items-center gap-0.5 font-semibold text-[var(--color-accent)] hover:underline shrink-0"
+              className="inline-flex items-center gap-0.5 font-semibold text-[var(--color-accent)] hover:underline shrink-0 text-xs"
             >
               <span>View</span>
               <ArrowRight className="h-3 w-3" />

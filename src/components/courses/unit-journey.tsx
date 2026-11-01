@@ -4,6 +4,7 @@ import * as React from "react";
 import { Check, Circle } from "lucide-react";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { Module, Topic } from "@/types/schemas";
+import { cleanSyllabusTitle } from "@/lib/utils";
 
 interface UnitJourneyProps {
   units: Module[];
@@ -72,7 +73,7 @@ export function UnitJourney({
                 key={unit.id}
                 onClick={() => onSelectUnit?.(unit.id)}
                 className="group flex flex-col items-center focus:outline-none cursor-pointer transition-transform hover:-translate-y-0.5"
-                title={`Unit ${unit.displayNum}: ${unit.title} (${unit.percent}%)`}
+                title={`Unit ${unit.displayNum}: ${cleanSyllabusTitle(unit.title)} (${unit.percent}%)`}
               >
                 {/* Circle Container */}
                 <div className="relative flex items-center justify-center">
@@ -81,7 +82,7 @@ export function UnitJourney({
                     percentage={unit.percent}
                     size={46}
                     strokeWidth={3.5}
-                    color={unit.isFinished ? "#E5A358" : unit.isActive ? "var(--color-accent)" : "var(--color-ink-muted)"}
+                    color={unit.isFinished ? "#5E7B5B" : unit.isActive ? "var(--color-crimson)" : "#CFC8BB"}
                     showText={false}
                   />
 
@@ -89,16 +90,16 @@ export function UnitJourney({
                   <div
                     className={`absolute inset-1 rounded-full flex items-center justify-center transition-all ${
                       unit.isFinished
-                        ? "bg-[#E5A358] text-white shadow-sm"
+                        ? "bg-[#5E7B5B] text-white shadow-sm"
                         : unit.isActive
-                        ? "bg-[var(--color-accent)] text-white ring-2 ring-[var(--color-accent)]/30 shadow-sm"
-                        : "bg-[var(--color-surface)] text-[var(--color-ink)] border border-[var(--color-border)] group-hover:border-[var(--color-ink-muted)]"
+                        ? "bg-[var(--color-crimson)] text-white ring-2 ring-[var(--color-crimson)]/30 shadow-sm"
+                        : "bg-[var(--color-surface)] text-[var(--color-ink)] border border-[var(--color-border)] group-hover:border-[var(--color-secondary)]"
                     }`}
                   >
                     {unit.isFinished ? (
                       <Check className="h-4 w-4 stroke-[3] text-white drop-shadow-sm" />
                     ) : (
-                      <span className="font-mono text-xs font-bold tabular-nums">
+                      <span className="font-sans text-xs font-bold tabular-nums">
                         {unit.displayNum}
                       </span>
                     )}
@@ -107,16 +108,16 @@ export function UnitJourney({
 
                 {/* Unit Label & Percent below circle */}
                 <span
-                  className={`mt-2 font-mono text-[11px] font-semibold tracking-tight transition-colors ${
+                  className={`mt-2 font-sans text-xs font-semibold tracking-tight transition-colors ${
                     unit.isActive
-                      ? "text-[var(--color-accent)] font-bold"
-                      : "text-[var(--color-ink-muted)] group-hover:text-[var(--color-ink)]"
+                      ? "text-[var(--color-crimson)] font-bold"
+                      : "text-[var(--color-secondary)] group-hover:text-[var(--color-ink)]"
                   }`}
                 >
                   Unit {unit.displayNum}
                 </span>
 
-                <span className="text-[10px] text-[var(--color-ink-muted)] tabular-nums">
+                <span className="text-xs text-[var(--color-secondary)] tabular-nums">
                   {unit.percent}%
                 </span>
               </button>

@@ -55,6 +55,14 @@ export class FirebaseDataStore implements DataStore {
     console.log("Clear data requested in Firestore mode");
   }
 
+  isSampleDataActive(): boolean {
+    return false;
+  }
+
+  async restoreOriginalSyllabus(courseId?: string): Promise<void> {
+    console.log("Restore original syllabus in Firestore mode for:", courseId || "all");
+  }
+
   async getUser(): Promise<UserProfile | null> {
     if (!db || !auth?.currentUser) return null;
     const snap = await getDoc(doc(db, "users", this.currentUid));
