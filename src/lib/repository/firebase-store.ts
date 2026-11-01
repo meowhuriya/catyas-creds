@@ -23,6 +23,7 @@ import {
   CourseAttendance,
   AttendanceLogEntry,
   ExamDate,
+  ClassTimetableSlot,
 } from "@/types/schemas";
 import { db, auth } from "@/lib/firebase/config";
 import {
@@ -848,6 +849,108 @@ export class FirebaseDataStore implements DataStore {
     const existing = await this.getCourseExamDate(courseId);
     if (existing) {
       await deleteDoc(doc(db, "examDates", existing.id));
+    }
+  }
+
+  // Weekly Class Timetable
+  async getTimetableSlots(): Promise<ClassTimetableSlot[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "timetableSlots"),
+      where("userId", "==", this.currentUid)
+    );
+    const snap = await getDocs(q);
+    const slots = snap.docs.map((d) => d.data() as ClassTimetableSlot);
+    if (slots.length === 0) {
+      const courses = await this.getCourses();
+      if (courses.length > 0) {
+        return this.generateDefaultWeeklyTimetable(courses);
+      }
+    }
+    return slots;
+  }
+
+  async saveTimetableSlot(
+    slotData: Omit<ClassTimetableSlot, "id" | "userId"> & { id?: string }
+  ): Promise<ClassTimetableSlot> {
+    if (!db) throw new Error("Firestore not configured");
+    const id = slotData.id || `slot-${this.currentUid}-${Date.now()}`;
+    const slot: ClassTimetableSlot = {
+      ...slotData,
+      id,
+      userId: this.currentUid,
+      room: slotData.room || "Room 101",
+      type: slotData.type || "lecture",
+    };
+    await setDoc(doc(db, "timetableSlots", id), slot);
+    return slot;
+  }
+
+  async deleteTimetableSlot(slotId: string): Promise<void> {
+    if (!db) return;
+    await deleteDoc(doc(db, "timetableSlots", slotId));
+  }
+
+  async generateDefaultWeeklyTimetable(courses: Course[]): Promise<ClassTimetableSlot[]> {
+    if (!db) return [];
+    const sem1 = courses.filter((c) => c.termId === "term-sem-1" || !c.termId);
+    const active = sem1.length > 0 ? sem1 : courses;
+    if (active.length === 0) return [];
+
+    const findCourse = (code: string) => active.find((c) => c.code === code) || active[0];
+
+    const cMath = findCourse("MA101BS");
+    const cChem = findCourse("CH102BS");
+    const cEng = findCourse("EN103HS");
+    const cEce = findCourse("EC104ES");
+    const cCs = findCourse("CS105ES");
+    const cChemLab = findCourse("CH106BS");
+    const cCsLab = findCourse("CS107ES");
+    const cEngLab = findCourse("EN108HS");
+    const cMech = findCourse("ME109ES");
+
+    const defaultSlots: Omit<ClassTimetableSlot, "id" | "userId">[] = [
+      { courseId: cMath.id, dayOfWeek: 1, startTime: "09:00", endTime: "10:00", room: "Room 301", type: "lecture" },
+      { courseId: cChem.id, dayOfWeek: 1, startTime: "10:00", endTime: "11:00", room: "Room 204", type: "lecture" },
+      { courseId: cCs.id, dayOfWeek: 1, startTime: "11:15", endTime: "12:15", room: "Room 402", type: "lecture" },
+      { courseId: cChemLab.id, dayOfWeek: 1, startTime: "13:30", endTime: "15:30", room: "Chem Lab A", type: "lab" },
+      { courseId: cEce.id, dayOfWeek: 2, startTime: "09:00", endTime: "10:00", room: "Room 301", type: "lecture" },
+      { courseId: cEng.id, dayOfWeek: 2, startTime: "10:00", endTime: "11:00", room: "Room 102", type: "lecture" },
+      { courseId: cMath.id, dayOfWeek: 2, startTime: "11:15", endTime: "12:15", room: "Room 301", type: "lecture" },
+      { courseId: cCsLab.id, dayOfWeek: 2, startTime: "13:30", endTime: "15:30", room: "Comp Lab 3", type: "lab" },
+      { courseId: cChem.id, dayOfWeek: 3, startTime: "09:00", endTime: "10:00", room: "Room 204", type: "lecture" },
+      { courseId: cCs.id, dayOfWeek: 3, startTime: "10:00", endTime: "11:00", room: "Room 402", type: "lecture" },
+      { courseId: cEce.id, dayOfWeek: 3, startTime: "11:15", endTime: "12:15", room: "Room 301", type: "lecture" },
+      { courseId: cEngLab.id, dayOfWeek: 3, startTime: "13:30", endTime: "14:30", room: "Lang Lab", type: "lab" },
+      { courseId: cMath.id, dayOfWeek: 4, startTime: "09:00", endTime: "10:00", room: "Room 301", type: "lecture" },
+      { courseId: cChem.id, dayOfWeek: 4, startTime: "10:00", endTime: "11:00", room: "Room 204", type: "lecture" },
+      { courseId: cEng.id, dayOfWeek: 4, startTime: "11:15", endTime: "12:15", room: "Room 102", type: "lecture" },
+      { courseId: cMech.id, dayOfWeek: 4, startTime: "13:30", endTime: "14:30", room: "Room 204", type: "lecture" },
+      { courseId: cCs.id, dayOfWeek: 5, startTime: "09:00", endTime: "10:00", room: "Room 402", type: "lecture" },
+      { courseId: cEce.id, dayOfWeek: 5, startTime: "10:00", endTime: "11:00", room: "Room 301", type: "lecture" },
+      { courseId: cMath.id, dayOfWeek: 5, startTime: "11:15", endTime: "12:15", room: "Room 301", type: "tutorial" },
+      { courseId: cEng.id, dayOfWeek: 5, startTime: "13:30", endTime: "14:30", room: "Room 102", type: "tutorial" },
+    ];
+
+    const results: ClassTimetableSlot[] = [];
+    for (let i = 0; i < defaultSlots.length; i++) {
+      const s = defaultSlots[i];
+      const slot: ClassTimetableSlot = {
+        ...s,
+        id: `slot-${this.currentUid}-${i + 1}`,
+        userId: this.currentUid,
+      };
+      await setDoc(doc(db, "timetableSlots", slot.id), slot);
+      results.push(slot);
+    }
+    return results;
+  }
+
+  async clearTimetable(): Promise<void> {
+    if (!db) return;
+    const slots = await this.getTimetableSlots();
+    for (const s of slots) {
+      await deleteDoc(doc(db, "timetableSlots", s.id));
     }
   }
 

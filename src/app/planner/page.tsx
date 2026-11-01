@@ -2,10 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useDataStore } from "@/lib/repository";
-import { Course, PlannerEvent, Assessment, Topic } from "@/types/schemas";
+import { Course, PlannerEvent, Assessment, Topic, ClassTimetableSlot } from "@/types/schemas";
 import { ScheduleStudyBlockModal } from "@/components/planner/schedule-study-block-modal";
 import { AiStudyPlanModal } from "@/components/planner/ai-study-plan-modal";
+import { WeeklyTimetableView } from "@/components/timetable/weekly-timetable-view";
 import { Button } from "@/components/ui/button";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import {
@@ -40,15 +42,19 @@ import {
   subWeeks,
 } from "date-fns";
 
-export default function PlannerPage() {
+function PlannerContent() {
+  const searchParams = useSearchParams();
+  const initialView = searchParams.get("view") === "timetable" ? "timetable" : "month";
+
   const { dataStore } = useDataStore();
 
   const [currentDate, setCurrentDate] = React.useState<Date>(() => new Date());
-  const [viewMode, setViewMode] = React.useState<"month" | "week">("month");
+  const [viewMode, setViewMode] = React.useState<"month" | "week" | "timetable">(initialView);
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [assessments, setAssessments] = React.useState<Assessment[]>([]);
   const [topics, setTopics] = React.useState<Topic[]>([]);
   const [plannerEvents, setPlannerEvents] = React.useState<PlannerEvent[]>([]);
+  const [timetableSlots, setTimetableSlots] = React.useState<ClassTimetableSlot[]>([]);
   const [selectedCourseFilter, setSelectedCourseFilter] = React.useState<string>("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<"all" | "pending" | "done">("all");
   const [selectedTypeFilter, setSelectedTypeFilter] = React.useState<"all" | "study_block" | "due_date" | "exam" | "revision">("all");
@@ -57,18 +63,26 @@ export default function PlannerPage() {
   const [selectedDateForModal, setSelectedDateForModal] = React.useState<string>("");
   const [loading, setLoading] = React.useState(true);
 
+  React.useEffect(() => {
+    if (searchParams.get("view") === "timetable") {
+      setViewMode("timetable");
+    }
+  }, [searchParams]);
+
   const loadData = React.useCallback(async () => {
     try {
       setLoading(true);
-      const [allCourses, allEvents, allTopics] = await Promise.all([
+      const [allCourses, allEvents, allTopics, slots] = await Promise.all([
         dataStore.getCourses(),
         dataStore.getPlannerEvents(),
         dataStore.getAllTopics(),
+        dataStore.getTimetableSlots(),
       ]);
 
       setCourses(allCourses);
       setPlannerEvents(allEvents);
       setTopics(allTopics);
+      setTimetableSlots(slots);
 
       const nestedAsms = await Promise.all(
         allCourses.map((c) => dataStore.getAssessments(c.id))
@@ -176,6 +190,27 @@ export default function PlannerPage() {
     await loadData();
   };
 
+  // Timetable Slot Handlers
+  const handleSaveTimetableSlot = async (slotData: any) => {
+    await dataStore.saveTimetableSlot(slotData);
+    await loadData();
+  };
+
+  const handleDeleteTimetableSlot = async (slotId: string) => {
+    await dataStore.deleteTimetableSlot(slotId);
+    await loadData();
+  };
+
+  const handleResetTimetable = async () => {
+    await dataStore.generateDefaultWeeklyTimetable(courses);
+    await loadData();
+  };
+
+  const handleClearTimetable = async () => {
+    await dataStore.clearTimetable();
+    await loadData();
+  };
+
   // Month navigation
   const handlePrev = () => {
     if (viewMode === "month") {
@@ -228,7 +263,7 @@ export default function PlannerPage() {
             <button
               type="button"
               onClick={() => setViewMode("month")}
-              className={`rounded px-3 py-1 font-medium transition-colors ${
+              className={`rounded px-3 py-1 font-medium transition-colors cursor-pointer ${
                 viewMode === "month"
                   ? "bg-app-accent text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
@@ -239,13 +274,24 @@ export default function PlannerPage() {
             <button
               type="button"
               onClick={() => setViewMode("week")}
-              className={`rounded px-3 py-1 font-medium transition-colors ${
+              className={`rounded px-3 py-1 font-medium transition-colors cursor-pointer ${
                 viewMode === "week"
                   ? "bg-app-accent text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
               Week View
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("timetable")}
+              className={`rounded px-3 py-1 font-medium transition-colors cursor-pointer ${
+                viewMode === "timetable"
+                  ? "bg-app-accent text-white font-semibold"
+                  : "text-app-ink-muted hover:text-app-ink"
+              }`}
+            >
+              Class Timetable
             </button>
           </div>
 
@@ -274,8 +320,20 @@ export default function PlannerPage() {
         </div>
       </div>
 
-      {/* Navigation Toolbar & Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-app-border bg-app-surface p-3.5 shadow-sm">
+      {/* Conditional View: Class Timetable vs Month/Week Planner */}
+      {viewMode === "timetable" ? (
+        <WeeklyTimetableView
+          courses={courses}
+          slots={timetableSlots}
+          onSaveSlot={handleSaveTimetableSlot}
+          onDeleteSlot={handleDeleteTimetableSlot}
+          onResetToDefault={handleResetTimetable}
+          onClear={handleClearTimetable}
+        />
+      ) : (
+        <>
+          {/* Navigation Toolbar & Filters */}
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-app-border bg-app-surface p-3.5 shadow-sm">
         {/* Month Navigation */}
         <div className="flex items-center gap-2">
           <Button
@@ -600,6 +658,8 @@ export default function PlannerPage() {
           </div>
         </div>
       )}
+      </>
+      )}
 
       {/* Schedule Study Block Modal */}
       <ScheduleStudyBlockModal
@@ -618,5 +678,19 @@ export default function PlannerPage() {
         onSuccess={loadData}
       />
     </div>
+  );
+}
+
+export default function PlannerPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center p-8 text-xs text-app-ink-muted">
+          Loading academic planner...
+        </div>
+      }
+    >
+      <PlannerContent />
+    </React.Suspense>
   );
 }

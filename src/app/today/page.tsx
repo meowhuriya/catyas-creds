@@ -11,8 +11,10 @@ import {
   StudySession,
   PlannerEvent,
   Module,
+  ClassTimetableSlot,
 } from "@/types/schemas";
 import { FocusTimer } from "@/components/today/focus-timer";
+import { TodayClassSchedule } from "@/components/timetable/today-class-schedule";
 import { QuickCheckModal } from "@/components/courses/quick-check-modal";
 import { YouTubeThumbnail } from "@/components/courses/youtube-thumbnail";
 import { ProgressBar } from "@/components/ui/progress-bar";
@@ -46,6 +48,7 @@ export default function TodayPage() {
   const [progressList, setProgressList] = React.useState<LessonProgress[]>([]);
   const [studySessions, setStudySessions] = React.useState<StudySession[]>([]);
   const [plannerEvents, setPlannerEvents] = React.useState<PlannerEvent[]>([]);
+  const [timetableSlots, setTimetableSlots] = React.useState<ClassTimetableSlot[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   // Quick Check modal state
@@ -79,9 +82,10 @@ export default function TodayPage() {
         }
       }
 
-      const [sessions, events] = await Promise.all([
+      const [sessions, events, slots] = await Promise.all([
         dataStore.getStudySessions(),
         dataStore.getPlannerEvents(),
+        dataStore.getTimetableSlots(),
       ]);
 
       setModules(allMods);
@@ -90,6 +94,7 @@ export default function TodayPage() {
       setProgressList(allProg);
       setStudySessions(sessions);
       setPlannerEvents(events);
+      setTimetableSlots(slots);
     } catch (err) {
       console.error("Failed to load Today page data:", err);
     } finally {
@@ -542,9 +547,16 @@ export default function TodayPage() {
           </div>
         </div>
 
-        {/* Right Column (1 Col): Focus Timer & Schedule */}
+        {/* Right Column (1 Col): Class Schedule, Focus Timer, Milestones */}
         <div className="space-y-5">
-          {/* 1. Collegiate Focus Timer Widget */}
+          {/* 1. Today's Class Timetable Schedule */}
+          <TodayClassSchedule
+            courses={courses}
+            slots={timetableSlots}
+            onAttendanceRecorded={loadData}
+          />
+
+          {/* 2. Collegiate Focus Timer Widget */}
           <FocusTimer courses={courses} onSessionComplete={loadData} />
 
           {/* 2. Upcoming Academic Milestones */}

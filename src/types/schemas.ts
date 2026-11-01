@@ -423,3 +423,16 @@ export const CourseAttendanceSchema = z.object({
 });
 export type CourseAttendance = z.infer<typeof CourseAttendanceSchema>;
 
+// Weekly Class Timetable Slot Schema
+export const ClassTimetableSlotSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  courseId: z.string(),
+  dayOfWeek: z.number().min(1).max(7), // 1 = Mon, 2 = Tue, 3 = Wed, 4 = Thu, 5 = Fri, 6 = Sat, 7 = Sun
+  startTime: z.string(), // "HH:MM", e.g. "09:00"
+  endTime: z.string(),   // "HH:MM", e.g. "10:00"
+  room: z.string().optional(),
+  type: z.enum(["lecture", "lab", "tutorial", "seminar"]).default("lecture"),
+});
+export type ClassTimetableSlot = z.infer<typeof ClassTimetableSlotSchema>;
+

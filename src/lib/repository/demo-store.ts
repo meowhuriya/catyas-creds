@@ -21,6 +21,7 @@ import {
   CourseAttendance,
   AttendanceLogEntry,
   ExamDate,
+  ClassTimetableSlot,
 } from "@/types/schemas";
 import {
   CLEAN_USER,
@@ -83,6 +84,7 @@ export class DemoDataStore implements DataStore {
   private studySessions: StudySession[];
   private attendance: CourseAttendance[];
   private examDates: ExamDate[];
+  private timetableSlots: ClassTimetableSlot[];
 
   constructor() {
     const isSample = getStorage<boolean>("is_sample_active", false);
@@ -113,6 +115,7 @@ export class DemoDataStore implements DataStore {
     this.studySessions = getStorage<StudySession[]>("studySessions", isSample ? SAMPLE_STUDY_SESSIONS : []);
     this.attendance = getStorage<CourseAttendance[]>("attendance", isSample ? SAMPLE_ATTENDANCE : []);
     this.examDates = getStorage<ExamDate[]>("exam_dates", []);
+    this.timetableSlots = getStorage<ClassTimetableSlot[]>("timetable_slots", []);
   }
 
   isDemoMode(): boolean {
@@ -191,6 +194,7 @@ export class DemoDataStore implements DataStore {
     setStorage("studySessions", this.studySessions);
     setStorage("attendance", this.attendance);
     setStorage("exam_dates", this.examDates);
+    setStorage("timetable_slots", this.timetableSlots);
   }
 
   async getUser(): Promise<UserProfile | null> {
@@ -875,6 +879,103 @@ export class DemoDataStore implements DataStore {
     setStorage("exam_dates", this.examDates);
   }
 
+  // Weekly Class Timetable Methods
+  async generateDefaultWeeklyTimetable(courses: Course[]): Promise<ClassTimetableSlot[]> {
+    const sem1Courses = courses.filter((c) => c.termId === "term-sem-1" || !c.termId);
+    const active = sem1Courses.length > 0 ? sem1Courses : courses;
+    if (active.length === 0) return [];
+
+    const findCourse = (code: string) => active.find((c) => c.code === code) || active[0];
+
+    const cMath = findCourse("MA101BS");
+    const cChem = findCourse("CH102BS");
+    const cEng = findCourse("EN103HS");
+    const cEce = findCourse("EC104ES");
+    const cCs = findCourse("CS105ES");
+    const cChemLab = findCourse("CH106BS");
+    const cCsLab = findCourse("CS107ES");
+    const cEngLab = findCourse("EN108HS");
+    const cMech = findCourse("ME109ES");
+
+    const defaultSlots: Omit<ClassTimetableSlot, "id" | "userId">[] = [
+      // Monday
+      { courseId: cMath.id, dayOfWeek: 1, startTime: "09:00", endTime: "10:00", room: "Room 301", type: "lecture" },
+      { courseId: cChem.id, dayOfWeek: 1, startTime: "10:00", endTime: "11:00", room: "Room 204", type: "lecture" },
+      { courseId: cCs.id, dayOfWeek: 1, startTime: "11:15", endTime: "12:15", room: "Room 402", type: "lecture" },
+      { courseId: cChemLab.id, dayOfWeek: 1, startTime: "13:30", endTime: "15:30", room: "Chem Lab A", type: "lab" },
+
+      // Tuesday
+      { courseId: cEce.id, dayOfWeek: 2, startTime: "09:00", endTime: "10:00", room: "Room 301", type: "lecture" },
+      { courseId: cEng.id, dayOfWeek: 2, startTime: "10:00", endTime: "11:00", room: "Room 102", type: "lecture" },
+      { courseId: cMath.id, dayOfWeek: 2, startTime: "11:15", endTime: "12:15", room: "Room 301", type: "lecture" },
+      { courseId: cCsLab.id, dayOfWeek: 2, startTime: "13:30", endTime: "15:30", room: "Comp Lab 3", type: "lab" },
+
+      // Wednesday
+      { courseId: cChem.id, dayOfWeek: 3, startTime: "09:00", endTime: "10:00", room: "Room 204", type: "lecture" },
+      { courseId: cCs.id, dayOfWeek: 3, startTime: "10:00", endTime: "11:00", room: "Room 402", type: "lecture" },
+      { courseId: cEce.id, dayOfWeek: 3, startTime: "11:15", endTime: "12:15", room: "Room 301", type: "lecture" },
+      { courseId: cEngLab.id, dayOfWeek: 3, startTime: "13:30", endTime: "14:30", room: "Lang Lab", type: "lab" },
+
+      // Thursday
+      { courseId: cMath.id, dayOfWeek: 4, startTime: "09:00", endTime: "10:00", room: "Room 301", type: "lecture" },
+      { courseId: cChem.id, dayOfWeek: 4, startTime: "10:00", endTime: "11:00", room: "Room 204", type: "lecture" },
+      { courseId: cEng.id, dayOfWeek: 4, startTime: "11:15", endTime: "12:15", room: "Room 102", type: "lecture" },
+      { courseId: cMech.id, dayOfWeek: 4, startTime: "13:30", endTime: "14:30", room: "Room 204", type: "lecture" },
+
+      // Friday
+      { courseId: cCs.id, dayOfWeek: 5, startTime: "09:00", endTime: "10:00", room: "Room 402", type: "lecture" },
+      { courseId: cEce.id, dayOfWeek: 5, startTime: "10:00", endTime: "11:00", room: "Room 301", type: "lecture" },
+      { courseId: cMath.id, dayOfWeek: 5, startTime: "11:15", endTime: "12:15", room: "Room 301", type: "tutorial" },
+      { courseId: cEng.id, dayOfWeek: 5, startTime: "13:30", endTime: "14:30", room: "Room 102", type: "tutorial" },
+    ];
+
+    this.timetableSlots = defaultSlots.map((s, idx) => ({
+      ...s,
+      id: `slot-${idx + 1}-${Date.now()}`,
+      userId: this.user.uid,
+    }));
+    setStorage("timetable_slots", this.timetableSlots);
+    return [...this.timetableSlots];
+  }
+
+  async getTimetableSlots(): Promise<ClassTimetableSlot[]> {
+    if (this.timetableSlots.length === 0 && this.courses.length > 0) {
+      await this.generateDefaultWeeklyTimetable(this.courses);
+    }
+    return [...this.timetableSlots];
+  }
+
+  async saveTimetableSlot(
+    slotData: Omit<ClassTimetableSlot, "id" | "userId"> & { id?: string }
+  ): Promise<ClassTimetableSlot> {
+    const id = slotData.id || `slot-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    const slot: ClassTimetableSlot = {
+      ...slotData,
+      id,
+      userId: this.user.uid,
+      room: slotData.room || "Room 101",
+      type: slotData.type || "lecture",
+    };
+    const existingIdx = this.timetableSlots.findIndex((s) => s.id === id);
+    if (existingIdx !== -1) {
+      this.timetableSlots[existingIdx] = slot;
+    } else {
+      this.timetableSlots.push(slot);
+    }
+    setStorage("timetable_slots", this.timetableSlots);
+    return { ...slot };
+  }
+
+  async deleteTimetableSlot(slotId: string): Promise<void> {
+    this.timetableSlots = this.timetableSlots.filter((s) => s.id !== slotId);
+    setStorage("timetable_slots", this.timetableSlots);
+  }
+
+  async clearTimetable(): Promise<void> {
+    this.timetableSlots = [];
+    setStorage("timetable_slots", this.timetableSlots);
+  }
+
   async exportAllDataJson(): Promise<string> {
     const payload = {
       user: this.user,
@@ -894,6 +995,7 @@ export class DemoDataStore implements DataStore {
       studySessions: this.studySessions,
       attendance: this.attendance,
       examDates: this.examDates,
+      timetableSlots: this.timetableSlots,
       degreePlan: this.degreePlan,
       snapshots: this.snapshots,
       auditLogs: this.auditLogs,
@@ -921,6 +1023,7 @@ export class DemoDataStore implements DataStore {
     if (Array.isArray(data.studySessions)) this.studySessions = data.studySessions;
     if (Array.isArray(data.attendance)) this.attendance = data.attendance;
     if (Array.isArray(data.examDates)) this.examDates = data.examDates;
+    if (Array.isArray(data.timetableSlots)) this.timetableSlots = data.timetableSlots;
     if (data.degreePlan) this.degreePlan = data.degreePlan;
     if (Array.isArray(data.snapshots)) this.snapshots = data.snapshots;
     if (Array.isArray(data.auditLogs)) this.auditLogs = data.auditLogs;

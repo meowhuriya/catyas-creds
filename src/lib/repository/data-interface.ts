@@ -21,6 +21,7 @@ import {
   StudySession,
   CourseAttendance,
   ExamDate,
+  ClassTimetableSlot,
 } from "@/types/schemas";
 
 export interface DataStore {
@@ -172,6 +173,15 @@ export interface DataStore {
     exam: { examTitle: string; date: string; targetScore?: number }
   ): Promise<ExamDate>;
   deleteCourseExamDate(courseId: string): Promise<void>;
+
+  // Weekly Class Timetable
+  getTimetableSlots(): Promise<ClassTimetableSlot[]>;
+  saveTimetableSlot(
+    slot: Omit<ClassTimetableSlot, "id" | "userId"> & { id?: string }
+  ): Promise<ClassTimetableSlot>;
+  deleteTimetableSlot(slotId: string): Promise<void>;
+  generateDefaultWeeklyTimetable(courses: Course[]): Promise<ClassTimetableSlot[]>;
+  clearTimetable(): Promise<void>;
 
   // Demo / Sample Data Controls
   loadDemoData(): Promise<void>;
