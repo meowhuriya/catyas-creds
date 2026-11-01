@@ -3,42 +3,42 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #FFF4DE;
+  --color-bg: #FAF4EC;
   --color-surface: #FFFFFF;
-  --color-surface-muted: #FFDDDD;
-  --color-border: #FFE8C4;
-  --color-ink: #14161F;
-  --color-ink-muted: #5E6472;
-  --color-accent: #D85870;
-  --color-accent-hover: #BF4058;
-  --color-burgundy: #4A1521;
-  --color-gold: #FFE8C4;
-  --color-success: #1F7A4D;
-  --color-warning: #B7791F;
-  --color-danger: #B42318;
-  --color-info: #2F5D8A;
+  --color-surface-muted: #F3E8DC;
+  --color-border: #E5D5C5;
+  --color-ink: #1D1618;
+  --color-ink-muted: #6B575A;
+  --color-accent: #A6192E;
+  --color-accent-hover: #881324;
+  --color-burgundy: #3D0D14;
+  --color-gold: #D89520;
+  --color-success: #44724E;
+  --color-warning: #D89520;
+  --color-danger: #B3202C;
+  --color-info: #4A7A96;
 
-  --focus-ring: 0 0 0 2px #FFF4DE, 0 0 0 4px #D85870;
-  --card-shadow: 0 1px 2px rgba(45, 20, 26, 0.05), 0 8px 24px rgba(45, 20, 26, 0.05);
+  --focus-ring: 0 0 0 2px #FAF4EC, 0 0 0 4px #A6192E;
+  --card-shadow: 0 1px 2px rgba(29, 22, 24, 0.05), 0 8px 24px rgba(29, 22, 24, 0.06);
 }
 
 .dark {
-  --color-bg: #181113;
-  --color-surface: #22181C;
-  --color-surface-muted: #2D2025;
-  --color-border: #3D2C33;
-  --color-ink: #FFF4DE;
-  --color-ink-muted: #BAA6AA;
-  --color-accent: #FFCED8;
-  --color-accent-hover: #FFDDDD;
-  --color-burgundy: #2D1016;
-  --color-gold: #FFE8C4;
-  --color-success: #2E9E68;
-  --color-warning: #D9942C;
-  --color-danger: #E0483B;
-  --color-info: #4E85BD;
+  --color-bg: #161113;
+  --color-surface: #201A1C;
+  --color-surface-muted: #2B2225;
+  --color-border: #3B2E32;
+  --color-ink: #FAF4EC;
+  --color-ink-muted: #AB9A9D;
+  --color-accent: #E25F70;
+  --color-accent-hover: #EE7584;
+  --color-burgundy: #280A0E;
+  --color-gold: #F0B533;
+  --color-success: #558B61;
+  --color-warning: #F0B533;
+  --color-danger: #E84D58;
+  --color-info: #6BA7C7;
 
-  --focus-ring: 0 0 0 2px #181113, 0 0 0 4px #FFCED8;
+  --focus-ring: 0 0 0 2px #161113, 0 0 0 4px #E25F70;
   --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 

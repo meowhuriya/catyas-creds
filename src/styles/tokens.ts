@@ -6,44 +6,44 @@
  */
 
 export const TOKENS = {
-  name: "Valeria’s Creds",
+  name: "Valeria's Creds",
   tagline: "LEARNING PORTAL",
   colors: {
     light: {
-      background: "#FFF4DE", // Warm cream from Color Hunt
+      background: "#FAF4EC", // Warm linen cream from gingham & babushka
       surface: "#FFFFFF",
-      surfaceMuted: "#FFDDDD", // Pale blush pink from Color Hunt
-      border: "#FFE8C4", // Soft peach from Color Hunt
-      ink: "#14161F",
-      inkMuted: "#5E6472",
-      accent: "#D85870", // Signature Rose derived from #FFCED8
-      accentHover: "#BF4058",
-      burgundy: "#4A1521",
-      gold: "#FFE8C4", // Soft peach gold from Color Hunt
-      success: "#1F7A4D",
-      warning: "#B7791F",
-      danger: "#B42318",
-      info: "#2F5D8A",
+      surfaceMuted: "#F3E8DC", // Soft linen oat
+      border: "#E5D5C5", // Warm woven linen border
+      ink: "#1D1618", // Deep cat espresso ink
+      inkMuted: "#6B575A", // Muted cocoa ink
+      accent: "#A6192E", // Vintage Gingham Red / Strawberry
+      accentHover: "#881324",
+      burgundy: "#3D0D14", // Deep rich berry burgundy
+      gold: "#D89520", // Babushka mustard gold
+      success: "#44724E", // Scarf strawberry leaf sage
+      warning: "#D89520", // Babushka mustard
+      danger: "#B3202C", // Gingham red
+      info: "#4A7A96", // Cat blue eye azure
     },
     dark: {
-      background: "#181113",
-      surface: "#22181C",
-      surfaceMuted: "#2D2025",
-      border: "#3D2C33",
-      ink: "#FFF4DE", // Warm cream from Color Hunt
-      inkMuted: "#BAA6AA",
-      accent: "#FFCED8", // Soft Rose from Color Hunt
-      accentHover: "#FFDDDD", // Pale blush pink from Color Hunt
-      burgundy: "#2D1016",
-      gold: "#FFE8C4", // Soft peach gold from Color Hunt
-      success: "#2E9E68",
-      warning: "#D9942C",
-      danger: "#E0483B",
-      info: "#4E85BD",
+      background: "#161113",
+      surface: "#201A1C",
+      surfaceMuted: "#2B2225",
+      border: "#3B2E32",
+      ink: "#FAF4EC",
+      inkMuted: "#AB9A9D",
+      accent: "#E25F70", // Strawberry rose
+      accentHover: "#EE7584",
+      burgundy: "#280A0E",
+      gold: "#F0B533", // Mustard gold
+      success: "#558B61",
+      warning: "#F0B533",
+      danger: "#E84D58",
+      info: "#6BA7C7",
     },
     hero: {
-      gradient: "linear-gradient(135deg, #3D141D, #6B2332)",
-      goldHairline: "1px solid rgba(255, 232, 196, 0.45)",
+      gradient: "linear-gradient(135deg, #380C13, #631724)",
+      goldHairline: "1px solid rgba(216, 149, 32, 0.45)",
     },
     // 8 Muted Course Color Tags - shown ONLY as a thin 4px bar or small 6px dot
     courseTags: {

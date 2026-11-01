@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Catya's Creds — Comprehensive End-to-End Student Journey", () => {
+test.describe("Valeria's Creds — Comprehensive End-to-End Student Journey", () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to dashboard
     await page.goto("/", { waitUntil: "domcontentloaded" });
@@ -9,7 +9,7 @@ test.describe("Catya's Creds — Comprehensive End-to-End Student Journey", () =
 
   test("1. Dashboard: Stat cards, Course cards, To-do list, and Continue Watching", async ({ page }) => {
     // Check main title & dashboard subtitle
-    await expect(page.locator("h1")).toContainText(/Welcome back, Catya/i);
+    await expect(page.locator("h1")).toContainText(/Welcome back, Valeria/i);
     await expect(page.locator("text=Academic Dashboard")).toBeVisible();
 
     // Stat cards

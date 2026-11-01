@@ -18,11 +18,13 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "Valeria’s Creds — Academic Learning Portal",
+  title: "Valeria's Creds — Academic Learning Portal",
   description:
     "A university-grade learning portal where students organize YouTube lectures into credit-bearing coursework, complete rigorous assessments, and earn verifiable credentials.",
   icons: {
     icon: "/favicon.svg",
+    shortcut: "/favicon.ico",
+    apple: "/cat-icon-192.png",
   },
 };
 

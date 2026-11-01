@@ -22,8 +22,8 @@ const { chromium } = require("@playwright/test");
   // Check Title
   const title = await page.title();
   console.log(`✓ Page title: "${title}"`);
-  if (!title.includes("Catya's Creds")) {
-    throw new Error(`Expected title to include "Catya's Creds", got "${title}"`);
+  if (!title.includes("Valeria's Creds")) {
+    throw new Error(`Expected title to include "Valeria's Creds", got "${title}"`);
   }
 
   // 2. Check Enrolled Course Cards (CS 101 code badge)

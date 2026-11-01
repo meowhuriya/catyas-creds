@@ -33,7 +33,7 @@ export function BentoHero({
   const firstName = studentName.split(" ")[0] || "Valeria";
 
   return (
-    <div className="relative overflow-hidden rounded-[14px] border-t border-[#FFE8C4]/50 bg-gradient-to-br from-[#3D141D] to-[#6B2332] text-white shadow-card p-6 md:p-8 select-none">
+    <div className="relative overflow-hidden rounded-[14px] border-t border-[#D89520]/45 bg-gradient-to-br from-[#380C13] to-[#631724] text-white shadow-card p-6 md:p-8 select-none">
       {/* Background Architectural Grid Pattern */}
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.07]"
@@ -41,7 +41,7 @@ export function BentoHero({
       >
         <defs>
           <pattern id="hero-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-            <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#FFE8C4" strokeWidth="0.8" />
+            <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#D89520" strokeWidth="0.8" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#hero-grid)" />
@@ -52,12 +52,12 @@ export function BentoHero({
         <div className="space-y-3 max-w-xl">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white border border-white/15 backdrop-blur-md">
-              <Sparkles className="h-3 w-3 text-[#FFE8C4]" />
+              <Sparkles className="h-3 w-3 text-[#D89520]" />
               <span>{currentTerm ? currentTerm.name : "Semester 1 (AY 2025-2026)"}</span>
             </span>
 
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#FFE8C4]/20 text-[#FFE8C4] border border-[#FFE8C4]/30">
-              <Flame className="h-3.5 w-3.5 text-[#FFE8C4]" />
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#D89520]/20 text-[#F5C26B] border border-[#D89520]/30">
+              <Flame className="h-3.5 w-3.5 text-[#F5C26B]" />
               <span>{streakDays} Day Study Streak</span>
             </span>
           </div>
@@ -81,10 +81,10 @@ export function BentoHero({
                 percentage={overallProgressPercent}
                 size={68}
                 strokeWidth={6}
-                color="#FFE8C4"
+                color="#D89520"
                 showText={false}
               />
-              <span className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-[#FFE8C4] tabular-nums">
+              <span className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-[#D89520] tabular-nums">
                 {Math.round(overallProgressPercent)}%
               </span>
             </div>
@@ -95,7 +95,7 @@ export function BentoHero({
               <span className="font-serif text-base font-bold text-white">
                 Semester Progress
               </span>
-              <span className="text-[11px] text-[#FFE8C4] font-medium">
+              <span className="text-[11px] text-[#F5C26B] font-medium">
                 Target: 100% Mastery
               </span>
             </div>
@@ -117,7 +117,7 @@ export function BentoHero({
               </div>
 
               <div className="flex flex-col min-w-0 pr-1">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#E5B85C] truncate">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#D89520] truncate">
                   {continueLesson.course?.code || "Course"} • Resume
                 </span>
                 <span className="text-xs font-medium text-white line-clamp-1">
@@ -125,7 +125,7 @@ export function BentoHero({
                 </span>
                 <Link
                   href={`/courses/${continueLesson.lesson.courseId}/player/${continueLesson.lesson.id}`}
-                  className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-white hover:text-[#FFE8C4] transition-colors"
+                  className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-white hover:text-[#D89520] transition-colors"
                 >
                   <span>Continue watching</span>
                   <ArrowRight className="h-3 w-3" />

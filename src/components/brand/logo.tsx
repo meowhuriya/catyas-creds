@@ -2,37 +2,20 @@ import React from "react";
 
 export function LogoMark({ size = 32, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg
-      viewBox="0 0 64 64"
-      width={size}
-      height={size}
-      className={`shrink-0 ${className}`}
-      aria-label="Valeria’s Creds Logo"
+    <div
+      style={{ width: size, height: size }}
+      className={`relative shrink-0 flex items-center justify-center ${className}`}
+      aria-label="Valeria's Creds Cat Sticker Logo"
     >
-      <rect width="64" height="64" rx="14" fill="#D85870" />
-      <line
-        x1="14"
-        y1="2"
-        x2="50"
-        y2="2"
-        stroke="#FFE8C4"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        opacity="0.85"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/cat-sticker.png"
+        alt="Valeria's Creds Cat Sticker"
+        width={size}
+        height={size}
+        className="h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.16)] select-none hover:scale-110 transition-transform duration-200"
       />
-      <text
-        x="30"
-        y="46"
-        fontFamily="var(--font-source-serif-4), Georgia, serif"
-        fontSize="38"
-        fontWeight="600"
-        fill="#FFFFFF"
-        textAnchor="middle"
-      >
-        V
-      </text>
-      <circle cx="47" cy="45" r="3" fill="#FFE8C4" />
-    </svg>
+    </div>
   );
 }
 
@@ -55,7 +38,7 @@ export function Wordmark({
           isSmall ? "text-base" : isLarge ? "text-2xl" : "text-lg"
         }`}
       >
-        Valeria’s Creds
+        Valeria's Creds
       </span>
       {showTagline && (
         <span

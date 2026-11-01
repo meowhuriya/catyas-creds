@@ -10,12 +10,12 @@
 Valeria’s Creds is engineered to the aesthetic and structural benchmark of Google Classroom, elite university registrar student portals, and the refined design polish of Linear and Coursera:
 * **Brand Assets**:
   * **Wordmark**: *Valeria’s Creds* in Source Serif 4 semibold with a letter-spaced caps label `LEARNING PORTAL`.
-  * **Logo Mark**: Rounded crimson square with a white serif `V` and a tiny gold dot (`/icon.svg` and `/favicon.svg`).
-  * **Name Everywhere**: Enforced across page titles, shell headers, metadata, transcript, verification registry, and exports. Never uses unauthorized university crests or names.
-* **Palette & Design System**:
-  * Light Background: Heritage Academic `#F6F3EE`, surface `#FFFFFF`, secondary surface `#EFEBE4`, border `#E2DDD3`, ink `#14161F`, muted ink `#5E6472`.
-  * Brand Highlights: Crimson `#A51C30`, Deep Burgundy `#3A0F1B`, Gold `#C79A3B`.
-  * Dark Mode: Authentically toned `#0F1117`, surface `#171A22`, secondary surface `#1F232D`, border `#282D3A`.
+  * **Logo Mark & Favicon**: Die-cut white bordered Babushka Cat sticker (`/cat-sticker.png`, `/favicon.svg`, `/favicon.ico`, and `/cat-icon-192.png`) featuring the ginger cat in a strawberry kerchief.
+  * **Name Everywhere**: Enforced as *Valeria's Creds* across page titles, shell headers, metadata, transcript, verification registry, and exports. Never uses unauthorized university crests or names.
+* **Palette & Design System (Cat Picture Cottagecore Gingham)**:
+  * Light Background: Warm Linen Cream `#FAF4EC`, surface `#FFFFFF`, muted surface `#F3E8DC`, border `#E5D5C5`, espresso ink `#1D1618`, muted cocoa `#6B575A`.
+  * Brand Highlights: Vintage Gingham Red / Strawberry `#A6192E`, Babushka Mustard Gold `#D89520`, Deep Berry Burgundy `#3D0D14`, Strawberry Leaf Sage `#44724E`.
+  * Dark Mode: Soft Espresso `#161113`, surface `#201A1C`, muted surface `#2B2225`, border `#3B2E32`, strawberry rose `#E25F70`, mustard gold `#F0B533`.
   * Course Department Accents: 8 muted tones (slate, teal, olive, ochre, plum, rust, graphite, forest) rendered strictly as thin 4px bars and 6px dots.
 * **Typography**: *Source Serif 4* for page titles, course titles, large numeric metrics, and formal certificates; *Inter* for interface controls and body copy. All numeric metrics, percentages, credit totals, and grade points strictly enforce tabular numbers (`tabular-nums`).
 * **Accessibility**: Fully WCAG AA compliant with 2px crimson visible focus rings, full keyboard shortcuts modal (`?`), keyboard skip-to-content anchor, and verified contrast ratios.

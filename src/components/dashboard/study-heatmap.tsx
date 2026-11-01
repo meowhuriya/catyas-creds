@@ -53,13 +53,13 @@ export function StudyHeatmap({ sessions = [], className = "" }: StudyHeatmapProp
     return w;
   }, [days]);
 
-  // Color mapping based on intensity levels
+  // Color mapping based on intensity levels from the cat picture palette (cream -> mustard -> strawberry -> gingham red)
   const levelColors = [
     "bg-[var(--color-surface-muted)] dark:bg-[var(--color-surface-muted)] border border-[var(--color-border)]/50",
-    "bg-[#FFE8C4] border border-[#FFE8C4]",
-    "bg-[#FFDDDD] border border-[#FFCED8]",
-    "bg-[#FFCED8] border border-[#D85870]/40",
-    "bg-[#D85870] border border-[#D85870]",
+    "bg-[#F5E6D3] border border-[#E5D5C5]",
+    "bg-[#F5C26B] border border-[#D89520]/50",
+    "bg-[#D26B7A] border border-[#A6192E]/50",
+    "bg-[#A6192E] border border-[#A6192E]",
   ];
 
   const totalHours = (

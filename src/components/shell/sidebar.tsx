@@ -59,7 +59,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </Link>
         )}
         {collapsed && (
-          <Link href="/" className="mx-auto focus:outline-none" title="Valeria’s Creds">
+          <Link href="/" className="mx-auto focus:outline-none" title="Valeria's Creds">
             <LogoMark size={30} />
           </Link>
         )}
@@ -173,7 +173,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {!collapsed && (
         <div className="border-t border-[var(--color-border)] p-3 text-[11px] text-[var(--color-ink-muted)] flex flex-col gap-1">
           <div className="flex items-center justify-between text-[var(--color-ink-muted)]/80">
-            <span>Valeria’s Creds v1.0</span>
+            <span>Valeria's Creds v1.0</span>
             <span className="font-mono text-[10px]">Academic</span>
           </div>
           <div className="flex items-center gap-2 text-[10px]">
