@@ -40,6 +40,7 @@ export default function DashboardPage() {
     refreshData,
     loadDemoData,
     currentUser,
+    firebaseUser,
   } = useDataStore();
 
   const [lessons, setLessons] = React.useState<Lesson[]>([]);
@@ -209,7 +210,7 @@ export default function DashboardPage() {
     <div className="space-y-8 select-none">
       {/* 1. Bento Hero Container */}
       <BentoHero
-        studentName={currentUser?.displayName || "Valeria"}
+        studentName={currentUser?.displayName || firebaseUser?.displayName || ""}
         currentTerm={
           terms.find((t) => t.id === selectedTermId) || currentTerm
         }

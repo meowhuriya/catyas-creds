@@ -30,7 +30,7 @@ interface WeeklyReviewModalProps {
 }
 
 export function WeeklyReviewModal({ open, onOpenChange }: WeeklyReviewModalProps) {
-  const { dataStore, currentUser } = useDataStore();
+  const { dataStore, currentUser, firebaseUser } = useDataStore();
 
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [topics, setTopics] = React.useState<Topic[]>([]);
@@ -139,7 +139,7 @@ export function WeeklyReviewModal({ open, onOpenChange }: WeeklyReviewModalProps
           <div className="flex items-center justify-between border-b border-neutral-200 pb-3 text-xs">
             <div>
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Student</span>
-              <span className="font-bold text-neutral-900">{currentUser?.displayName || "Valeria V."}</span>
+              <span className="font-bold text-neutral-900">{currentUser?.displayName || firebaseUser?.displayName || "Student"}</span>
             </div>
             <div>
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Registry ID</span>

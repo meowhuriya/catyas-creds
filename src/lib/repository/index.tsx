@@ -5,12 +5,22 @@ import { DataStore } from "./data-interface";
 import { DemoDataStore } from "./demo-store";
 import { FirebaseDataStore } from "./firebase-store";
 import { isFirebaseConfigured, auth, googleProvider } from "@/lib/firebase/config";
-import { signInWithPopup, signOut as fbSignOut, onAuthStateChanged, User } from "firebase/auth";
+import {
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  signOut as fbSignOut,
+  onAuthStateChanged,
+  deleteUser,
+  User,
+} from "firebase/auth";
 import { UserProfile, Term, Course } from "@/types/schemas";
 
 interface DataStoreContextValue {
   dataStore: DataStore;
   isDemo: boolean;
+  isRealMode: boolean;
+  authLoading: boolean;
   isSampleActive: boolean;
   currentUser: UserProfile | null;
   firebaseUser: User | null;
@@ -20,6 +30,7 @@ interface DataStoreContextValue {
   refreshData: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  deleteMyAccountAndData: () => Promise<void>;
   loadDemoData: () => Promise<void>;
   clearDemoData: () => Promise<void>;
   restoreOriginalSyllabus: (courseId?: string) => Promise<void>;
@@ -28,8 +39,11 @@ interface DataStoreContextValue {
 const DataStoreContext = createContext<DataStoreContextValue | null>(null);
 
 export function DataStoreProvider({ children }: { children: React.ReactNode }) {
+  const isRealMode = isFirebaseConfigured;
+  const isDemo = !isRealMode;
+
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
-  const [isDemo, setIsDemo] = useState<boolean>(true);
+  const [authLoading, setAuthLoading] = useState<boolean>(isRealMode);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [terms, setTerms] = useState<Term[]>([]);
   const [currentTerm, setCurrentTerm] = useState<Term | null>(null);
@@ -38,26 +52,43 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize data store instance
   const dataStore = useMemo<DataStore>(() => {
-    if (isFirebaseConfigured && !isDemo && firebaseUser) {
+    if (isRealMode && firebaseUser) {
       return new FirebaseDataStore();
     }
     return new DemoDataStore();
-  }, [isDemo, firebaseUser, version]);
+  }, [isRealMode, firebaseUser, version]);
 
-  // Listen to Firebase Auth state if configured
+  // Listen to Firebase Auth state if in real mode
   useEffect(() => {
-    if (isFirebaseConfigured && auth) {
+    if (isRealMode && auth) {
+      // Check for redirect sign-in result first
+      getRedirectResult(auth)
+        .then((cred) => {
+          if (cred?.user) {
+            setFirebaseUser(cred.user);
+          }
+        })
+        .catch((err) => {
+          console.warn("Redirect sign-in check failed:", err);
+        });
+
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setFirebaseUser(user);
-        if (user) {
-          setIsDemo(false);
-        }
+        setAuthLoading(false);
       });
       return () => unsubscribe();
+    } else {
+      setAuthLoading(false);
     }
-  }, []);
+  }, [isRealMode]);
 
   const refreshData = useCallback(async () => {
+    if (isRealMode && !firebaseUser) {
+      setCurrentUser(null);
+      setTerms([]);
+      setCourses([]);
+      return;
+    }
     try {
       const [u, tList, cList] = await Promise.all([
         dataStore.getUser(),
@@ -72,32 +103,62 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error("Failed to load repository data:", err);
     }
-  }, [dataStore]);
+  }, [dataStore, isRealMode, firebaseUser]);
 
   useEffect(() => {
-    refreshData();
-  }, [refreshData, version]);
+    if (!authLoading) {
+      refreshData();
+    }
+  }, [refreshData, version, authLoading]);
 
   const signInWithGoogle = async () => {
-    if (isFirebaseConfigured && auth && googleProvider) {
+    if (isRealMode && auth && googleProvider) {
       try {
         await signInWithPopup(auth, googleProvider);
-        setIsDemo(false);
         setVersion((v) => v + 1);
-      } catch (err) {
-        console.error("Google sign in failed:", err);
+      } catch (err: any) {
+        if (err?.code === "auth/popup-blocked") {
+          console.warn("Popup blocked. Falling back to redirect...");
+          await signInWithRedirect(auth, googleProvider);
+          return;
+        }
+        throw err;
       }
     } else {
-      alert("Firebase is not configured yet. Running in high-fidelity demo mode with full sample data.");
+      alert("Firebase is not configured. Running in local demo mode.");
     }
   };
 
   const signOut = async () => {
-    if (isFirebaseConfigured && auth) {
+    if (isRealMode && auth) {
       await fbSignOut(auth);
     }
-    setIsDemo(true);
+    setFirebaseUser(null);
+    setCurrentUser(null);
     setVersion((v) => v + 1);
+  };
+
+  const deleteMyAccountAndData = async () => {
+    if (isRealMode && auth && auth.currentUser) {
+      const currAuthUser = auth.currentUser;
+      try {
+        await dataStore.deleteAccountAndData?.();
+      } catch (err) {
+        console.warn("Failed to delete Firestore user data:", err);
+      }
+      try {
+        await deleteUser(currAuthUser);
+      } catch (err) {
+        console.warn("Auth user deletion required re-auth:", err);
+        await fbSignOut(auth);
+      }
+      setFirebaseUser(null);
+      setCurrentUser(null);
+      setVersion((v) => v + 1);
+    } else {
+      await dataStore.clearDemoData();
+      setVersion((v) => v + 1);
+    }
   };
 
   const loadDemoData = async () => {
@@ -121,6 +182,8 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
     () => ({
       dataStore,
       isDemo,
+      isRealMode,
+      authLoading,
       isSampleActive,
       currentUser,
       firebaseUser,
@@ -130,6 +193,7 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
       refreshData,
       signInWithGoogle,
       signOut,
+      deleteMyAccountAndData,
       loadDemoData,
       clearDemoData,
       restoreOriginalSyllabus,
@@ -137,6 +201,8 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
     [
       dataStore,
       isDemo,
+      isRealMode,
+      authLoading,
       isSampleActive,
       currentUser,
       firebaseUser,

@@ -1,15 +1,22 @@
 "use client";
 
 import * as React from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { MobileTabBar } from "./mobile-nav";
 import { CommandPalette } from "./command-palette";
 import { ShortcutDialog } from "./shortcut-dialog";
 import { useToast } from "@/components/ui/toast";
+import { useDataStore } from "@/lib/repository";
 import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@/lib/appearance";
+import { Loader2, Info } from "lucide-react";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { isRealMode, isDemo, firebaseUser, authLoading } = useDataStore();
+
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [shortcutOpen, setShortcutOpen] = React.useState(false);
@@ -37,6 +44,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [info]);
 
+  // Route protection in Real Mode
+  React.useEffect(() => {
+    if (!authLoading && isRealMode) {
+      const isPublicRoute = pathname === "/login" || pathname?.startsWith("/verify");
+      if (!firebaseUser && !isPublicRoute) {
+        router.push("/login");
+      }
+    }
+  }, [authLoading, isRealMode, firebaseUser, pathname, router]);
+
   const toggleSidebar = () => {
     setSidebarCollapsed((prev) => {
       const next = !prev;
@@ -44,6 +61,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       return next;
     });
   };
+
+  // Login page has its own standalone full-screen layout
+  if (pathname === "/login") {
+    return <>{children}</>;
+  }
+
+  // Public verification route bypasses auth checks and app shell
+  if (pathname?.startsWith("/verify")) {
+    return <>{children}</>;
+  }
+
+  // If in Real Mode and authenticating, show solid loading screen
+  if (isRealMode && authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 select-none">
+        <div className="p-8 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] text-center space-y-3 shadow-xl">
+          <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#A51C30]" />
+          <p className="text-xs font-medium text-app-ink">Checking session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If in Real Mode and not logged in, show redirecting state
+  if (isRealMode && !firebaseUser) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 select-none">
+        <div className="p-8 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] text-center space-y-3 shadow-xl">
+          <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#A51C30]" />
+          <p className="text-xs font-medium text-app-ink">Redirecting to sign in...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-transparent text-app-ink">
@@ -70,8 +121,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <main
           id="main-content"
-          className="flex-1 px-4 pt-6 md:px-8 max-w-content w-full mx-auto pb-24 md:pb-12"
+          className="flex-1 px-4 pt-6 md:px-8 max-w-content w-full mx-auto pb-24 md:pb-12 space-y-4"
         >
+          {/* Demo Mode Banner when Firebase is not configured */}
+          {isDemo && (
+            <div className="rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-amber-500/40 p-3 px-4 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200 shadow-xs">
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <span className="font-semibold">Demo mode (not saved online)</span>
+              </div>
+              <span className="text-[11px] text-app-ink-muted hidden sm:inline">
+                Connect Firebase credentials to enable real-time cloud synchronization.
+              </span>
+            </div>
+          )}
+
           {children}
 
           {/* Academic Portal Footer (Solid cream panel) */}

@@ -36,6 +36,7 @@ export interface DataStore {
   getUser(): Promise<UserProfile | null>;
   updateSettings(settings: Partial<UserSettings>): Promise<void>;
   resetAccount(): Promise<void>;
+  deleteAccountAndData?(): Promise<void>;
 
   // Academic Terms
   getTerms(): Promise<Term[]>;

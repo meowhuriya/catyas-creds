@@ -40,7 +40,7 @@ import {
 } from "lucide-react";
 
 export default function TodayPage() {
-  const { dataStore } = useDataStore();
+  const { dataStore, currentUser, firebaseUser } = useDataStore();
 
   const [courses, setCourses] = React.useState<Course[]>([]);
   const [modules, setModules] = React.useState<Module[]>([]);
@@ -212,7 +212,7 @@ export default function TodayPage() {
               {todayFormatted}
             </span>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-ink)] tracking-tight">
-              Welcome to Today&apos;s Study Block, Valeria
+              Welcome to Today&apos;s Study Block{currentUser?.displayName || firebaseUser?.displayName ? `, ${(currentUser?.displayName || firebaseUser?.displayName || "").split(" ")[0]}` : ""}
             </h1>
             <p className="text-xs text-[var(--color-ink-muted)] max-w-xl leading-relaxed">
               Maintain your academic cadence with verified video study, spaced topic revisions, and focused study blocks.

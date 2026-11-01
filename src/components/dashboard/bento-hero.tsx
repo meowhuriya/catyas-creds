@@ -22,7 +22,7 @@ interface BentoHeroProps {
 }
 
 export function BentoHero({
-  studentName = "Valeria",
+  studentName = "",
   currentTerm,
   coursesCount,
   totalCredits,
@@ -30,7 +30,7 @@ export function BentoHero({
   streakDays = 0,
   continueLesson,
 }: BentoHeroProps) {
-  const firstName = studentName.split(" ")[0] || "Valeria";
+  const firstName = studentName ? studentName.split(" ")[0] : "";
 
   return (
     <div className="relative overflow-hidden rounded-[18px] border-2 border-[#F6EBD3] shadow-card select-none">
@@ -64,7 +64,7 @@ export function BentoHero({
             </div>
 
             <h1 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-              Welcome back, {firstName}.
+              Welcome back{firstName ? `, ${firstName}` : ""}.
             </h1>
 
             <p className="text-sm md:text-base text-white/90 font-medium">

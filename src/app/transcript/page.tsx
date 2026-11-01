@@ -39,7 +39,7 @@ import {
 import QRCode from "qrcode";
 
 export default function TranscriptPage() {
-  const { dataStore, currentUser } = useDataStore();
+  const { dataStore, currentUser, firebaseUser } = useDataStore();
 
   const [terms, setTerms] = React.useState<Term[]>([]);
   const [courses, setCourses] = React.useState<Course[]>([]);
@@ -242,7 +242,7 @@ export default function TranscriptPage() {
       }));
 
       const created = await dataStore.createTranscriptSnapshot({
-        studentName: currentUser?.displayName || "Valeria V.",
+        studentName: currentUser?.displayName || firebaseUser?.displayName || "Student",
         cgpa,
         totalCredits: totalEarnedCredits,
         isPublic: makePublic,
@@ -402,7 +402,7 @@ export default function TranscriptPage() {
               Student Name
             </span>
             <span className="font-bold text-sm text-neutral-900">
-              {currentUser?.displayName || "Valeria V."}
+              {currentUser?.displayName || firebaseUser?.displayName || "Student"}
             </span>
           </div>
 

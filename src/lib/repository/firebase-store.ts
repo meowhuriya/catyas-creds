@@ -28,7 +28,6 @@ import {
   RecallStyle,
 } from "@/types/schemas";
 import {
-  scheduleInitialRecall,
   processRecallRating,
   prioritizeDailyRecalls,
   RecallCandidate,
@@ -48,9 +47,31 @@ import {
   query,
   where,
   orderBy,
+  writeBatch,
+  WriteBatch,
 } from "firebase/firestore";
+import {
+  SEED_TERMS,
+  SEED_COURSES,
+  SEED_MODULES,
+  SEED_TOPICS,
+  SAMPLE_LESSONS,
+  SAMPLE_LESSON_PROGRESS,
+  SAMPLE_ASSESSMENTS,
+  SAMPLE_STUDY_SESSIONS,
+} from "@/lib/demo/seed-data";
+
+export interface CourseWithContent extends Course {
+  units?: Module[];
+  topics?: Topic[];
+}
 
 export class FirebaseDataStore implements DataStore {
+  // In-memory cache for fast, zero-extra-read lookups within a session
+  private coursesCache: Map<string, CourseWithContent> = new Map();
+  private termsCache: Term[] | null = null;
+  private userCache: UserProfile | null = null;
+
   private get currentUid(): string {
     const user = auth?.currentUser;
     if (!user) throw new Error("Authentication required for FirebaseDataStore");
@@ -62,46 +83,220 @@ export class FirebaseDataStore implements DataStore {
   }
 
   async loadDemoData(): Promise<void> {
-    // In Firebase mode, demo data is not automatically loaded unless explicitly converted
-    console.log("Loading demo data into Firestore for current user...");
+    if (!db) return;
+    const batch = writeBatch(db);
+    for (const l of SAMPLE_LESSONS) {
+      const ref = doc(db, "users", this.currentUid, "videos", l.id);
+      batch.set(ref, { ...l, userId: this.currentUid });
+    }
+    for (const p of SAMPLE_LESSON_PROGRESS) {
+      const ref = doc(db, "users", this.currentUid, "videoProgress", p.id);
+      batch.set(ref, { ...p, userId: this.currentUid });
+    }
+    for (const a of SAMPLE_ASSESSMENTS) {
+      const ref = doc(db, "users", this.currentUid, "assessments", a.id);
+      batch.set(ref, { ...a, userId: this.currentUid });
+    }
+    for (const s of SAMPLE_STUDY_SESSIONS) {
+      const ref = doc(db, "users", this.currentUid, "studySessions", s.id);
+      batch.set(ref, { ...s, userId: this.currentUid });
+    }
+    await batch.commit();
   }
 
   async clearDemoData(): Promise<void> {
-    console.log("Clear data requested in Firestore mode");
+    if (!db) return;
+    const collectionsToClear = ["videos", "videoProgress", "assessments", "studySessions", "notes"];
+    for (const col of collectionsToClear) {
+      const snap = await getDocs(collection(db, "users", this.currentUid, col));
+      if (!snap.empty) {
+        const batch = writeBatch(db);
+        snap.docs.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+      }
+    }
+    await this.restoreOriginalSyllabus();
   }
 
   isSampleDataActive(): boolean {
     return false;
   }
 
-  async restoreOriginalSyllabus(courseId?: string): Promise<void> {
-    console.log("Restore original syllabus in Firestore mode for:", courseId || "all");
+  // Auto-seed on first sign-in
+  private async loadInitialSyllabusData(): Promise<void> {
+    if (!db) return;
+    const batch = writeBatch(db);
+
+    // 1. Terms
+    for (const t of SEED_TERMS) {
+      const termData: Term = {
+        ...t,
+        userId: this.currentUid,
+      };
+      const termRef = doc(db, "users", this.currentUid, "terms", t.id);
+      batch.set(termRef, termData);
+    }
+
+    // 2. Courses with embedded Units and Topics to minimize reads on the free plan
+    for (const c of SEED_COURSES) {
+      const courseUnits = SEED_MODULES.filter((m) => m.courseId === c.id).map((m) => ({
+        ...m,
+        userId: this.currentUid,
+      }));
+      const courseTopics = SEED_TOPICS.filter((t) => t.courseId === c.id).map((t) => ({
+        ...t,
+        userId: this.currentUid,
+      }));
+
+      const courseDoc: CourseWithContent = {
+        ...c,
+        userId: this.currentUid,
+        units: courseUnits,
+        topics: courseTopics,
+      };
+      const courseRef = doc(db, "users", this.currentUid, "courses", c.id);
+      batch.set(courseRef, courseDoc);
+      this.coursesCache.set(c.id, courseDoc);
+    }
+
+    await batch.commit();
   }
 
+  async restoreOriginalSyllabus(courseId?: string): Promise<void> {
+    if (!db) return;
+    if (courseId) {
+      const seedCourse = SEED_COURSES.find((c) => c.id === courseId);
+      if (!seedCourse) return;
+      const courseUnits = SEED_MODULES.filter((m) => m.courseId === courseId).map((m) => ({
+        ...m,
+        userId: this.currentUid,
+      }));
+      const courseTopics = SEED_TOPICS.filter((t) => t.courseId === courseId).map((t) => ({
+        ...t,
+        userId: this.currentUid,
+      }));
+      const courseDoc: CourseWithContent = {
+        ...seedCourse,
+        userId: this.currentUid,
+        units: courseUnits,
+        topics: courseTopics,
+      };
+      await setDoc(doc(db, "users", this.currentUid, "courses", courseId), courseDoc);
+      this.coursesCache.set(courseId, courseDoc);
+    } else {
+      await this.loadInitialSyllabusData();
+    }
+  }
+
+  async resetCourseToOriginalSyllabus(courseId: string): Promise<void> {
+    await this.restoreOriginalSyllabus(courseId);
+  }
+
+  // User Profile
   async getUser(): Promise<UserProfile | null> {
     if (!db || !auth?.currentUser) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid));
-    if (!snap.exists()) return null;
-    return snap.data() as UserProfile;
+    if (this.userCache && this.userCache.uid === this.currentUid) {
+      return this.userCache;
+    }
+
+    const userDocRef = doc(db, "users", this.currentUid);
+    const snap = await getDoc(userDocRef);
+
+    if (!snap.exists()) {
+      // First sign-in: create user profile & auto-load initial syllabus
+      const u = auth.currentUser;
+      const newUser: UserProfile = {
+        uid: this.currentUid,
+        email: u.email || "student@valeriascreds.edu",
+        displayName: u.displayName || "Student",
+        photoURL: u.photoURL || undefined,
+        currentTermId: "term-sem-1",
+        settings: {
+          gradeScale: "10_point",
+          defaultHoursPerCredit: 15,
+          theme: "system",
+        },
+        createdAt: new Date().toISOString(),
+      };
+      await setDoc(userDocRef, newUser);
+      await this.loadInitialSyllabusData();
+      this.userCache = newUser;
+      return newUser;
+    }
+
+    const userData = snap.data() as UserProfile;
+
+    // Check if courses exist for this user; if empty (interrupted initialization), auto-load
+    const coursesSnap = await getDocs(collection(db, "users", this.currentUid, "courses"));
+    if (coursesSnap.empty) {
+      await this.loadInitialSyllabusData();
+    }
+
+    this.userCache = userData;
+    return userData;
   }
 
   async updateSettings(settings: Partial<UserSettings>): Promise<void> {
     if (!db) return;
     const ref = doc(db, "users", this.currentUid);
-    await updateDoc(ref, {
-      settings: settings,
-    });
+    const existing = await this.getUser();
+    const updatedSettings = { ...(existing?.settings || {}), ...settings };
+    await updateDoc(ref, { settings: updatedSettings });
+    if (this.userCache) {
+      this.userCache.settings = updatedSettings as UserSettings;
+    }
   }
 
   async resetAccount(): Promise<void> {
-    // Intentionally empty for safety
+    await this.clearDemoData();
   }
 
+  async deleteAccountAndData(): Promise<void> {
+    if (!db) return;
+    const subcollections = [
+      "terms",
+      "courses",
+      "videos",
+      "videoProgress",
+      "notes",
+      "plannerEvents",
+      "studySessions",
+      "attendance",
+      "examDates",
+      "timetableSlots",
+      "recallHistory",
+      "assessments",
+      "questions",
+      "attempts",
+      "rubrics",
+      "submissions",
+      "degreePlan",
+    ];
+
+    for (const subcol of subcollections) {
+      const snap = await getDocs(collection(db, "users", this.currentUid, subcol));
+      if (!snap.empty) {
+        const batch = writeBatch(db);
+        snap.docs.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+      }
+    }
+
+    await deleteDoc(doc(db, "users", this.currentUid));
+    this.coursesCache.clear();
+    this.termsCache = null;
+    this.userCache = null;
+  }
+
+  // Academic Terms
   async getTerms(): Promise<Term[]> {
     if (!db) return [];
-    const q = query(collection(db, "terms"), where("userId", "==", this.currentUid));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Term);
+    if (this.termsCache) return this.termsCache;
+    const snap = await getDocs(collection(db, "users", this.currentUid, "terms"));
+    const terms = snap.docs.map((d) => d.data() as Term);
+    terms.sort((a, b) => a.id.localeCompare(b.id));
+    this.termsCache = terms;
+    return terms;
   }
 
   async getCurrentTerm(): Promise<Term | null> {
@@ -118,114 +313,212 @@ export class FirebaseDataStore implements DataStore {
       userId: this.currentUid,
       createdAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, "terms", id), term);
+    await setDoc(doc(db, "users", this.currentUid, "terms", id), term);
+    this.termsCache = null;
     return term;
   }
 
   async setCurrentTerm(termId: string): Promise<void> {
     if (!db) return;
     const terms = await this.getTerms();
+    const batch = writeBatch(db);
     for (const t of terms) {
-      if (t.isCurrent !== (t.id === termId)) {
-        await updateDoc(doc(db, "terms", t.id), { isCurrent: t.id === termId });
+      const isCur = t.id === termId;
+      if (t.isCurrent !== isCur) {
+        batch.update(doc(db, "users", this.currentUid, "terms", t.id), { isCurrent: isCur });
       }
     }
+    await batch.commit();
+    this.termsCache = null;
   }
 
+  // Courses (Embed units and topics for minimal reads)
   async getCourses(termId?: string): Promise<Course[]> {
     if (!db) return [];
-    let q = query(collection(db, "courses"), where("userId", "==", this.currentUid));
-    if (termId) {
-      q = query(q, where("termId", "==", termId));
+    if (this.coursesCache.size === 0) {
+      const snap = await getDocs(collection(db, "users", this.currentUid, "courses"));
+      snap.docs.forEach((d) => {
+        const c = d.data() as CourseWithContent;
+        this.coursesCache.set(c.id, c);
+      });
     }
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Course);
+
+    const list = Array.from(this.coursesCache.values());
+    if (termId) {
+      return list.filter((c) => c.termId === termId);
+    }
+    return list;
   }
 
   async getCourse(courseId: string): Promise<Course | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "courses", courseId));
+    if (this.coursesCache.has(courseId)) {
+      return this.coursesCache.get(courseId)!;
+    }
+    const snap = await getDoc(doc(db, "users", this.currentUid, "courses", courseId));
     if (!snap.exists()) return null;
-    const data = snap.data() as Course;
-    return data.userId === this.currentUid ? data : null;
+    const data = snap.data() as CourseWithContent;
+    this.coursesCache.set(courseId, data);
+    return data;
   }
 
   async createCourse(courseData: Omit<Course, "id" | "userId" | "createdAt">): Promise<Course> {
     if (!db) throw new Error("Firestore not configured");
     const id = "course-" + Date.now();
-    const course: Course = {
+    const course: CourseWithContent = {
       ...courseData,
       id,
       userId: this.currentUid,
       createdAt: new Date().toISOString(),
+      units: [],
+      topics: [],
     };
-    await setDoc(doc(db, "courses", id), course);
+    await setDoc(doc(db, "users", this.currentUid, "courses", id), course);
+    this.coursesCache.set(id, course);
     return course;
   }
 
   async updateCourse(courseId: string, updates: Partial<Course>): Promise<Course> {
     if (!db) throw new Error("Firestore not configured");
-    const ref = doc(db, "courses", courseId);
-    await updateDoc(ref, updates);
-    const snap = await getDoc(ref);
-    return snap.data() as Course;
+    const existing = await this.getCourse(courseId);
+    const updated: CourseWithContent = {
+      ...(existing || {}),
+      ...updates,
+      id: courseId,
+      userId: this.currentUid,
+    } as CourseWithContent;
+    await setDoc(doc(db, "users", this.currentUid, "courses", courseId), updated, { merge: true });
+    this.coursesCache.set(courseId, updated);
+    return updated;
   }
 
   async deleteCourse(courseId: string): Promise<void> {
     if (!db) return;
-    await deleteDoc(doc(db, "courses", courseId));
+    await deleteDoc(doc(db, "users", this.currentUid, "courses", courseId));
+    this.coursesCache.delete(courseId);
   }
 
+  // Modules / Units
   async getModules(courseId: string): Promise<Module[]> {
-    if (!db) return [];
-    const q = query(
-      collection(db, "modules"),
-      where("userId", "==", this.currentUid),
-      where("courseId", "==", courseId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs
-      .map((d) => d.data() as Module)
-      .sort((a, b) => a.order - b.order);
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    if (!course || !course.units) return [];
+    return [...course.units].sort((a, b) => a.order - b.order);
   }
 
   async getUnits(courseId: string): Promise<Module[]> {
     return this.getModules(courseId);
   }
 
+  async createModule(
+    moduleData: Omit<Module, "id" | "userId" | "createdAt" | "isSection"> & {
+      isSection?: boolean;
+      unitNumber?: number;
+      electiveExperimentsCount?: number | null;
+    }
+  ): Promise<Module> {
+    if (!db) throw new Error("Firestore not configured");
+    const course = (await this.getCourse(moduleData.courseId)) as CourseWithContent | null;
+    if (!course) throw new Error("Course not found");
+
+    const id = "unit-" + Date.now();
+    const newMod: Module = {
+      id,
+      userId: this.currentUid,
+      courseId: moduleData.courseId,
+      title: moduleData.title,
+      order: moduleData.order ?? (course.units?.length || 0),
+      isSection: moduleData.isSection || false,
+      unitNumber: moduleData.unitNumber ?? (course.units?.length || 0) + 1,
+      electiveExperimentsCount: moduleData.electiveExperimentsCount || null,
+      isCollapsed: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedUnits = [...(course.units || []), newMod];
+    await this.updateCourse(course.id, { units: updatedUnits } as any);
+    return newMod;
+  }
+
+  async updateModuleOrder(modules: { id: string; order: number }[]): Promise<void> {
+    if (modules.length === 0) return;
+    const courseId = (await this.findCourseIdByUnitId(modules[0].id));
+    if (!courseId) return;
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    if (!course || !course.units) return;
+
+    const orderMap = new Map(modules.map((m) => [m.id, m.order]));
+    const updatedUnits = course.units.map((u) => {
+      if (orderMap.has(u.id)) {
+        return { ...u, order: orderMap.get(u.id)! };
+      }
+      return u;
+    });
+
+    await this.updateCourse(courseId, { units: updatedUnits } as any);
+  }
+
+  async toggleModuleCollapsed(moduleId: string, isCollapsed: boolean): Promise<void> {
+    const courseId = await this.findCourseIdByUnitId(moduleId);
+    if (!courseId) return;
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    if (!course || !course.units) return;
+
+    const updatedUnits = course.units.map((u) => (u.id === moduleId ? { ...u, isCollapsed } : u));
+    await this.updateCourse(courseId, { units: updatedUnits } as any);
+  }
+
+  private async findCourseIdByUnitId(unitId: string): Promise<string | null> {
+    const courses = await this.getCourses();
+    for (const c of courses as CourseWithContent[]) {
+      if (c.units && c.units.some((u) => u.id === unitId)) {
+        return c.id;
+      }
+    }
+    return null;
+  }
+
+  private async findCourseIdByTopicId(topicId: string): Promise<string | null> {
+    const courses = await this.getCourses();
+    for (const c of courses as CourseWithContent[]) {
+      if (c.topics && c.topics.some((t) => t.id === topicId)) {
+        return c.id;
+      }
+    }
+    return null;
+  }
+
+  // Topics
   async getTopics(unitId: string): Promise<Topic[]> {
-    if (!db) return [];
-    const q = query(
-      collection(db, "topics"),
-      where("userId", "==", this.currentUid),
-      where("unitId", "==", unitId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs
-      .map((d) => d.data() as Topic)
-      .sort((a, b) => a.order - b.order);
+    const courses = (await this.getCourses()) as CourseWithContent[];
+    for (const c of courses) {
+      if (c.topics) {
+        const matches = c.topics.filter((t) => t.unitId === unitId);
+        if (matches.length > 0) {
+          return matches.sort((a, b) => a.order - b.order);
+        }
+      }
+    }
+    return [];
   }
 
   async getAllTopics(courseId?: string): Promise<Topic[]> {
-    if (!db) return [];
-    const q = courseId
-      ? query(
-          collection(db, "topics"),
-          where("userId", "==", this.currentUid),
-          where("courseId", "==", courseId)
-        )
-      : query(
-          collection(db, "topics"),
-          where("userId", "==", this.currentUid)
-        );
-    const snap = await getDocs(q);
-    return snap.docs
-      .map((d) => d.data() as Topic)
-      .sort((a, b) => a.order - b.order);
+    const courses = (await this.getCourses()) as CourseWithContent[];
+    if (courseId) {
+      const c = courses.find((crs) => crs.id === courseId);
+      return (c?.topics || []).sort((a, b) => a.order - b.order);
+    }
+    const all: Topic[] = [];
+    courses.forEach((c) => {
+      if (c.topics) all.push(...c.topics);
+    });
+    return all.sort((a, b) => a.order - b.order);
   }
 
   async createTopic(topicData: Omit<Topic, "id" | "userId" | "createdAt">): Promise<Topic> {
-    if (!db) throw new Error("Firestore not configured");
+    const courseId = topicData.courseId;
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    if (!course) throw new Error("Course not found");
+
     const id = "topic-" + Date.now();
     const topic: Topic = {
       ...topicData,
@@ -233,140 +526,137 @@ export class FirebaseDataStore implements DataStore {
       userId: this.currentUid,
       createdAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, "topics", id), topic);
+
+    const updatedTopics = [...(course.topics || []), topic];
+    await this.updateCourse(courseId, { topics: updatedTopics } as any);
     return topic;
   }
 
   async updateTopic(topicId: string, updates: Partial<Topic>): Promise<Topic> {
-    if (!db) throw new Error("Firestore not configured");
-    const ref = doc(db, "topics", topicId);
-    if (updates.watchScore !== undefined || updates.checkScore !== undefined) {
-      const snap = await getDoc(ref);
-      const existing = (snap.data() as Topic) || {};
-      const w = updates.watchScore ?? existing.watchScore ?? 0;
-      const c = updates.checkScore ?? existing.checkScore ?? 0;
-      updates.topicScore = w + c;
-      updates.isDone = updates.topicScore >= 70;
-    }
-    await updateDoc(ref, updates);
-    const snap = await getDoc(ref);
-    return snap.data() as Topic;
+    const courseId = await this.findCourseIdByTopicId(topicId);
+    if (!courseId) throw new Error(`Topic ${topicId} not found in any course`);
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    if (!course || !course.topics) throw new Error("Course not found");
+
+    let updatedTopic: Topic | null = null;
+    const updatedTopics = course.topics.map((t) => {
+      if (t.id === topicId) {
+        const merged: Topic = { ...t, ...updates };
+        if (updates.watchScore !== undefined || updates.checkScore !== undefined) {
+          const w = updates.watchScore ?? t.watchScore ?? 0;
+          const c = updates.checkScore ?? t.checkScore ?? 0;
+          merged.topicScore = w + c;
+          merged.isDone = merged.topicScore >= 70;
+        }
+        updatedTopic = merged;
+        return merged;
+      }
+      return t;
+    });
+
+    if (!updatedTopic) throw new Error("Topic not found");
+    await this.updateCourse(courseId, { topics: updatedTopics } as any);
+    return updatedTopic;
   }
 
   async deleteTopic(topicId: string): Promise<void> {
-    if (!db) return;
-    await deleteDoc(doc(db, "topics", topicId));
+    const courseId = await this.findCourseIdByTopicId(topicId);
+    if (!courseId) return;
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    if (!course || !course.topics) return;
+
+    const updatedTopics = course.topics.filter((t) => t.id !== topicId);
+    await this.updateCourse(courseId, { topics: updatedTopics } as any);
   }
 
-  async resetCourseToOriginalSyllabus(courseId: string): Promise<void> {
-    // In Firebase mode, fetches original seed definition and replaces topics/units for this course
-    if (!db) return;
-    // We import dynamically or handle through repo
-  }
-
-  async createModule(moduleData: Omit<Module, "id" | "userId" | "createdAt">): Promise<Module> {
-    if (!db) throw new Error("Firestore not configured");
-    const id = "mod-" + Date.now();
-    const mod: Module = {
-      ...moduleData,
-      id,
-      userId: this.currentUid,
-      createdAt: new Date().toISOString(),
-    };
-    await setDoc(doc(db, "modules", id), mod);
-    return mod;
-  }
-
-  async updateModuleOrder(modules: { id: string; order: number }[]): Promise<void> {
-    if (!db) return;
-    for (const m of modules) {
-      await updateDoc(doc(db, "modules", m.id), { order: m.order });
-    }
-  }
-
-  async toggleModuleCollapsed(moduleId: string, isCollapsed: boolean): Promise<void> {
-    if (!db) return;
-    await updateDoc(doc(db, "modules", moduleId), { isCollapsed });
-  }
-
+  // Lessons / Videos (subcollection under users/{uid}/videos)
   async getLessons(courseId: string): Promise<Lesson[]> {
     if (!db) return [];
     const q = query(
-      collection(db, "lessons"),
-      where("userId", "==", this.currentUid),
+      collection(db, "users", this.currentUid, "videos"),
       where("courseId", "==", courseId)
     );
     const snap = await getDocs(q);
-    return snap.docs
-      .map((d) => d.data() as Lesson)
-      .sort((a, b) => a.order - b.order);
+    return snap.docs.map((d) => d.data() as Lesson).sort((a, b) => a.order - b.order);
   }
 
   async getLesson(lessonId: string): Promise<Lesson | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "lessons", lessonId));
+    const snap = await getDoc(doc(db, "users", this.currentUid, "videos", lessonId));
     if (!snap.exists()) return null;
-    const data = snap.data() as Lesson;
-    return data.userId === this.currentUid ? data : null;
+    return snap.data() as Lesson;
   }
 
-  async addLessons(lessonsData: Omit<Lesson, "id" | "userId" | "createdAt">[]): Promise<Lesson[]> {
+  async addLessons(
+    lessons: (Omit<Lesson, "id" | "userId" | "createdAt" | "linkedTopicIds"> & {
+      linkedTopicIds?: string[];
+    })[]
+  ): Promise<Lesson[]> {
     if (!db) throw new Error("Firestore not configured");
     const added: Lesson[] = [];
+    const batch = writeBatch(db);
     const now = new Date().toISOString();
 
-    for (const data of lessonsData) {
-      const id = "les-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7);
+    for (let i = 0; i < lessons.length; i++) {
+      const l = lessons[i];
+      const id = "video-" + Date.now() + "-" + i;
       const lesson: Lesson = {
-        ...data,
+        ...l,
         id,
         userId: this.currentUid,
         createdAt: now,
+        linkedTopicIds: l.linkedTopicIds || [],
       };
-      await setDoc(doc(db, "lessons", id), lesson);
+      batch.set(doc(db, "users", this.currentUid, "videos", id), lesson);
       added.push(lesson);
     }
+
+    await batch.commit();
     return added;
   }
 
   async updateLesson(lessonId: string, updates: Partial<Lesson>): Promise<Lesson> {
     if (!db) throw new Error("Firestore not configured");
-    const ref = doc(db, "lessons", lessonId);
+    const ref = doc(db, "users", this.currentUid, "videos", lessonId);
     await updateDoc(ref, updates);
     const snap = await getDoc(ref);
     return snap.data() as Lesson;
   }
 
-  async updateLessonOrder(
-    lessons: { id: string; order: number; moduleId: string }[]
-  ): Promise<void> {
+  async updateLessonOrder(lessons: { id: string; order: number; moduleId: string }[]): Promise<void> {
     if (!db) return;
+    const batch = writeBatch(db);
     for (const l of lessons) {
-      await updateDoc(doc(db, "lessons", l.id), {
+      batch.update(doc(db, "users", this.currentUid, "videos", l.id), {
         order: l.order,
         moduleId: l.moduleId,
+        unitId: l.moduleId,
       });
     }
+    await batch.commit();
   }
 
   async deleteLesson(lessonId: string): Promise<void> {
     if (!db) return;
-    await deleteDoc(doc(db, "lessons", lessonId));
+    await deleteDoc(doc(db, "users", this.currentUid, "videos", lessonId));
   }
 
+  // Watch Progress
   async getLessonProgress(lessonId: string): Promise<LessonProgress | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "lessonProgress", `${this.currentUid}_${lessonId}`));
+    const snap = await getDoc(doc(db, "users", this.currentUid, "videoProgress", lessonId));
     if (!snap.exists()) return null;
     return snap.data() as LessonProgress;
   }
 
   async getAllLessonProgress(courseId?: string): Promise<LessonProgress[]> {
     if (!db) return [];
-    let q = query(collection(db, "lessonProgress"), where("userId", "==", this.currentUid));
-    if (courseId) {
-      q = query(q, where("courseId", "==", courseId));
-    }
+    const q = courseId
+      ? query(
+          collection(db, "users", this.currentUid, "videoProgress"),
+          where("courseId", "==", courseId)
+        )
+      : collection(db, "users", this.currentUid, "videoProgress");
     const snap = await getDocs(q);
     return snap.docs.map((d) => d.data() as LessonProgress);
   }
@@ -375,7 +665,7 @@ export class FirebaseDataStore implements DataStore {
     progressData: Omit<LessonProgress, "id" | "userId" | "updatedAt">
   ): Promise<LessonProgress> {
     if (!db) throw new Error("Firestore not configured");
-    const id = `${this.currentUid}_${progressData.lessonId}`;
+    const id = progressData.lessonId;
     const now = new Date().toISOString();
     const progress: LessonProgress = {
       ...progressData,
@@ -383,53 +673,31 @@ export class FirebaseDataStore implements DataStore {
       userId: this.currentUid,
       updatedAt: now,
     };
-    await setDoc(doc(db, "lessonProgress", id), progress, { merge: true });
+    await setDoc(doc(db, "users", this.currentUid, "videoProgress", id), progress, { merge: true });
 
     // Auto-award 40 watch mastery points to linked topics if completed
     if (progressData.isCompleted) {
-      try {
-        const lessonSnap = await getDoc(doc(db, "lessons", progressData.lessonId));
-        if (lessonSnap.exists()) {
-          const lesson = lessonSnap.data() as Lesson;
-          if (lesson.linkedTopicIds && lesson.linkedTopicIds.length > 0) {
-            for (const tid of lesson.linkedTopicIds) {
-              const topicRef = doc(db, "topics", tid);
-              const topicSnap = await getDoc(topicRef);
-              if (topicSnap.exists()) {
-                const topicData = topicSnap.data() as Topic;
-                if ((topicData.watchScore || 0) < 40) {
-                  const watchScore = 40;
-                  const topicScore = watchScore + (topicData.checkScore || 0);
-                  const isDone = topicScore >= 70;
-                  await updateDoc(topicRef, {
-                    watchScore,
-                    topicScore,
-                    isDone,
-                    updatedAt: now,
-                  });
-                }
-              }
-            }
+      const lesson = await this.getLesson(progressData.lessonId);
+      if (lesson && lesson.linkedTopicIds) {
+        for (const tId of lesson.linkedTopicIds) {
+          try {
+            await this.updateTopic(tId, { watchScore: 40 });
+          } catch {
+            // Topic might be in another course or deleted
           }
         }
-      } catch (err) {
-        console.warn("Could not auto-award topic watch scores in firestore:", err);
       }
     }
 
     return progress;
   }
 
+  // Notes
   async getNote(lessonId: string): Promise<Note | null> {
     if (!db) return null;
-    const q = query(
-      collection(db, "notes"),
-      where("userId", "==", this.currentUid),
-      where("lessonId", "==", lessonId)
-    );
-    const snap = await getDocs(q);
-    if (snap.empty) return null;
-    return snap.docs[0].data() as Note;
+    const snap = await getDoc(doc(db, "users", this.currentUid, "notes", lessonId));
+    if (!snap.exists()) return null;
+    return snap.data() as Note;
   }
 
   async saveNote(
@@ -439,7 +707,7 @@ export class FirebaseDataStore implements DataStore {
     timestamps: NoteTimestamp[]
   ): Promise<Note> {
     if (!db) throw new Error("Firestore not configured");
-    const id = `note_${this.currentUid}_${lessonId}`;
+    const id = lessonId;
     const now = new Date().toISOString();
     const note: Note = {
       id,
@@ -450,25 +718,27 @@ export class FirebaseDataStore implements DataStore {
       timestamps,
       updatedAt: now,
     };
-    await setDoc(doc(db, "notes", id), note);
+    await setDoc(doc(db, "users", this.currentUid, "notes", id), note);
     return note;
   }
 
   async getAllNotes(courseId?: string): Promise<Note[]> {
     if (!db) return [];
-    let q = query(collection(db, "notes"), where("userId", "==", this.currentUid));
-    if (courseId) {
-      q = query(q, where("courseId", "==", courseId));
-    }
+    const q = courseId
+      ? query(
+          collection(db, "users", this.currentUid, "notes"),
+          where("courseId", "==", courseId)
+        )
+      : collection(db, "users", this.currentUid, "notes");
     const snap = await getDocs(q);
     return snap.docs.map((d) => d.data() as Note);
   }
 
+  // Assessments & Question Bank
   async getAssessments(courseId: string): Promise<Assessment[]> {
     if (!db) return [];
     const q = query(
-      collection(db, "assessments"),
-      where("userId", "==", this.currentUid),
+      collection(db, "users", this.currentUid, "assessments"),
       where("courseId", "==", courseId)
     );
     const snap = await getDocs(q);
@@ -477,31 +747,30 @@ export class FirebaseDataStore implements DataStore {
 
   async getAssessment(assessmentId: string): Promise<Assessment | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "assessments", assessmentId));
+    const snap = await getDoc(doc(db, "users", this.currentUid, "assessments", assessmentId));
     if (!snap.exists()) return null;
     return snap.data() as Assessment;
   }
 
   async createAssessment(
-    asmData: Omit<Assessment, "id" | "userId" | "createdAt">
+    assessmentData: Omit<Assessment, "id" | "userId" | "createdAt">
   ): Promise<Assessment> {
     if (!db) throw new Error("Firestore not configured");
     const id = "asm-" + Date.now();
     const asm: Assessment = {
-      ...asmData,
+      ...assessmentData,
       id,
       userId: this.currentUid,
       createdAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, "assessments", id), asm);
+    await setDoc(doc(db, "users", this.currentUid, "assessments", id), asm);
     return asm;
   }
 
   async getQuestions(assessmentId: string): Promise<Question[]> {
     if (!db) return [];
     const q = query(
-      collection(db, "questions"),
-      where("userId", "==", this.currentUid),
+      collection(db, "users", this.currentUid, "questions"),
       where("assessmentId", "==", assessmentId)
     );
     const snap = await getDocs(q);
@@ -513,27 +782,31 @@ export class FirebaseDataStore implements DataStore {
     questions: Omit<Question, "id" | "userId">[]
   ): Promise<Question[]> {
     if (!db) throw new Error("Firestore not configured");
+    const batch = writeBatch(db);
     const saved: Question[] = [];
+
     for (let i = 0; i < questions.length; i++) {
       const q = questions[i];
-      const id = `q-${Date.now()}-${i}`;
+      const id = "q-" + Date.now() + "-" + i;
       const item: Question = {
         ...q,
         id,
         userId: this.currentUid,
         assessmentId,
       };
-      await setDoc(doc(db, "questions", id), item);
+      batch.set(doc(db, "users", this.currentUid, "questions", id), item);
       saved.push(item);
     }
+
+    await batch.commit();
     return saved;
   }
 
+  // Attempts
   async getAttempts(assessmentId: string): Promise<Attempt[]> {
     if (!db) return [];
     const q = query(
-      collection(db, "attempts"),
-      where("userId", "==", this.currentUid),
+      collection(db, "users", this.currentUid, "attempts"),
       where("assessmentId", "==", assessmentId)
     );
     const snap = await getDocs(q);
@@ -548,98 +821,128 @@ export class FirebaseDataStore implements DataStore {
       id,
       userId: this.currentUid,
     };
-    await setDoc(doc(db, "attempts", id), attempt);
+    await setDoc(doc(db, "users", this.currentUid, "attempts", id), attempt);
     return attempt;
+  }
+
+  // Rubrics & Submissions
+  async getRubrics(assessmentId: string): Promise<Rubric[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "users", this.currentUid, "rubrics"),
+      where("assessmentId", "==", assessmentId)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as Rubric);
   }
 
   async getRubric(assessmentId: string): Promise<Rubric | null> {
     if (!db) return null;
-    const q = query(
-      collection(db, "rubrics"),
-      where("userId", "==", this.currentUid),
-      where("assessmentId", "==", assessmentId)
-    );
-    const snap = await getDocs(q);
-    if (snap.empty) return null;
-    return snap.docs[0].data() as Rubric;
+    const snap = await getDoc(doc(db, "users", this.currentUid, "rubrics", assessmentId));
+    if (!snap.exists()) return null;
+    return snap.data() as Rubric;
   }
 
   async saveRubric(rubricData: Omit<Rubric, "id" | "userId">): Promise<Rubric> {
     if (!db) throw new Error("Firestore not configured");
-    const id = "rubric-" + Date.now();
+    const id = rubricData.assessmentId || ("rub-" + Date.now());
     const rubric: Rubric = {
       ...rubricData,
       id,
       userId: this.currentUid,
     };
-    await setDoc(doc(db, "rubrics", id), rubric);
+    await setDoc(doc(db, "users", this.currentUid, "rubrics", id), rubric);
     return rubric;
+  }
+
+  async getSubmissions(assessmentId: string): Promise<Submission[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "users", this.currentUid, "submissions"),
+      where("assessmentId", "==", assessmentId)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as Submission);
   }
 
   async getSubmission(assessmentId: string): Promise<Submission | null> {
     if (!db) return null;
-    const q = query(
-      collection(db, "submissions"),
-      where("userId", "==", this.currentUid),
-      where("assessmentId", "==", assessmentId)
-    );
-    const snap = await getDocs(q);
-    if (snap.empty) return null;
-    return snap.docs[0].data() as Submission;
+    const snap = await getDoc(doc(db, "users", this.currentUid, "submissions", assessmentId));
+    if (!snap.exists()) return null;
+    return snap.data() as Submission;
   }
 
-  async submitAssignment(submissionData: Omit<Submission, "id" | "userId">): Promise<Submission> {
+  async saveSubmission(submissionData: Omit<Submission, "id" | "userId">): Promise<Submission> {
     if (!db) throw new Error("Firestore not configured");
-    const id = "sub-" + Date.now();
+    const id = submissionData.assessmentId || ("sub-" + Date.now());
     const submission: Submission = {
       ...submissionData,
       id,
       userId: this.currentUid,
     };
-    await setDoc(doc(db, "submissions", id), submission);
+    await setDoc(doc(db, "users", this.currentUid, "submissions", id), submission);
     return submission;
   }
 
-  async getPlannerEvents(): Promise<PlannerEvent[]> {
+  async submitAssignment(submissionData: Omit<Submission, "id" | "userId">): Promise<Submission> {
+    return this.saveSubmission(submissionData);
+  }
+
+  // Planner Events
+  async getPlannerEvents(start?: string, end?: string): Promise<PlannerEvent[]> {
     if (!db) return [];
-    const q = query(collection(db, "plannerEvents"), where("userId", "==", this.currentUid));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as PlannerEvent);
+    const snap = await getDocs(collection(db, "users", this.currentUid, "plannerEvents"));
+    const list = snap.docs.map((d) => d.data() as PlannerEvent);
+    return list.filter((e) => (!start || e.date >= start) && (!end || e.date <= end));
   }
 
   async createPlannerEvent(
     eventData: Omit<PlannerEvent, "id" | "userId">
   ): Promise<PlannerEvent> {
     if (!db) throw new Error("Firestore not configured");
-    const id = "plan-" + Date.now();
+    const id = "event-" + Date.now();
     const event: PlannerEvent = {
       ...eventData,
       id,
       userId: this.currentUid,
     };
-    await setDoc(doc(db, "plannerEvents", id), event);
+    await setDoc(doc(db, "users", this.currentUid, "plannerEvents", id), event);
     return event;
+  }
+
+  async updatePlannerEvent(eventId: string, updates: Partial<PlannerEvent>): Promise<PlannerEvent> {
+    if (!db) throw new Error("Firestore not configured");
+    const ref = doc(db, "users", this.currentUid, "plannerEvents", eventId);
+    await updateDoc(ref, updates);
+    const snap = await getDoc(ref);
+    return snap.data() as PlannerEvent;
   }
 
   async togglePlannerEventDone(eventId: string, isDone: boolean): Promise<void> {
     if (!db) return;
-    await updateDoc(doc(db, "plannerEvents", eventId), { isDone });
+    await updateDoc(doc(db, "users", this.currentUid, "plannerEvents", eventId), { isDone });
   }
 
+  async deletePlannerEvent(eventId: string): Promise<void> {
+    if (!db) return;
+    await deleteDoc(doc(db, "users", this.currentUid, "plannerEvents", eventId));
+  }
+
+  // Degree Plan
   async getDegreePlan(): Promise<DegreePlan | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "degreePlans", this.currentUid));
+    const snap = await getDoc(doc(db, "users", this.currentUid, "degreePlan", "current"));
     if (!snap.exists()) return null;
     return snap.data() as DegreePlan;
   }
 
   async updateDegreePlan(plan: Partial<DegreePlan>): Promise<DegreePlan> {
     if (!db) throw new Error("Firestore not configured");
-    const ref = doc(db, "degreePlans", this.currentUid);
+    const ref = doc(db, "users", this.currentUid, "degreePlan", "current");
     const updated: DegreePlan = {
-      id: this.currentUid,
+      id: "deg-plan-1",
       userId: this.currentUid,
-      totalCreditsTarget: plan.totalCreditsTarget ?? 120,
+      totalCreditsTarget: plan.totalCreditsTarget || 160,
       departmentRequirements: plan.departmentRequirements ?? {},
       levelRequirements: plan.levelRequirements ?? {},
     };
@@ -647,6 +950,7 @@ export class FirebaseDataStore implements DataStore {
     return updated;
   }
 
+  // Transcript Snapshots
   async getTranscriptSnapshots(): Promise<TranscriptSnapshot[]> {
     if (!db) return [];
     const q = query(collection(db, "transcriptSnapshots"), where("userId", "==", this.currentUid));
@@ -658,7 +962,7 @@ export class FirebaseDataStore implements DataStore {
     snapshotData: Omit<TranscriptSnapshot, "id" | "userId" | "issuedAt" | "verificationHash">
   ): Promise<TranscriptSnapshot> {
     if (!db) throw new Error("Firestore not configured");
-    const id = "VER-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    const id = "snap-" + Date.now();
     const snapshot: TranscriptSnapshot = {
       ...snapshotData,
       id,
@@ -675,19 +979,31 @@ export class FirebaseDataStore implements DataStore {
     await updateDoc(doc(db, "transcriptSnapshots", snapshotId), { isPublic });
   }
 
-  async getPublicVerificationSnapshot(
-    verificationId: string
-  ): Promise<TranscriptSnapshot | null> {
+  async getPublicVerificationSnapshot(idOrHash: string): Promise<TranscriptSnapshot | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "transcriptSnapshots", verificationId));
-    if (!snap.exists()) return null;
-    const data = snap.data() as TranscriptSnapshot;
-    return data.isPublic ? data : null;
+    const docSnap = await getDoc(doc(db, "transcriptSnapshots", idOrHash));
+    if (docSnap.exists()) {
+      return docSnap.data() as TranscriptSnapshot;
+    }
+    const q = query(
+      collection(db, "transcriptSnapshots"),
+      where("verificationHash", "==", idOrHash)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs[0].data() as TranscriptSnapshot;
+    }
+    return null;
   }
 
-  async logAudit(action: AuditLog["action"], entityId: string, details: string): Promise<void> {
+  // Audit Log
+  async logAudit(
+    action: AuditLog["action"],
+    entityId: string,
+    details: string
+  ): Promise<void> {
     if (!db) return;
-    const id = "audit-" + Date.now();
+    const id = "log-" + Date.now();
     const entry: AuditLog = {
       id,
       userId: this.currentUid,
@@ -696,39 +1012,29 @@ export class FirebaseDataStore implements DataStore {
       details,
       timestamp: new Date().toISOString(),
     };
-    await setDoc(doc(db, "auditLog", id), entry);
+    await setDoc(doc(db, "users", this.currentUid, "auditLog", id), entry);
   }
 
   async getAuditLogs(): Promise<AuditLog[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "auditLog"),
-      where("userId", "==", this.currentUid),
-      orderBy("timestamp", "desc")
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as AuditLog);
+    const snap = await getDocs(collection(db, "users", this.currentUid, "auditLog"));
+    return snap.docs.map((d) => d.data() as AuditLog).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }
 
+  // Study Sessions
   async getStudySessions(courseId?: string): Promise<StudySession[]> {
     if (!db) return [];
     const q = courseId
       ? query(
-          collection(db, "studySessions"),
-          where("userId", "==", this.currentUid),
+          collection(db, "users", this.currentUid, "studySessions"),
           where("courseId", "==", courseId)
         )
-      : query(
-          collection(db, "studySessions"),
-          where("userId", "==", this.currentUid)
-        );
+      : collection(db, "users", this.currentUid, "studySessions");
     const snap = await getDocs(q);
     return snap.docs.map((d) => d.data() as StudySession);
   }
 
-  async logStudySession(
-    sessionData: Omit<StudySession, "id" | "userId">
-  ): Promise<StudySession> {
+  async saveStudySession(sessionData: Omit<StudySession, "id" | "userId">): Promise<StudySession> {
     if (!db) throw new Error("Firestore not configured");
     const id = "session-" + Date.now();
     const session: StudySession = {
@@ -736,20 +1042,31 @@ export class FirebaseDataStore implements DataStore {
       id,
       userId: this.currentUid,
     };
-    await setDoc(doc(db, "studySessions", id), session);
+    await setDoc(doc(db, "users", this.currentUid, "studySessions", id), session);
     return session;
   }
 
+  async logStudySession(sessionData: Omit<StudySession, "id" | "userId">): Promise<StudySession> {
+    return this.saveStudySession(sessionData);
+  }
+
+  // Course Attendance
   async getCourseAttendance(courseId: string): Promise<CourseAttendance> {
-    if (!db) throw new Error("Firestore not configured");
-    const q = query(
-      collection(db, "attendance"),
-      where("userId", "==", this.currentUid),
-      where("courseId", "==", courseId)
-    );
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      return snap.docs[0].data() as CourseAttendance;
+    if (!db) {
+      return {
+        id: `att-${this.currentUid}-${courseId}`,
+        courseId,
+        userId: this.currentUid,
+        classesHeld: 0,
+        classesAttended: 0,
+        minimumPercentage: 75,
+        logs: [],
+        updatedAt: new Date().toISOString(),
+      };
+    }
+    const snap = await getDoc(doc(db, "users", this.currentUid, "attendance", courseId));
+    if (snap.exists()) {
+      return snap.data() as CourseAttendance;
     }
     const defaultAtt: CourseAttendance = {
       id: `att-${this.currentUid}-${courseId}`,
@@ -761,17 +1078,13 @@ export class FirebaseDataStore implements DataStore {
       logs: [],
       updatedAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, "attendance", defaultAtt.id), defaultAtt);
+    await setDoc(doc(db, "users", this.currentUid, "attendance", courseId), defaultAtt);
     return defaultAtt;
   }
 
   async getAllAttendance(): Promise<CourseAttendance[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "attendance"),
-      where("userId", "==", this.currentUid)
-    );
-    const snap = await getDocs(q);
+    const snap = await getDocs(collection(db, "users", this.currentUid, "attendance"));
     return snap.docs.map((d) => d.data() as CourseAttendance);
   }
 
@@ -786,7 +1099,7 @@ export class FirebaseDataStore implements DataStore {
       ...updates,
       updatedAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, "attendance", existing.id), updated);
+    await setDoc(doc(db, "users", this.currentUid, "attendance", courseId), updated);
     return updated;
   }
 
@@ -813,27 +1126,23 @@ export class FirebaseDataStore implements DataStore {
     });
   }
 
+  async setCourseAttendanceThreshold(courseId: string, percentage: number): Promise<CourseAttendance> {
+    return this.updateCourseAttendance(courseId, { minimumPercentage: percentage });
+  }
+
+  // Exam Dates
   async getCourseExamDate(courseId: string): Promise<ExamDate | null> {
     if (!db) return null;
-    const q = query(
-      collection(db, "examDates"),
-      where("userId", "==", this.currentUid),
-      where("courseId", "==", courseId)
-    );
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      return snap.docs[0].data() as ExamDate;
+    const snap = await getDoc(doc(db, "users", this.currentUid, "examDates", courseId));
+    if (snap.exists()) {
+      return snap.data() as ExamDate;
     }
     return null;
   }
 
   async getAllExamDates(): Promise<ExamDate[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "examDates"),
-      where("userId", "==", this.currentUid)
-    );
-    const snap = await getDocs(q);
+    const snap = await getDocs(collection(db, "users", this.currentUid, "examDates"));
     return snap.docs.map((d) => d.data() as ExamDate);
   }
 
@@ -842,35 +1151,27 @@ export class FirebaseDataStore implements DataStore {
     data: { examTitle: string; date: string; targetScore?: number }
   ): Promise<ExamDate> {
     if (!db) throw new Error("Firestore not configured");
-    const existing = await this.getCourseExamDate(courseId);
     const exam: ExamDate = {
-      id: existing ? existing.id : `exam-${this.currentUid}-${courseId}`,
+      id: `exam-${this.currentUid}-${courseId}`,
       userId: this.currentUid,
       courseId,
       examTitle: data.examTitle || "Final Examination",
       date: data.date,
       targetScore: data.targetScore ?? 85,
     };
-    await setDoc(doc(db, "examDates", exam.id), exam);
+    await setDoc(doc(db, "users", this.currentUid, "examDates", courseId), exam);
     return exam;
   }
 
   async deleteCourseExamDate(courseId: string): Promise<void> {
     if (!db) return;
-    const existing = await this.getCourseExamDate(courseId);
-    if (existing) {
-      await deleteDoc(doc(db, "examDates", existing.id));
-    }
+    await deleteDoc(doc(db, "users", this.currentUid, "examDates", courseId));
   }
 
   // Weekly Class Timetable
   async getTimetableSlots(): Promise<ClassTimetableSlot[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "timetableSlots"),
-      where("userId", "==", this.currentUid)
-    );
-    const snap = await getDocs(q);
+    const snap = await getDocs(collection(db, "users", this.currentUid, "timetableSlots"));
     const slots = snap.docs.map((d) => d.data() as ClassTimetableSlot);
     if (slots.length === 0) {
       const courses = await this.getCourses();
@@ -893,13 +1194,13 @@ export class FirebaseDataStore implements DataStore {
       room: slotData.room || "Room 101",
       type: slotData.type || "lecture",
     };
-    await setDoc(doc(db, "timetableSlots", id), slot);
+    await setDoc(doc(db, "users", this.currentUid, "timetableSlots", id), slot);
     return slot;
   }
 
   async deleteTimetableSlot(slotId: string): Promise<void> {
     if (!db) return;
-    await deleteDoc(doc(db, "timetableSlots", slotId));
+    await deleteDoc(doc(db, "users", this.currentUid, "timetableSlots", slotId));
   }
 
   async generateDefaultWeeklyTimetable(courses: Course[]): Promise<ClassTimetableSlot[]> {
@@ -913,11 +1214,11 @@ export class FirebaseDataStore implements DataStore {
     const cMath = findCourse("MA101BS");
     const cChem = findCourse("CH102BS");
     const cEng = findCourse("EN103HS");
-    const cEce = findCourse("EC104ES");
-    const cCs = findCourse("CS105ES");
+    const cEce = findCourse("EE104ES") || findCourse("EC104ES");
+    const cCs = findCourse("CS105ES") || findCourse("ME105ES");
     const cChemLab = findCourse("CH106BS");
-    const cCsLab = findCourse("CS107ES");
-    const cEngLab = findCourse("EN108HS");
+    const cCsLab = findCourse("EN107HS") || findCourse("CS107ES");
+    const cEngLab = findCourse("EE108ES") || findCourse("EN108HS");
     const cMech = findCourse("ME109ES");
 
     const defaultSlots: Omit<ClassTimetableSlot, "id" | "userId">[] = [
@@ -944,6 +1245,7 @@ export class FirebaseDataStore implements DataStore {
     ];
 
     const results: ClassTimetableSlot[] = [];
+    const batch = writeBatch(db);
     for (let i = 0; i < defaultSlots.length; i++) {
       const s = defaultSlots[i];
       const slot: ClassTimetableSlot = {
@@ -951,49 +1253,49 @@ export class FirebaseDataStore implements DataStore {
         id: `slot-${this.currentUid}-${i + 1}`,
         userId: this.currentUid,
       };
-      await setDoc(doc(db, "timetableSlots", slot.id), slot);
+      batch.set(doc(db, "users", this.currentUid, "timetableSlots", slot.id), slot);
       results.push(slot);
     }
+    await batch.commit();
     return results;
   }
 
   async clearTimetable(): Promise<void> {
     if (!db) return;
-    const slots = await this.getTimetableSlots();
-    for (const s of slots) {
-      await deleteDoc(doc(db, "timetableSlots", s.id));
+    const snap = await getDocs(collection(db, "users", this.currentUid, "timetableSlots"));
+    if (!snap.empty) {
+      const batch = writeBatch(db);
+      snap.docs.forEach((d) => batch.delete(d.ref));
+      await batch.commit();
     }
   }
 
-  // Smart Spaced Recall Engine (Phase S1)
+  // Smart Spaced Recall Engine
   async getRecallCandidates(today?: string): Promise<RecallCandidate[]> {
-    if (!db) return [];
     const todayStr = today || toDateString(new Date());
-    const courses = await this.getCourses();
-    const courseMap = new Map(courses.map((c) => [c.id, c]));
-
-    const q = query(collection(db, "topics"), where("userId", "==", this.currentUid));
-    const snap = await getDocs(q);
-    const topics = snap.docs.map((d) => d.data() as Topic);
-
+    const courses = (await this.getCourses()) as CourseWithContent[];
     const candidates: RecallCandidate[] = [];
-    for (const t of topics) {
-      if (t.isDone || (t.topicScore || 0) >= 70) {
-        const c = courseMap.get(t.courseId);
-        candidates.push({
-          topicId: t.id,
-          courseId: t.courseId,
-          unitId: t.unitId,
-          title: t.title,
-          recallDueAt: t.recallDueAt || todayStr,
-          recallStage: t.recallStage || 1,
-          retentionLevel: t.retentionLevel || "none",
-          topicScore: t.topicScore || 0,
-          isDone: t.isDone,
-          isConsolidated: t.isConsolidated || false,
-          courseCode: c?.code,
-          courseTitle: c?.title,
-        });
+
+    for (const c of courses) {
+      if (c.topics) {
+        for (const t of c.topics) {
+          if (t.isDone || (t.topicScore || 0) >= 70) {
+            candidates.push({
+              topicId: t.id,
+              courseId: t.courseId,
+              unitId: t.unitId,
+              title: t.title,
+              recallDueAt: t.recallDueAt || todayStr,
+              recallStage: t.recallStage || 1,
+              retentionLevel: t.retentionLevel || "none",
+              topicScore: t.topicScore || 0,
+              isDone: t.isDone,
+              isConsolidated: t.isConsolidated || false,
+              courseCode: c.code,
+              courseTitle: c.title,
+            });
+          }
+        }
       }
     }
     return candidates;
@@ -1026,12 +1328,12 @@ export class FirebaseDataStore implements DataStore {
   }): Promise<{ topic: Topic; historyEntry: RecallHistoryEntry }> {
     if (!db) throw new Error("Firestore not configured");
     const todayStr = entry.today || toDateString(new Date());
-    const topicRef = doc(db, "topics", entry.topicId);
-    const snap = await getDoc(topicRef);
-    if (!snap.exists()) throw new Error("Topic not found");
-    const topic = snap.data() as Topic;
+    const courseId = await this.findCourseIdByTopicId(entry.topicId);
+    if (!courseId) throw new Error("Course not found for topic");
+    const course = (await this.getCourse(courseId)) as CourseWithContent | null;
+    const topic = course?.topics?.find((t) => t.id === entry.topicId);
+    if (!topic) throw new Error("Topic not found");
 
-    const course = await this.getCourse(topic.courseId);
     const exam = await this.getCourseExamDate(topic.courseId);
     const user = await this.getUser();
     const intervals = user?.settings?.recallIntervals || [1, 3, 7, 14];
@@ -1049,8 +1351,7 @@ export class FirebaseDataStore implements DataStore {
       currentScore,
     });
 
-    const updatedTopic: Topic = {
-      ...topic,
+    const updatedTopic = await this.updateTopic(topic.id, {
       recallStage: scheduled.nextStage,
       recallDueAt: scheduled.nextDueDate,
       retentionLevel: scheduled.retentionLevel,
@@ -1060,9 +1361,7 @@ export class FirebaseDataStore implements DataStore {
       lastRecalledAt: todayStr,
       topicScore: scheduled.newScore,
       isDone: scheduled.newScore >= 70,
-    };
-
-    await updateDoc(topicRef, updatedTopic as any);
+    });
 
     const historyId = `recall-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const historyEntry: RecallHistoryEntry = {
@@ -1082,16 +1381,14 @@ export class FirebaseDataStore implements DataStore {
       date: todayStr,
     };
 
-    await setDoc(doc(db, "recallHistory", historyId), historyEntry);
-
+    await setDoc(doc(db, "users", this.currentUid, "recallHistory", historyId), historyEntry);
     return { topic: updatedTopic, historyEntry };
   }
 
   async getRecallHistory(limitCount?: number): Promise<RecallHistoryEntry[]> {
     if (!db) return [];
     const q = query(
-      collection(db, "recallHistory"),
-      where("userId", "==", this.currentUid),
+      collection(db, "users", this.currentUid, "recallHistory"),
       orderBy("reviewedAt", "desc")
     );
     const snap = await getDocs(q);
@@ -1100,11 +1397,7 @@ export class FirebaseDataStore implements DataStore {
   }
 
   async updateCourseRecallStyle(courseId: string, style: RecallStyle): Promise<Course> {
-    if (!db) throw new Error("Firestore not configured");
-    const courseRef = doc(db, "courses", courseId);
-    await updateDoc(courseRef, { recallStyle: style });
-    const snap = await getDoc(courseRef);
-    return snap.data() as Course;
+    return this.updateCourse(courseId, { recallStyle: style });
   }
 
   async exportAllDataJson(): Promise<string> {
@@ -1134,7 +1427,6 @@ export class FirebaseDataStore implements DataStore {
   }
 
   async importAllDataJson(jsonString: string): Promise<void> {
-    // In Firebase mode, import creates/restores records for current user
     console.log("Importing JSON dataset into Firebase for user:", this.currentUid);
   }
 }
