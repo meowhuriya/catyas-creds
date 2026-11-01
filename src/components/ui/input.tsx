@@ -13,7 +13,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         type={type}
         className={cn(
           "flex h-9 w-full rounded-control border border-app-border bg-app-surface px-3 py-1 text-sm text-app-ink shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-app-ink-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50",
-          tabular && "tabular-nums font-mono",
+          tabular && "tabular-nums font-sans font-semibold",
           className
         )}
         ref={ref}

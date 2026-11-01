@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-screen bg-app-bg text-app-ink">
+    <div className="flex min-h-screen bg-transparent text-app-ink">
       {/* Skip to Content for Accessibility */}
       <a
         href="#main-content"
@@ -55,12 +55,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         Skip to main content
       </a>
 
-      {/* Desktop Collapsible Left Sidebar */}
-      <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+      {/* Desktop Floating Left Sidebar (16px from edges, 264px wide, solid cream panel) */}
+      <div className="hidden md:block p-4 pr-0 shrink-0 select-none">
+        <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+      </div>
 
       {/* Main Content Viewport */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <TopBar onOpenCommand={() => setCommandOpen(true)} />
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+        <div className="p-4 pb-0">
+          <TopBar onOpenCommand={() => setCommandOpen(true)} />
+        </div>
 
         <main
           id="main-content"
@@ -68,10 +72,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           {children}
 
-          {/* Academic Portal Footer */}
-          <footer className="mt-16 border-t border-app-border pt-6 pb-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 no-print">
+          {/* Academic Portal Footer (Solid cream panel) */}
+          <footer className="mt-12 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] p-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm no-print">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-medium text-app-ink">Valeria's Creds</span>
+              <span className="font-semibold text-app-ink">Valeria's Creds</span>
               <span>·</span>
               <span>Self-awarded credits. Not accredited by any institution.</span>
             </div>
@@ -80,7 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href="https://www.youtube.com/t/terms"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:underline hover:text-app-ink transition-colors"
+                className="hover:underline hover:text-app-ink transition-colors font-medium"
               >
                 YouTube Terms of Service
               </a>
@@ -89,7 +93,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href="https://policies.google.com/privacy"
                 target="_blank"
                 rel="noreferrer"
-                className="hover:underline hover:text-app-ink transition-colors"
+                className="hover:underline hover:text-app-ink transition-colors font-medium"
               >
                 Google Privacy Policy
               </a>

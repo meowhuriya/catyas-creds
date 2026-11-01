@@ -109,7 +109,7 @@ export function SortableLessonItem({
               Channel: {lesson.channelTitle}
             </span>
             <span>•</span>
-            <div className="flex items-center gap-1 font-mono text-[11px] tabular-nums">
+            <div className="flex items-center gap-1 font-sans font-semibold text-[11px] tabular-nums">
               <Clock className="h-3 w-3 text-app-ink-muted/70" />
               {durationSec ? (
                 <span>{formatSecondsToTime(durationSec)}</span>
@@ -122,7 +122,7 @@ export function SortableLessonItem({
             {lesson.startTimeSeconds ? (
               <>
                 <span>•</span>
-                <span className="font-mono text-[11px] tabular-nums">
+                <span className="font-sans font-semibold text-[11px] tabular-nums">
                   Starts at {formatSecondsToTime(lesson.startTimeSeconds)}
                 </span>
               </>

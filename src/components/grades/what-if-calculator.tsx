@@ -277,7 +277,7 @@ export function WhatIfCalculator({
               <CheckCircle2 className="h-4 w-4 shrink-0" />
               <span>
                 To secure a <strong className="font-semibold">{targetPercentage}%</strong> course final grade, you need an average of{" "}
-                <strong className="font-mono font-bold tabular-nums">
+                <strong className="font-sans font-semibold font-bold tabular-nums">
                   {Math.round(targetRequirement.requiredScoreOnRemaining)}%
                 </strong>{" "}
                 across your {uncompletedCount} remaining uncompleted assessment items.
@@ -288,7 +288,7 @@ export function WhatIfCalculator({
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>
                 A target of <strong className="font-semibold">{targetPercentage}%</strong> requires an average of{" "}
-                <strong className="font-mono font-bold tabular-nums">
+                <strong className="font-sans font-semibold font-bold tabular-nums">
                   {Math.round(targetRequirement.requiredScoreOnRemaining)}%
                 </strong>{" "}
                 on remaining items, which exceeds the 100% maximum points cap.
@@ -360,12 +360,12 @@ export function WhatIfCalculator({
                             const val = Math.max(0, Math.min(asm.maxPoints, Number(e.target.value)));
                             setHypotheticalScores((prev) => ({ ...prev, [asm.id]: val }));
                           }}
-                          className="font-mono tabular-nums text-center text-xs h-7"
+                          className="font-sans font-semibold tabular-nums text-center text-xs h-7"
                         />
                         <span className="text-app-ink-muted text-[11px]">pts</span>
                       </div>
 
-                      <span className="font-mono text-xs font-bold text-app-ink tabular-nums w-12 text-right">
+                      <span className="font-sans font-semibold text-xs font-bold text-app-ink tabular-nums w-12 text-right">
                         {hypoPct}%
                       </span>
                     </div>

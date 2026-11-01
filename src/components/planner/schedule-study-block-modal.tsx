@@ -160,7 +160,7 @@ export function ScheduleStudyBlockModal({
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="font-semibold text-app-ink">Duration</label>
-              <span className="text-[11px] text-app-ink-muted font-mono">
+              <span className="text-[11px] text-app-ink-muted font-sans font-semibold">
                 Ends at {calculateEndTime(startTime, durationMinutes)}
               </span>
             </div>
@@ -170,7 +170,7 @@ export function ScheduleStudyBlockModal({
                   key={mins}
                   type="button"
                   onClick={() => setDurationMinutes(mins)}
-                  className={`rounded-control border py-2 text-center font-mono font-medium text-xs transition-colors ${
+                  className={`rounded-control border py-2 text-center font-sans font-semibold font-medium text-xs transition-colors ${
                     durationMinutes === mins
                       ? "border-app-accent bg-app-accent/10 text-app-accent font-bold"
                       : "border-app-border bg-app-surface text-app-ink-muted hover:border-app-ink-muted"

@@ -172,7 +172,7 @@ export function FocusTimer({
 
         {/* Chime indicator badge */}
         <span
-          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] text-[10px] font-mono border border-[var(--color-border)]"
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] text-[10px] font-sans font-semibold border border-[var(--color-border)]"
           title="Gentle acoustic chime plays upon timer completion"
         >
           <Volume2 className="h-3 w-3" />
@@ -233,7 +233,7 @@ export function FocusTimer({
         <div className="font-serif text-5xl sm:text-6xl font-bold tracking-tight text-[var(--color-ink)] tabular-nums">
           {timeFormatted}
         </div>
-        <span className="text-[11px] font-mono uppercase tracking-wider text-[var(--color-ink-muted)] block mt-1">
+        <span className="text-[11px] font-sans font-semibold uppercase tracking-wider text-[var(--color-ink-muted)] block mt-1">
           {isRunning
             ? "Session in Progress"
             : secondsLeft === 0
@@ -260,7 +260,7 @@ export function FocusTimer({
             max={180}
             value={customMinutes}
             onChange={(e) => handleCustomChange(parseInt(e.target.value) || 25)}
-            className="w-16 h-7 rounded-[4px] border border-[var(--color-border)] bg-[var(--color-surface)] text-center font-mono font-bold text-xs"
+            className="w-16 h-7 rounded-[4px] border border-[var(--color-border)] bg-[var(--color-surface)] text-center font-sans font-semibold font-bold text-xs"
           />
         </div>
       )}

@@ -54,7 +54,7 @@ export function TodoList({
             <h3 className="font-serif text-base font-bold text-app-ink">
               To-Do & Upcoming Deadlines
             </h3>
-            <span className="rounded-full bg-app-surface-muted px-2 py-0.5 font-mono text-xs font-semibold text-app-ink tabular-nums">
+            <span className="rounded-full bg-app-surface-muted px-2 py-0.5 font-sans font-semibold text-xs font-semibold text-app-ink tabular-nums">
               {pendingItems.length}
             </span>
           </div>
@@ -89,7 +89,7 @@ export function TodoList({
                         className="h-1.5 w-1.5 rounded-full shrink-0"
                         style={{ backgroundColor: tagColor }}
                       />
-                      <span className="font-mono text-xs font-bold text-app-ink uppercase">
+                      <span className="font-sans font-semibold text-xs font-bold text-app-ink uppercase">
                         {item.course?.code}
                       </span>
                       <span className="text-xs font-medium text-app-ink truncate">
@@ -98,13 +98,13 @@ export function TodoList({
                     </div>
                     <div className="flex items-center gap-2 text-xs text-app-ink-muted">
                       <Calendar className="h-3 w-3 text-app-ink-muted/70" />
-                      <span className="font-mono tabular-nums">
+                      <span className="font-sans font-semibold tabular-nums">
                         Due: {item.dueDate}
                       </span>
                       <span>•</span>
                       <span>{item.type.toUpperCase()}</span>
                       <span>•</span>
-                      <span className="font-mono tabular-nums">
+                      <span className="font-sans font-semibold tabular-nums">
                         {item.maxPoints} pts
                       </span>
                     </div>
@@ -133,7 +133,7 @@ export function TodoList({
             <h3 className="font-serif text-base font-bold text-app-ink">
               Recent Submissions & Graded Work
             </h3>
-            <span className="rounded-full bg-app-surface-muted px-2 py-0.5 font-mono text-xs font-semibold text-app-ink tabular-nums">
+            <span className="rounded-full bg-app-surface-muted px-2 py-0.5 font-sans font-semibold text-xs font-semibold text-app-ink tabular-nums">
               {completedItems.length}
             </span>
           </div>
@@ -173,7 +173,7 @@ export function TodoList({
                         className="h-1.5 w-1.5 rounded-full shrink-0"
                         style={{ backgroundColor: tagColor }}
                       />
-                      <span className="font-mono text-xs font-bold text-app-ink uppercase">
+                      <span className="font-sans font-semibold text-xs font-bold text-app-ink uppercase">
                         {item.course?.code}
                       </span>
                       <span className="text-xs font-medium text-app-ink truncate">
@@ -182,7 +182,7 @@ export function TodoList({
                     </div>
                     <div className="flex items-center gap-2 text-xs text-app-ink-muted">
                       <span>Recorded Grade:</span>
-                      <span className="font-mono font-semibold text-app-success tabular-nums">
+                      <span className="font-sans font-semibold font-semibold text-app-success tabular-nums">
                         {score}/{max} ({Math.round((score / max) * 100)}%)
                       </span>
                     </div>

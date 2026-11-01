@@ -239,8 +239,8 @@ export default function DegreePage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-app-border pb-4">
+      {/* Header (Solid cream panel) */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
         <div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-app-ink">
             Degree Audit & Curriculum Progress
@@ -299,7 +299,7 @@ export default function DegreePage() {
       <div className="rounded-card border border-app-border bg-app-surface p-4 space-y-2 shadow-sm">
         <div className="flex items-center justify-between text-xs font-semibold">
           <span className="text-app-ink">Overall Degree Completion</span>
-          <span className="font-mono text-app-accent tabular-nums">{overallPercent}% ({earnedCredits} / {targetCredits} Credits)</span>
+          <span className="font-sans font-semibold text-app-accent tabular-nums">{overallPercent}% ({earnedCredits} / {targetCredits} Credits)</span>
         </div>
         <ProgressBar value={overallPercent} />
       </div>
@@ -334,7 +334,7 @@ export default function DegreePage() {
                 Major core, basic sciences, humanities, and engineering sciences.
               </p>
             </div>
-            <span className="font-mono text-xs font-bold text-app-ink-muted tabular-nums">
+            <span className="font-sans font-semibold text-xs font-bold text-app-ink-muted tabular-nums">
               {earnedCredits} / {targetCredits} cr
             </span>
           </div>
@@ -344,7 +344,7 @@ export default function DegreePage() {
               <div key={item.dept} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-app-ink">{item.dept}</span>
-                  <span className="font-mono tabular-nums text-app-ink-muted text-[11px]">
+                  <span className="font-sans font-semibold tabular-nums text-app-ink-muted text-[11px]">
                     <strong className="text-app-ink font-semibold">{item.earned}</strong> / {item.required} cr ({item.pct}%)
                   </span>
                 </div>
@@ -365,7 +365,7 @@ export default function DegreePage() {
                 Progress across lower-division foundations and upper-division seminars.
               </p>
             </div>
-            <span className="font-mono text-xs font-bold text-app-ink-muted tabular-nums">
+            <span className="font-sans font-semibold text-xs font-bold text-app-ink-muted tabular-nums">
               4 Academic Levels
             </span>
           </div>
@@ -375,7 +375,7 @@ export default function DegreePage() {
               <div key={item.level} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium text-app-ink">{item.title}</span>
-                  <span className="font-mono tabular-nums text-app-ink-muted text-[11px]">
+                  <span className="font-sans font-semibold tabular-nums text-app-ink-muted text-[11px]">
                     <strong className="text-app-ink font-semibold">{item.earned}</strong> / {item.required} cr ({item.pct}%)
                   </span>
                 </div>
@@ -426,7 +426,7 @@ export default function DegreePage() {
             </button>
           </div>
 
-          <span className="text-xs text-app-ink-muted font-mono tabular-nums">
+          <span className="text-xs text-app-ink-muted font-sans font-semibold tabular-nums">
             {auditTab === "completed"
               ? `${earnedCredits} credits completed`
               : auditTab === "in_progress"
@@ -461,7 +461,7 @@ export default function DegreePage() {
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-app-ink">{c.code}</span>
+                            <span className="font-sans font-semibold font-bold text-app-ink">{c.code}</span>
                             <span className="font-semibold text-app-ink">{c.title}</span>
                           </div>
                           <span className="text-[11px] text-app-ink-muted">
@@ -513,7 +513,7 @@ export default function DegreePage() {
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-mono font-bold text-app-ink">{c.code}</span>
+                            <span className="font-sans font-semibold font-bold text-app-ink">{c.code}</span>
                             <span className="font-semibold text-app-ink">{c.title}</span>
                           </div>
                           <span className="text-[11px] text-app-ink-muted">
@@ -551,7 +551,7 @@ export default function DegreePage() {
                     .map((d) => (
                       <div key={d.dept} className="flex items-center justify-between border-b border-app-border/60 pb-1.5">
                         <span className="text-app-ink font-medium">{d.dept}</span>
-                        <span className="font-mono text-app-accent font-bold tabular-nums">
+                        <span className="font-sans font-semibold text-app-accent font-bold tabular-nums">
                           {d.remaining} credits needed
                         </span>
                       </div>
@@ -567,7 +567,7 @@ export default function DegreePage() {
                     .map((l) => (
                       <div key={l.level} className="flex items-center justify-between border-b border-app-border/60 pb-1.5">
                         <span className="text-app-ink font-medium">{l.title}</span>
-                        <span className="font-mono text-app-accent font-bold tabular-nums">
+                        <span className="font-sans font-semibold text-app-accent font-bold tabular-nums">
                           {l.remaining} credits needed
                         </span>
                       </div>
@@ -611,9 +611,9 @@ export default function DegreePage() {
                   max={300}
                   value={tempTarget}
                   onChange={(e) => setTempTarget(Number(e.target.value))}
-                  className="font-mono font-bold text-center text-base"
+                  className="font-sans font-semibold font-bold text-center text-base"
                 />
-                <span className="font-mono text-app-ink-muted">Credits</span>
+                <span className="font-sans font-semibold text-app-ink-muted">Credits</span>
               </div>
             </div>
 
@@ -623,7 +623,7 @@ export default function DegreePage() {
                   key={preset}
                   type="button"
                   onClick={() => setTempTarget(preset)}
-                  className={`flex-1 rounded border py-1.5 text-xs font-mono font-medium transition-colors ${
+                  className={`flex-1 rounded border py-1.5 text-xs font-sans font-semibold font-medium transition-colors ${
                     tempTarget === preset
                       ? "border-app-accent bg-app-accent/10 text-app-accent font-bold"
                       : "border-app-border bg-app-surface text-app-ink-muted hover:border-app-ink-muted"

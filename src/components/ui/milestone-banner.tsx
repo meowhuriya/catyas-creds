@@ -47,7 +47,7 @@ export function MilestoneBanner({
 
           <div className="min-w-0 flex-1 space-y-0.5">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#D85870] font-bold">
+              <span className="text-[10px] font-sans font-semibold uppercase tracking-widest text-[#D85870] font-bold">
                 {type === "semester"
                   ? "Academic Term Completed"
                   : type === "course"
@@ -55,7 +55,7 @@ export function MilestoneBanner({
                   : "Unit Completed"}
               </span>
               <span className="text-[10px] text-[#E5A358] font-bold">•</span>
-              <span className="text-[10px] text-[var(--color-ink-muted)] font-mono">
+              <span className="text-[10px] text-[var(--color-ink-muted)] font-sans font-semibold">
                 Verified Progress
               </span>
             </div>

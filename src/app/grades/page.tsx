@@ -192,10 +192,14 @@ export default function GradesPage() {
     return courseGradeRecords.filter((r) => r.course.termId === selectedTermId);
   }, [courseGradeRecords, selectedTermId]);
 
+  const hasGradedResult = courseGradeRecords.some(
+    (r) => r.gradeResult.points > 0 || r.gradeResult.currentGrade > 0
+  );
+
   return (
     <div className="space-y-6">
-      {/* Page Header & Grade Scale Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-app-border pb-4">
+      {/* Page Header & Grade Scale Switcher (Solid cream panel) */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
         <div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-app-ink">
             Official Grades & Academic Standings
@@ -256,15 +260,15 @@ export default function GradesPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Stat
           label={selectedTermId === "all" ? "Average SGPA" : `${activeTerm?.name || "Term"} SGPA`}
-          value={termSGPA.toFixed(2)}
-          unit={scale === "10_point" ? "/ 10.00" : "/ 4.00"}
+          value={hasGradedResult && termSGPA > 0 ? termSGPA.toFixed(2) : "—"}
+          unit={hasGradedResult && termSGPA > 0 ? (scale === "10_point" ? "/ 10.00" : "/ 4.00") : ""}
           subtext={`${termCredits} Credits in ${selectedTermId === "all" ? "all terms" : activeTerm?.name || "Term"}`}
         />
 
         <Stat
           label="Cumulative CGPA"
-          value={cumulativeCGPA.toFixed(2)}
-          unit={scale === "10_point" ? "/ 10.00" : "/ 4.00"}
+          value={hasGradedResult && cumulativeCGPA > 0 ? cumulativeCGPA.toFixed(2) : "—"}
+          unit={hasGradedResult && cumulativeCGPA > 0 ? (scale === "10_point" ? "/ 10.00" : "/ 4.00") : ""}
           subtext="Collegiate retake replacement applied"
         />
 
@@ -298,7 +302,7 @@ export default function GradesPage() {
             <h3 className="font-serif text-base font-bold text-app-ink">
               Enrolled Course Grades
             </h3>
-            <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-mono tabular-nums border border-app-border/60">
+            <span className="rounded-full bg-app-surface px-2 py-0.5 text-xs text-app-ink-muted font-sans font-semibold tabular-nums border border-app-border/60">
               {filteredGradeRows.length} courses
             </span>
           </div>
@@ -352,7 +356,7 @@ export default function GradesPage() {
                             className="h-2 w-2 rounded-full shrink-0"
                             style={{ backgroundColor: tagColor }}
                           />
-                          <span className="font-mono">{course.code}</span>
+                          <span className="font-sans font-semibold">{course.code}</span>
                           {isRetake && (
                             <span
                               className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-bold text-amber-700 dark:text-amber-400 border border-amber-500/20"
@@ -375,17 +379,17 @@ export default function GradesPage() {
                       </td>
 
                       {/* Credits */}
-                      <td className="px-4 py-3 text-right font-mono tabular-nums text-app-ink font-medium">
+                      <td className="px-4 py-3 text-right font-sans font-semibold tabular-nums text-app-ink font-medium">
                         {course.credits}
                       </td>
 
                       {/* Current Grade % */}
-                      <td className="px-4 py-3 text-right font-mono tabular-nums font-semibold text-app-ink">
+                      <td className="px-4 py-3 text-right font-sans font-semibold tabular-nums font-semibold text-app-ink">
                         {gradeResult.currentGrade}%
                       </td>
 
                       {/* Projected Final Grade % */}
-                      <td className="px-4 py-3 text-right font-mono tabular-nums text-app-accent font-semibold">
+                      <td className="px-4 py-3 text-right font-sans font-semibold tabular-nums text-app-accent font-semibold">
                         {gradeResult.projectedFinalGrade}%
                       </td>
 
@@ -397,7 +401,7 @@ export default function GradesPage() {
                       </td>
 
                       {/* Grade Points */}
-                      <td className="px-4 py-3 text-right font-mono tabular-nums font-bold text-app-ink">
+                      <td className="px-4 py-3 text-right font-sans font-semibold tabular-nums font-bold text-app-ink">
                         {gradeResult.points.toFixed(1)}
                       </td>
 

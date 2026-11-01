@@ -33,6 +33,15 @@ topics_list = []
 
 for c_idx, c in enumerate(seed_json["courses"]):
     cid = f"course-{c['code'].lower()}"
+    TAG_MAP = {"crimson": "rust", "tomato": "rust", "mustard": "ochre", "sage": "olive", "teal": "teal", "plum": "plum"}
+    color_tag = TAG_MAP.get(c.get("colorTag", ""), "slate")
+    if isinstance(c.get("gradingScheme"), dict):
+        grading_scheme = c["gradingScheme"]
+    elif c.get("type") == "lab":
+        grading_scheme = {"lessonCompletion": 60, "quizzes": 20, "assignments": 0, "midterm": 0, "finalExam": 20}
+    else:
+        grading_scheme = {"lessonCompletion": 10, "quizzes": 25, "assignments": 30, "midterm": 15, "finalExam": 20}
+
     courses_list.append({
         "id": cid,
         "userId": "valeria-student",
@@ -40,11 +49,11 @@ for c_idx, c in enumerate(seed_json["courses"]):
         "code": c["code"],
         "title": clean(c["title"]),
         "department": c["department"],
-        "level": c["level"],
+        "level": str(c["level"]),
         "credits": c["credits"],
         "description": c["description"],
-        "colorTag": c["colorTag"],
-        "gradingScheme": c["gradingScheme"],
+        "colorTag": color_tag,
+        "gradingScheme": grading_scheme,
         "passMark": 40,
         "createdAt": "2025-08-01T08:00:00.000Z"
     })
@@ -81,7 +90,6 @@ for c_idx, c in enumerate(seed_json["courses"]):
                 "isStudiedManually": False,
                 "isExperiment": c["type"] == "lab",
                 "isSelectedExperiment": True,
-                "masteryThreshold": 70,
                 "createdAt": "2025-08-01T08:00:00.000Z"
             })
 
@@ -150,7 +158,7 @@ export const SAMPLE_STUDY_SESSIONS: StudySession[] = [
     userId: "valeria-student",
     courseId: "course-ma101bs",
     durationMinutes: 90,
-    type: "lecture_watch",
+    mode: "custom",
     completedAt: "2025-09-18T10:30:00.000Z",
   }},
   {{
@@ -158,7 +166,7 @@ export const SAMPLE_STUDY_SESSIONS: StudySession[] = [
     userId: "valeria-student",
     courseId: "course-cs105es",
     durationMinutes: 120,
-    type: "focus_timer",
+    mode: "pomodoro",
     completedAt: "2025-09-19T14:00:00.000Z",
   }}
 ];
@@ -166,21 +174,20 @@ export const SAMPLE_STUDY_SESSIONS: StudySession[] = [
 export const SAMPLE_LESSONS: Lesson[] = [
   {{
     id: "lesson-ma101-1",
+    userId: "valeria-student",
     courseId: "course-ma101bs",
     moduleId: "unit-ma101bs-u1",
     title: "Matrices: Rank of Matrix by Echelon Form",
-    youtubeUrl: "https://www.youtube.com/watch?v=fNk_zzaMoSs",
-    youtubeId: "fNk_zzaMoSs",
+    youtubeVideoId: "fNk_zzaMoSs",
+    originalUrl: "https://www.youtube.com/watch?v=fNk_zzaMoSs",
     durationSeconds: 1560,
+    startTimeSeconds: 0,
+    canEmbed: true,
     order: 0,
     channelTitle: "MIT OpenCourseWare",
-    channelId: "MIT",
     thumbnailUrl: "https://i.ytimg.com/vi/fNk_zzaMoSs/hqdefault.jpg",
-    publishedAt: "2020-05-10T12:00:00.000Z",
-    hasCaptions: true,
-    isOfficialEmbedAllowed: true,
-    viewCount: 250000,
     linkedTopicIds: ["ma101bs-u1-t1"],
+    cachedAt: "2025-08-05T08:00:00.000Z",
     createdAt: "2025-08-05T08:00:00.000Z",
   }}
 ];
@@ -192,12 +199,10 @@ export const SAMPLE_LESSON_PROGRESS: LessonProgress[] = [
     lessonId: "lesson-ma101-1",
     courseId: "course-ma101bs",
     watchedSeconds: 1560,
-    completed: true,
+    totalDurationSeconds: 1560,
+    percentWatched: 100,
+    isCompleted: true,
     lastPositionSeconds: 1560,
-    playbackSpeed: 1,
-    videoQuality: "720p",
-    notesCount: 2,
-    watchSegments: [[0, 1560]],
     updatedAt: "2025-09-18T10:30:00.000Z",
   }}
 ];
@@ -205,16 +210,14 @@ export const SAMPLE_LESSON_PROGRESS: LessonProgress[] = [
 export const SAMPLE_ASSESSMENTS: Assessment[] = [
   {{
     id: "asm-ma101-q1",
+    userId: "valeria-student",
     courseId: "course-ma101bs",
     title: "Quiz 1: Rank and Linear Systems",
     type: "quiz",
     description: "Evaluates elementary row transformations and echelon forms.",
+    maxPoints: 100,
     timeLimitMinutes: 30,
-    weightPercent: 10,
     dueDate: "2025-09-18T23:59:59.000Z",
-    gradingSchemeComponent: "quizzes",
-    passingScore: 60,
-    topicIds: ["ma101bs-u1-t1", "ma101bs-u1-t2"],
     createdAt: "2025-08-10T08:00:00.000Z",
   }}
 ];
@@ -225,13 +228,11 @@ export const SAMPLE_PLANNER_EVENTS: PlannerEvent[] = [
     userId: "valeria-student",
     courseId: "course-ma101bs",
     title: "Review Linear Equations",
-    description: "Prepare practice set on Homogeneous equations",
     date: "2025-09-20",
     startTime: "10:00",
     endTime: "11:30",
     type: "study_block",
-    isCompleted: false,
-    createdAt: "2025-08-15T08:00:00.000Z",
+    isDone: false,
   }}
 ];
 
@@ -253,17 +254,20 @@ export const DEMO_PLANNER_EVENTS = SAMPLE_PLANNER_EVENTS;
 export const DEMO_DEGREE_PLAN: DegreePlan = {{
   id: "degree-cse-2025",
   userId: "valeria-student",
-  programName: "B.Tech. in Computer Science and Engineering",
-  totalCreditsRequired: 160,
-  regulations: "JNTUH R-25 Regulations",
-  expectedGraduation: "May 2029",
-  categories: [
-    {{ id: "bsc", name: "Basic Science Courses (BSC)", requiredCredits: 24, earnedCredits: 0 }},
-    {{ id: "esc", name: "Engineering Science Courses (ESC)", requiredCredits: 22, earnedCredits: 0 }},
-    {{ id: "hsms", name: "Humanities and Social Sciences (HSMS)", requiredCredits: 10, earnedCredits: 0 }},
-    {{ id: "pcc", name: "Professional Core Courses (PCC)", requiredCredits: 68, earnedCredits: 0 }},
-  ],
-  updatedAt: "2025-08-01T08:00:00.000Z",
+  totalCreditsTarget: 160,
+  departmentRequirements: {{
+    "Computer Science": 70,
+    "Mathematics": 20,
+    "Basic Sciences": 20,
+    "Humanities": 15,
+    "Engineering Sciences": 35,
+  }},
+  levelRequirements: {{
+    "100": 40,
+    "200": 40,
+    "300": 40,
+    "400": 40,
+  }},
 }};
 export const DEMO_AUDIT_LOGS: AuditLog[] = [];
 export const DEMO_STUDY_SESSIONS = SAMPLE_STUDY_SESSIONS;

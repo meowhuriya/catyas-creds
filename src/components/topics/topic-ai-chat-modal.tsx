@@ -344,7 +344,7 @@ export function TopicAiChatModal({
                           : "border-app-border bg-app-surface hover:border-app-ink-muted/40"
                       }`}
                     >
-                      <div className="flex items-center justify-between text-[10px] font-mono text-app-ink-muted uppercase">
+                      <div className="flex items-center justify-between text-[10px] font-sans font-semibold text-app-ink-muted uppercase">
                         <span>Card {i + 1} of {flashcardsResult.flashcards.length}</span>
                         <span className="text-app-accent font-semibold">{isFlipped ? "Answer / Solution" : "Front Prompt"}</span>
                       </div>

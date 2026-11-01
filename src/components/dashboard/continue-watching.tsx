@@ -69,7 +69,7 @@ export function ContinueWatchingStrip({
                     <Play className="h-5 w-5 fill-white ml-0.5" />
                   </Link>
                 </div>
-                <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-mono text-[10px] text-white tabular-nums">
+                <div className="absolute bottom-2 right-2 rounded bg-black/80 px-1.5 py-0.5 font-sans font-semibold text-[10px] text-white tabular-nums">
                   {formatSecondsToTime(prog.lastPositionSeconds)} /{" "}
                   {formatSecondsToTime(
                     prog.totalDurationSeconds || lesson.durationSeconds || 0
@@ -91,7 +91,7 @@ export function ContinueWatchingStrip({
                       className="h-1.5 w-1.5 rounded-full"
                       style={{ backgroundColor: tagColor }}
                     />
-                    <span className="font-mono text-app-accent uppercase">
+                    <span className="font-sans font-semibold text-app-accent uppercase">
                       {course.code}
                     </span>
                     <span className="text-app-ink-muted truncate">

@@ -153,7 +153,7 @@ export function DataTable<T>({
                         "px-4 py-2.5 text-sm text-app-ink whitespace-nowrap",
                         col.align === "right" && "text-right",
                         col.align === "center" && "text-center",
-                        col.tabular && "tabular-nums font-mono",
+                        col.tabular && "tabular-nums font-sans font-semibold",
                         col.className
                       )}
                     >

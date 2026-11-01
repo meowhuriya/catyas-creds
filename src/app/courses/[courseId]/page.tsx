@@ -408,8 +408,8 @@ export default function CourseDetailPage() {
         />
       </div>
 
-      {/* Course Hero Meta & Actions */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 border-b border-[var(--color-border)] pb-6">
+      {/* Course Hero Meta & Actions (Solid cream panel) */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
         <div>
           <div className="flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
             <span

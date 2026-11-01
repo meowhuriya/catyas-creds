@@ -3,8 +3,10 @@
 @tailwind utilities;
 
 :root {
+  --check-scale: 0.6;
+  --veil: 0;
   --check-alpha: 0.12;
-  --color-bg: #F6EBD3;
+  --color-bg: #EADFC6;
   --color-surface: #FFFFFF;
   --color-surface-muted: #FBF6EC;
   --color-border: #E5D5C5;
@@ -56,16 +58,49 @@
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
-/* Page Gingham Background (Pure CSS - No image file) */
+/* Full-Page Gingham Background (Covers the ENTIRE page, behind everything) */
 body {
-  background-color: var(--color-bg);
-  background-image: repeating-linear-gradient(0deg, rgba(198, 47, 60, var(--check-alpha)) 0 16px, transparent 16px 32px),
-                    repeating-linear-gradient(90deg, rgba(198, 47, 60, var(--check-alpha)) 0 16px, transparent 16px 32px);
+  background-color: #EADFC6;
+  background-image: url('/gingham-tile.jpg');
+  background-repeat: repeat;
+  background-size: calc(243px * var(--check-scale, 0.6)) auto;
+  background-attachment: fixed;
   color: var(--color-ink);
   font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(246, 235, 211, var(--veil, 0));
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* All app content sits above the veil layer */
+#__next, main, #main-content, aside, header, nav, .app-shell-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* Phones: scroll background and 0.45 default check scale */
+@media (max-width: 640px) {
+  body {
+    background-attachment: scroll;
+    --check-scale: 0.45;
+  }
+}
+
+/* Dark mode: keep gingham with dark veil so it reads as dim maroon check */
+html.dark body::before,
+.dark body::before {
+  background: rgba(20, 14, 16, 0.70) !important;
 }
 
 /* Background Variations: Plain Paper */
@@ -73,6 +108,9 @@ html[data-bg="plain"] body,
 .bg-plain-paper-body {
   background-color: var(--color-surface-muted) !important;
   background-image: none !important;
+}
+html[data-bg="plain"] body::before {
+  display: none !important;
 }
 
 /* Background Variations: Custom User Wallpaper with Dim & Blur */
@@ -129,14 +167,6 @@ html[data-text-size="large"] {
 /* Headings: Fraunces */
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-fraunces), Georgia, serif;
-}
-
-/* 10px Gingham Trim Strip (used on Hero and Course Cards) */
-.gingham-trim {
-  height: 10px;
-  background-color: #F6EBD3;
-  background-image: repeating-linear-gradient(0deg, rgba(198, 47, 60, var(--check-alpha, 0.16)) 0 5px, transparent 5px 10px),
-                    repeating-linear-gradient(90deg, rgba(198, 47, 60, var(--check-alpha, 0.16)) 0 5px, transparent 5px 10px);
 }
 
 /* Academic Card Styling - Solid, high readability */

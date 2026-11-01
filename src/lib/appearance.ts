@@ -1,12 +1,14 @@
-// Appearance & Theme Management (PART D)
+// Appearance & Theme Management (PART D & Full-Page Gingham Tile)
 
 export type BackgroundType = "gingham" | "plain" | "custom";
-export type PatternStrength = "soft" | "medium" | "bold";
+export type CheckSize = "small" | "medium" | "large"; // Small 0.35, Medium 0.6, Large 1.0
+export type PatternStrength = "bold" | "medium" | "soft"; // Bold veil 0, Medium veil 0.3, Soft veil 0.55
 export type AccentColor = "crimson" | "tomato" | "mustard" | "sage" | "plum";
 export type TextSize = "normal" | "large";
 
 export interface AppearanceSettings {
   bgType: BackgroundType;
+  checkSize: CheckSize;
   patternStrength: PatternStrength;
   accentColor: AccentColor;
   textSize: TextSize;
@@ -16,14 +18,15 @@ export interface AppearanceSettings {
 
 export const DEFAULT_APPEARANCE: AppearanceSettings = {
   bgType: "gingham",
-  patternStrength: "soft",
+  checkSize: "medium", // 0.6
+  patternStrength: "bold", // veil 0
   accentColor: "crimson",
   textSize: "normal",
   customDim: 20,
   customBlur: 0,
 };
 
-const STORAGE_KEY = "valerias_appearance_settings_v1";
+const STORAGE_KEY = "valerias_appearance_settings_v2";
 const DB_NAME = "valerias_appearance_db";
 const STORE_NAME = "wallpapers";
 
@@ -148,20 +151,29 @@ export function applyAppearanceToDOM(
   if (typeof document === "undefined") return;
   const root = document.documentElement;
 
-  // 1. Pattern strength alpha
-  const alphaMap: Record<PatternStrength, string> = {
-    soft: "0.12",
-    medium: "0.20",
-    bold: "0.30",
+  // 1. Check size scale
+  const scaleMap: Record<CheckSize, string> = {
+    small: "0.35",
+    medium: "0.6",
+    large: "1.0",
+  };
+  const checkScale = scaleMap[settings.checkSize || "medium"] || "0.6";
+  root.style.setProperty("--check-scale", checkScale);
+
+  // 2. Veil strength (Bold veil 0, Medium veil 0.3, Soft veil 0.55)
+  const veilMap: Record<PatternStrength, string> = {
+    bold: "0",
+    medium: "0.3",
+    soft: "0.55",
   };
   const isDark = root.classList.contains("dark");
-  const checkAlpha = isDark ? "0.10" : alphaMap[settings.patternStrength] || "0.12";
-  root.style.setProperty("--check-alpha", checkAlpha);
+  const veilVal = isDark ? "0.70" : veilMap[settings.patternStrength || "bold"] || "0";
+  root.style.setProperty("--veil", veilVal);
 
-  // 2. Background mode
+  // 3. Background mode
   root.dataset.bg = settings.bgType;
 
-  // 3. Custom image variables
+  // 4. Custom image variables
   if (settings.bgType === "custom" && customImageUrl) {
     root.style.setProperty("--custom-bg-image", `url("${customImageUrl}")`);
     root.style.setProperty("--custom-dim", (settings.customDim / 100).toFixed(2));
@@ -172,9 +184,9 @@ export function applyAppearanceToDOM(
     root.style.removeProperty("--custom-blur");
   }
 
-  // 4. Accent colour
+  // 5. Accent colour
   root.dataset.accent = settings.accentColor;
 
-  // 5. Text size
+  // 6. Text size
   root.dataset.textSize = settings.textSize;
 }

@@ -249,7 +249,7 @@ export function QuickCheckModal({
               <Award className="h-5 w-5 text-app-accent" />
               <DialogTitle className="font-serif">Topic Quick Check</DialogTitle>
             </div>
-            <span className="font-mono text-xs bg-[var(--color-surface-muted)] px-2 py-0.5 rounded-[4px] border border-[var(--color-border)] text-[var(--color-ink-muted)]">
+            <span className="font-sans font-semibold text-xs bg-[var(--color-surface-muted)] px-2 py-0.5 rounded-[4px] border border-[var(--color-border)] text-[var(--color-ink-muted)]">
               Max 60 Points
             </span>
           </div>
@@ -325,7 +325,7 @@ export function QuickCheckModal({
                       key={idx}
                       type="button"
                       onClick={() => setCurrentIdx(idx)}
-                      className={`h-6 w-6 rounded-[4px] text-[10px] font-mono flex items-center justify-center transition-colors ${bg}`}
+                      className={`h-6 w-6 rounded-[4px] text-[10px] font-sans font-semibold flex items-center justify-center transition-colors ${bg}`}
                     >
                       {idx + 1}
                     </button>
@@ -371,7 +371,7 @@ export function QuickCheckModal({
                         onClick={() => handleSelectOption(optIdx)}
                         className={`flex w-full items-start gap-2.5 p-2.5 rounded-[6px] border text-left transition-colors text-xs ${borderClass}`}
                       >
-                        <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] shrink-0 mt-0.5">
+                        <span className="font-sans font-semibold text-[10px] font-bold px-1.5 py-0.5 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] shrink-0 mt-0.5">
                           {String.fromCharCode(65 + optIdx)}
                         </span>
                         <span className="flex-1 leading-relaxed">{opt}</span>

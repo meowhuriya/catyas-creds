@@ -67,7 +67,7 @@ export default function VerifyPage() {
             Verification Record Not Found or Private
           </h2>
           <p className="mt-2 text-xs text-app-ink-muted leading-relaxed max-w-sm mx-auto">
-            Credential ID <code className="font-mono bg-app-surface-muted px-1.5 py-0.5 rounded border border-app-border text-app-ink">{verificationId}</code> is either invalid, revoked, or public sharing has not been enabled by the student.
+            Credential ID <code className="font-sans font-semibold bg-app-surface-muted px-1.5 py-0.5 rounded border border-app-border text-app-ink">{verificationId}</code> is either invalid, revoked, or public sharing has not been enabled by the student.
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function VerifyPage() {
               </span>
             </div>
           </div>
-          <span className="rounded bg-emerald-600 text-white font-mono font-bold text-[10px] px-2 py-0.5 uppercase tracking-wider">
+          <span className="rounded bg-emerald-600 text-white font-sans font-semibold font-bold text-[10px] px-2 py-0.5 uppercase tracking-wider">
             Verified
           </span>
         </div>
@@ -136,7 +136,7 @@ export default function VerifyPage() {
             <span className="text-[10px] uppercase font-semibold text-app-ink-muted block">
               Verification ID
             </span>
-            <span className="font-mono text-xs font-bold text-app-accent mt-0.5 block">
+            <span className="font-sans font-semibold text-xs font-bold text-app-accent mt-0.5 block">
               {snapshot.id}
             </span>
           </div>
@@ -145,7 +145,7 @@ export default function VerifyPage() {
             <span className="text-[10px] uppercase font-semibold text-app-ink-muted block">
               Cumulative CGPA
             </span>
-            <span className="font-mono text-sm font-bold text-app-ink tabular-nums mt-0.5 block">
+            <span className="font-sans font-semibold text-sm font-bold text-app-ink tabular-nums mt-0.5 block">
               {snapshot.cgpa.toFixed(2)}
             </span>
           </div>
@@ -154,7 +154,7 @@ export default function VerifyPage() {
             <span className="text-[10px] uppercase font-semibold text-app-ink-muted block">
               Total Credits Earned
             </span>
-            <span className="font-mono text-sm font-bold text-app-ink tabular-nums mt-0.5 block">
+            <span className="font-sans font-semibold text-sm font-bold text-app-ink tabular-nums mt-0.5 block">
               {snapshot.totalCredits}.0 Semester Credits
             </span>
           </div>
@@ -163,7 +163,7 @@ export default function VerifyPage() {
             <span className="text-[10px] uppercase font-semibold text-app-ink-muted block">
               Snapshot Timestamp
             </span>
-            <span className="font-mono text-xs text-app-ink-muted mt-0.5 block">
+            <span className="font-sans font-semibold text-xs text-app-ink-muted mt-0.5 block">
               {issuedDateStr}
             </span>
           </div>
@@ -184,12 +184,12 @@ export default function VerifyPage() {
                 >
                   <div className="flex items-center justify-between border-b border-app-border/60 pb-1.5 font-semibold text-app-ink">
                     <span>{term.termName}</span>
-                    <span className="font-mono text-[11px] text-app-ink-muted">
+                    <span className="font-sans font-semibold text-[11px] text-app-ink-muted">
                       SGPA: {typeof term.sgpa === "number" ? term.sgpa.toFixed(2) : term.sgpa}
                     </span>
                   </div>
 
-                  <div className="space-y-1 divide-y divide-app-border/40 font-mono text-[11px]">
+                  <div className="space-y-1 divide-y divide-app-border/40 font-sans font-semibold text-[11px]">
                     {(term.courses || []).map((c: any, cIdx: number) => (
                       <div key={cIdx} className="pt-1 flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -233,11 +233,11 @@ export default function VerifyPage() {
                     <span className="font-semibold text-app-ink block text-[11px]">
                       {log.details}
                     </span>
-                    <span className="font-mono text-[9px] text-app-ink-muted capitalize">
+                    <span className="font-sans font-semibold text-[9px] text-app-ink-muted capitalize">
                       Action: {log.action.replace("_", " ")}
                     </span>
                   </div>
-                  <span className="font-mono text-[10px] text-app-ink-muted shrink-0 tabular-nums">
+                  <span className="font-sans font-semibold text-[10px] text-app-ink-muted shrink-0 tabular-nums">
                     {new Date(log.timestamp).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",

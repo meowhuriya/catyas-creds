@@ -89,7 +89,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
   }, [pathname]);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-app-border bg-app-surface/90 px-4 md:px-6 backdrop-blur-md">
+    <header className="h-14 w-full bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] rounded-[18px] shadow-sm px-4 md:px-5 flex items-center justify-between">
       {/* Left: Breadcrumbs */}
       <div className="flex items-center gap-3">
         <Breadcrumbs items={breadcrumbItems} />
@@ -105,7 +105,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
             <Search className="h-3.5 w-3.5" />
             <span>Search courses, lessons, assessments...</span>
           </div>
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-app-border bg-app-surface px-1.5 py-0.5 font-mono text-[10px] text-app-ink-muted">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-app-border bg-app-surface px-1.5 py-0.5 font-sans font-semibold text-[10px] text-app-ink-muted">
             <span className="text-[9px]">⌘</span>K
           </kbd>
         </button>

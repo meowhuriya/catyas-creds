@@ -60,8 +60,8 @@ function CoursesContent() {
 
   return (
     <div className="space-y-6 select-none">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--color-border)] pb-4">
+      {/* Header (Solid cream floating panel) */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
         <div>
           <div className="flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
             <span className="font-semibold uppercase tracking-wider text-[var(--color-accent)]">
@@ -110,9 +110,9 @@ function CoursesContent() {
         </div>
       </div>
 
-      {/* Filter Tabs by Term */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs">
+      {/* Filter Tabs by Term (Solid cream pill) */}
+      <div className="flex items-center justify-between gap-3 p-3 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
+        <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[var(--color-surface)] dark:bg-[#2B2124] border border-[#E4D9C0] dark:border-[#3D2D31] text-xs">
           <button
             onClick={() => setSelectedTermId("all")}
             className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
@@ -138,7 +138,7 @@ function CoursesContent() {
           ))}
         </div>
 
-        <span className="text-xs text-[var(--color-ink-muted)] font-mono tabular-nums">
+        <span className="text-xs text-[var(--color-ink-muted)] font-sans font-semibold tabular-nums">
           Showing {filteredCourses.length} of {courses.length} Courses
         </span>
       </div>

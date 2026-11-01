@@ -256,7 +256,7 @@ export function CreateAssessmentModal({
                 min={1}
                 value={maxPoints}
                 onChange={(e) => setMaxPoints(Number(e.target.value))}
-                className="font-mono tabular-nums"
+                className="font-sans font-semibold tabular-nums"
               />
             </div>
 
@@ -279,7 +279,7 @@ export function CreateAssessmentModal({
                 onChange={(e) =>
                   setTimeLimitMinutes(e.target.value === "" ? "" : Number(e.target.value))
                 }
-                className="font-mono tabular-nums"
+                className="font-sans font-semibold tabular-nums"
               />
             </div>
 
@@ -293,7 +293,7 @@ export function CreateAssessmentModal({
                 onChange={(e) =>
                   setAttemptLimit(e.target.value === "" ? "" : Number(e.target.value))
                 }
-                className="font-mono tabular-nums"
+                className="font-sans font-semibold tabular-nums"
               />
             </div>
           </div>
@@ -320,7 +320,7 @@ export function CreateAssessmentModal({
                     onChange={(e) =>
                       setLockedThreshold(e.target.value === "" ? "" : Number(e.target.value))
                     }
-                    className="text-center font-mono tabular-nums"
+                    className="text-center font-sans font-semibold tabular-nums"
                   />
                   <span className="text-app-ink-muted">%</span>
                 </div>
@@ -392,7 +392,7 @@ export function CreateAssessmentModal({
                                 )
                               );
                             }}
-                            className="font-mono tabular-nums text-center"
+                            className="font-sans font-semibold tabular-nums text-center"
                           />
                           <span className="text-app-ink-muted text-[11px]">pts</span>
                         </div>
@@ -482,7 +482,7 @@ export function CreateAssessmentModal({
                                 prev.map((item, i) => (i === idx ? { ...item, points: pts } : item))
                               );
                             }}
-                            className="font-mono tabular-nums text-center"
+                            className="font-sans font-semibold tabular-nums text-center"
                           />
                           <span className="text-app-ink-muted text-[11px]">pts</span>
                         </div>

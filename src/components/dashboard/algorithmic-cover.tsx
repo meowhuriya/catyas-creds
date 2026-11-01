@@ -158,7 +158,7 @@ export function AlgorithmicCover({
       {/* Course Meta Label Overlay */}
       <div className="relative z-10 px-4 flex flex-col justify-center">
         <span
-          className="font-mono text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-control inline-block w-fit mb-1 backdrop-blur-md"
+          className="font-sans font-semibold text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-control inline-block w-fit mb-1 backdrop-blur-md"
           style={{
             backgroundColor: "rgba(255, 255, 255, 0.12)",
             color: "#FFFFFF",

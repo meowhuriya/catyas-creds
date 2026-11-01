@@ -46,8 +46,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "relative hidden md:flex flex-col border-r border-[var(--color-border)] bg-[var(--color-surface)] transition-all duration-200 select-none shrink-0",
-        collapsed ? "w-16" : "w-[280px]"
+        "relative hidden md:flex flex-col bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] rounded-[18px] shadow-sm transition-all duration-200 select-none shrink-0 h-[calc(100vh-32px)] sticky top-4 overflow-hidden",
+        collapsed ? "w-16" : "w-[264px]"
       )}
     >
       {/* Brand Header */}

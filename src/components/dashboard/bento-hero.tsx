@@ -33,10 +33,7 @@ export function BentoHero({
   const firstName = studentName.split(" ")[0] || "Valeria";
 
   return (
-    <div className="relative overflow-hidden rounded-[14px] shadow-card select-none">
-      {/* 10px Gingham Trim along the top of Hero Banner */}
-      <div className="gingham-trim w-full" />
-
+    <div className="relative overflow-hidden rounded-[18px] border-2 border-[#F6EBD3] shadow-card select-none">
       <div className="relative overflow-hidden bg-gradient-to-br from-[#380C13] to-[#631724] text-white p-6 md:p-8">
         {/* Background Architectural Grid Pattern */}
         <svg

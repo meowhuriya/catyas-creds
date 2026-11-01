@@ -123,7 +123,7 @@ export function ShortcutDialog({
               className="flex items-center justify-between py-2 text-xs"
             >
               <span className="text-app-ink">{s.desc}</span>
-              <kbd className="rounded border border-app-border bg-app-surface-muted px-2 py-0.5 font-mono text-[11px] font-semibold text-app-ink">
+              <kbd className="rounded border border-app-border bg-app-surface-muted px-2 py-0.5 font-sans font-semibold text-[11px] font-semibold text-app-ink">
                 {s.key}
               </kbd>
             </div>

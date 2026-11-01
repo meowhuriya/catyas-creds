@@ -38,6 +38,7 @@ import {
 import {
   AppearanceSettings,
   BackgroundType,
+  CheckSize,
   PatternStrength,
   AccentColor,
   TextSize,
@@ -315,8 +316,8 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8 max-w-3xl">
-      {/* Page Header */}
-      <div className="border-b border-[#E5D5C5] pb-4">
+      {/* Page Header (Solid cream panel) */}
+      <div className="p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
         <h1 className="font-serif text-2xl md:text-3xl font-bold tracking-tight text-[#14161F] dark:text-[#F6EBD3]">
           Academic Settings & Appearance
         </h1>
@@ -339,7 +340,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {/* 1. Appearance & Background Customization (PART D) */}
+      {/* 1. Appearance & Background Customization */}
       <div className="academic-card p-5 space-y-6 text-sm">
         <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
           <div className="flex items-center gap-2">
@@ -349,7 +350,7 @@ export default function SettingsPage() {
             </h2>
           </div>
           <span className="eyebrow-label text-[#8A1627]">
-            CSS Gingham
+            Full Gingham
           </span>
         </div>
 
@@ -357,13 +358,13 @@ export default function SettingsPage() {
           {/* Background Type */}
           <div>
             <label className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block mb-2">
-              Page Background
+              Background
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { id: "gingham", label: "Red Gingham", desc: "Pure CSS soft cream & red check" },
-                { id: "plain", label: "Plain Paper", desc: "Warm clean solid cream #FAF7F2" },
-                { id: "custom", label: "My Own Image", desc: "Local wallpaper with dim & blur" },
+                { id: "gingham", label: "Gingham", desc: "Seamless red check tile on cream" },
+                { id: "plain", label: "Plain paper", desc: "Warm clean solid cream #FAF7F2" },
+                { id: "custom", label: "My own image", desc: "Local wallpaper with dim & blur" },
               ].map((opt) => (
                 <button
                   key={opt.id}
@@ -386,31 +387,67 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Pattern Strength (only relevant when Gingham is selected) */}
+          {/* Check Size & Pattern Strength (when Gingham is selected) */}
           {appearance.bgType === "gingham" && (
-            <div>
-              <label className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block mb-2">
-                Pattern Strength
-              </label>
-              <div className="grid grid-cols-3 gap-3 max-w-md">
-                {[
-                  { id: "soft", label: "Soft (Default)", alpha: "0.12" },
-                  { id: "medium", label: "Medium", alpha: "0.20" },
-                  { id: "bold", label: "Bold", alpha: "0.30" },
-                ].map((st) => (
-                  <button
-                    key={st.id}
-                    type="button"
-                    onClick={() => updateAppearance({ patternStrength: st.id as PatternStrength })}
-                    className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
-                      appearance.patternStrength === st.id
-                        ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                        : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
-                    }`}
-                  >
-                    <span className="text-xs font-semibold">{st.label}</span>
-                  </button>
-                ))}
+            <div className="space-y-4 pt-1 border-t border-[#E5D5C5]/70">
+              {/* Check Size */}
+              <div>
+                <label className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block mb-1">
+                  Check Size
+                </label>
+                <span className="text-xs text-[#4B5160] dark:text-[#CFC8BB] block mb-2">
+                  Scale of the red gingham tile grid
+                </span>
+                <div className="grid grid-cols-3 gap-3 max-w-md">
+                  {[
+                    { id: "small", label: "Small (0.35)", scale: "0.35" },
+                    { id: "medium", label: "Medium (0.60)", scale: "0.60" },
+                    { id: "large", label: "Large (1.00)", scale: "1.00" },
+                  ].map((sz) => (
+                    <button
+                      key={sz.id}
+                      type="button"
+                      onClick={() => updateAppearance({ checkSize: sz.id as CheckSize })}
+                      className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
+                        (appearance.checkSize || "medium") === sz.id
+                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
+                          : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                      }`}
+                    >
+                      <span className="text-xs font-semibold">{sz.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Strength */}
+              <div>
+                <label className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block mb-1">
+                  Strength
+                </label>
+                <span className="text-xs text-[#4B5160] dark:text-[#CFC8BB] block mb-2">
+                  Pattern visibility veil (Bold shows the check directly)
+                </span>
+                <div className="grid grid-cols-3 gap-3 max-w-md">
+                  {[
+                    { id: "bold", label: "Bold (veil 0)", veil: "0" },
+                    { id: "medium", label: "Medium (veil 0.3)", veil: "0.3" },
+                    { id: "soft", label: "Soft (veil 0.55)", veil: "0.55" },
+                  ].map((st) => (
+                    <button
+                      key={st.id}
+                      type="button"
+                      onClick={() => updateAppearance({ patternStrength: st.id as PatternStrength })}
+                      className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
+                        appearance.patternStrength === st.id
+                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
+                          : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                      }`}
+                    >
+                      <span className="text-xs font-semibold">{st.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}

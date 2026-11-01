@@ -101,7 +101,7 @@ export function GroupModulesDialog({
               max={50}
               value={chunkSize}
               onChange={(e) => setChunkSize(Number(e.target.value))}
-              className="w-24 text-center font-mono tabular-nums"
+              className="w-24 text-center font-sans font-semibold tabular-nums"
             />
             <span className="text-app-ink">
               lessons per module

@@ -540,11 +540,11 @@ export default function VideoPlayerPage() {
               <div className="flex justify-between text-xs text-[var(--color-ink-muted)]">
                 <span>
                   Verified Watch Time:{" "}
-                  <strong className="text-[var(--color-ink)] font-mono tabular-nums">
+                  <strong className="text-[var(--color-ink)] font-sans font-semibold tabular-nums">
                     {formatSecondsToTime(progress?.watchedSeconds || 0)}
                   </strong>
                 </span>
-                <span className="font-mono tabular-nums">
+                <span className="font-sans font-semibold tabular-nums">
                   Duration:{" "}
                   {lesson.durationSeconds
                     ? formatSecondsToTime(lesson.durationSeconds)
@@ -572,7 +572,7 @@ export default function VideoPlayerPage() {
                     ? "Verified 40 mastery points awarded to linked syllabus topics."
                     : "Reach 90% verified watch time to unlock 40 mastery points."}
                 </span>
-                <span className="font-mono tabular-nums">{percentWatched}%</span>
+                <span className="font-sans font-semibold tabular-nums">{percentWatched}%</span>
               </div>
             </div>
           </div>
@@ -606,7 +606,7 @@ export default function VideoPlayerPage() {
                   <button
                     key={idx}
                     onClick={() => handleSeekToTimestamp(ts.seconds)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)]/70 px-2.5 py-1 text-xs font-mono text-[var(--color-accent)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-muted)]/70 px-2.5 py-1 text-xs font-sans font-semibold text-[var(--color-accent)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-colors"
                     title={`Seek to ${formatSecondsToTime(ts.seconds)}`}
                   >
                     <Play className="h-2.5 w-2.5 fill-current" />
@@ -630,7 +630,7 @@ export default function VideoPlayerPage() {
                 className="w-full rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-xs text-[var(--color-ink)] shadow-sm outline-none focus:ring-2 focus:ring-[var(--color-accent)] placeholder:text-[var(--color-ink-muted)]/50 leading-relaxed font-sans"
               />
               <span className="text-[10px] text-[var(--color-ink-muted)] block mt-1">
-                Autosaved to your student registry. Press <kbd className="px-1 py-0.5 rounded border border-[var(--color-border)] bg-[var(--color-surface-muted)] font-mono text-[9px]">n</kbd> anywhere to focus notes.
+                Autosaved to your student registry. Press <kbd className="px-1 py-0.5 rounded border border-[var(--color-border)] bg-[var(--color-surface-muted)] font-sans font-semibold text-[9px]">n</kbd> anywhere to focus notes.
               </span>
             </div>
           </div>
@@ -738,7 +738,7 @@ export default function VideoPlayerPage() {
                 placeholder="e.g. 45:30 or 01:15:00"
                 value={manualDurationInput}
                 onChange={(e) => setManualDurationInput(e.target.value)}
-                className="w-full rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] p-2 font-mono text-xs text-center tabular-nums text-[var(--color-ink)]"
+                className="w-full rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] p-2 font-sans font-semibold text-xs text-center tabular-nums text-[var(--color-ink)]"
               />
             </div>
             <div className="mt-4 flex justify-end gap-2">

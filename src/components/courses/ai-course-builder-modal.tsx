@@ -216,7 +216,7 @@ export function AiCourseBuilderModal({
                   onChange={(e) => setSyllabusText(e.target.value)}
                   placeholder="Paste syllabus course description, unit outlines, and topic lists here..."
                   rows={8}
-                  className="w-full rounded-control border border-app-border bg-app-surface p-2.5 font-mono text-xs text-app-ink placeholder:text-app-ink-muted focus:border-app-accent focus:outline-none"
+                  className="w-full rounded-control border border-app-border bg-app-surface p-2.5 font-sans font-semibold text-xs text-app-ink placeholder:text-app-ink-muted focus:border-app-accent focus:outline-none"
                 />
               </div>
 
@@ -274,7 +274,7 @@ export function AiCourseBuilderModal({
                   <Input
                     value={editCode}
                     onChange={(e) => setEditCode(e.target.value)}
-                    className="h-8 text-xs font-mono font-bold mt-1"
+                    className="h-8 text-xs font-sans font-semibold font-bold mt-1"
                   />
                 </div>
 
@@ -310,7 +310,7 @@ export function AiCourseBuilderModal({
                     max={6}
                     value={editCredits}
                     onChange={(e) => setEditCredits(Number(e.target.value))}
-                    className="h-8 text-xs font-mono mt-1 w-24"
+                    className="h-8 text-xs font-sans font-semibold mt-1 w-24"
                   />
                 </div>
 
@@ -339,7 +339,7 @@ export function AiCourseBuilderModal({
                       <div className="flex items-center gap-2 font-semibold text-app-ink">
                         <Layers className="h-3.5 w-3.5 text-app-accent shrink-0" />
                         <span>Unit {u.unitNumber}: {u.title}</span>
-                        <span className="text-[10px] font-mono text-app-ink-muted ml-auto">
+                        <span className="text-[10px] font-sans font-semibold text-app-ink-muted ml-auto">
                           {u.topics.length} topics
                         </span>
                       </div>

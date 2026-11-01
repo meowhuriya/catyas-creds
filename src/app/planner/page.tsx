@@ -211,8 +211,8 @@ export default function PlannerPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-app-border pb-4">
+      {/* Page Header (Solid cream panel) */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
         <div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-app-ink">
             Academic Planner
@@ -394,7 +394,7 @@ export default function PlannerPage() {
                   {/* Date Number Header */}
                   <div className="flex items-center justify-between mb-1">
                     <span
-                      className={`h-5 w-5 flex items-center justify-center rounded-full text-xs font-mono font-bold tabular-nums ${
+                      className={`h-5 w-5 flex items-center justify-center rounded-full text-xs font-sans font-semibold font-bold tabular-nums ${
                         isCurrentDay
                           ? "bg-app-accent text-white"
                           : isCurrentMonth
@@ -465,7 +465,7 @@ export default function PlannerPage() {
                               <span className="truncate">{evt.title}</span>
                             </div>
                             {evt.startTime && evt.startTime !== "23:59" && (
-                              <span className="text-[9px] text-app-ink-muted font-mono block">
+                              <span className="text-[9px] text-app-ink-muted font-sans font-semibold block">
                                 {evt.startTime}
                                 {evt.endTime ? ` - ${evt.endTime}` : ""}
                               </span>
@@ -572,7 +572,7 @@ export default function PlannerPage() {
                             </div>
 
                             {evt.startTime && evt.startTime !== "23:59" && (
-                              <div className="flex items-center gap-1 text-[10px] text-app-ink-muted font-mono">
+                              <div className="flex items-center gap-1 text-[10px] text-app-ink-muted font-sans font-semibold">
                                 <Clock className="h-3 w-3" />
                                 <span>
                                   {evt.startTime}

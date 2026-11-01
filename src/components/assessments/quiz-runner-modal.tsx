@@ -261,7 +261,7 @@ export function QuizRunnerModal({
             {/* Timer Header Indicator */}
             {!isReviewing && hasStartedExam && secondsRemaining !== null && (
               <div
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control border font-mono text-xs font-bold tabular-nums ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control border font-sans font-semibold text-xs font-bold tabular-nums ${
                   secondsRemaining < 60
                     ? "border-app-danger/40 bg-app-danger/10 text-app-danger animate-pulse"
                     : "border-app-border bg-app-surface text-app-ink"
@@ -301,7 +301,7 @@ export function QuizRunnerModal({
                   <span className="text-[10px] font-semibold uppercase text-app-ink-muted block">
                     Total Time Allowed
                   </span>
-                  <div className="flex items-center gap-1 font-mono font-bold text-app-ink mt-0.5">
+                  <div className="flex items-center gap-1 font-sans font-semibold font-bold text-app-ink mt-0.5">
                     <Clock className="h-3.5 w-3.5 text-app-accent" />
                     <span>{assessment.timeLimitMinutes || 90} Minutes</span>
                   </div>
@@ -311,7 +311,7 @@ export function QuizRunnerModal({
                   <span className="text-[10px] font-semibold uppercase text-app-ink-muted block">
                     Attempt Policy
                   </span>
-                  <span className="font-mono font-bold text-app-ink block mt-0.5">
+                  <span className="font-sans font-semibold font-bold text-app-ink block mt-0.5">
                     Strictly 1 Attempt
                   </span>
                 </div>
@@ -320,7 +320,7 @@ export function QuizRunnerModal({
                   <span className="text-[10px] font-semibold uppercase text-app-ink-muted block">
                     Assessment Questions
                   </span>
-                  <span className="font-mono font-bold text-app-ink block mt-0.5">
+                  <span className="font-sans font-semibold font-bold text-app-ink block mt-0.5">
                     {questions.length} Items ({assessment.maxPoints} pts)
                   </span>
                 </div>
@@ -370,7 +370,7 @@ export function QuizRunnerModal({
                         <span className="font-serif text-2xl font-bold text-app-ink tabular-nums">
                           {activeAttempt.score} / {activeAttempt.maxPoints} pts
                         </span>
-                        <span className="font-mono text-sm font-semibold text-app-accent tabular-nums">
+                        <span className="font-sans font-semibold text-sm font-semibold text-app-accent tabular-nums">
                           ({activeAttempt.percentage}%)
                         </span>
                         <span className="rounded bg-app-surface px-1.5 py-0.5 text-[11px] font-serif font-bold text-app-ink border border-app-border">
@@ -441,7 +441,7 @@ export function QuizRunnerModal({
                     {/* Header */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-app-ink-muted text-xs">
+                        <span className="font-sans font-semibold font-bold text-app-ink-muted text-xs">
                           {idx + 1}.
                         </span>
                         <span className="font-semibold text-app-ink text-sm">
@@ -450,7 +450,7 @@ export function QuizRunnerModal({
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="font-mono text-[11px] text-app-ink-muted tabular-nums">
+                        <span className="font-sans font-semibold text-[11px] text-app-ink-muted tabular-nums">
                           {q.points} pts
                         </span>
                         {isReviewing && (

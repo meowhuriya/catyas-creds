@@ -143,7 +143,7 @@ export function WeeklyReviewModal({ open, onOpenChange }: WeeklyReviewModalProps
             </div>
             <div>
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Registry ID</span>
-              <span className="font-mono text-neutral-800">VC-2026-9812-REG</span>
+              <span className="font-sans font-semibold text-neutral-800">VC-2026-9812-REG</span>
             </div>
             <div>
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Active Standing</span>
@@ -155,28 +155,28 @@ export function WeeklyReviewModal({ open, onOpenChange }: WeeklyReviewModalProps
           <div className="grid grid-cols-4 gap-3 text-center border-b border-neutral-200 pb-4">
             <div className="rounded border border-neutral-200 bg-neutral-50 p-2.5">
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Study Hours</span>
-              <span className="font-mono text-base font-bold text-neutral-900 mt-0.5 block tabular-nums">
+              <span className="font-sans font-semibold text-base font-bold text-neutral-900 mt-0.5 block tabular-nums">
                 {weeklyHours}h
               </span>
             </div>
 
             <div className="rounded border border-neutral-200 bg-neutral-50 p-2.5">
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Topics Mastered</span>
-              <span className="font-mono text-base font-bold text-neutral-900 mt-0.5 block tabular-nums">
+              <span className="font-sans font-semibold text-base font-bold text-neutral-900 mt-0.5 block tabular-nums">
                 {topicsMastered}
               </span>
             </div>
 
             <div className="rounded border border-neutral-200 bg-neutral-50 p-2.5">
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Active Streak</span>
-              <span className="font-mono text-base font-bold text-app-accent mt-0.5 block tabular-nums">
+              <span className="font-sans font-semibold text-base font-bold text-app-accent mt-0.5 block tabular-nums">
                 14 Days
               </span>
             </div>
 
             <div className="rounded border border-neutral-200 bg-neutral-50 p-2.5">
               <span className="text-[10px] text-neutral-500 uppercase font-semibold block">Weekly Target</span>
-              <span className="font-mono text-base font-bold text-emerald-700 mt-0.5 block tabular-nums">
+              <span className="font-sans font-semibold text-base font-bold text-emerald-700 mt-0.5 block tabular-nums">
                 100% Met
               </span>
             </div>
@@ -191,7 +191,7 @@ export function WeeklyReviewModal({ open, onOpenChange }: WeeklyReviewModalProps
                 <span>Priority Revision Focus</span>
               </div>
 
-              <div className="space-y-1.5 font-mono text-[11px]">
+              <div className="space-y-1.5 font-sans font-semibold text-[11px]">
                 {weakestTopics.map((t) => (
                   <div
                     key={t.id}
@@ -229,7 +229,7 @@ export function WeeklyReviewModal({ open, onOpenChange }: WeeklyReviewModalProps
                       <span className="font-medium text-neutral-800 truncate pr-2">
                         {e.title}
                       </span>
-                      <span className="font-mono text-neutral-500 shrink-0 text-[10px]">
+                      <span className="font-sans font-semibold text-neutral-500 shrink-0 text-[10px]">
                         {e.date}
                       </span>
                     </div>

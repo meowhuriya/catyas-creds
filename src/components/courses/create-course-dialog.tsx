@@ -136,7 +136,7 @@ export function CreateCourseDialog({
                 placeholder="e.g. CS 101"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="font-mono uppercase font-semibold"
+                className="font-sans font-semibold uppercase font-semibold"
                 required
               />
             </div>
@@ -198,7 +198,7 @@ export function CreateCourseDialog({
                 step={0.5}
                 value={credits}
                 onChange={(e) => setCredits(Number(e.target.value))}
-                className="font-mono tabular-nums"
+                className="font-sans font-semibold tabular-nums"
                 required
               />
               <span className="text-[11px] text-app-ink-muted mt-1 block">

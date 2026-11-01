@@ -1,7 +1,7 @@
 {
-  "institution": "JNTUH Hyderabad (R-25 Regulations)",
-  "portal": "Valeria\u2019s Creds",
-  "academicYear": "AY 2025-2026",
+  "institution": "Meridian Institute of Technology",
+  "portal": "Valeria's Creds",
+  "academicYear": "2025-2026",
   "terms": [
     {
       "id": "term-sem-1",
@@ -23,29 +23,23 @@
       "code": "MA101BS",
       "title": "Matrices and Calculus",
       "department": "Mathematics",
-      "level": "100",
+      "level": 100,
       "credits": 4,
       "termId": "term-sem-1",
       "type": "theory",
-      "colorTag": "slate",
-      "description": "Foundational curriculum in Matrices and Calculus (Mathematics).",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "Fundamental matrix algebra, eigenvalues, single and multivariable differential and integral calculus.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
           "title": "Matrices",
           "topics": [
-            "Rank of a matrix by Echelon form and Normal form",
+            "Rank of a matrix by Echelon form",
+            "Normal form",
             "Inverse of Non-singular matrices by Gauss-Jordan method",
-            "System of linear equations",
-            "Solving system of Homogeneous and Non-Homogeneous equations",
+            "System of linear equations: Solving system of Homogeneous",
+            "Non-Homogeneous equations",
             "Gauss Seidel Iteration Method."
           ]
         },
@@ -53,10 +47,8 @@
           "unitNumber": 2,
           "title": "Eigen values and Eigen vectors",
           "topics": [
-            "Linear Transformation and Orthogonal Transformation",
-            "Eigen values",
-            "Eigen vectors and their properties",
-            "Diagonalization of a matrix",
+            "Linear Transformation and Orthogonal Transformation: Eigen values",
+            "Eigen vectors and their properties & Diagonalization of a matrix",
             "Cayley-Hamilton Theorem (without proof)",
             "Fnding inverse and power of a matrix by Cayley-Hamilton Theorem",
             "Quadratic forms and Nature of the Quadratic Forms",
@@ -68,13 +60,11 @@
           "title": "Single Variable Calculus",
           "topics": [
             "Limit and Continuous of functions and its properties",
-            "Mean value theorems",
-            "Rolle\u2019s theorem",
+            "Mean value theorems: Rolle\u2019s theorem",
             "Lagrange\u2019s Mean value theorem with their Geometrical Interpretation and applications",
             "Cauchy\u2019s Mean value Theorem",
             "Taylor\u2019s Series (All the theorems without proof)",
-            "Curve Tracing",
-            "Curve tracing in cartesian coordinates."
+            "Curve Tracing: Curve tracing in cartesian coordinates."
           ]
         },
         {
@@ -82,13 +72,11 @@
           "title": "Multivariable Calculus (Partial Differentiation and applications)",
           "topics": [
             "Definitions of Limit and continuity",
-            "Partial Differentiation",
-            "Euler\u2019s Theorem",
+            "Partial Differentiation: Euler\u2019s Theorem",
             "Total derivative",
             "Jacobian",
             "Functional dependence & independence",
-            "Applications",
-            "Maxima and minima of functions of two variables and three variables using method of Lagrange multipliers."
+            "Applications: Maxima and minima of functions of two variables and three variables using method of Lagrange multipliers."
           ]
         },
         {
@@ -97,11 +85,9 @@
           "topics": [
             "Evaluation of Double Integrals (Cartesian and polar coordinates)",
             "change of order of integration (only Cartesian form)",
-            "Change of variables for double integrals (Cartesian to polar)",
-            "Evaluation of Triple Integrals",
+            "Change of variables for double integrals (Cartesian to polar) & Evaluation of Triple Integrals",
             "Change of variables for triple integrals (Cartesian to Spherical and Cylindrical polar coordinates)",
-            "Applications",
-            "Areas by double integrals and volumes by triple integrals."
+            "Applications: Areas by double integrals and volumes by triple integrals."
           ]
         }
       ]
@@ -110,39 +96,30 @@
       "code": "CH102BS",
       "title": "Engineering Chemistry",
       "department": "Chemistry",
-      "level": "100",
+      "level": 100,
       "credits": 3,
       "termId": "term-sem-1",
       "type": "theory",
-      "colorTag": "teal",
-      "description": "Course Objectives: 1. To develop adaptability to new advances in Engineering Chemistry and acquire the essential skills to become a competent engineering professional. 2. To understand the industrial significance of water treatment, fundamental principles of battery chemistry, and the impact of corrosion along with its control methods for structural protection.",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "sage",
+      "description": "Water treatment, electrochemistry, corrosion, energy sources, polymers, and advanced materials.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
           "title": "Water and its treatment",
           "topics": [
-            "Introduction- Hardness, types, degree of hardness and units",
-            "Estimation of hardness of water by complexometric method",
-            "Numerical problems",
-            "Potable water and its specifications (WHO)",
-            "Steps involved in the treatment of potable water",
-            "Disinfection of potable water by chlorination and break- point chlorination",
-            "Defluoridation",
-            "Nalgonda technique",
-            "Boiler troubles",
-            "Scales, Sludges and Caustic embrittlement",
-            "Internal treatment of boiler feed water",
-            "Calgon conditioning, Phosphate conditioning, Colloidal conditioning",
-            "External treatment methods",
-            "Softening of water by ion- exchange processes",
+            "Introduction- Hardness",
+            "types",
+            "degree of hardness and units",
+            "Estimation of hardness of water by complexometric method - Numerical problems",
+            "Potable water and its specifications (WHO) - Steps involved in the treatment of potable water - Disinfection of potable water by chlorination and break- point chlorination",
+            "Defluoridation - Nalgonda technique",
+            "Boiler troubles: Scales",
+            "Sludges and Caustic embrittlement",
+            "Internal treatment of boiler feed water - Calgon conditioning",
+            "Phosphate conditioning",
+            "Colloidal conditioning",
+            "External treatment methods - Softening of water by ion- exchange processes",
             "Desalination of brackish water",
             "Reverse osmosis."
           ]
@@ -151,79 +128,80 @@
           "unitNumber": 2,
           "title": "Electrochemistry and Corrosion",
           "topics": [
-            "Introduction- Electrode potential, standard electrode potential, Nernst equation (no derivation), electrochemical cell",
-            "Galvanic cell, cell representation, EMF of cell",
-            "Numerical problems",
-            "Types of electrodes, reference electrodes",
-            "Primary reference electrode",
-            "Standard Hydrogen Electrode (SHE), Secondary reference electrode",
-            "Calomel electrode",
-            "Construction, working and determination of pH of unknown solution using SHE and Calomel electrode",
-            "Corrosion",
-            "Introduction- Definition, causes and effects of corrosion",
-            "Theories of corrosion, chemical and electrochemical theories of corrosion, Types of corrosion",
-            "galvanic, water-line and pitting corrosion",
-            "Factors affecting rate of corrosion",
-            "Nature of the metal, Nature of the corroding environment",
-            "Corrosion control methods",
-            "Cathodic protection Methods",
-            "Sacrificial anode and impressed current methods."
+            "Introduction- Electrode potential",
+            "standard electrode potential & Nernst equation (no derivation)",
+            "electrochemical cell - Galvanic cell",
+            "cell representation & EMF of cell - Numerical problems & Types of electrodes",
+            "reference electrodes - Primary reference electrode - Standard Hydrogen Electrode (SHE)",
+            "Secondary reference electrode - Calomel electrode & Construction",
+            "working and determination of pH of unknown solution using SHE and Calomel electrode",
+            "Corrosion: Introduction- Definition",
+            "causes and effects of corrosion & Theories of corrosion",
+            "chemical and electrochemical theories of corrosion",
+            "Types of corrosion: galvanic & water-line and pitting corrosion",
+            "Factors affecting rate of corrosion - Nature of the metal",
+            "Nature of the corroding environment",
+            "Corrosion control methods - Cathodic protection Methods - Sacrificial anode and impressed current methods."
           ]
         },
         {
           "unitNumber": 3,
           "title": "Energy sources",
           "topics": [
-            "Batteries",
-            "Introduction",
-            "Classification of batteries",
-            "Primary, secondary and reserve batteries with examples",
-            "Construction, working and applications of Zn-air and Lithium ion battery",
-            "Fuel Cells",
-            "Differences between a battery and a fuel cell, Construction and applications of Direct Methanol Fuel Cell (DMFC)",
-            "formula",
-            "Numerical problems",
-            "Fossil fuels",
-            "Introduction, Classification, Petroleum",
-            "Refining of Crude oil, Cracking",
-            "Types of cracking",
-            "Moving bed catalytic cracking",
+            "Batteries: Introduction",
+            "Classification of batteries - Primary",
+            "secondary and reserve batteries with examples & Construction",
+            "working and applications of Zn-air and Lithium ion battery",
+            "Fuel Cells & Differences between a battery and a fuel cell",
+            "Construction and applications of Direct Methanol Fuel Cell (DMFC)",
+            "Fuels: Introduction and characteristics of a good fuel",
+            "Calorific value & Units - HCV",
+            "LCV- Dulongs formula - Numerical problems",
+            "Fossil fuels: Introduction & Classification",
+            "Petroleum - Refining of Crude oil",
+            "Cracking - Types of cracking - Moving bed catalytic cracking",
             "LPG and CNG composition and uses",
-            "Synthetic Fuels",
-            "Fischer-Tropsch process, Introduction and applications of Hythane and Green Hydrogen."
+            "Synthetic Fuels: Fischer-Tropsch process",
+            "Introduction and applications of Hythane and Green Hydrogen."
           ]
         },
         {
           "unitNumber": 4,
           "title": "Polymers",
           "topics": [
-            "Definition",
-            "Classification of polymers",
-            "Based on origin and tacticity with examples",
-            "Types of polymerization",
-            "Addition (free radical addition mechanism) and condensation polymerization",
-            "Plastics, Elastomers and Fibers",
-            "Definition and applications (PVC, Buna-S, Nylon-6,6)",
-            "Differences between themoplastics and thermo setting plastics, Fiber reinforced plastics (FRP)",
-            "Conducting polymers",
-            "Definition and Classification with examples",
-            "Mechanism of conduction in trans- poly-acetylene and applications of conducting polymers",
-            "Biodegradable polymers",
-            "Polylactic acid and its applications."
+            "Definition - Classification of polymers: Based on origin",
+            "tacticity with examples",
+            "Types of polymerization - Addition (free radical addition mechanism)",
+            "condensation polymerization",
+            "Plastics & Elastomers & Fibers: Definition",
+            "applications (PVC & Buna-S & Nylon-6",
+            "Differences between themoplastics",
+            "thermo setting plastics",
+            "Fiber reinforced plastics (FRP)",
+            "Conducting polymers: Definition",
+            "Classification with examples - Mechanism of conduction in trans- poly-acetylene",
+            "applications of conducting polymers",
+            "Biodegradable polymers: Polylactic acid",
+            "its applications."
           ]
         },
         {
           "unitNumber": 5,
           "title": "Advanced Functional Materials",
           "topics": [
-            "Smart materials",
-            "Introduction, Classification with examples",
-            "Shape Memory Alloys",
-            "Nitinol, Piezoelectric materials",
-            "quartz and their engineering applications",
-            "Biosensor",
-            "Definition, Amperometric Glucose monitor sensor",
-            "Interpretative spectroscopic applications of UV-Visible spectroscopy for Analysis of pollutants in dye industry, IR spectroscopy in night vision-security, Pollution Under Control- CO sensor (Passive Infrared detection), Raman spectroscopy (application)",
+            "Smart materials: Introduction",
+            "Classification with examples - Shape Memory Alloys",
+            "Nitinol",
+            "Piezoelectric materials",
+            "quartz",
+            "their engineering applications",
+            "Biosensor - Definition",
+            "Amperometric Glucose monitor sensor",
+            "Interpretative spectroscopic applications of UV-Visible spectroscopy",
+            "for Analysis of pollutants in dye industry",
+            "IR spectroscopy in night vision-security",
+            "Pollution Under Control- CO sensor (Passive Infrared detection)",
+            "Raman spectroscopy (application) -",
             "Tumour detection in medical applications."
           ]
         }
@@ -233,132 +211,100 @@
       "code": "EN103HS",
       "title": "English for Skill Enhancement",
       "department": "Humanities",
-      "level": "100",
+      "level": 100,
       "credits": 3,
       "termId": "term-sem-1",
       "type": "theory",
-      "colorTag": "olive",
-      "description": "Foundational curriculum in English for Skill Enhancement (Humanities).",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "teal",
+      "description": "Integrated English communication skills covering reading, writing, grammar, vocabulary, and professional expression.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Theme: Perspectives",
+          "title": "Grammar, Reading and Sentence Structures",
           "topics": [
-            "Lesson on \u2018The Generation Gap\u2019 by Benjamin M",
+            "Theme: Perspectives Lesson on \u2018The Generation Gap\u2019 by Benjamin M",
             "Spock from the prescribed textbook titled English for the Young in the Digital World published by Orient Black Swan Pvt",
-            "Vocabulary",
-            "The Concept of Word Formation -The Use of Prefixes and Suffixes",
-            "Words Often Misspelt",
-            "Synonyms and Antonyms Grammar",
-            "Identifying Common Errors in Writing with Reference to Parts of Speech particularly Reading",
-            "Reading and Its Importance- Sub Skills of Reading",
-            "Skimming and Scanning",
-            "Writing",
-            "Sentence Structures and Types -Use of Phrases and Clauses in Sentences- Importance of Proper Punctuation- Techniques for Writing Precisely",
-            "Nature and Style of Formal Writing."
+            "Ltd",
+            "Vocabulary: The Concept of Word Formation -The Use of Prefixes",
+            "Suffixes - Words Often Misspelt - Synonyms",
+            "Antonyms Grammar: Identifying Common Errors in Writing with Reference to Parts of Speech particularly Articles",
+            "Prepositions & Degrees of Comparison Reading: Reading",
+            "Its Importance- Sub Skills of Reading",
+            "Skimming & Scanning & Writing: Sentence Structures",
+            "Types -Use of Phrases",
+            "Clauses in Sentences- Importance of Proper Punctuation- Techniques for Writing Precisely",
+            "Nature & Style of Formal Writing."
           ]
         },
         {
           "unitNumber": 2,
-          "title": "Theme: Digital Transformation",
+          "title": "Reading Strategies and Paragraph Writing",
           "topics": [
-            "Lesson on \u2018Emerging Technologies\u2019 from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
-            "Vocabulary",
-            "Homophones, Homonyms and Homographs Grammar",
-            "Identifying Common Errors in Writing with Reference to Noun-pronoun Agreement and Subject-verb Agreement",
-            "Reading",
-            "Reading Strategies-Guessing Meaning from Context",
+            "Theme: Digital Transformation Lesson on \u2018Emerging Technologies\u2019 from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
+            "Ltd & Vocabulary: Homophones",
+            "Homonyms and Homographs Grammar: Identifying Common Errors in Writing with Reference to Noun-pronoun Agreement and Subject-verb Agreement",
+            "Reading: Reading Strategies-Guessing Meaning from Context",
             "Identifying Main Ideas",
-            "Exercises for Practice Writing",
-            "Paragraph Writing",
-            "Types, Structures and Features of a Paragraph",
-            "Creating Coherence",
-            "Linkers and Connectives",
-            "Organizing Principles in a Paragraph",
-            "Defining- Describing People, Objects, Places and Events",
-            "Classifying- Providing Examples or Evidence",
-            "Essay Writing",
-            "Writing Introduction and Conclusion."
+            "Exercises for Practice Writing: Paragraph Writing",
+            "Types",
+            "Structures and Features of a Paragraph - Creating Coherence",
+            "Linkers and Connectives - Organizing Principles in a Paragraph",
+            "Defining- Describing People",
+            "Objects & Places and Events",
+            "Classifying- Providing Examples or Evidence - Essay Writing - Writing Introduction and Conclusion."
           ]
         },
         {
           "unitNumber": 3,
-          "title": "Theme: Attitude and Gratitude",
+          "title": "Modifiers, Topic Sentences and Formal Letters",
           "topics": [
-            "Poems on \u2018Leisure\u2019 by William Henry Davies and \u2018 Be Thankful\u2019",
-            "Unknown Author from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
-            "Vocabulary",
-            "Words Often Confused",
-            "Words from Foreign Languages and their Use in English",
-            "Grammar",
-            "Identifying Common Errors in Writing with Reference to Misplaced Modifiers and Tenses",
-            "Reading",
-            "Sub-Skills of Reading",
-            "Identifying Topic Sentence and Providing Supporting Ideas",
-            "Exercises for Practice",
-            "Writing",
-            "Format of a Formal Letter-Writing Formal Letters E.g.., Letter of Complaint, Letter of Requisition, Job Application with CV/Resume",
-            "Difference between Writing a Letter and an Email",
-            "Email Etiquette."
+            "Theme: Attitude and Gratitude Poems on \u2018Leisure\u2019 by William Henry Davies and \u2018 Be Thankful\u2019 - Unknown Author from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
+            "Ltd",
+            "Vocabulary: Words Often Confused - Words from Foreign Languages and their Use in English",
+            "Grammar: Identifying Common Errors in Writing with Reference to Misplaced Modifiers and Tenses",
+            "Reading: Sub-Skills of Reading",
+            "Identifying Topic Sentence and Providing Supporting Ideas - Exercises for Practice",
+            "Writing: Format of a Formal Letter-Writing Formal Letters E.g..",
+            "Letter of Complaint",
+            "Letter of Requisition",
+            "Job Application with CV/Resume",
+            "Difference between Writing a Letter and an Email - Email Etiquette."
           ]
         },
         {
           "unitNumber": 4,
-          "title": "Theme: Entrepreneurship",
+          "title": "Prompt Engineering, Note Making and Pr\u00e9cis Writing",
           "topics": [
-            "Lesson on \u2018Why a Start-Up Needs to Find its Customers First\u2019 by Pranav Jain from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
-            "Vocabulary",
-            "Standard Abbreviations in English",
+            "Theme: Entrepreneurship Lesson on \u2018Why a Start-Up Needs to Find its Customers First\u2019 by Pranav Jain from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
+            "Ltd",
+            "Vocabulary: Standard Abbreviations in English",
             "Inferring Meanings of Words through Context",
-            "Phrasal Verbs",
-            "Idioms",
-            "Grammar",
-            "Redundancies and Clich\u00e9s in Written Communication",
-            "Converting Passive to Active Voice and Vice-Versa",
-            "Reading",
-            "Prompt Engineering Techniques",
-            "Comprehending and Generating Appropriate Prompts",
-            "Exercises for Practice Writing",
-            "Writing Practices- Note Making-Pr\u00e9cis Writing."
+            "Phrasal Verbs & Idioms & Grammar: Redundancies",
+            "Clich\u00e9s in Written Communication",
+            "Converting Passive to Active Voice",
+            "Vice-Versa",
+            "Reading: Prompt Engineering Techniques",
+            "Comprehending",
+            "Generating Appropriate Prompts - Exercises for Practice Writing: Writing Practices- Note Making-Pr\u00e9cis Writing."
           ]
         },
         {
           "unitNumber": 5,
-          "title": "Theme: Integrity and Professionalism",
+          "title": "SQ3R Reading Method and Technical Reports",
           "topics": [
-            "Lesson on \u2018 Professional Ethics\u2019 from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
-            "Vocabulary",
-            "Technical Vocabulary and their Usage",
-            "One Word Substitutes",
-            "Collocations",
-            "Grammar",
-            "Direct and Indirect Speech",
-            "Common Errors in English (Covering all the other aspects Reading",
-            "Survey, Question, Read, Recite and Review (SQ3R Method)",
-            "Inferring the Meaning and Evaluating a Text- Exercises for Practice Writing",
-            "Report Writing",
-            "Technical Reports- Introduction",
+            "Theme: Integrity and Professionalism Lesson on \u2018 Professional Ethics\u2019 from the prescribed textbook titled English for the Young in the Digital World published by Orient BlackSwan Pvt",
+            "Ltd & Vocabulary: Technical Vocabulary and their Usage",
+            "One Word Substitutes & Collocations",
+            "Grammar: Direct and Indirect Speech - Common Errors in English (Covering all the other aspects of grammar which were not covered in the previous units) Reading: Survey, Question, Read, Recite and Review (SQ3R Method)",
+            "Inferring the Meaning and Evaluating a Text- Exercises for Practice Writing: Report Writing - Technical Reports- Introduction",
             "Characteristics of a Report",
-            "Categories of Reports Formats- Structure of Reports (Manuscript Format) -Types of Reports",
-            "Writing a Technical Report",
-            "Note",
-            "Listening and Speaking skills which are given under Unit-6 in AICTE Model Curriculum are covered in the syllabus of ELCS Lab Course",
-            "\uf0d8 ( Note",
-            "As the syllabus of English given in AICTE Model Curriculum-2018 for B.Tech",
-            "First Year is Open-ended, besides following the prescribed textbook, it is required to prepare teaching/learning materials by the teachers collectively in the form of handouts based on the needs of the students in their respective colleges for effective teaching/learning in the class.) TEXT BOOK",
+            "Categories of Reports Formats- Structure of Reports (Manuscript Format) -Types of Reports - Writing a Technical Report",
+            "Note: Listening and Speaking skills which are given under Unit-6 in AICTE Model Curriculum are covered in the syllabus of ELCS Lab Course",
+            "Open-ended, besides following the prescribed textbook, it is required to prepare teaching/learning materials by the teachers collectively in the form of handouts based on the needs of the students in their respective colleges for effective teaching/learning in the class.) TEXT BOOK",
             "Board of Editors",
-            "2025",
             "English for the Young in the Digital World",
-            "Orient Black Swan Pvt",
-            "Ltd."
+            "Orient Black Swan Pvt & Ltd."
           ]
         }
       ]
@@ -366,69 +312,86 @@
     {
       "code": "EC104ES",
       "title": "Electronic Devices and Circuits",
-      "department": "Electronics",
-      "level": "100",
+      "department": "Electronics & Communication",
+      "level": 100,
       "credits": 3,
       "termId": "term-sem-1",
       "type": "theory",
-      "colorTag": "ochre",
-      "description": "Foundational curriculum in Electronic Devices and Circuits (Electronics).",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "mustard",
+      "description": "Semiconductor diodes, bipolar junction transistors, field effect transistors, and biasing circuits.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Diode Characteristics and Applications: PN junction diode \u2013 I-V characteristics, Diode resistance",
+          "title": "Diode Characteristics and Applications",
           "topics": [
-            "and capacitance, Diode models (Ideal, Simplified, Piecewise Linear), Rectifiers",
-            "Half-wave, Full-wave (Center-tap and bridge), Capacitor filter for rectifiers, Clippers and clampers, Zener diode",
+            "Diode Characteristics and Applications: PN junction diode",
+            "I-V characteristics",
+            "Diode resistance and capacitance",
+            "Diode models (Ideal & Simplified & Piecewise Linear)",
+            "Rectifiers & Half-wave",
+            "Full-wave (Center-tap and bridge)",
+            "Capacitor filter for rectifiers",
+            "Clippers and clampers & Zener diode",
             "I-V characteristics and voltage regulation."
           ]
         },
         {
           "unitNumber": 2,
-          "title": "Bipolar Junction Transistor (BJT): Structure and working principle of BJT, Current components and",
+          "title": "Bipolar Junction Transistor (BJT)",
           "topics": [
-            "transistor action, Configurations",
-            "Common Base (CB), Common Emitter (CE), Common Collector (CC), Input and output characteristics, Determination of h-parameters from transistor characteristics."
+            "Bipolar Junction Transistor (BJT): Structure",
+            "working principle of BJT",
+            "Current components",
+            "transistor action",
+            "Configurations: Common Base (CB)",
+            "Common Emitter (CE)",
+            "Common Collector (CC) & Input",
+            "output characteristics",
+            "Determination of h-parameters from transistor characteristics."
           ]
         },
         {
           "unitNumber": 3,
-          "title": "BJT Biasing: Need for biasing and stabilization, Load line and operating point, Biasing techniques",
+          "title": "BJT Biasing and Stabilization",
           "topics": [
-            "Fixed bias, Collector-to-base bias, Voltage divider bias, Stability factors and thermal runaway"
+            "BJT Biasing: Need for biasing",
+            "stabilization & Load line",
+            "operating point",
+            "Biasing techniques: Fixed bias",
+            "Collector-to-base bias",
+            "Voltage divider bias",
+            "Stability factors",
+            "thermal runaway"
           ]
         },
         {
           "unitNumber": 4,
-          "title": "Transistor Amplifiers: Transistor as a small-signal amplifier, h-parameter equivalent circuit, CE, CB,",
+          "title": "Special Purpose Diodes",
           "topics": [
-            "CC amplifier analysis using h-parameters, Approximate CE model",
-            "with and without emitter bypass"
+            "Transistor Amplifiers",
+            "Transistor as",
+            "a small-signal amplifier",
+            "h-parameter equivalent circuit",
+            "CC amplifier",
+            "analysis using h-parameters",
+            "Approximate CE model",
+            "with",
+            "without emitter bypass capacitor."
           ]
         },
         {
           "unitNumber": 5,
-          "title": "Special Purpose Diodes: Principle of Operation of \u2013 SCR, Tunnel Diode, Varactor Diode, Photo Diode,",
+          "title": "Field Effect Transistors and Advanced Devices",
           "topics": [
-            "Solar Cell, LED and Schottky Diode Field Effect Transistors and Advanced Devices",
-            "JFET",
-            "Structure, operation, and characteristics, MOSFET",
-            "Enhancement and Depletion modes",
-            "Structure, operation, and characteristics, Advanced Devices",
-            "FinFETs",
-            "3D structure, Scaling advantages, CNTFETs",
-            "Structure, ballistic transport, fabrication, Comparison",
-            "CMOS vs",
-            "FinFET vs",
-            "CNTFET."
+            "Special Purpose Diodes: Principle of Operation of",
+            "SCR & Tunnel Diode",
+            "Varactor Diode & Photo Diode",
+            "Solar Cell, LED and Schottky Diode Field Effect Transistors and Advanced Devices: JFET: Structure, operation, and characteristics, MOSFET: Enhancement and Depletion modes",
+            "Structure & operation & and characteristics",
+            "Advanced Devices: FinFETs - 3D structure",
+            "Scaling advantages, CNTFETs - Structure, ballistic transport, fabrication, Comparison: CMOS vs",
+            "FinFET vs & CNTFET."
           ]
         }
       ]
@@ -436,61 +399,80 @@
     {
       "code": "CS105ES",
       "title": "Programming for Problem Solving",
-      "department": "Computer Science",
-      "level": "100",
+      "department": "Computer Science & Engineering",
+      "level": 100,
       "credits": 3,
       "termId": "term-sem-1",
       "type": "theory",
-      "colorTag": "plum",
-      "description": "Course Objectives: 1. To learn the fundamentals of computers. 2. To understand the various steps in program development. 3. To learn the syntax and semantics of the C programming language. 4. To learn the usage of structured programming approaches in solving problems.",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "Structured problem solving with C, control structures, functions, arrays, pointers, recursion, and file handling.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
           "title": "Overview of C:C Language Elements, Variable Declarations and Data Types, Executable",
           "topics": [
-            "General Form of a C Program",
-            "Arithmetic Expressions",
-            "Formatting Numbers in Program Output",
-            "Selection Structures",
-            "Control Structures, Conditions, if Statement, if Statements with Compound Statements, Decision Steps in Algorithms",
-            "Repetition and Loop Statements",
-            "Repetition in Programs, Counting Loops and the while Statement, Computing a Sum or Product in a Loop, for Statement, Conditional Loops, Loop Design, Nested Loops, do-while Statement."
+            "Statements & General Form of a C Program",
+            "Arithmetic Expressions & Formatting Numbers in Program Output",
+            "Selection Structures: Control Structures",
+            "Conditions & if Statement",
+            "if Statements with Compound Statements",
+            "Decision Steps in Algorithms",
+            "Repetition and Loop Statements: Repetition in Programs",
+            "Counting Loops and the while Statement",
+            "Computing a Sum or Product in a Loop",
+            "for Statement & Conditional Loops",
+            "Loop Design & Nested Loops & do-while Statement."
           ]
         },
         {
           "unitNumber": 2,
           "title": "Top-Down Design with Functions: Building Programs from Existing Information, Library",
           "topics": [
-            "Functions, Top-Down Design and Structure Charts, Functions without Arguments, Functions with Input Arguments",
-            "Pointers and Modular Programming",
-            "Pointers and the Indirection Operator, Functions with Output Parameters, Multiple Calls to a Function with Input/ Output Parameters, Scope of Names, Formal Output Parameters as Actual Arguments."
+            "Functions & Top-Down Design",
+            "Structure Charts",
+            "Functions without Arguments",
+            "Functions with Input Arguments",
+            "Pointers",
+            "Modular Programming: Pointers",
+            "the Indirection Operator",
+            "Functions with Output Parameters",
+            "Multiple Calls to a Function with Input/ Output Parameters",
+            "Scope of Names",
+            "Formal Output Parameters as Actual Arguments."
           ]
         },
         {
           "unitNumber": 3,
           "title": "Arrays: Declaring and Referencing Arrays, Array Subscripts, Using for Loops for Sequential",
           "topics": [
-            "Access, Using Array Elements as Function Arguments, Array Arguments, Searching and Sorting an Array, Parallel Arrays and Enumerated Types, Multidimensional Arrays",
-            "Strings",
-            "String Basics, String Library Functions",
-            "Assignment and Substrings, Longer Strings",
-            "Concatenation and Whole-Line Input, String Comparison, Arrays of Pointers."
+            "Access",
+            "Using Array Elements as Function Arguments",
+            "Array Arguments",
+            "Searching and Sorting an Array",
+            "Parallel Arrays and Enumerated Types",
+            "Multidimensional Arrays",
+            "Strings: String Basics",
+            "String Library Functions: Assignment and Substrings",
+            "Longer Strings: Concatenation and Whole-Line Input",
+            "String Comparison",
+            "Arrays of Pointers."
           ]
         },
         {
           "unitNumber": 4,
           "title": "Recursion: The Nature of Recursion, Tracing a Recursive Function, Recursive Mathematical",
           "topics": [
-            "Functions, Recursive Functions with Array and String Parameters Structure and Union Types",
-            "User-Defined Structure Types, Structure Type Data as Input and Output Parameters, Functions with Structured Result Values, Union Types."
+            "Functions",
+            "Recursive Functions with Array",
+            "String Parameters Structure",
+            "Union Types",
+            "User-Defined Structure Types",
+            "Structure Type Data as Input",
+            "Output Parameters",
+            "Functions with",
+            "Structured Result Values",
+            "Union Types."
           ]
         },
         {
@@ -498,9 +480,15 @@
           "title": "Text and Binary File Pointers: Input/ Output Files - Review and Further Study, Binary Files,",
           "topics": [
             "Searching a Database",
-            "Searching and Sorting",
-            "Linear and Binary Search Techniques in Arrays",
-            "Bubble, Insertion and Selection Sort Algorithms"
+            "Searching",
+            "Sorting",
+            "Basic searching in an",
+            "array of elements (linear",
+            "binary search techniques)",
+            "Basic algorithms to sort",
+            "array of elements (Bubble",
+            "Insertion",
+            "Selection sort algorithms)."
           ]
         }
       ]
@@ -509,46 +497,62 @@
       "code": "CH106BS",
       "title": "Engineering Chemistry Lab",
       "department": "Chemistry",
-      "level": "100",
+      "level": 100,
       "credits": 1,
       "termId": "term-sem-1",
       "type": "lab",
-      "colorTag": "teal",
-      "description": "The course includes experiments based on fundamental principles of chemistry essential for engineering students, aiming to develop practical skills and reinforce theoretical concepts.",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "sage",
+      "description": "Practical experiments in volumetric analysis, conductometry, potentiometry, pH metry, colorimetry, and synthesis.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "1. Estimation of the concentration of strong acid by Conductometry.",
-          "isSection": true,
+          "title": "Volumetric Analysis",
           "topics": [
-            "2. Estimation of the concentration of strong and weak acid in an acid mixture by",
-            "Conductometry."
+            "Estimation of Hardness of water by EDTA Complexometry method"
           ]
         },
         {
           "unitNumber": 2,
-          "title": "III. Potentiometry",
-          "isSection": true,
+          "title": "Conductometry",
           "topics": [
-            "1. Estimation of concentration of Fe +2ion by Potentiometry using KMnO4.",
-            "2. Estimation of concentration of strong acid with strong base by Potentiometry using",
-            "quinhydrone"
+            "Estimation of the concentration of strong acid by Conductometry",
+            "Estimation of the concentration of strong and weak acid in an acid mixture by Conductometry"
           ]
         },
         {
           "unitNumber": 3,
-          "title": "VII. Corrosion: Determination of rate of corrosion of mild steel in the presence and absence of",
-          "isSection": true,
+          "title": "Potentiometry",
           "topics": [
-            "inhibitor."
+            "Estimation of concentration of Fe +2ion by Potentiometry using KMnO4",
+            "Estimation of concentration of strong acid with strong base by Potentiometry using quinhydrone"
+          ]
+        },
+        {
+          "unitNumber": 4,
+          "title": "pH Metry and Colorimetry",
+          "topics": [
+            "Determination of an acid concentration using pH meter",
+            "Verification of Lambert-Beer\u2019s law using KMnO4"
+          ]
+        },
+        {
+          "unitNumber": 5,
+          "title": "Preparations and Corrosion",
+          "topics": [
+            "Preparation of Bakelite polymer",
+            "Preparation of Nylon \u2013 6, 6 polymer",
+            "Determination of rate of corrosion of mild steel in the presence and absence of inhibitor"
+          ]
+        },
+        {
+          "unitNumber": 6,
+          "title": "Virtual Lab Experiments",
+          "topics": [
+            "Construction of Fuel cell and its working",
+            "Smart materials for Biomedical applications",
+            "Batteries for electrical vehicles",
+            "Functioning of solar cell and its applications"
           ]
         }
       ]
@@ -556,112 +560,73 @@
     {
       "code": "CS107ES",
       "title": "Programming for Problem Solving Lab",
-      "department": "Computer Science",
-      "level": "100",
+      "department": "Computer Science & Engineering",
+      "level": 100,
       "credits": 1,
       "termId": "term-sem-1",
       "type": "lab",
-      "colorTag": "plum",
-      "description": "Course Objectives: The students will learn the following: 1. To work with an IDE to create, edit, compile, run and debug programs 2. To analyze the various steps in program development. 3. To develop programs to solve basic problems by understanding basic concepts in C like",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "Hands-on implementation of C programs, problem solving algorithms, pointers, arrays, files, and sorting.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Simple numeric problems",
-          "isSection": true,
+          "title": "Simple Numeric Problems",
           "topics": [
-            "a) Write a program for finding the max and min from the three numbers.",
-            "b) Write the program for the simple, compound interest.",
-            "c) Write a program that prints a multiplication table for a given number and the number of rows in",
-            "the table. For example, for a number 5 and rows = 3, the output should be",
-            "5 x 1 = 5",
-            "5 x 2 = 10",
-            "5 x 3 = 15",
-            "d) Write a program that shows the binary equivalent of a given positive number between 0 to 255."
+            "Finding maximum and minimum from three numbers",
+            "Calculation of simple and compound interest",
+            "Printing multiplication table for a given number and rows",
+            "Binary equivalent of a given positive number (0 to 255)"
           ]
         },
         {
           "unitNumber": 2,
           "title": "Expression Evaluation",
-          "isSection": true,
           "topics": [
-            "a) Write a C program, which takes two integer operands and one operator from the user, performs",
-            "the operation and then prints the result. (Consider the operators +,-,*, /, % and use Switch",
-            "Statement).",
-            "b) Write a program that finds if a given number is a prime number.",
-            "c) Write a C program to find the sum of individual digits of a positive integer and test given number",
-            "is palindrome.",
-            "d) A Fibonacci sequence is defined as follows: the first and second terms in the sequence are 0",
-            "a C program to generate the first n terms of the sequence.",
-            "Arrays, Pointers and Functions",
-            "a) Write a C program to find the minimum, maximum and average in an array of integers.",
-            "b) Write a C program that uses functions to perform the following"
+            "Two operand arithmetic calculator using switch statement",
+            "Prime number verification algorithm",
+            "Sum of individual digits of an integer and palindrome check",
+            "Generating the first n terms of the Fibonacci sequence"
           ]
         },
         {
           "unitNumber": 3,
-          "title": "II. Multiplication of Two Matrices",
-          "isSection": true,
+          "title": "Arrays, Pointers and Functions",
           "topics": [
-            "c) Write a program for reading elements using a pointer into an array and display the values using",
-            "the array.",
-            "d) Write a program for display values reverse order from an array using a pointer."
+            "Minimum, maximum and average in an array of integers",
+            "Matrix addition and matrix multiplication using functions",
+            "Reading elements into array using pointers and display",
+            "Displaying array elements in reverse order using pointers"
           ]
         },
         {
           "unitNumber": 4,
           "title": "Files",
-          "isSection": true,
           "topics": [
-            "a) Write a C program which copies one file to another, replacing all lowercase characters with",
-            "their uppercase equivalents.",
-            "b) Write a C program to merge two files into a third file (i.e., the contents of the first file followed",
-            "by those of the second are put in the third file)."
+            "Copying one file to another with lowercase to uppercase conversion",
+            "Merging two files into a third file"
           ]
         },
         {
           "unitNumber": 5,
           "title": "Strings",
-          "isSection": true,
           "topics": [
-            "a) Write a C program that uses functions to perform the following operations",
-            "I. To insert a sub-string into a given main string from a given position."
+            "Insert substring and delete n characters from given position in string",
+            "String palindrome verification without using library functions",
+            "Find character position in string or return negative one",
+            "Counting lines, words and characters in a given text"
           ]
         },
         {
           "unitNumber": 6,
-          "title": "II. To delete n Characters from a given position in a given string",
-          "isSection": true,
-          "topics": [
-            "b) Write a C program to determine if the given string is a palindrome or not (Spelled same in both",
-            "directions with or without a meaning like madam, civic, noon, abcba, etc.)",
-            "c) Write a C program that displays the position of a character ch in the string S or",
-            "1 if S doesn\u2019t",
-            "contain ch.",
-            "d) Write a C program to count the lines, words and characters in a given text."
-          ]
-        },
-        {
-          "unitNumber": 7,
           "title": "Sorting and Searching",
-          "isSection": true,
           "topics": [
-            "a) Write a C program that uses non-recursive function to search for a Key value in a given list of",
-            "integers using linear search method.",
-            "b) Write a C program that uses non-recursive function to search for a Key value in a given sorted",
-            "list of integers using binary search method.",
-            "c) Write a C program that implements the Bubble sort method to sort a given list of integers in",
-            "ascending order.",
-            "d) Write a C program that sorts the given array of integers using selection sort in descending order",
-            "e) Write a C program that sorts the given array of integers using insertion sort in ascending order",
-            "f) Write a C program that sorts a given array of names."
+            "Linear search non-recursive function implementation",
+            "Binary search non-recursive function implementation",
+            "Bubble sort implementation in ascending order",
+            "Selection sort implementation in descending order",
+            "Insertion sort implementation in ascending order",
+            "Alphabetical sorting of an array of names"
           ]
         }
       ]
@@ -670,126 +635,64 @@
       "code": "EN108HS",
       "title": "English Language and Communication Skills Lab",
       "department": "Humanities",
-      "level": "100",
+      "level": 100,
       "credits": 1,
       "termId": "term-sem-1",
       "type": "lab",
-      "colorTag": "olive",
-      "description": "Foundational curriculum in English Language and Communication Skills Lab (Humanities).",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "teal",
+      "description": "Interactive communication skills practice focusing on phonetics, pronunciation, accent, rhythm, and active listening.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "ICS Lab",
-          "isSection": true,
+          "title": "Speech Sounds and Minimal Pairs",
           "topics": [
-            "\uf076 Diagnostic Test",
-            "Activity titled \u2018Express Your View\u2019"
+            "Introduction to Phonetics and Speech Organs",
+            "Vowels, Diphthongs and Consonant Sounds",
+            "Minimal Pairs Practice and Auditory Discrimination",
+            "Mother Tongue Influence Neutralization Techniques"
           ]
         },
         {
           "unitNumber": 2,
-          "title": "Instruction: Spoken and Written language - Formal and Informal English - Greetings - Introducing",
-          "isSection": true,
+          "title": "Syllables and Word Stress",
           "topics": [
-            "Oneself and Others"
+            "Syllable Division and Word Structure Rules",
+            "Primary and Secondary Word Stress Patterns",
+            "Stress Shift in Derivative Words and Parts of Speech",
+            "Intonation and Stress Placement in Connected Speech"
           ]
         },
         {
           "unitNumber": 3,
-          "title": "Practice: Any Ice-Breaking Activity",
-          "isSection": true,
+          "title": "Rhythm and Intonation Patterns",
           "topics": [
-            "Exercise",
-            "II"
+            "Falling and Rising Intonation in Statements and Questions",
+            "Sentence Rhythm, Pausing, and Thought Groups",
+            "Weak Forms and Contracted Forms in Spoken English",
+            "Expressing Nuance, Politeness, and Attitude through Pitch"
           ]
         },
         {
           "unitNumber": 4,
-          "title": "Practice: Role Play Activity - Situational Dialogues \u2013Expressions used in Various Situations \u2013Making",
-          "isSection": true,
+          "title": "Listening for Specific Details",
           "topics": [
-            "Requests and Seeking Permissions",
-            "Taking Leave",
-            "Telephone Etiquette",
-            "Exercise",
-            "III"
+            "Active Listening Strategies for Academic Lectures",
+            "Gap Fill and Note Taking Practice Exercises",
+            "Listening for Factual Information and Key Details",
+            "Comprehension of Diverse Accents and Speech Rates",
+            "Listening for Inferences and Speaker Intent"
           ]
         },
         {
           "unitNumber": 5,
-          "title": "Practice: Picture Description Activity \u2013 Looking at a Picture and Describing Objects, Situations, Places,",
-          "isSection": true,
+          "title": "Listening for Evaluation and Real-life Situations",
           "topics": [
-            "People and Events (A wide range of Materials / Handouts are to be made available in the lab.)",
-            "Exercise",
-            "IV"
-          ]
-        },
-        {
-          "unitNumber": 6,
-          "title": "Practice: Activity on Telling and Retelling Stories - Collage",
-          "isSection": true,
-          "topics": [
-            "Exercise",
-            "V"
-          ]
-        },
-        {
-          "unitNumber": 7,
-          "title": "Practice: Silent Speech - Dumb Charades Activity",
-          "isSection": true,
-          "topics": [
-            "\uf076 Post-Assessment Test on \u2018Express Your View\u2019"
-          ]
-        },
-        {
-          "unitNumber": 8,
-          "title": "1. Computer Assisted Language Learning (CALL) Lab",
-          "isSection": true,
-          "topics": [
-            "The Computer Assisted Language Learning Lab has to accommodate 40 students with 40 systems,",
-            "with one Master Console, LAN facility and English language learning software for self- study by",
-            "students.",
-            "System Requirement (Hardware component)",
-            "Computer network with LAN facility (minimum 40 systems with multimedia) with the following",
-            "specifications",
-            "i) Computers with Suitable Configuration",
-            "ii) High Fidelity Headphones"
-          ]
-        },
-        {
-          "unitNumber": 9,
-          "title": "The Interactive Communication Skills Lab: A Spacious room with movable chairs and audio-",
-          "isSection": true,
-          "topics": [
-            "visual aids with a Public Address System, a T. V. or LCD, a digital stereo",
-            "audio & video system",
-            "and camcorder etc.",
-            "\uf040 Note: English Language Teachers are requested to prepare Materials / Handouts for each",
-            "Activity for the Use of those Materials in CALL & ICS Labs."
-          ]
-        },
-        {
-          "unitNumber": 10,
-          "title": "Suggested Software",
-          "isSection": true,
-          "topics": [
-            "\uf0b7 Cambridge Advanced Learners\u2019 English Dictionary with CD.",
-            "\uf0b7 Grammar Made Easy by Darling Kindersley.",
-            "\uf0b7 Punctuation Made Easy by Darling Kindersley.",
-            "\uf0b7 Oxford Advanced Learner\u2019s Compass, 10 th Edition.",
-            "\uf0b7 English Pronunciation in Use (Elementary, Intermediate, Advanced) Cambridge University",
-            "Press.",
-            "\uf0b7 English Vocabulary in Use (Elementary, Intermediate, Advanced) Cambridge University Press.",
-            "\uf0b7 TOEFL & GRE (KAPLAN, AARCO & BARRONS, USA, Cracking GRE by CLIFFS)."
+            "Evaluating Arguments and Critical Listening Practice",
+            "Synthesizing and Writing Summaries from Spoken Texts",
+            "Listening Comprehension in Everyday Social Dialogues",
+            "Professional and Workplace Conversation Scenarios",
+            "Formal Oral Presentation and Delivery Assessment"
           ]
         }
       ]
@@ -797,42 +700,36 @@
     {
       "code": "ME109ES",
       "title": "Engineering Workshop",
-      "department": "Mechanical",
-      "level": "100",
+      "department": "Mechanical Engineering",
+      "level": 100,
       "credits": 1,
       "termId": "term-sem-1",
       "type": "lab",
-      "colorTag": "rust",
-      "description": "Course Objectives: 1. To introduce students to basic manufacturing processes and workshop practices. 2. To provide hands-on training in carpentry, fitting, welding, sheet metal, and machining 3. To develop skills in using hand tools and measuring instruments. 4. To enhance safety awareness and proper handling of workshop equipment.",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "mustard",
+      "description": "Foundational manufacturing processes, hands-on workshop trades, safety practices, and trade demonstrations.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Laboratory Experiments",
-          "isSection": true,
+          "title": "Trades for Exercises",
           "topics": [
-            "i. Carpentry: T- Lap Joint, Dovetail Joint, Mortise and Tenon Joint",
-            "ii. Fitting: V- Fit, Dovetail Fit and Semi- circular fit",
-            "iii. Tin Smithy: Square Tin, Rectangular Tray and Conical Funnel",
-            "iv. Foundry: Preparation of Green Sand Mould using Single Piece and Split Pattern",
-            "v. Welding Practice: Arc Welding and Gas Welding",
-            "vi. House wiring: Parallel and Series, Two-way Switch and Tube Light",
-            "vii. Black Smithy: Round to Square, Fan Hook and S- Hook"
+            "Carpentry: T-Lap Joint, Dovetail Joint, Mortise and Tenon Joint",
+            "Fitting: V-Fit, Dovetail Fit and Semi-circular fit",
+            "Tin Smithy: Square Tin, Rectangular Tray and Conical Funnel",
+            "Foundry: Green Sand Mould preparation using Single Piece and Split Pattern",
+            "Welding Practice: Arc Welding and Gas Welding techniques",
+            "House Wiring: Parallel and Series Circuits, Two-way Switch and Tube Light",
+            "Black Smithy: Round to Square forging, Fan Hook and S-Hook fabrication"
           ]
         },
         {
           "unitNumber": 2,
-          "title": "2. TRADES FOR DEMONSTRATION AND EXPOSURE: Plumbing, Machine Shop, Metal Cutting",
-          "isSection": true,
+          "title": "Trades for Demonstration and Exposure",
           "topics": [
-            "(Water Plasma), Power tools in construction and Wood Working"
+            "Plumbing and Pipe Fitting Operations",
+            "Machine Shop: Lathe Operations and Facing/Turning",
+            "Metal Cutting using Water Jet and Plasma Cutting",
+            "Power Tools in Construction and Wood Working Machinery"
           ]
         }
       ]
@@ -841,20 +738,13 @@
       "code": "MA201BS",
       "title": "Ordinary Differential Equations and Vector Calculus",
       "department": "Mathematics",
-      "level": "100",
+      "level": 200,
       "credits": 3,
       "termId": "term-sem-2",
       "type": "theory",
-      "colorTag": "slate",
-      "description": "Course Objectives: To learn 1. Methods of solving the differential equations of first and higher order. 2. Concept, properties of Laplace transforms. 3. Solving ordinary differential equations using Laplace transforms techniques.",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "First and higher order ODEs, Laplace transforms, vector differentiation, and vector integration theorems.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
@@ -864,17 +754,17 @@
             "Equations reducible to exact differential equations",
             "linear and Bernoulli\u2019s equations",
             "Orthogonal Trajectories (only in Cartesian Coordinates)",
-            "Applications",
-            "Newton\u2019s law of cooling",
-            "Law of natural growth and decay."
+            "Applications: Newton\u2019s law of cooling & Law of natural growth and decay."
           ]
         },
         {
           "unitNumber": 2,
           "title": "Ordinary Differential Equations of Higher Order",
           "topics": [
-            "Higher order linear differential equations with constant coefficients",
-            "Non-Homogeneous terms of the type \ud835\udc52\u0bd4\u0beb, sin\ud835\udc4e\ud835\udc65 , cos\ud835\udc4e\ud835\udc65, polynomials in \ud835\udc65, \ud835\udc52\u0bd4\u0beb\ud835\udc49(\ud835\udc65) and \ud835\udc65 \ud835\udc49(\ud835\udc65)",
+            "Higher order linear differential equations with constant coefficients: Non-Homogeneous terms of the type \ud835\udc52\u0bd4\u0beb",
+            "sin\ud835\udc4e\ud835\udc65 & cos\ud835\udc4e\ud835\udc65",
+            "polynomials in \ud835\udc65",
+            "\ud835\udc52\u0bd4\u0beb\ud835\udc49(\ud835\udc65) and \ud835\udc65 \ud835\udc49(\ud835\udc65)",
             "Method of variation of parameters."
           ]
         },
@@ -882,16 +772,12 @@
           "unitNumber": 3,
           "title": "Laplace Transforms",
           "topics": [
-            "Laplace Transforms",
-            "Laplace Transform of standard functions",
-            "First shifting theorem",
+            "Laplace Transforms: Laplace Transform of standard functions & First shifting theorem",
             "Laplace transforms of functions multiplied by \u2018t\u2019 and divided by \u2018t\u2019",
             "Laplace transforms of derivatives and integrals of function",
-            "Evaluation of integrals by Laplace transforms",
-            "Laplace transform of periodic functions",
+            "Evaluation of integrals by Laplace transforms & Laplace transform of periodic functions",
             "Inverse Laplace transform by different methods, convolution theorem (without proof)",
-            "Applications",
-            "solving Initial value problems by Laplace Transform method."
+            "Applications: solving Initial value problems by Laplace Transform method."
           ]
         },
         {
@@ -899,10 +785,8 @@
           "title": "Vector Differentiation",
           "topics": [
             "Vector point functions and scalar point functions",
-            "Gradient",
-            "Divergence and Curl",
-            "Directional derivatives",
-            "Vector Identities",
+            "Gradient & Divergence and Curl",
+            "Directional derivatives & Vector Identities",
             "Scalar potential functions",
             "Solenoidal and Irrotational vectors."
           ]
@@ -911,51 +795,11 @@
           "unitNumber": 5,
           "title": "Vector Integration",
           "topics": [
-            "Line, Surface and Volume Integrals",
-            "Theorems of Green, Gauss and Stokes (without proofs) and their applications"
-          ]
-        },
-        {
-          "unitNumber": 6,
-          "title": "Crystallography & Materials Characterization",
-          "topics": [
-            "Introduction",
-            "Unit cell, space lattice, basis, lattice parameters",
-            "crystal structures, Bravais lattices, packing factor",
-            "SC, BCC, FCC",
-            "Miller indices, inter-planar distance",
-            "defects in crystals (Qualitative)",
-            "point defects, line defects, surface defects and volume defects",
-            "concept of nanomaterials",
-            "surface to volume ratio, X -ray diffraction",
-            "Bragg\u2019s law, powder method, calculation of average crystallite size using Debye Scherrer\u2019s formula, scanning electron microscopy (SEM)",
-            "block diagram, working principle."
-          ]
-        },
-        {
-          "unitNumber": 7,
-          "title": "Quantum Mechanics",
-          "topics": [
-            "Introduction, de-Broglie hypothesis, Heisenberg uncertainty principle, physical significance of wave function, postulates of quantum mechanics",
-            "operators in quantum mechanics, eigen values and eigen functions, expectation value",
-            "Schr\u00f6dinger\u2019s time independent wave equation, particle in a 1D box, Bloch\u2019s theorem (qualitative), Kronig-Penney model (qualitative)",
-            "E-k diagram, effective mass of electron, formation of energy bands, origin of bandgap, classification of solids, concept of discrete energy levels and quantum confinement in nanomaterials."
-          ]
-        },
-        {
-          "unitNumber": 8,
-          "title": "Quantum Computing",
-          "topics": [
-            "Introduction, linear algebra for quantum computation, Dirac\u2019s Bra and Ket notation and their properties, Hilbert space, Bloch\u2019s sphere, concept of quantum computer, classical bits, Qubits, multiple Qubit system, quantum computing system for information processing, evolution of quantum systems, quantum measurements, entanglement, quantum gates, challenges and advantages of quantum computing over classical computation, quantum algorithms",
-            "Deutsch-Jozsa, Shor, Grover."
-          ]
-        },
-        {
-          "unitNumber": 9,
-          "title": "Magnetic and Dielectric Materials",
-          "topics": [
-            "Introduction to magnetic materials, origin of magnetic moment-classification of magnetic materials, hysteresis, Weiss domain theory of ferromagnetism, soft and hard magnetic materials, synthesis of ferrimagnetic materials using sol-gel method, applications",
-            "magnetic hyperthermia for cancer treatment, magnets for EV, Giant Magneto Resistance (GMR) device."
+            "Line & Surface",
+            "Volume Integrals",
+            "Theorems of Green & Gauss",
+            "Stokes (without proofs)",
+            "their applications"
           ]
         }
       ]
@@ -964,48 +808,33 @@
       "code": "PH202BS",
       "title": "Advanced Engineering Physics",
       "department": "Physics",
-      "level": "100",
-      "credits": 3,
+      "level": 200,
+      "credits": 4,
       "termId": "term-sem-2",
       "type": "theory",
-      "colorTag": "graphite",
-      "description": "Course Objectives: 1. To study crystal structures, defects, and material characterization techniques like XRD and SEM. 2. To understand fundamental concepts of quantum mechanics and their applications in solids and nanomaterials.",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "teal",
+      "description": "Crystallography, quantum mechanics, quantum computing, magnetic/dielectric materials, lasers, and optical fibers.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
           "title": "Crystallography & Materials Characterization",
           "topics": [
-            "Introduction",
-            "Unit cell",
-            "space lattice",
-            "basis",
+            "Introduction: Unit cell",
+            "space lattice & basis",
             "lattice parameters",
             "crystal structures",
             "Bravais lattices",
-            "packing factor",
-            "SC, BCC, FCC",
-            "Miller indices",
+            "packing factor: SC",
+            "BCC & FCC & Miller indices",
             "inter-planar distance",
-            "defects in crystals (Qualitative)",
-            "point defects",
+            "defects in crystals (Qualitative): point defects",
             "line defects",
-            "surface defects and volume defects",
-            "concept of nanomaterials",
-            "surface to volume ratio",
-            "X -ray diffraction",
-            "Bragg\u2019s law",
+            "surface defects and volume defects. concept of nanomaterials: surface to volume ratio",
+            "X -ray diffraction: Bragg\u2019s law",
             "powder method",
             "calculation of average crystallite size using Debye Scherrer\u2019s formula",
-            "scanning electron microscopy (SEM)",
-            "block diagram",
+            "scanning electron microscopy (SEM): block diagram",
             "working principle."
           ]
         },
@@ -1017,15 +846,13 @@
             "de-Broglie hypothesis",
             "Heisenberg uncertainty principle",
             "physical significance of wave function",
-            "postulates of quantum mechanics",
-            "operators in quantum mechanics",
+            "postulates of quantum mechanics: operators in quantum mechanics",
             "eigen values and eigen functions",
             "expectation value",
             "Schr\u00f6dinger\u2019s time independent wave equation",
             "particle in a 1D box",
             "Bloch\u2019s theorem (qualitative)",
-            "Kronig-Penney model (qualitative)",
-            "E-k diagram",
+            "Kronig-Penney model (qualitative): E-k diagram",
             "effective mass of electron",
             "formation of energy bands",
             "origin of bandgap",
@@ -1043,8 +870,7 @@
             "Hilbert space",
             "Bloch\u2019s sphere",
             "concept of quantum computer",
-            "classical bits",
-            "Qubits",
+            "classical bits & Qubits",
             "multiple Qubit system",
             "quantum computing system for information processing",
             "evolution of quantum systems",
@@ -1052,10 +878,8 @@
             "entanglement",
             "quantum gates",
             "challenges and advantages of quantum computing over classical computation",
-            "quantum algorithms",
-            "Deutsch-Jozsa",
-            "Shor",
-            "Grover."
+            "quantum algorithms: Deutsch-Jozsa",
+            "Shor, Grover."
           ]
         },
         {
@@ -1068,16 +892,15 @@
             "Weiss domain theory of ferromagnetism",
             "soft and hard magnetic materials",
             "synthesis of ferrimagnetic materials using sol-gel method",
-            "applications",
-            "magnetic hyperthermia for cancer treatment",
+            "applications: magnetic hyperthermia for cancer treatment",
+            "magnets for EV",
+            "Giant Magneto Resistance (GMR) device",
             "Introduction to dielectric materials",
-            "types of polarization (qualitative)",
-            "electronics",
+            "types of polarization (qualitative): electronics",
             "ionic & orientation",
             "ferroelectric",
             "piezoelectric",
-            "pyroelectric materials and their applications",
-            "Ferroelectric Random-Access Memory (Fe-RAM)",
+            "pyroelectric materials and their applications: Ferroelectric Random-Access Memory (Fe-RAM)",
             "load cell and fire sensor."
           ]
         },
@@ -1085,29 +908,21 @@
           "unitNumber": 5,
           "title": "Laser and Fibre Optics",
           "topics": [
-            "Introduction to laser",
-            "characteristics of laser",
+            "Introduction to laser & characteristics of laser",
             "Einstein coefficients and their relations",
-            "metastable state",
-            "population inversion",
-            "pumping",
-            "lasing action",
-            "Ruby laser",
-            "He-Ne laser",
-            "CO2 laser",
+            "metastable state & population inversion",
+            "pumping & lasing action & Ruby laser",
+            "He-Ne laser & CO2 laser",
             "semiconductor diode laser",
-            "applications",
-            "Bar code scanner",
+            "applications: Bar code scanner",
             "LIDAR for autonomous vehicle",
             "Introduction to fibre optics",
             "total internal reflection",
             "construction of optical fibre",
-            "acceptance angle",
-            "numerical aperture",
+            "acceptance angle & numerical aperture",
             "classification of optical fibres",
             "losses in optical fibre",
-            "applications",
-            "optical fibre for communication system",
+            "applications: optical fibre for communication system",
             "sensor for structural health monitoring."
           ]
         }
@@ -1116,92 +931,77 @@
     {
       "code": "ME203ES",
       "title": "Engineering Drawing and Computer Aided Drafting",
-      "department": "Mechanical",
-      "level": "100",
+      "department": "Mechanical Engineering",
+      "level": 200,
       "credits": 3,
       "termId": "term-sem-2",
       "type": "theory",
-      "colorTag": "rust",
-      "description": "Course Objectives: 1. To introduce the fundamentals of engineering drawing and projection systems. 2. To develop skills in constructing orthographic, isometric, and sectional views. 3. To train students in interpreting and creating technical drawings using CAD tools. 4. To familiarize students with dimensioning standards and drafting conventions.",
-      "gradingScheme": {
-        "lessonCompletion": 20,
-        "quizzes": 20,
-        "assignments": 30,
-        "midterm": 10,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "mustard",
+      "description": "Engineering curves, orthographic projections, projections of solids, development of surfaces, and isometric projections.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
           "title": "Introduction to Engineering Graphics (Conventional)",
           "topics": [
             "Principles of Engineering Graphics and their Significance",
-            "Geometrical Constructions",
-            "Scales",
-            "Plain and Diagonal",
-            "Conic Sections including the Rectangular Hyperbola",
-            "General method only",
-            "Cycloid",
-            "Epicycloid and Hypocycloid."
+            "Geometrical Constructions and Drafting Standards",
+            "Scales: Plain and Diagonal Scales Construction",
+            "Conic Sections: Ellipse, Parabola, and Rectangular Hyperbola",
+            "Cycloidal Curves: Cycloid, Epicycloid and Hypocycloid Generation",
+            "Involutes of Polygons and Circles",
+            "Engineering Curves Application in Mechanical Design"
           ]
         },
         {
           "unitNumber": 2,
           "title": "Orthographic Projections (Conventional and Computer Aided)",
           "topics": [
-            "Principles of Orthographic Projections",
-            "Conventions",
-            "Projections of Points and Lines",
-            "Projections of Plane regular geometric figures",
-            "Auxiliary Planes",
-            "Computer aided orthographic projections",
-            "points",
-            "lines and planes",
-            "Introduction to Computer aided drafting",
-            "views",
-            "commands and conics."
+            "Principles of Orthographic Projections and BIS Conventions",
+            "Projections of Points in Different Quadrants",
+            "Projections of Straight Lines Inclined to One Reference Plane",
+            "Projections of Lines Inclined to Both Reference Planes",
+            "Projections of Plane Regular Geometric Figures",
+            "Auxiliary Reference Planes and True Shapes",
+            "Computer Aided Orthographic Drafting Commands and Views"
           ]
         },
         {
           "unitNumber": 3,
           "title": "Projections of Regular Solids (Conventional and Computer Aided)",
           "topics": [
-            "Auxiliary Views",
-            "Sections or Sectional views of Right Regular Solids",
-            "Prism",
-            "Cylinder",
-            "Pyramid",
-            "Cone",
-            "Auxiliary views",
-            "Computer aided projections of solids",
-            "sectional views"
+            "Projections of Prisms: Triangular, Square and Hexagonal",
+            "Projections of Cylinders with Inclined Axes",
+            "Projections of Pyramids with Axis Inclined to Reference Planes",
+            "Projections of Cones in Simple and Auxiliary Positions",
+            "Sections of Right Regular Solids by Cutting Planes",
+            "True Shape of Sectional Views",
+            "Computer Aided 3D Projections and Sectional Modelling"
           ]
         },
         {
           "unitNumber": 4,
-          "title": "Development of Surfaces (Conventional): Prism, Cylinder, Pyramid and Cone.",
+          "title": "Development of Surfaces (Conventional)",
           "topics": [
-            "Foundations of Development of Surfaces (Conventional): Prism",
-            "Cylinder",
-            "Pyramid and Cone.",
-            "Advanced concepts in Development of Surfaces (Conventional): Prism, Cylinder, Pyramid and Cone."
+            "Principles and Methods of Development of Lateral Surfaces",
+            "Parallel Line Development Method for Right Regular Prisms",
+            "Development of Lateral Surface of Truncated Cylinders",
+            "Radial Line Development Method for Pyramids",
+            "Development of Lateral Surface of Cones and Truncated Cones",
+            "Practical Applications of Surface Development in Sheet Metal Work"
           ]
         },
         {
           "unitNumber": 5,
           "title": "Isometric Projections (Conventional and Computer Aided)",
           "topics": [
-            "Principles of Isometric Projection, Isometric Scale, Isometric Views, Conventions, Isometric Views of Lines, Plane Figures, Simple and Compound Solids, Isometric Projection of objects having non, isometric lines",
-            "Isometric Projection of Spherical Parts",
-            "Conversion of Isometric Views to Orthographic Views and Vice- versa, Conventions",
-            "Conversion of orthographic projection into isometric view",
-            "Note",
-            "The End Semester Examination will be in conventional mode",
-            "CIE",
-            "I will be in conventional mode",
-            "CIE",
-            "II will be using Computer."
+            "Principles of Isometric Projection and Isometric Scale Construction",
+            "Isometric Views of Points, Lines, and Plane Figures",
+            "Isometric Projections of Simple and Compound Regular Solids",
+            "Isometric Projection of Objects with Non-Isometric Lines",
+            "Isometric Projection of Spherical Parts and Hollow Solids",
+            "Conversion of Isometric Views to Orthographic Projections",
+            "Computer Aided Isometric Drafting and Solid Modelling"
           ]
         }
       ]
@@ -1209,64 +1009,77 @@
     {
       "code": "EE204ES",
       "title": "Basic Electrical Engineering",
-      "department": "Electrical",
-      "level": "100",
+      "department": "Electrical & Electronics",
+      "level": 200,
       "credits": 3,
       "termId": "term-sem-2",
       "type": "theory",
-      "colorTag": "forest",
-      "description": "Course Objectives: \uf0b7 To understand DC and Single & Three phase AC circuits \uf0b7 To study and understand the different types of DC, AC machines and Transformers. \uf0b7 To import the knowledge of various electrical installations and the concept of power, power factor and its improvement.",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "mustard",
+      "description": "DC circuit analysis, network theorems, single-phase AC circuits, transformers, and electrical machines.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "D.C. Circuits: Electrical circuit elements (R, L and C), voltage and current sources, KVL&KCL, analysis",
+          "title": "D.C. Circuits",
           "topics": [
-            "of simple circuits with dc excitation",
-            "Superposition, Thevenin and Norton Theorems",
+            "D.C",
+            "Circuits: Electrical circuit elements (R",
+            "L and C)",
+            "voltage and current sources & KVL&KCL",
+            "analysis of simple circuits with dc excitation",
+            "Superposition & Thevenin and Norton Theorems",
             "Time-domain analysis of first-order RL and RC circuits."
           ]
         },
         {
           "unitNumber": 2,
-          "title": "A.C. Circuits: Representation of sinusoidal waveforms, peak and rms values, phasor representation,",
+          "title": "A.C. Circuits",
           "topics": [
-            "real power, reactive power, apparent power, power factor, Analysis of single-phase ac circuits consisting of R, L, C, RL, RC, RLC combinations (series and parallel), resonance in series R-L-C circuit",
-            "Three-phase balanced circuits, voltage and current relations in star and delta connections."
+            "A.C",
+            "Circuits: Representation of sinusoidal waveforms",
+            "peak and rms values & phasor representation",
+            "real power & reactive power",
+            "apparent power, power factor, Analysis of single-phase ac circuits consisting of R, RLC combinations (series and parallel), resonance in series R-L-C circuit",
+            "Three-phase balanced circuits",
+            "voltage and current relations in star and delta connections."
           ]
         },
         {
           "unitNumber": 3,
-          "title": "Transformers: Ideal and practical transformer, equivalent circuit, losses in transformers, regulation and",
+          "title": "Transformers",
           "topics": [
-            "efficiency",
-            "Auto-transformer and three-phase transformer connections."
+            "Transformers: Ideal",
+            "practical transformer",
+            "equivalent circuit",
+            "losses in transformers",
+            "regulation & efficiency",
+            "Auto-transformer",
+            "three-phase transformer connections."
           ]
         },
         {
           "unitNumber": 4,
-          "title": "Electrical Machines: Construction and working principle of dc machine, performance characteristics",
+          "title": "Electrical Machines",
           "topics": [
-            "of dc shunt machine",
-            "Generation of rotating magnetic field, Construction and working of a three-phase induction motor, Significance of torque-slip characteristics",
-            "Single-phase induction motor, Construction and working",
+            "Electrical Machines: Construction and working principle of dc machine",
+            "performance characteristics of dc shunt machine",
+            "Generation of rotating magnetic field",
+            "Construction and working of a three-phase induction motor",
+            "Significance of torque-slip characteristics",
+            "Single-phase induction motor & Construction and working",
             "Construction and working of synchronous generator."
           ]
         },
         {
           "unitNumber": 5,
-          "title": "Electrical Installations: Components of LT Switchgear: Switch Fuse Unit (SFU), MCB, ELCB, MCCB,",
+          "title": "Electrical Installations",
           "topics": [
-            "Types of Wires and Cables, Earthing",
-            "Types of Batteries, Important Characteristics for Batteries",
-            "Elementary calculations for energy consumption, power factor improvement and battery backup."
+            "Electrical Installations: Components of LT Switchgear: Switch Fuse Unit (SFU)",
+            "MCB & ELCB & MCCB & Types of Wires and Cables, Earthing",
+            "Types of Batteries",
+            "Important Characteristics for Batteries",
+            "Elementary calculations for energy consumption",
+            "power factor improvement and battery backup."
           ]
         }
       ]
@@ -1274,74 +1087,107 @@
     {
       "code": "CS205ES",
       "title": "Data Structures",
-      "department": "Computer Science",
-      "level": "100",
+      "department": "Computer Science & Engineering",
+      "level": 200,
       "credits": 3,
       "termId": "term-sem-2",
       "type": "theory",
-      "colorTag": "plum",
-      "description": "Course Objectives: 1. To provide practical exposure to advanced concepts in solid-state and modern physics. 2. To synthesize and study the physical properties of materials like semiconductors, ferromagnetic, and ferroelectric substances. 3. To perform semiconductor characterization using Hall effect and band gap experiments.",
-      "gradingScheme": {
-        "lessonCompletion": 10,
-        "quizzes": 25,
-        "assignments": 30,
-        "midterm": 15,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "Linear and non-linear data structures: stacks, queues, linked lists, trees, graphs, and hashing techniques.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Introduction to Data Structures: Basic Terminology, Classification of Data Structures, Operation on Data",
+          "title": "Introduction to Data Structures, Stacks and Queues",
           "topics": [
-            "Structures, abstract data types, selecting a Data Structure, Linear list",
-            "Introduction, singly linked list, Circular Linked Lists, Doubly Linked List, Stacks- Operations, Stack algorithm, Stack ADT, Stack applications, Queues- operations, Queue Algorithm, Queue ADT, Queue Applications."
+            "Introduction to Data Structures: Basic Terminology",
+            "Classification of Data Structures",
+            "Operation on Data Structures",
+            "abstract data types",
+            "selecting a Data Structure",
+            "Linear list & Introduction",
+            "singly linked list",
+            "Circular Linked Lists",
+            "Doubly Linked List & Stacks- Operations",
+            "Stack algorithm & Stack ADT",
+            "Stack applications & Queues- operations",
+            "Queue Algorithm & Queue ADT",
+            "Queue Applications."
           ]
         },
         {
           "unitNumber": 2,
-          "title": "Trees: Introduction, Types of Trees, creating a Binary Tree from a General Tree, traversing a Binary",
+          "title": "Trees and Binary Search Trees",
           "topics": [
-            "Tree, Binary Search Trees (BST), BST Operations- Searching, Insertion and Deletion, BST ADT, BST Applications, Threaded Binary Trees, AVL Trees, Red",
-            "Black Trees, Splay Trees"
+            "Trees: Introduction",
+            "Types of Trees",
+            "creating a Binary Tree from a General Tree",
+            "traversing a Binary Tree",
+            "Binary Search Trees (BST)",
+            "BST Operations- Searching",
+            "Insertion and Deletion",
+            "BST ADT",
+            "BST Applications",
+            "Threaded Binary Trees",
+            "AVL Trees & Red",
+            "Black Trees",
+            "Splay Trees"
           ]
         },
         {
           "unitNumber": 3,
-          "title": "Multi way Search Trees: Introduction, B Trees, B Trees ADT, 2-3 Trees, 2-3- Tree, B* Tree, B+ Trees",
+          "title": "Multi-way Search Trees and Heaps",
           "topics": [
-            "Heaps",
-            "Binary Heaps, Binomial heaps, Fibonacci heaps, Comparison of Various Heaps, Applications Searching",
-            "Introduction, Interpolation Search, Jump search"
+            "Multi way Search Trees: Introduction",
+            "B Trees",
+            "B Trees ADT",
+            "Trees",
+            "Tree",
+            "B* Tree",
+            "B+ Trees Heaps: Binary Heaps",
+            "Binomial heaps",
+            "Fibonacci heaps",
+            "Comparison of Various Heaps",
+            "Applications Searching: Introduction",
+            "Interpolation Search",
+            "Jump search"
           ]
         },
         {
           "unitNumber": 4,
-          "title": "Graphs: Introduction, Directed Graphs, Bi connected Components, Representation of Graphs, Graph",
+          "title": "Graphs and Sorting Algorithms",
           "topics": [
-            "Traversal Algorithms, Graph ADT, Applications of Graphs Sorting",
-            "Radix Sort, Heap sort, Shell Sort, Tree Sort,"
+            "Graphs: Introduction",
+            "Directed Graphs",
+            "Bi connected Components",
+            "Representation of Graphs",
+            "Graph Traversal Algorithms",
+            "Applications of Graph Traversal Algorithms",
+            "Graph ADT",
+            "Applications of",
+            "Graphs Sorting",
+            "Radix Sort",
+            "Heap sort",
+            "Shell Sort",
+            "Tree Sort"
           ]
         },
         {
           "unitNumber": 5,
-          "title": "Hashing and Collision: Introduction, Hash Tables, Hash Functions, Different Hash Functions: Division",
+          "title": "Hashing, Collisions and File Organization",
           "topics": [
-            "Method, Multiplication Method, Mid-square Method, Folding Method",
-            "collisions",
-            "Collision Resolution by Open Addressing, Collision Resolution by Chaining Files and their Organization",
-            "Data Structures",
-            "A Pseudocode Approach with C, 2 nd Edition, R",
-            "Data Structures using C",
-            "A",
-            "S.Tanenbaum, Y",
-            "Langsam, and M.J",
-            "I Year II Sem",
-            "To provide practical exposure to advanced concepts in solid-state and modern physics",
-            "To synthesize and study the physical properties of materials like semiconductors, ferromagnetic, and ferroelectric substances",
-            "To perform semiconductor characterization using Hall effect and band gap experiments",
-            "To explore the working principles of lasers and optical fibers through hands-on experiments",
-            "To develop skills in data analysis, interpretation, and scientific reporting."
+            "Hashing and Collision: Introduction",
+            "Hash Tables & Hash Functions",
+            "Different Hash Functions: Division Method",
+            "Multiplication Method",
+            "Mid-square Method",
+            "Folding Method",
+            "collisions: Collision Resolution by Open Addressing",
+            "Collision Resolution by Chaining Files and their Organization: Introduction",
+            "Data hierarchy & File Attributes",
+            "Text and Binary Files",
+            "Basic File Operations",
+            "File Organization & Indexing"
           ]
         }
       ]
@@ -1350,115 +1196,28 @@
       "code": "PH206BS",
       "title": "Advanced Engineering Physics Lab",
       "department": "Physics",
-      "level": "100",
+      "level": 200,
       "credits": 1,
       "termId": "term-sem-2",
       "type": "lab",
-      "colorTag": "graphite",
-      "description": "Course Objectives: 1. To provide practical exposure to advanced concepts in solid-state and modern physics. 2. To synthesize and study the physical properties of materials like semiconductors, ferromagnetic, and ferroelectric substances. 3. To perform semiconductor characterization using Hall effect and band gap experiments.",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": 8,
+      "colorTag": "teal",
+      "description": "Laboratory measurements in solid state physics, semiconductor parameters, magnetic hysteresis, lasers, and optical fibers.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "2. Determination of energy gap of a semiconductor.",
-          "isSection": true,
+          "title": "Advanced Engineering Physics Experiments",
           "topics": [
-            "3. Determination of Hall coefficient and carrier concertation of a given semiconductor.",
-            "4. Determination of magnetic moment of a bar magnet and horizontal earth magnetic field."
-          ]
-        },
-        {
-          "unitNumber": 2,
-          "title": "7. Determination of dielectric constant of a given material.",
-          "isSection": true,
-          "topics": [
-            "8. Determination of Curie\u2019s temperature of a given ferroelectric material.",
-            "9. A) Determination of wavelength of a laser using diffraction grating.",
-            "B) Study of V-I & L-I characteristics of a given laser diode."
-          ]
-        },
-        {
-          "unitNumber": 3,
-          "title": "10. A) Determination of numerical aperture of a given optical fibre.",
-          "isSection": true,
-          "topics": [
-            "B) Determination of bending losses of a given optical fibre."
-          ]
-        },
-        {
-          "unitNumber": 5,
-          "title": "2. It introduces searching and sorting algorithms",
-          "isSection": true,
-          "topics": [
-            "3. It provides an understanding of data structures such as stacks and queues."
-          ]
-        },
-        {
-          "unitNumber": 7,
-          "title": "1. Write a program that uses functions to perform the following operations on singly linked list.",
-          "isSection": true,
-          "topics": [
-            "i) Creation ii) Insertion iii) Deletion iv) Traversal"
-          ]
-        },
-        {
-          "unitNumber": 8,
-          "title": "2. Write a program that uses functions to perform the following operations on doubly linked list.",
-          "isSection": true,
-          "topics": [
-            "i) Creation ii) Insertion iii) Deletion iv) Traversal"
-          ]
-        },
-        {
-          "unitNumber": 9,
-          "title": "3. Write a program that uses functions to perform the following operations on circular linked list.",
-          "isSection": true,
-          "topics": [
-            "i) Creation ii) Insertion iii) Deletion iv) Traversal"
-          ]
-        },
-        {
-          "unitNumber": 10,
-          "title": "4. Write a program that implement stack (its operations) using",
-          "isSection": true,
-          "topics": [
-            "i) Arrays ii) ADT"
-          ]
-        },
-        {
-          "unitNumber": 11,
-          "title": "5. Write a program that implement Queue (its operations) using",
-          "isSection": true,
-          "topics": [
-            "i) Arrays ii) ADT",
-            "6. Write a program that implements the following sorting methods to sort a given list of integers in",
-            "ascending order",
-            "i ) Radix Sort, ii) Heap sort, iii) Shell Sort, iv) Tree Sort",
-            "7. Write a program to implement the tree traversal methods (Recursive and Non-Recursive)."
-          ]
-        },
-        {
-          "unitNumber": 12,
-          "title": "8. Write a program to implement",
-          "isSection": true,
-          "topics": [
-            "i) Binary Search tree ii) B Trees iii) B+ Trees iv) AVL trees v) Red",
-            "Black trees"
-          ]
-        },
-        {
-          "unitNumber": 13,
-          "title": "10. Write a program to implement the following Hash Functions: i) Division Method, ii) Multiplication",
-          "isSection": true,
-          "topics": [
-            "Method, iii) Mid-square Method, iv) Folding Method"
+            "Synthesis of magnetite (Fe3O4) powder using sol-gel method",
+            "Determination of energy gap of a semiconductor",
+            "Determination of Hall coefficient and carrier concentration of a semiconductor",
+            "Determination of magnetic moment of a bar magnet and horizontal earth magnetic field",
+            "Study of B-H curve of a ferromagnetic material",
+            "Study of P-E loop of a given ferroelectric crystal",
+            "Determination of dielectric constant of a given material",
+            "Determination of Curie temperature of a ferroelectric material",
+            "Determination of wavelength of a laser using diffraction grating",
+            "Determination of numerical aperture and bending loss of an optical fiber"
           ]
         }
       ]
@@ -1466,81 +1225,29 @@
     {
       "code": "CS207ES",
       "title": "Data Structures Lab",
-      "department": "Computer Science",
-      "level": "100",
+      "department": "Computer Science & Engineering",
+      "level": 200,
       "credits": 1,
       "termId": "term-sem-2",
       "type": "lab",
-      "colorTag": "plum",
-      "description": "Course Objectives: 1. It covers various concepts of C programming language 2. It introduces searching and sorting algorithms 3. It provides an understanding of data structures such as stacks and queues.",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "Implementation and empirical evaluation of stacks, queues, linked lists, trees, graph algorithms, and hashing.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "1. Write a program that uses functions to perform the following operations on singly linked list.",
-          "isSection": true,
+          "title": "Data Structures Laboratory Experiments",
           "topics": [
-            "i) Creation ii) Insertion iii) Deletion iv) Traversal"
-          ]
-        },
-        {
-          "unitNumber": 2,
-          "title": "2. Write a program that uses functions to perform the following operations on doubly linked list.",
-          "isSection": true,
-          "topics": [
-            "i) Creation ii) Insertion iii) Deletion iv) Traversal"
-          ]
-        },
-        {
-          "unitNumber": 3,
-          "title": "3. Write a program that uses functions to perform the following operations on circular linked list.",
-          "isSection": true,
-          "topics": [
-            "i) Creation ii) Insertion iii) Deletion iv) Traversal"
-          ]
-        },
-        {
-          "unitNumber": 4,
-          "title": "4. Write a program that implement stack (its operations) using",
-          "isSection": true,
-          "topics": [
-            "i) Arrays ii) ADT"
-          ]
-        },
-        {
-          "unitNumber": 5,
-          "title": "5. Write a program that implement Queue (its operations) using",
-          "isSection": true,
-          "topics": [
-            "i) Arrays ii) ADT",
-            "6. Write a program that implements the following sorting methods to sort a given list of integers in",
-            "ascending order",
-            "i ) Radix Sort, ii) Heap sort, iii) Shell Sort, iv) Tree Sort",
-            "7. Write a program to implement the tree traversal methods (Recursive and Non-Recursive)."
-          ]
-        },
-        {
-          "unitNumber": 6,
-          "title": "8. Write a program to implement",
-          "isSection": true,
-          "topics": [
-            "i) Binary Search tree ii) B Trees iii) B+ Trees iv) AVL trees v) Red",
-            "Black trees"
-          ]
-        },
-        {
-          "unitNumber": 7,
-          "title": "10. Write a program to implement the following Hash Functions: i) Division Method, ii) Multiplication",
-          "isSection": true,
-          "topics": [
-            "Method, iii) Mid-square Method, iv) Folding Method"
+            "Singly linked list operations: insertion, deletion, and display",
+            "Doubly linked list operations: insertion, deletion, and display",
+            "Circular linked list operations: insertion, deletion, and display",
+            "Stack implementation using arrays and Abstract Data Types (ADT)",
+            "Queue implementation using arrays and Abstract Data Types (ADT)",
+            "Sorting algorithms implementation: Radix Sort, Heap Sort, Shell Sort, and Tree Sort",
+            "Binary tree recursive and non-recursive traversal methods",
+            "Binary Search Tree operations: insertion, deletion, and searching",
+            "Graph traversal methods: Breadth First Search (BFS) and Depth First Search (DFS)",
+            "Hash functions implementation: Division Method and Linear Probing for collision resolution"
           ]
         }
       ]
@@ -1548,122 +1255,55 @@
     {
       "code": "CS208ES",
       "title": "Python Programming Lab",
-      "department": "Computer Science",
-      "level": "100",
+      "department": "Computer Science & Engineering",
+      "level": 200,
       "credits": 1,
       "termId": "term-sem-2",
       "type": "lab",
-      "colorTag": "ochre",
-      "description": "Course Objectives: \uf0b7 To install and run the Python interpreter \uf0b7 To learn control structures. \uf0b7 To Understand Lists, Dictionaries in python \uf0b7 To Handle Strings and Files in Python",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "sage",
+      "description": "Comprehensive practical programming in Python: control structures, data collections, functions, OOP, and file I/O.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "I. Use a web browser to go to the Python website http://python.org. This page contains",
-          "isSection": true,
+          "title": "Python Programming Laboratory Exercises",
           "topics": [
-            "information about Python and links to Python-related pages, and it gives you the ability",
-            "to search the Python documentation.",
-            "II. Start the Python interpreter and type help() to start the online help utility."
-          ]
-        },
-        {
-          "unitNumber": 2,
-          "title": "2. Start a Python interpreter and use it as a Calculator.",
-          "isSection": true,
-          "topics": [
-            "3. Write a program to calculate compound interest when principal, rate and number of periods are",
-            "given.",
-            "4. Read the name, address, email and phone number of a person through the keyboard and print",
-            "the details."
-          ]
-        },
-        {
-          "unitNumber": 3,
-          "title": "5. Print the below triangle using for loop.",
-          "isSection": true,
-          "topics": [
-            "2 2 2 2",
-            "1 1 1 1 1",
-            "6. Write a program to check whether the given input is digit or lowercase character or uppercase",
-            "character or a special character(use 'if-else-if' ladder)",
-            "7. Python program to print all prime numbers in a given interval (use break)"
-          ]
-        },
-        {
-          "unitNumber": 4,
-          "title": "9. Write a program to find common values between two arrays.",
-          "isSection": true,
-          "topics": [
-            "10. Write a function called palindrome that takes a string argument and returnsTrue if it is a",
-            "palindrome and False otherwise. Remember that you can use the built-in function len to check",
-            "the length of a string.",
-            "11. Write a function called is_sorted that takes a list as a parameter and returns True if the list is",
-            "sorted in ascending order and False otherwise.",
-            "12. Write a function called has_duplicates that takes a list and returns True if there is any element",
-            "that appears more than once. It should not modify the original list.",
-            "13. Write a function called remove_duplicates that takes a list and returns a new list with only the",
-            "unique elements from the original. Hint: they don\u2019t have to be in the same order.",
-            "14. The wordlist I provided, words.txt, doesn\u2019t contain single letter words. So you might want to add",
-            "15. Write a python code to read dictionary values from the user. Construct a function to invert its",
-            "content. i.e., keys should be values and values should be keys.",
-            "16. Add a comma between the characters. If the given word is 'Apple', it should become 'A,p,p,l,e'"
-          ]
-        },
-        {
-          "unitNumber": 5,
-          "title": "17. Remove the given word in all the places in a string?",
-          "isSection": true,
-          "topics": [
-            "18. Write a function that takes a sentence as an input parameter and replaces the first letter of",
-            "every word with the corresponding upper case letter and the rest of the letters in the word by",
-            "corresponding letters in lower case without using a built-in function?",
-            "19. Writes a recursive function that generates all binary strings of n-bit length"
-          ]
-        },
-        {
-          "unitNumber": 6,
-          "title": "20. Write a python program that defines a matrix and prints",
-          "isSection": true,
-          "topics": [
-            "21. Write a python program to perform multiplication of two square matrices",
-            "22. How do you make a module? Give an example of construction of a module using different",
-            "geometrical shapes and operations on them as its functions.",
-            "23. Use the structure of exception handling all general-purpose exceptions.",
-            "24. Write a function called draw_rectangle that takes a Canvas and a Rectangle as arguments and",
-            "draws a representation of the Rectangle on the Canvas.",
-            "25. Add an attribute named color to your Rectangle objects and modify draw_rectangle so that it",
-            "uses the color attribute as the fill color.",
-            "26. Write a function called draw_point that takes a Canvas and a Point as arguments and draws a",
-            "representation of the Point on the Canvas.",
-            "27. Define a new class called Circle with appropriate attributes and instantiate a few Circle objects.",
-            "Write a function called draw_circle that draws circles on the canvas.",
-            "28. Write a python code to read a phone number and email-id from the user and validate it for",
-            "correctness.",
-            "29. Write a Python code to merge two given file contents into a third file.",
-            "30. Write a Python code to open a given file and construct a function to check for given words",
-            "present in it and display on found.",
-            "31. Write a Python code to Read text from a text file, find the word with most number of occurrences",
-            "32. Write a function that reads a file file1and displays the number of words, number of vowels,",
-            "blank spaces, lower case letters and uppercase letters."
-          ]
-        },
-        {
-          "unitNumber": 7,
-          "title": "34. Install NumPypackage with pip and explore it.",
-          "isSection": true,
-          "topics": [
-            "35. Write a program to implement Digital Logic Gates",
-            "AND, OR, NOT, EX-OR",
-            "36. Write a GUI program to create a window wizard having two text labels, two text fields and two",
-            "buttons as Submit and Reset."
+            "Python interpreter setup, interactive mode, and online help utility",
+            "Interactive arithmetic calculations using Python interpreter as a calculator",
+            "Compound interest calculation with principal, rate, and period inputs",
+            "Reading personal contact details from standard input and formatted printing",
+            "Inverted triangle number pattern generation using nested for loops",
+            "Fibonacci sequence generation using while loop up to n terms",
+            "Armstrong number check between given numerical limits",
+            "Counting characters, vowels, consonants, digits, and special symbols in string",
+            "String slicing, reversal, and substring search operations",
+            "Function to compute greatest common divisor (GCD) of two numbers",
+            "Binary, octal, and hexadecimal number conversions using built-in functions",
+            "List creation, indexing, appending, and element removal operations",
+            "List comprehension for filtering even numbers and squaring values",
+            "Tuple immutability demonstration, packing, unpacking, and slicing",
+            "Dictionary creation, key-value lookup, insertion, and deletion",
+            "Inverting dictionary mapping keys to values and values to keys",
+            "Word frequency counter in a sentence using dictionary data structure",
+            "Set mathematical operations: union, intersection, difference, and symmetric difference",
+            "Removing duplicates from a list using Python set conversion",
+            "Recursive function implementation to compute factorial of a number",
+            "Recursive implementation of Tower of Hanoi problem",
+            "Lambda functions with map, filter, and reduce operations",
+            "Modular programming: creating custom modules and importing functions",
+            "File reading, counting lines, words, and characters in a text file",
+            "File writing and copying contents from source file to destination file",
+            "Exception handling using try, except, else, and finally blocks",
+            "Handling multiple exceptions and custom user-defined exception classes",
+            "Class definition, constructor (__init__), instance methods, and attributes",
+            "Single and multiple inheritance implementation in Python classes",
+            "Method overriding and polymorphism demonstration",
+            "Operator overloading using special dunder methods",
+            "Regular expressions: pattern matching, phone number, and email validation",
+            "Searching and replacing patterns in text using re module",
+            "Command line arguments processing using sys.argv",
+            "Date and time manipulation using datetime module",
+            "Basic data analysis and plotting using standard libraries"
           ]
         }
       ]
@@ -1671,57 +1311,38 @@
     {
       "code": "EE209ES",
       "title": "Basic Electrical Engineering Lab",
-      "department": "Electrical",
-      "level": "100",
+      "department": "Electrical & Electronics",
+      "level": 200,
       "credits": 1,
       "termId": "term-sem-2",
       "type": "lab",
-      "colorTag": "forest",
-      "description": "Course Objectives: \uf0b7 To measure the electrical parameters for different types of DC and AC circuits using conventional and theorems approach. \uf0b7 To study the transient response of various R, L and C circuits using different excitations. \uf0b7 To determine the performance of different types of DC, AC machines and Transformers.",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "mustard",
+      "description": "Hands-on verification of circuit theorems, transient analysis of RLC circuits, and performance tests on electrical machines.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Laboratory Experiments",
-          "isSection": true,
+          "title": "Part A - Compulsory Experiments",
           "topics": [
-            "PART- A (compulsory)"
+            "Verification of Kirchhoff's Voltage Law (KVL) and Kirchhoff's Current Law (KCL)",
+            "Verification of Thevenin's and Norton's Network Theorems",
+            "Transient Response of Series RL and RC circuits for DC excitation",
+            "Resonance phenomenon in series RLC circuit and bandwidth calculation",
+            "Calculations and Verification of Impedance and Current of RL, RC and RLC series circuits",
+            "Measurement of Voltage, Current and Real Power in Primary and Secondary Circuits of Single-Phase Transformer",
+            "Performance Characteristics of a DC Shunt Motor",
+            "Torque-Speed Characteristics of a Three-phase Induction Motor"
           ]
         },
         {
           "unitNumber": 2,
-          "title": "4. Resonance in series RLC circuit",
-          "isSection": true,
+          "title": "Part B - Laboratory Experiments",
           "topics": [
-            "5. Calculations and Verification of Impedance and Current of RL, RC and RLC series",
-            "circuits",
-            "6. Measurement of Voltage, Current and Real Power in primary and Secondary Circuits of a",
-            "Single-Phase Transformer"
-          ]
-        },
-        {
-          "unitNumber": 3,
-          "title": "8. Torque-Speed Characteristics of a Three-phase Induction Motor.",
-          "isSection": true,
-          "topics": [
-            "PART-B (any two experiments from the given list)"
-          ]
-        },
-        {
-          "unitNumber": 4,
-          "title": "2. Three Phase Transformer: Verification of Relationship between Voltages and Currents",
-          "isSection": true,
-          "topics": [
-            "(Star-Delta, Delta-Delta, Delta-star, Star-Star)",
-            "3. Load Test on Single Phase Transformer (Calculate Efficiency and Regulation)",
-            "4. Measurement of Active and Reactive Power in a balanced Three-phase circuit"
+            "Verification of Superposition Theorem for DC excitation",
+            "Three-Phase Transformer: Verification of Relationship between Line and Phase Voltages and Currents",
+            "Load Test on Single-Phase Transformer for Efficiency and Voltage Regulation calculation",
+            "Measurement of Active and Reactive Power in a balanced Three-phase circuit using Two-Wattmeter method",
+            "No-Load Magnetization Characteristics of a Three-phase Alternator"
           ]
         }
       ]
@@ -1729,30 +1350,62 @@
     {
       "code": "CS210ES",
       "title": "IT Workshop",
-      "department": "Computer Science",
-      "level": "100",
+      "department": "Computer Science & Engineering",
+      "level": 200,
       "credits": 1,
       "termId": "term-sem-2",
       "type": "lab",
-      "colorTag": "slate",
-      "description": "Course Objectives: The IT Workshop for engineers is a training lab course spread over 60 hours. The modules include training on PC Hardware, Internet & World Wide Web and Productivity tools including Word, Excel, PowerPoint and Publisher.",
-      "gradingScheme": {
-        "lessonCompletion": 60,
-        "quizzes": 20,
-        "assignments": 0,
-        "midterm": 0,
-        "finalExam": 20
-      },
-      "electiveExperimentsCount": null,
+      "colorTag": "crimson",
+      "description": "Practical training in PC hardware assembly, dual-boot OS installation, internet security, LaTeX, Word, Excel, and PowerPoint.",
+      "gradingScheme": "10_point",
       "units": [
         {
           "unitNumber": 1,
-          "title": "Practical Lab Exercises",
-          "isSection": true,
+          "title": "PC Hardware",
           "topics": [
-            "Laboratory Setup and Safety Orientation",
-            "Core Experiments",
-            "Final Verification and Viva"
+            "Task 1: Peripherals of a computer, CPU components identification, and block diagram",
+            "Task 2: Disassembling and assembling personal computer back to working condition",
+            "Task 3: Operating system installation: Windows OS setup and driver configuration",
+            "Task 4: Linux OS dual-boot installation alongside Windows and partition management"
+          ]
+        },
+        {
+          "unitNumber": 2,
+          "title": "Internet and World Wide Web",
+          "topics": [
+            "Task 1: Local Area Network connectivity, IP addressing, and TCP/IP configuration",
+            "Task 2: Web browser configuration, proxy settings, bookmarks, and search customization",
+            "Task 3: Search engine querying techniques, netiquette, and academic resource discovery",
+            "Task 4: Cyber hygiene: virus protection, firewalls, safe browsing, and anti-phishing practices"
+          ]
+        },
+        {
+          "unitNumber": 3,
+          "title": "LaTeX and Word Processing",
+          "topics": [
+            "Task 1: Document preparation orientation: LaTeX and word processor fundamentals",
+            "Task 2: Creating professional project certificate with headers, footers, and timestamping",
+            "Task 3: Creating academic project abstract: styles, table formatting, and bulleted lists",
+            "Task 4: Creating technical newsletter: multi-column layout, image formatting, and callouts"
+          ]
+        },
+        {
+          "unitNumber": 4,
+          "title": "Spreadsheet Automation with Excel",
+          "topics": [
+            "Excel orientation: workbook interface, gridlines, format cells, and cell addressing",
+            "Task 1: Creating academic scheduler with formatting, summation, and auto-fill",
+            "Task 2: Calculating GPA using cell referencing, average formulas, and statistical functions",
+            "Task 3: Advanced data manipulation: cell splitting, freezing panes, grouping, and conditional formatting"
+          ]
+        },
+        {
+          "unitNumber": 5,
+          "title": "Interactive Presentations with PowerPoint",
+          "topics": [
+            "Task 1: Presentation design: slide layouts, typography, shapes, and arrows",
+            "Task 2: Interactive presentations: hyperlinks, media embedding (audio/video), and animations",
+            "Task 3: Slide Master configuration, reusable templates, and slide sorter presentation delivery"
           ]
         }
       ]

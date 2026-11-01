@@ -46,9 +46,6 @@ export function CourseCard({
 
   return (
     <div className="group relative flex flex-col justify-between overflow-hidden academic-card academic-card-hover select-none">
-      {/* 10px Gingham Trim above the Course Card Cover */}
-      <div className="gingham-trim w-full" />
-
       {/* Top Algorithmic Cover Art (96px height) */}
       <Link href={`/courses/${course.id}`} className="block focus:outline-none">
         <AlgorithmicCover

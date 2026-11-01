@@ -193,7 +193,7 @@ export function AiStudyPlanModal({
                     type="date"
                     value={examDate}
                     onChange={(e) => setExamDate(e.target.value)}
-                    className="h-8 text-xs font-mono"
+                    className="h-8 text-xs font-sans font-semibold"
                   />
                 </div>
 
@@ -207,7 +207,7 @@ export function AiStudyPlanModal({
                     max={100}
                     value={currentScore}
                     onChange={(e) => setCurrentScore(Number(e.target.value))}
-                    className="h-8 text-xs font-mono w-24"
+                    className="h-8 text-xs font-sans font-semibold w-24"
                   />
                 </div>
 
@@ -274,12 +274,12 @@ export function AiStudyPlanModal({
                   >
                     <div className="flex items-center justify-between font-semibold text-app-ink">
                       <div className="flex items-center gap-2">
-                        <span className="rounded bg-app-accent text-white font-mono text-[10px] px-1.5 py-0.5">
+                        <span className="rounded bg-app-accent text-white font-sans font-semibold text-[10px] px-1.5 py-0.5">
                           Week {wk.weekNumber}
                         </span>
                         <span>{wk.focusTheme}</span>
                       </div>
-                      <span className="font-mono text-[11px] text-app-ink-muted flex items-center gap-1">
+                      <span className="font-sans font-semibold text-[11px] text-app-ink-muted flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         {wk.plannedHours} hrs
                       </span>

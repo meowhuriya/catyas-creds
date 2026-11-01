@@ -25,7 +25,7 @@ export function YouTubeThumbnail({
       <div className="flex h-full w-full items-center justify-center bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)]">
         <div className="flex flex-col items-center gap-1">
           <Video className="h-6 w-6 stroke-[1.5]" />
-          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold">
+          <span className="text-[10px] uppercase font-sans font-semibold tracking-wider font-semibold">
             Lecture
           </span>
         </div>

@@ -199,7 +199,7 @@ export default function TodayPage() {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--color-accent)] font-bold">
+            <span className="text-[10px] font-sans font-semibold uppercase tracking-widest text-[var(--color-accent)] font-bold">
               {todayFormatted}
             </span>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-ink)] tracking-tight">
@@ -219,7 +219,7 @@ export default function TodayPage() {
                 <span className="font-serif text-sm font-bold block leading-none">
                   {streakDays}-Day
                 </span>
-                <span className="text-[9px] uppercase font-mono tracking-wider opacity-80">
+                <span className="text-[9px] uppercase font-sans font-semibold tracking-wider opacity-80">
                   Study Streak
                 </span>
               </div>
@@ -232,7 +232,7 @@ export default function TodayPage() {
                 <span className="font-serif text-sm font-bold block leading-none">
                   {todayHours} hrs
                 </span>
-                <span className="text-[9px] uppercase font-mono tracking-wider text-[var(--color-ink-muted)]">
+                <span className="text-[9px] uppercase font-sans font-semibold tracking-wider text-[var(--color-ink-muted)]">
                   Today Logged
                 </span>
               </div>
@@ -258,7 +258,7 @@ export default function TodayPage() {
                   </span>
                 </div>
                 {focusCourse && (
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/20">
+                  <span className="text-[10px] font-sans font-semibold font-bold px-2 py-0.5 rounded bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/20">
                     {focusCourse.code}
                   </span>
                 )}
@@ -274,12 +274,12 @@ export default function TodayPage() {
                   <div className="flex items-center justify-between text-xs text-[var(--color-ink-muted)]">
                     <span>
                       Current Mastery:{" "}
-                      <strong className="text-[var(--color-ink)] font-mono tabular-nums">
+                      <strong className="text-[var(--color-ink)] font-sans font-semibold tabular-nums">
                         {suggestedFocusTopic.topicScore}/100
                       </strong>{" "}
                       (Watch: {suggestedFocusTopic.watchScore}/40 • Check: {suggestedFocusTopic.checkScore}/60)
                     </span>
-                    <span className="font-mono text-[11px]">
+                    <span className="font-sans font-semibold text-[11px]">
                       {suggestedFocusTopic.isDone ? "Done (>= 70)" : "Learning"}
                     </span>
                   </div>
@@ -334,7 +334,7 @@ export default function TodayPage() {
                   Continue Watching
                 </h3>
               </div>
-              <span className="text-xs text-[var(--color-ink-muted)] font-mono">
+              <span className="text-xs text-[var(--color-ink-muted)] font-sans font-semibold">
                 {continueWatching.length} in progress
               </span>
             </div>
@@ -363,7 +363,7 @@ export default function TodayPage() {
                           alt={lesson.title}
                           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-200"
                         />
-                        <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-[4px] bg-black/80 font-mono text-[10px] font-semibold text-white tabular-nums">
+                        <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-[4px] bg-black/80 font-sans font-semibold text-[10px] font-semibold text-white tabular-nums">
                           {formatSecondsToTime(progress.lastPositionSeconds || 0)}
                         </span>
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40">
@@ -378,7 +378,7 @@ export default function TodayPage() {
                         <div>
                           <div className="flex items-center justify-between text-[10px] text-[var(--color-ink-muted)]">
                             <span className="font-semibold">{lesson.channelTitle}</span>
-                            <span className="font-mono tabular-nums">{percent}% watched</span>
+                            <span className="font-sans font-semibold tabular-nums">{percent}% watched</span>
                           </div>
                           <h4 className="font-serif text-xs font-bold text-[var(--color-ink)] line-clamp-2 mt-0.5 group-hover:text-[var(--color-accent)] transition-colors">
                             {lesson.title}
@@ -394,7 +394,7 @@ export default function TodayPage() {
                             <ChevronRight className="h-3 w-3" />
                           </Link>
                           {course && (
-                            <span className="text-[10px] font-mono text-[var(--color-ink-muted)]">
+                            <span className="text-[10px] font-sans font-semibold text-[var(--color-ink-muted)]">
                               {course.code}
                             </span>
                           )}
@@ -416,7 +416,7 @@ export default function TodayPage() {
                   Spaced Revision Queue
                 </h3>
               </div>
-              <span className="text-xs text-[var(--color-ink-muted)] font-mono">
+              <span className="text-xs text-[var(--color-ink-muted)] font-sans font-semibold">
                 {dueRevisions.length} due
               </span>
             </div>
@@ -438,7 +438,7 @@ export default function TodayPage() {
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           {course && (
-                            <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] border border-[var(--color-border)]">
+                            <span className="text-[10px] font-sans font-semibold font-bold px-1.5 py-0.2 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] border border-[var(--color-border)]">
                               {course.code}
                             </span>
                           )}
@@ -497,11 +497,11 @@ export default function TodayPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         {c && (
-                          <span className="text-[10px] font-mono font-bold text-[var(--color-ink-muted)]">
+                          <span className="text-[10px] font-sans font-semibold font-bold text-[var(--color-ink-muted)]">
                             {c.code}
                           </span>
                         )}
-                        <span className="text-[10px] font-mono font-semibold text-amber-700 dark:text-amber-400">
+                        <span className="text-[10px] font-sans font-semibold font-semibold text-amber-700 dark:text-amber-400">
                           {top.topicScore}/100 Pts
                         </span>
                       </div>
@@ -576,13 +576,13 @@ export default function TodayPage() {
                     className="p-3 rounded-[8px] border border-[var(--color-border)] bg-[var(--color-surface-muted)]/40 flex items-start justify-between gap-3"
                   >
                     <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-accent)] font-bold block">
+                      <span className="text-[10px] font-sans font-semibold uppercase tracking-wider text-[var(--color-accent)] font-bold block">
                         {evt.type.replace("_", " ")}
                       </span>
                       <h4 className="font-serif text-xs font-bold text-[var(--color-ink)] truncate mt-0.5">
                         {evt.title}
                       </h4>
-                      <span className="text-[11px] text-[var(--color-ink-muted)] block mt-0.5 font-mono">
+                      <span className="text-[11px] text-[var(--color-ink-muted)] block mt-0.5 font-sans font-semibold">
                         Date: {evt.date}
                       </span>
                     </div>
@@ -604,25 +604,25 @@ export default function TodayPage() {
             <div className="text-xs space-y-2 text-[var(--color-ink-muted)]">
               <div className="flex justify-between">
                 <span>Daily Target:</span>
-                <span className="font-mono font-semibold text-[var(--color-ink)]">
+                <span className="font-sans font-semibold font-semibold text-[var(--color-ink)]">
                   2.0 Hours
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Hours Logged Today:</span>
-                <span className="font-mono font-bold text-[var(--color-accent)]">
+                <span className="font-sans font-semibold font-bold text-[var(--color-accent)]">
                   {todayHours} Hours
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Completed Sessions:</span>
-                <span className="font-mono font-semibold text-[var(--color-ink)]">
+                <span className="font-sans font-semibold font-semibold text-[var(--color-ink)]">
                   {todaySessions.length} sessions
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Active Study Streak:</span>
-                <span className="font-mono font-bold text-amber-700 dark:text-amber-400">
+                <span className="font-sans font-semibold font-bold text-amber-700 dark:text-amber-400">
                   {streakDays} days
                 </span>
               </div>

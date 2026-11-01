@@ -35,6 +35,7 @@ export default function DashboardPage() {
     currentTerm,
     terms,
     dataStore,
+    refreshData,
     loadDemoData,
     currentUser,
   } = useDataStore();
@@ -176,7 +177,7 @@ export default function DashboardPage() {
 
   // Overall term progress calculation (credit-weighted average of course scores)
   const overallProgress = React.useMemo(() => {
-    if (activeTermCourses.length === 0) return 0;
+    if (activeTermCourses.length === 0 || activeTermMasteredCount === 0) return 0;
     const courseInputs = activeTermCourses.map((c) => {
       const cModules = modules.filter((m) => m.courseId === c.id);
       const unitScores = cModules.map((m) => {
@@ -192,7 +193,7 @@ export default function DashboardPage() {
     });
     const { progressPercent } = calculateSemesterProgress(courseInputs);
     return progressPercent;
-  }, [activeTermCourses, modules, topics]);
+  }, [activeTermCourses, activeTermMasteredCount, modules, topics]);
 
   return (
     <div className="space-y-8 select-none">
@@ -241,13 +242,13 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left 8 Columns: Courses */}
         <div className="lg:col-span-8 space-y-4">
-          {/* Term Switcher & Header Controls */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-[var(--color-border)]/70">
+          {/* Term Switcher & Header Controls (Solid cream panel) */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
             <div className="flex items-center gap-2.5">
               <h2 className="font-heading text-xl font-bold text-[var(--color-ink)]">
                 Course Journey
               </h2>
-              <span className="rounded-full bg-[var(--color-surface-muted)] px-2.5 py-0.5 font-sans text-xs font-semibold text-[var(--color-ink)] tabular-nums">
+              <span className="rounded-full bg-[var(--color-surface)] px-2.5 py-0.5 font-sans text-xs font-semibold text-[var(--color-ink)] tabular-nums border border-[#E4D9C0] dark:border-[#3D2D31]">
                 {activeTermCourses.length}
               </span>
               {dataStore.isSampleDataActive() && (
@@ -262,21 +263,25 @@ export default function DashboardPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setWeeklyReviewOpen(true)}
-                className="gap-1.5 text-xs text-app-ink-muted hover:text-app-ink"
+                className="gap-1.5 text-xs text-app-ink-muted hover:text-app-ink bg-white dark:bg-[#2B2124] border border-[#CFC8BB]"
               >
                 <Printer className="h-3.5 w-3.5 text-app-accent" />
                 <span>Weekly Review</span>
               </Button>
 
               {/* Term Filter Tabs */}
-              <div className="flex items-center gap-1.5 p-1 rounded-[8px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs">
+              <div className="flex items-center gap-1.5 p-1 rounded-[10px] bg-[var(--color-surface)] dark:bg-[#2B2124] border border-[#E4D9C0] dark:border-[#3D2D31] text-xs">
                 {terms.map((t) => (
                   <button
                     key={t.id}
-                    onClick={() => setSelectedTermId(t.id)}
-                    className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
+                    onClick={async () => {
+                      setSelectedTermId(t.id);
+                      await dataStore.setCurrentTerm(t.id);
+                      await refreshData();
+                    }}
+                    className={`px-3 py-1 rounded-[6px] font-sans font-semibold transition-all ${
                       selectedTermId === t.id
-                        ? "bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm"
+                        ? "bg-[#A51C30] text-white shadow-sm"
                         : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
                     }`}
                   >

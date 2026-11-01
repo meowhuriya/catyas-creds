@@ -145,7 +145,7 @@ export function GradingSchemeModal({
                   : `Invalid: Weights total ${validation.total}% (must be 100%)`}
               </span>
             </div>
-            <span className="font-mono font-bold text-sm tabular-nums">
+            <span className="font-sans font-semibold font-bold text-sm tabular-nums">
               {validation.total}%
             </span>
           </div>
@@ -170,7 +170,7 @@ export function GradingSchemeModal({
                   onChange={(e) =>
                     handleUpdateWeight("lessonCompletion", Number(e.target.value))
                   }
-                  className="w-20 text-center font-mono tabular-nums"
+                  className="w-20 text-center font-sans font-semibold tabular-nums"
                 />
                 <span className="text-app-ink-muted">%</span>
               </div>
@@ -194,7 +194,7 @@ export function GradingSchemeModal({
                   onChange={(e) =>
                     handleUpdateWeight("quizzes", Number(e.target.value))
                   }
-                  className="w-20 text-center font-mono tabular-nums"
+                  className="w-20 text-center font-sans font-semibold tabular-nums"
                 />
                 <span className="text-app-ink-muted">%</span>
               </div>
@@ -218,7 +218,7 @@ export function GradingSchemeModal({
                   onChange={(e) =>
                     handleUpdateWeight("assignments", Number(e.target.value))
                   }
-                  className="w-20 text-center font-mono tabular-nums"
+                  className="w-20 text-center font-sans font-semibold tabular-nums"
                 />
                 <span className="text-app-ink-muted">%</span>
               </div>
@@ -242,7 +242,7 @@ export function GradingSchemeModal({
                   onChange={(e) =>
                     handleUpdateWeight("midterm", Number(e.target.value))
                   }
-                  className="w-20 text-center font-mono tabular-nums"
+                  className="w-20 text-center font-sans font-semibold tabular-nums"
                 />
                 <span className="text-app-ink-muted">%</span>
               </div>
@@ -266,7 +266,7 @@ export function GradingSchemeModal({
                   onChange={(e) =>
                     handleUpdateWeight("finalExam", Number(e.target.value))
                   }
-                  className="w-20 text-center font-mono tabular-nums"
+                  className="w-20 text-center font-sans font-semibold tabular-nums"
                 />
                 <span className="text-app-ink-muted">%</span>
               </div>
@@ -289,7 +289,7 @@ export function GradingSchemeModal({
                 max={100}
                 value={passMark}
                 onChange={(e) => setPassMark(Number(e.target.value))}
-                className="w-20 text-center font-mono tabular-nums"
+                className="w-20 text-center font-sans font-semibold tabular-nums"
               />
               <span className="text-app-ink-muted">%</span>
             </div>

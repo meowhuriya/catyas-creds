@@ -136,7 +136,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     className="flex items-center justify-between px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <span className="font-mono text-xs font-semibold text-app-ink-muted">
+                      <span className="font-sans font-semibold text-xs font-semibold text-app-ink-muted">
                         {course.code}
                       </span>
                       <span className="truncate">{course.title}</span>

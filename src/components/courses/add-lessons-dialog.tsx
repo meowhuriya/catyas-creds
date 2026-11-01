@@ -374,7 +374,7 @@ export function AddLessonsDialog({
                 placeholder={"https://www.youtube.com/watch?v=dQw4w9WgXcQ\nhttps://youtu.be/dQw4w9WgXcQ?t=1m30s"}
                 value={inputUrls}
                 onChange={(e) => setInputUrls(e.target.value)}
-                className="w-full rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 font-mono text-xs text-[var(--color-ink)] shadow-sm outline-none focus:ring-2 focus:ring-[var(--color-accent)] placeholder:text-[var(--color-ink-muted)]/50"
+                className="w-full rounded-[6px] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 font-sans font-semibold text-xs text-[var(--color-ink)] shadow-sm outline-none focus:ring-2 focus:ring-[var(--color-accent)] placeholder:text-[var(--color-ink-muted)]/50"
               />
             </div>
 
@@ -467,7 +467,7 @@ export function AddLessonsDialog({
                         {item.startTimeSeconds ? (
                           <>
                             <span>•</span>
-                            <span className="font-mono tabular-nums">
+                            <span className="font-sans font-semibold tabular-nums">
                               Start: {item.startTimeSeconds}s
                             </span>
                           </>
@@ -482,7 +482,7 @@ export function AddLessonsDialog({
                           placeholder="Duration (e.g. 15:30)"
                           value={item.manualDuration || ""}
                           onChange={(e) => handleDurationChange(item.id, e.target.value)}
-                          className="h-5 w-28 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 text-[10px] font-mono text-[var(--color-ink)] placeholder:text-[var(--color-ink-muted)]/50"
+                          className="h-5 w-28 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 text-[10px] font-sans font-semibold text-[var(--color-ink)] placeholder:text-[var(--color-ink-muted)]/50"
                         />
                         <span className="text-[10px] text-[var(--color-ink-muted)]">
                           (optional; captured automatically in player)

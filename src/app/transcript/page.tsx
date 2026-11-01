@@ -313,8 +313,8 @@ export default function TranscriptPage() {
 
   return (
     <div className="space-y-6">
-      {/* Top Action Toolbar (Hidden in Print) */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-app-border pb-4 no-print">
+      {/* Top Action Toolbar (Solid cream panel, Hidden in Print) */}
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm no-print">
         <div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-app-ink">
             Official Academic Transcript
@@ -410,7 +410,7 @@ export default function TranscriptPage() {
             <span className="text-neutral-500 block uppercase tracking-wider text-[10px] font-semibold">
               Registry Identification
             </span>
-            <span className="font-mono text-xs font-semibold text-neutral-800">
+            <span className="font-sans font-semibold text-xs font-semibold text-neutral-800">
               VC-2026-9812-REG
             </span>
           </div>
@@ -428,7 +428,7 @@ export default function TranscriptPage() {
             <span className="text-neutral-500 block uppercase tracking-wider text-[10px] font-semibold">
               Official Issue Date
             </span>
-            <span className="font-mono text-xs text-neutral-800">
+            <span className="font-sans font-semibold text-xs text-neutral-800">
               {issueDateFormatted}
             </span>
           </div>
@@ -446,7 +446,7 @@ export default function TranscriptPage() {
                   <span className="font-serif text-sm font-bold uppercase tracking-wider text-neutral-900">
                     {tg.term.name}
                   </span>
-                  <span className="text-[11px] font-mono text-neutral-600">
+                  <span className="text-[11px] font-sans font-semibold text-neutral-600">
                     Term SGPA: <strong className="text-neutral-900 font-bold tabular-nums">{tg.sgpa.toFixed(2)}</strong>
                   </span>
                 </div>
@@ -463,7 +463,7 @@ export default function TranscriptPage() {
                       <th className="py-1.5 text-right w-16">Points</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-200 font-mono">
+                  <tbody className="divide-y divide-neutral-200 font-sans font-semibold">
                     {tg.courses.map(({ course, gradeResult }) => {
                       const isRetake = (codeOccurrences[course.code.trim().toUpperCase()] || 0) > 1;
 
@@ -497,10 +497,10 @@ export default function TranscriptPage() {
                       <td colSpan={3} className="py-1.5 font-medium italic">
                         Term Subtotals
                       </td>
-                      <td className="py-1.5 text-right font-mono font-semibold tabular-nums text-neutral-800">
+                      <td className="py-1.5 text-right font-sans font-semibold font-semibold tabular-nums text-neutral-800">
                         {tg.earned}.0 cr
                       </td>
-                      <td colSpan={2} className="py-1.5 text-right font-mono font-bold tabular-nums text-neutral-900">
+                      <td colSpan={2} className="py-1.5 text-right font-sans font-semibold font-bold tabular-nums text-neutral-900">
                         SGPA: {tg.sgpa.toFixed(2)}
                       </td>
                     </tr>
@@ -512,7 +512,7 @@ export default function TranscriptPage() {
         </div>
 
         {/* Cumulative Totals Summary Box */}
-        <div className="mt-8 border-t-2 border-b-2 border-neutral-400 py-3 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-mono break-inside-avoid">
+        <div className="mt-8 border-t-2 border-b-2 border-neutral-400 py-3 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-sans font-semibold break-inside-avoid">
           <div>
             <span className="text-[10px] font-sans uppercase text-neutral-500 block font-semibold">
               Total Credits Attempted
@@ -557,12 +557,12 @@ export default function TranscriptPage() {
               <ShieldCheck className="h-4 w-4" />
               <span>Official Digital Credential Verification</span>
             </div>
-            <div className="font-mono text-[11px] text-neutral-800" data-testid="verification-id-container">
+            <div className="font-sans font-semibold text-[11px] text-neutral-800" data-testid="verification-id-container">
               Verification ID: <strong>{activeSnapshot?.id || "UNVERIFIED-DRAFT"}</strong>
             </div>
             <div className="text-[11px] text-neutral-500 max-w-sm">
               Scan this QR code or navigate to{" "}
-              <span className="font-mono font-medium text-neutral-700">/verify/{activeSnapshot?.id || "[id]"}</span>{" "}
+              <span className="font-sans font-semibold font-medium text-neutral-700">/verify/{activeSnapshot?.id || "[id]"}</span>{" "}
               to audit the cryptographic timestamped coursework record.
             </div>
             <div className="pt-1">

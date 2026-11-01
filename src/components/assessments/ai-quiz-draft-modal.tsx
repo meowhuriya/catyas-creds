@@ -184,7 +184,7 @@ export function AiQuizDraftModal({
               Gemini API Not Configured
             </h4>
             <p className="text-xs text-app-ink-muted max-w-md mx-auto">
-              To activate the AI Note-to-Quiz Drafter, set <code className="bg-app-surface px-1 py-0.5 rounded border border-app-border font-mono text-[11px]">GEMINI_API_KEY</code> in your environment or <code className="bg-app-surface px-1 py-0.5 rounded border border-app-border font-mono text-[11px]">.env.local</code>. You can still manually author quizzes and question banks via the standard New Assessment button.
+              To activate the AI Note-to-Quiz Drafter, set <code className="bg-app-surface px-1 py-0.5 rounded border border-app-border font-sans font-semibold text-[11px]">GEMINI_API_KEY</code> in your environment or <code className="bg-app-surface px-1 py-0.5 rounded border border-app-border font-sans font-semibold text-[11px]">.env.local</code>. You can still manually author quizzes and question banks via the standard New Assessment button.
             </p>
           </div>
         ) : (
@@ -221,7 +221,7 @@ export function AiQuizDraftModal({
                   <FileText className="h-3 w-3" />
                   Source Notes Preview ({activeNote.content.length} characters)
                 </span>
-                <p className="text-xs text-app-ink font-mono line-clamp-3 whitespace-pre-wrap">
+                <p className="text-xs text-app-ink font-sans font-semibold line-clamp-3 whitespace-pre-wrap">
                   {activeNote.content}
                 </p>
               </div>
@@ -316,7 +316,7 @@ export function AiQuizDraftModal({
                             {idx + 1}. {q.prompt}
                           </span>
                         </div>
-                        <span className="rounded bg-app-surface-muted px-2 py-0.5 font-mono text-[10px] text-app-ink-muted capitalize">
+                        <span className="rounded bg-app-surface-muted px-2 py-0.5 font-sans font-semibold text-[10px] text-app-ink-muted capitalize">
                           {q.type.replace("_", " ")}
                         </span>
                       </div>

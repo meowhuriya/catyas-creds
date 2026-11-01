@@ -37,7 +37,7 @@ import {
 } from "@/lib/demo/seed-data";
 import { Topic, StudySession } from "@/types/schemas";
 
-const STORAGE_PREFIX = "valerias_creds_";
+const STORAGE_PREFIX = "valerias_creds_v4_";
 
 function getStorage<T>(key: string, defaultVal: T): T {
   if (typeof window === "undefined") return defaultVal;
@@ -84,7 +84,14 @@ export class DemoDataStore implements DataStore {
     this.terms = getStorage<Term[]>("terms", SEED_TERMS);
     this.courses = getStorage<Course[]>("courses", SEED_COURSES);
     this.modules = getStorage<Module[]>("modules", SEED_MODULES);
-    this.topics = getStorage<Topic[]>("topics", SEED_TOPICS);
+
+    let loadedTopics = getStorage<Topic[]>("topics", SEED_TOPICS);
+    if (!Array.isArray(loadedTopics) || loadedTopics.length !== 651) {
+      loadedTopics = SEED_TOPICS;
+      setStorage("topics", SEED_TOPICS);
+    }
+    this.topics = loadedTopics;
+
     this.lessons = getStorage<Lesson[]>("lessons", isSample ? SAMPLE_LESSONS : []);
     this.progress = getStorage<LessonProgress[]>("progress", isSample ? SAMPLE_LESSON_PROGRESS : []);
     this.assessments = getStorage<Assessment[]>("assessments", isSample ? SAMPLE_ASSESSMENTS : []);

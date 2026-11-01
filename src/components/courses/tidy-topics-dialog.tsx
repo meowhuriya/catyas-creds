@@ -125,7 +125,7 @@ export function TidyTopicsDialog({
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
               Preview Refinements (First 5 Topics):
             </span>
-            <span className="text-[10px] font-mono text-[var(--color-ink-muted)]">
+            <span className="text-[10px] font-sans font-semibold text-[var(--color-ink-muted)]">
               Rules: AI only drafts. Review below.
             </span>
           </div>
@@ -145,7 +145,7 @@ export function TidyTopicsDialog({
                     <span>{item.cleaned}</span>
                   </div>
                   {item.isAi && (
-                    <span className="text-[9px] uppercase font-mono px-1.5 py-0.2 rounded bg-app-accent/10 text-app-accent font-bold">
+                    <span className="text-[9px] uppercase font-sans font-semibold px-1.5 py-0.2 rounded bg-app-accent/10 text-app-accent font-bold">
                       AI Model
                     </span>
                   )}

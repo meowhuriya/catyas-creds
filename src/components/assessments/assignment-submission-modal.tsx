@@ -298,7 +298,7 @@ export function AssignmentSubmissionModal({
                     placeholder="Enter your problem set solutions, analysis, and conclusions..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    className="w-full rounded-control border border-app-border bg-app-surface p-2.5 text-xs text-app-ink focus:border-app-accent focus:outline-none font-mono"
+                    className="w-full rounded-control border border-app-border bg-app-surface p-2.5 text-xs text-app-ink focus:border-app-accent focus:outline-none font-sans font-semibold"
                   />
                 </div>
               )}
@@ -347,7 +347,7 @@ export function AssignmentSubmissionModal({
                             {crit.description}
                           </p>
                         </div>
-                        <span className="font-mono text-xs font-bold text-app-ink-muted shrink-0 tabular-nums">
+                        <span className="font-sans font-semibold text-xs font-bold text-app-ink-muted shrink-0 tabular-nums">
                           Max {crit.maxPoints} pts
                         </span>
                       </div>
@@ -374,7 +374,7 @@ export function AssignmentSubmissionModal({
                                 <span className="font-semibold text-xs text-app-ink">
                                   {lvl.level}
                                 </span>
-                                <span className="font-mono font-bold text-xs text-app-accent tabular-nums">
+                                <span className="font-sans font-semibold font-bold text-xs text-app-accent tabular-nums">
                                   {lvl.points} pts
                                 </span>
                               </div>
@@ -393,7 +393,7 @@ export function AssignmentSubmissionModal({
                             Criterion Justification (Required, &ge; 10 chars) *
                           </label>
                           <span
-                            className={`font-mono text-[10px] tabular-nums ${
+                            className={`font-sans font-semibold text-[10px] tabular-nums ${
                               isJustificationValid
                                 ? "text-app-success"
                                 : "text-app-ink-muted"
