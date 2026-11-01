@@ -22,7 +22,14 @@ import {
   CourseAttendance,
   ExamDate,
   ClassTimetableSlot,
+  RecallHistoryEntry,
+  RecallStyle,
 } from "@/types/schemas";
+import {
+  RecallCandidate,
+  PrioritizedRecallsResult,
+  RecallRating,
+} from "@/lib/recall/recall-engine";
 
 export interface DataStore {
   // User Profile & Settings
@@ -182,6 +189,17 @@ export interface DataStore {
   deleteTimetableSlot(slotId: string): Promise<void>;
   generateDefaultWeeklyTimetable(courses: Course[]): Promise<ClassTimetableSlot[]>;
   clearTimetable(): Promise<void>;
+
+  // Smart Spaced Recall Engine (Phase S1)
+  getRecallCandidates(today?: string): Promise<RecallCandidate[]>;
+  getPrioritizedDailyRecalls(today?: string): Promise<PrioritizedRecallsResult>;
+  recordRecallReview(entry: {
+    topicId: string;
+    rating: RecallRating;
+    today?: string;
+  }): Promise<{ topic: Topic; historyEntry: RecallHistoryEntry }>;
+  getRecallHistory(limit?: number): Promise<RecallHistoryEntry[]>;
+  updateCourseRecallStyle(courseId: string, style: RecallStyle): Promise<Course>;
 
   // Demo / Sample Data Controls
   loadDemoData(): Promise<void>;

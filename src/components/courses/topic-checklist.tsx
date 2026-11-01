@@ -309,6 +309,38 @@ export function TopicChecklist({
                               Watch {topic.watchScore || 0} · Check {topic.checkScore || 0}
                             </span>
                           )}
+
+                          {/* Smart Spaced Recall Retention Indicator (Phase S1) */}
+                          {topic.isConsolidated ? (
+                            <span
+                              className="px-1.5 py-0.5 rounded-[4px] text-[10px] font-bold uppercase tracking-wider bg-purple-500/10 text-purple-800 dark:text-purple-300 border border-purple-500/30"
+                              title="Topic Consolidated: 4 spaced recall stages successfully completed!"
+                            >
+                              Consolidated
+                            </span>
+                          ) : topic.retentionLevel && topic.retentionLevel !== "none" ? (
+                            <span
+                              className={`px-1.5 py-0.2 rounded-[4px] text-[10px] font-bold capitalize flex items-center gap-1 border ${
+                                topic.retentionLevel === "green"
+                                  ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border-emerald-500/30"
+                                  : topic.retentionLevel === "amber"
+                                  ? "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/30"
+                                  : "bg-red-500/10 text-red-800 dark:text-red-300 border-red-500/30"
+                              }`}
+                              title={`Spaced retention verified: ${topic.retentionLevel} (Stage ${topic.recallStage || 1})`}
+                            >
+                              <span
+                                className={`h-1.5 w-1.5 rounded-full ${
+                                  topic.retentionLevel === "green"
+                                    ? "bg-emerald-600 dark:bg-emerald-400"
+                                    : topic.retentionLevel === "amber"
+                                    ? "bg-amber-600 dark:bg-amber-400"
+                                    : "bg-red-600 dark:bg-red-400"
+                                }`}
+                              />
+                              <span>{topic.retentionLevel}</span>
+                            </span>
+                          ) : null}
                         </div>
                       </div>
                     )}

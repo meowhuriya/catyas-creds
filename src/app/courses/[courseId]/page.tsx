@@ -16,7 +16,12 @@ import {
   Topic,
   CourseAttendance,
   ExamDate,
+  RecallStyle,
 } from "@/types/schemas";
+import {
+  calculateExamReadinessForecast,
+  getDefaultRecallStyle,
+} from "@/lib/recall/recall-engine";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ProgressRing } from "@/components/ui/progress-ring";
@@ -81,6 +86,7 @@ import {
   RotateCcw,
   AlertTriangle,
   UserCheck,
+  Brain,
 } from "lucide-react";
 
 export default function CourseDetailPage() {
@@ -186,6 +192,16 @@ export default function CourseDetailPage() {
     }
   }, [courseId, loadData]);
 
+  const readinessForecast = React.useMemo(() => {
+    if (!courseExamDate?.date) return null;
+    const recalledCount = topics.filter((t) => (t.recallStage || 0) >= 1).length;
+    return calculateExamReadinessForecast({
+      totalTopics: topics.length,
+      topicsRecalled: recalledCount,
+      examDate: courseExamDate.date,
+    });
+  }, [topics, courseExamDate]);
+
   if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8 text-xs text-app-ink-muted">
@@ -249,6 +265,8 @@ export default function CourseDetailPage() {
     submissions,
     gpaScale
   );
+
+  const currentRecallStyle: RecallStyle = course.recallStyle || getDefaultRecallStyle(course);
 
   // Drag-and-drop reordering handler
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -570,6 +588,87 @@ export default function CourseDetailPage() {
           subtitle={`All ${activeUnitMastery.completedTopics} of ${activeUnitMastery.totalTopics} curricular topics are completed with verified watch progress and check mastery.`}
         />
       )}
+
+      {/* Exam Readiness Forecast & Recall Style Card (Phase S1) */}
+      <div className="rounded-[16px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-[#FBF6EC] dark:bg-[#221A1C] p-4 sm:p-5 shadow-sm space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Brain className="h-4 w-4 text-[#A51C30]" />
+            <h3 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3]">
+              Exam Readiness Forecast & Recall Style
+            </h3>
+            {courseExamDate && readinessForecast && (
+              <span
+                className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase ${
+                  readinessForecast.isBehind
+                    ? "bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/30"
+                    : "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30"
+                }`}
+              >
+                {readinessForecast.forecastPercent}% Forecasted
+              </span>
+            )}
+          </div>
+
+          {/* Recall Style Dropdown */}
+          <div className="flex items-center gap-2 text-xs">
+            <span className="font-semibold text-[#4B5160] dark:text-[#CFC8BB]">Recall Style:</span>
+            <select
+              value={currentRecallStyle}
+              onChange={async (e) => {
+                const newStyle = e.target.value as RecallStyle;
+                await dataStore.updateCourseRecallStyle(course.id, newStyle);
+                await loadData();
+              }}
+              className="px-2.5 py-1 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-[#150F11] text-xs font-semibold text-[#14161F] dark:text-[#F6EBD3] focus:outline-none cursor-pointer"
+            >
+              <option value="problems">Problems (Math / Analytical)</option>
+              <option value="questions">Questions (Science / Concepts)</option>
+              <option value="code">Code (CS / Memory)</option>
+              <option value="vocabulary_and_usage">Vocabulary & Usage (English)</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Readiness forecast sentence or set exam prompt */}
+        {courseExamDate && readinessForecast ? (
+          <div className="space-y-2 pt-1 text-xs">
+            <p className="font-medium text-[#14161F] dark:text-[#F6EBD3]">
+              {readinessForecast.statusSentence}
+            </p>
+            {readinessForecast.warningNote && (
+              <div className="p-2.5 rounded-[8px] bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-medium">
+                {readinessForecast.warningNote}
+              </div>
+            )}
+            <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#4B5160] dark:text-[#CFC8BB]">
+              <span>
+                Exam target: <strong className="text-[#14161F] dark:text-[#F6EBD3]">{courseExamDate.date}</strong>
+              </span>
+              <span>•</span>
+              <span>
+                Refresh cutoff: <strong className="text-[#14161F] dark:text-[#F6EBD3]">{readinessForecast.daysToRefreshCutoff} days</strong>
+              </span>
+              <span>•</span>
+              <span>
+                Unreviewed syllabus topics: <strong className="text-[#14161F] dark:text-[#F6EBD3]">{readinessForecast.unreviewedTopics}</strong>
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#4B5160] dark:text-[#CFC8BB] pt-1">
+            <span>Set an exam date to unlock pre-exam recall compression and readiness forecasting.</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveTab("exam-prep")}
+              className="btn-secondary text-xs h-7 px-2.5"
+            >
+              Set Exam Target
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Course Navigation Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

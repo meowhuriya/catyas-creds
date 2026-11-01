@@ -12,6 +12,7 @@ import {
   FileText,
   Award,
   Settings,
+  RotateCcw,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -33,6 +34,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const navItems = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Today", href: "/today", icon: Clock },
+    { label: "Smart Recall", href: "/recall", icon: RotateCcw },
     { label: "Courses", href: "/courses", icon: BookOpen },
     { label: "Planner", href: "/planner", icon: Calendar },
     { label: "Grades", href: "/grades", icon: GraduationCap },

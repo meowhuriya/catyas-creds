@@ -24,7 +24,18 @@ import {
   AttendanceLogEntry,
   ExamDate,
   ClassTimetableSlot,
+  RecallHistoryEntry,
+  RecallStyle,
 } from "@/types/schemas";
+import {
+  scheduleInitialRecall,
+  processRecallRating,
+  prioritizeDailyRecalls,
+  RecallCandidate,
+  PrioritizedRecallsResult,
+  RecallRating,
+  toDateString,
+} from "@/lib/recall/recall-engine";
 import { db, auth } from "@/lib/firebase/config";
 import {
   collection,
@@ -952,6 +963,148 @@ export class FirebaseDataStore implements DataStore {
     for (const s of slots) {
       await deleteDoc(doc(db, "timetableSlots", s.id));
     }
+  }
+
+  // Smart Spaced Recall Engine (Phase S1)
+  async getRecallCandidates(today?: string): Promise<RecallCandidate[]> {
+    if (!db) return [];
+    const todayStr = today || toDateString(new Date());
+    const courses = await this.getCourses();
+    const courseMap = new Map(courses.map((c) => [c.id, c]));
+
+    const q = query(collection(db, "topics"), where("userId", "==", this.currentUid));
+    const snap = await getDocs(q);
+    const topics = snap.docs.map((d) => d.data() as Topic);
+
+    const candidates: RecallCandidate[] = [];
+    for (const t of topics) {
+      if (t.isDone || (t.topicScore || 0) >= 70) {
+        const c = courseMap.get(t.courseId);
+        candidates.push({
+          topicId: t.id,
+          courseId: t.courseId,
+          unitId: t.unitId,
+          title: t.title,
+          recallDueAt: t.recallDueAt || todayStr,
+          recallStage: t.recallStage || 1,
+          retentionLevel: t.retentionLevel || "none",
+          topicScore: t.topicScore || 0,
+          isDone: t.isDone,
+          isConsolidated: t.isConsolidated || false,
+          courseCode: c?.code,
+          courseTitle: c?.title,
+        });
+      }
+    }
+    return candidates;
+  }
+
+  async getPrioritizedDailyRecalls(today?: string): Promise<PrioritizedRecallsResult> {
+    const todayStr = today || toDateString(new Date());
+    const candidates = await this.getRecallCandidates(todayStr);
+    const examDates = await this.getAllExamDates();
+    const examDatesByCourse: Record<string, string> = {};
+    for (const e of examDates) {
+      examDatesByCourse[e.courseId] = e.date;
+    }
+
+    const user = await this.getUser();
+    const dailyCap = user?.settings?.recallDailyCap || 20;
+
+    return prioritizeDailyRecalls({
+      candidates,
+      examDatesByCourse,
+      dailyCap,
+      today: todayStr,
+    });
+  }
+
+  async recordRecallReview(entry: {
+    topicId: string;
+    rating: RecallRating;
+    today?: string;
+  }): Promise<{ topic: Topic; historyEntry: RecallHistoryEntry }> {
+    if (!db) throw new Error("Firestore not configured");
+    const todayStr = entry.today || toDateString(new Date());
+    const topicRef = doc(db, "topics", entry.topicId);
+    const snap = await getDoc(topicRef);
+    if (!snap.exists()) throw new Error("Topic not found");
+    const topic = snap.data() as Topic;
+
+    const course = await this.getCourse(topic.courseId);
+    const exam = await this.getCourseExamDate(topic.courseId);
+    const user = await this.getUser();
+    const intervals = user?.settings?.recallIntervals || [1, 3, 7, 14];
+
+    const currentStage = topic.recallStage || 1;
+    const currentScore = topic.topicScore || 70;
+    const prevRetention = topic.retentionLevel || "none";
+
+    const scheduled = processRecallRating({
+      currentStage,
+      rating: entry.rating,
+      intervals,
+      today: todayStr,
+      examDate: exam?.date,
+      currentScore,
+    });
+
+    const updatedTopic: Topic = {
+      ...topic,
+      recallStage: scheduled.nextStage,
+      recallDueAt: scheduled.nextDueDate,
+      retentionLevel: scheduled.retentionLevel,
+      isConsolidated: scheduled.isConsolidated,
+      recallGapDays: scheduled.gapDays,
+      lastRecallRating: entry.rating,
+      lastRecalledAt: todayStr,
+      topicScore: scheduled.newScore,
+      isDone: scheduled.newScore >= 70,
+    };
+
+    await updateDoc(topicRef, updatedTopic as any);
+
+    const historyId = `recall-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const historyEntry: RecallHistoryEntry = {
+      id: historyId,
+      userId: this.currentUid,
+      topicId: topic.id,
+      courseId: topic.courseId,
+      topicTitle: topic.title,
+      courseCode: course?.code || "",
+      stage: scheduled.nextStage,
+      rating: entry.rating,
+      previousRetention: prevRetention,
+      newRetention: scheduled.retentionLevel,
+      scoreBefore: currentScore,
+      scoreAfter: scheduled.newScore,
+      reviewedAt: new Date().toISOString(),
+      date: todayStr,
+    };
+
+    await setDoc(doc(db, "recallHistory", historyId), historyEntry);
+
+    return { topic: updatedTopic, historyEntry };
+  }
+
+  async getRecallHistory(limitCount?: number): Promise<RecallHistoryEntry[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "recallHistory"),
+      where("userId", "==", this.currentUid),
+      orderBy("reviewedAt", "desc")
+    );
+    const snap = await getDocs(q);
+    const list = snap.docs.map((d) => d.data() as RecallHistoryEntry);
+    return limitCount && limitCount > 0 ? list.slice(0, limitCount) : list;
+  }
+
+  async updateCourseRecallStyle(courseId: string, style: RecallStyle): Promise<Course> {
+    if (!db) throw new Error("Firestore not configured");
+    const courseRef = doc(db, "courses", courseId);
+    await updateDoc(courseRef, { recallStyle: style });
+    const snap = await getDoc(courseRef);
+    return snap.data() as Course;
   }
 
   async exportAllDataJson(): Promise<string> {

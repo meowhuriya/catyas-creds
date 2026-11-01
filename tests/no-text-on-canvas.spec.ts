@@ -4,6 +4,7 @@ const { chromium } = require("@playwright/test");
 const ROUTES = [
   { name: "dashboard", path: "/" },
   { name: "today", path: "/today" },
+  { name: "recall", path: "/recall" },
   { name: "courses", path: "/courses" },
   { name: "one course page", path: "/courses/course-ch102bs" },
   { name: "one unit page", path: "/courses/course-ch102bs" },
@@ -51,7 +52,7 @@ export async function runAudit(options: { baseUrl?: string; verbose?: boolean } 
         await page.waitForTimeout(600);
 
         // Apply theme
-        await page.evaluate((th) => {
+        await page.evaluate((th: string) => {
           if (th === "dark") {
             document.documentElement.classList.add("dark");
           } else {

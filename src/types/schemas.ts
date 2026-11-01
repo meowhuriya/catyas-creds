@@ -5,6 +5,8 @@ export const UserSettingsSchema = z.object({
   gradeScale: z.enum(["10_point", "4_point"]).default("10_point"),
   defaultHoursPerCredit: z.number().min(1).max(100).default(15),
   theme: z.enum(["light", "dark", "system"]).default("system"),
+  recallIntervals: z.array(z.number()).default([1, 3, 7, 14]).optional(),
+  recallDailyCap: z.number().min(1).max(100).default(20).optional(),
 });
 export type UserSettings = z.infer<typeof UserSettingsSchema>;
 
@@ -68,6 +70,14 @@ export type CourseColorTag = z.infer<typeof CourseColorTagSchema>;
 export const CourseLevelSchema = z.enum(["100", "200", "300", "400"]);
 export type CourseLevel = z.infer<typeof CourseLevelSchema>;
 
+export const RecallStyleSchema = z.enum([
+  "problems",
+  "questions",
+  "code",
+  "vocabulary_and_usage",
+]);
+export type RecallStyle = z.infer<typeof RecallStyleSchema>;
+
 export const CourseSchema = z.object({
   id: z.string(),
   userId: z.string(),
@@ -88,6 +98,7 @@ export const CourseSchema = z.object({
   }),
   passMark: z.number().default(40),
   electiveExperimentsCount: z.number().nullable().optional(),
+  recallStyle: RecallStyleSchema.optional(),
   createdAt: z.string(),
 });
 export type Course = z.infer<typeof CourseSchema>;
@@ -109,6 +120,9 @@ export type Module = z.infer<typeof ModuleSchema>;
 export const UnitSchema = ModuleSchema;
 export type Unit = Module;
 
+export const RetentionLevelSchema = z.enum(["green", "amber", "red", "none"]);
+export type RetentionLevel = z.infer<typeof RetentionLevelSchema>;
+
 // Topic Schema
 export const TopicSchema = z.object({
   id: z.string(),
@@ -126,9 +140,36 @@ export const TopicSchema = z.object({
   isSelectedExperiment: z.boolean().default(true),
   lastRevisedAt: z.string().optional(),
   revisionDueAt: z.string().optional(),
+  // Smart Recall Engine fields
+  recallStage: z.number().default(0).optional(), // 0 = not started, 1 = D+1, 2 = D+3, 3 = D+7, 4 = D+14, 5 = Consolidated
+  isConsolidated: z.boolean().default(false).optional(),
+  retentionLevel: RetentionLevelSchema.default("none").optional(),
+  lastRecallRating: z.enum(["forgot", "hard", "good", "easy"]).optional(),
+  lastRecalledAt: z.string().optional(),
+  recallDueAt: z.string().optional(),
+  recallGapDays: z.number().optional(),
   createdAt: z.string(),
 });
 export type Topic = z.infer<typeof TopicSchema>;
+
+// Recall History Entry Schema
+export const RecallHistoryEntrySchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  topicId: z.string(),
+  courseId: z.string(),
+  topicTitle: z.string(),
+  courseCode: z.string(),
+  stage: z.number(),
+  rating: z.enum(["forgot", "hard", "good", "easy"]),
+  previousRetention: RetentionLevelSchema,
+  newRetention: RetentionLevelSchema,
+  scoreBefore: z.number(),
+  scoreAfter: z.number(),
+  reviewedAt: z.string(),
+  date: z.string(),
+});
+export type RecallHistoryEntry = z.infer<typeof RecallHistoryEntrySchema>;
 
 // Lesson / Video Schema
 export const LessonSchema = z.object({

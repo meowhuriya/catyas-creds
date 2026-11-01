@@ -21,6 +21,7 @@ import { ProgressBar } from "@/components/ui/progress-bar";
 import { Button } from "@/components/ui/button";
 import { formatSecondsToTime } from "@/lib/utils";
 import { isRevisionDue } from "@/lib/mastery/spaced-revision";
+import { PrioritizedRecallsResult } from "@/lib/recall/recall-engine";
 import {
   Clock,
   Flame,
@@ -49,6 +50,7 @@ export default function TodayPage() {
   const [studySessions, setStudySessions] = React.useState<StudySession[]>([]);
   const [plannerEvents, setPlannerEvents] = React.useState<PlannerEvent[]>([]);
   const [timetableSlots, setTimetableSlots] = React.useState<ClassTimetableSlot[]>([]);
+  const [recallQueue, setRecallQueue] = React.useState<PrioritizedRecallsResult | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   // Quick Check modal state
@@ -82,10 +84,11 @@ export default function TodayPage() {
         }
       }
 
-      const [sessions, events, slots] = await Promise.all([
+      const [sessions, events, slots, pRecalls] = await Promise.all([
         dataStore.getStudySessions(),
         dataStore.getPlannerEvents(),
         dataStore.getTimetableSlots(),
+        dataStore.getPrioritizedDailyRecalls(),
       ]);
 
       setModules(allMods);
@@ -95,6 +98,7 @@ export default function TodayPage() {
       setStudySessions(sessions);
       setPlannerEvents(events);
       setTimetableSlots(slots);
+      setRecallQueue(pRecalls);
     } catch (err) {
       console.error("Failed to load Today page data:", err);
     } finally {
@@ -412,66 +416,110 @@ export default function TodayPage() {
             )}
           </div>
 
-          {/* 3. Topics Due for Spaced Revision */}
+          {/* 3. Smart Spaced Recall Queue (Phase S1) */}
           <div className="academic-card p-5 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)]/70">
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[var(--color-border)]/70">
               <div className="flex items-center gap-2">
                 <RotateCcw className="h-4 w-4 text-[var(--color-accent)]" />
                 <h3 className="font-serif text-base font-bold text-[var(--color-ink)]">
-                  Spaced Revision Queue
+                  Smart Recall Queue
                 </h3>
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] dark:bg-[#A51C30]/20">
+                  1 · 3 · 7 · 14
+                </span>
               </div>
-              <span className="text-xs text-[var(--color-ink-muted)] font-sans font-semibold">
-                {dueRevisions.length} due
-              </span>
+              <div className="flex items-center gap-2 text-xs text-[var(--color-ink-muted)] font-sans font-semibold">
+                <span className="px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] text-[var(--color-ink)] border border-[var(--color-border)]">
+                  {recallQueue ? recallQueue.dueToday.length : 0} due
+                </span>
+                <span>•</span>
+                <span className="tabular-nums">
+                  ~{(recallQueue ? recallQueue.dueToday.length : 0) * 2} mins
+                </span>
+              </div>
             </div>
 
-            {dueRevisions.length === 0 ? (
-              <div className="py-6 text-center text-xs text-[var(--color-ink-muted)]">
-                You are completely up to date on all spaced revisions. Retention is verified and active!
+            {/* Calm Backlog Notice Banner (if any recalls were deferred) */}
+            {recallQueue && recallQueue.backlogNote && (
+              <div className="p-3 rounded-[10px] border border-[#D9A441]/40 bg-[#FFF9ED] dark:bg-[#282116] text-[#7A4F0E] dark:text-[#E8BD65] flex items-start gap-2.5 text-xs leading-relaxed">
+                <Calendar className="h-4 w-4 shrink-0 mt-0.5 text-[#D9A441]" />
+                <div>
+                  <span className="font-bold">Paced Review Schedule:</span>{" "}
+                  <span>{recallQueue.backlogNote}</span>
+                </div>
+              </div>
+            )}
+
+            {(!recallQueue || recallQueue.dueToday.length === 0) ? (
+              <div className="py-6 text-center text-xs text-[var(--color-ink-muted)] space-y-2">
+                <p>You are completely up to date on all spaced recalls. Retention is verified and active!</p>
+                <Link href="/recall">
+                  <Button variant="outline" size="sm" className="btn-secondary text-xs mt-1">
+                    Open Recall Center & History
+                  </Button>
+                </Link>
               </div>
             ) : (
-              <div className="divide-y divide-[var(--color-border)]/60 border rounded-[8px] border-[var(--color-border)] bg-[var(--color-surface)]">
-                {dueRevisions.map((t) => {
-                  const course = courses.find((c) => c.id === t.courseId);
-
-                  return (
+              <div className="space-y-3">
+                <div className="divide-y divide-[var(--color-border)]/60 border rounded-[8px] border-[var(--color-border)] bg-[var(--color-surface)]">
+                  {recallQueue.dueToday.slice(0, 5).map((t) => (
                     <div
-                      key={t.id}
-                      className="p-3.5 flex items-center justify-between gap-3 hover:bg-[var(--color-surface-muted)]/40 transition-colors"
+                      key={t.topicId}
+                      className="p-3 flex items-center justify-between gap-3 hover:bg-[var(--color-surface-muted)]/40 transition-colors"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          {course && (
-                            <span className="text-[10px] font-sans font-semibold font-bold px-1.5 py-0.2 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] border border-[var(--color-border)]">
-                              {course.code}
-                            </span>
-                          )}
-                          <span className="text-[10px] uppercase font-bold text-[var(--color-accent)]">
-                            Revision Due
+                          <span className="text-[10px] font-sans font-bold px-1.5 py-0.2 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] border border-[var(--color-border)]">
+                            {t.courseCode || "COURSE"}
+                          </span>
+                          <span className="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] dark:bg-[#A51C30]/20">
+                            {t.isLightReview
+                              ? "Pre-exam Light Review"
+                              : t.isPreExamRefresh
+                              ? "Pre-exam Refresh"
+                              : `Stage ${t.recallStage}`}
+                          </span>
+                          <span
+                            className={`text-[10px] px-1.5 py-0.2 rounded font-semibold capitalize ${
+                              t.retentionLevel === "green"
+                                ? "bg-emerald-500/10 text-emerald-800 dark:text-emerald-300"
+                                : t.retentionLevel === "amber"
+                                ? "bg-amber-500/10 text-amber-800 dark:text-amber-300"
+                                : t.retentionLevel === "red"
+                                ? "bg-red-500/10 text-red-800 dark:text-red-300"
+                                : "bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)]"
+                            }`}
+                          >
+                            {t.retentionLevel || "none"}
                           </span>
                         </div>
-                        <h4 className="font-serif text-xs font-bold text-[var(--color-ink)] truncate mt-0.5">
+                        <h4 className="font-serif text-xs font-bold text-[var(--color-ink)] truncate mt-1">
                           {t.title}
                         </h4>
-                        <div className="flex items-center gap-2 text-[11px] text-[var(--color-ink-muted)] mt-0.5">
-                          <span>Mastery: {t.topicScore}/100</span>
-                          <span>•</span>
-                          <span>Due: {t.revisionDueAt || "Today"}</span>
-                        </div>
                       </div>
 
-                      <Button
-                        size="sm"
-                        onClick={() => setQuickCheckTopic(t)}
-                        className="gap-1 text-xs shrink-0 bg-[var(--color-accent)] text-white hover:opacity-90 font-semibold shadow-xs"
-                      >
-                        <Award className="h-3 w-3" />
-                        <span>Re-check</span>
-                      </Button>
+                      <span className="text-xs font-bold tabular-nums text-[var(--color-ink)] shrink-0">
+                        {t.topicScore}/100
+                      </span>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
+
+                {recallQueue.dueToday.length > 5 && (
+                  <p className="text-[11px] text-[var(--color-ink-muted)] text-center">
+                    + {recallQueue.dueToday.length - 5} more card{recallQueue.dueToday.length - 5 === 1 ? "" : "s"} waiting in today&apos;s queue
+                  </p>
+                )}
+
+                <Link href="/recall" className="block pt-1">
+                  <Button className="w-full btn-primary text-xs gap-2 py-2.5">
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    <span>
+                      Start Daily Recall ({recallQueue.dueToday.length} cards · ~{recallQueue.dueToday.length * 2} mins)
+                    </span>
+                    <ArrowRight className="h-3.5 w-3.5 ml-auto" />
+                  </Button>
+                </Link>
               </div>
             )}
           </div>

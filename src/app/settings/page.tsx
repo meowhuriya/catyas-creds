@@ -69,6 +69,8 @@ export default function SettingsPage() {
   const [scale, setScale] = React.useState<"10_point" | "4_point">("10_point");
   const [hoursPerCredit, setHoursPerCredit] = React.useState<number>(15);
   const [theme, setTheme] = React.useState<"light" | "dark" | "system">("light");
+  const [recallIntervals, setRecallIntervals] = React.useState<string>("1, 3, 7, 14");
+  const [recallDailyCap, setRecallDailyCap] = React.useState<number>(20);
   const [savedMessage, setSavedMessage] = React.useState<string | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -103,6 +105,8 @@ export default function SettingsPage() {
         setScale(currentUser.settings.gradeScale || "10_point");
         setHoursPerCredit(currentUser.settings.defaultHoursPerCredit || 15);
         setTheme(currentUser.settings.theme || "light");
+        setRecallIntervals((currentUser.settings.recallIntervals || [1, 3, 7, 14]).join(", "));
+        setRecallDailyCap(currentUser.settings.recallDailyCap || 20);
       }
 
       // Load appearance
@@ -191,10 +195,17 @@ export default function SettingsPage() {
     e.preventDefault();
     try {
       setLoading(true);
+      const parsedIntervals = recallIntervals
+        .split(",")
+        .map((s) => Number(s.trim()))
+        .filter((n) => !isNaN(n) && n > 0);
+
       await dataStore.updateSettings({
         gradeScale: scale,
         defaultHoursPerCredit: Number(hoursPerCredit) || 15,
         theme,
+        recallIntervals: parsedIntervals.length > 0 ? parsedIntervals : [1, 3, 7, 14],
+        recallDailyCap: Number(recallDailyCap) || 20,
       });
 
       await refreshData();
@@ -865,6 +876,41 @@ export default function SettingsPage() {
                 <span>System</span>
               </button>
             </div>
+          </div>
+
+          {/* Smart Recall Engine Spacing Intervals */}
+          <div>
+            <label className="block text-xs font-semibold text-[#14161F] dark:text-[#F6EBD3] mb-1">
+              Spaced Recall Intervals (days)
+            </label>
+            <Input
+              type="text"
+              value={recallIntervals}
+              onChange={(e) => setRecallIntervals(e.target.value)}
+              placeholder="1, 3, 7, 14"
+              className="text-xs h-9 bg-white dark:bg-[#1E1416] border-[#E5D5C5] dark:border-[#3D2D31]"
+            />
+            <p className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7] mt-1">
+              Comma-separated sequence of days scheduled when a topic first reaches Done (score 70+). Default: 1, 3, 7, 14.
+            </p>
+          </div>
+
+          {/* Daily Recall Cap */}
+          <div>
+            <label className="block text-xs font-semibold text-[#14161F] dark:text-[#F6EBD3] mb-1">
+              Daily Recall Review Cap
+            </label>
+            <Input
+              type="number"
+              min={1}
+              max={100}
+              value={recallDailyCap}
+              onChange={(e) => setRecallDailyCap(Number(e.target.value))}
+              className="text-xs h-9 bg-white dark:bg-[#1E1416] border-[#E5D5C5] dark:border-[#3D2D31]"
+            />
+            <p className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7] mt-1">
+              Maximum recall cards prioritized per day. Any excess cards are safely deferred with a calm backlog note. Default: 20.
+            </p>
           </div>
         </div>
 

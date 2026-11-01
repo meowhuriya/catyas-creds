@@ -22,6 +22,8 @@ import {
   AttendanceLogEntry,
   ExamDate,
   ClassTimetableSlot,
+  RecallHistoryEntry,
+  RecallStyle,
 } from "@/types/schemas";
 import {
   CLEAN_USER,
@@ -41,6 +43,15 @@ import {
   DEMO_TOPICS,
 } from "@/lib/demo/seed-data";
 import { Topic, StudySession } from "@/types/schemas";
+import {
+  scheduleInitialRecall,
+  processRecallRating,
+  prioritizeDailyRecalls,
+  RecallCandidate,
+  PrioritizedRecallsResult,
+  RecallRating,
+  toDateString,
+} from "@/lib/recall/recall-engine";
 
 const STORAGE_PREFIX = "valerias_creds_v4_";
 
@@ -85,6 +96,7 @@ export class DemoDataStore implements DataStore {
   private attendance: CourseAttendance[];
   private examDates: ExamDate[];
   private timetableSlots: ClassTimetableSlot[];
+  private recallHistory: RecallHistoryEntry[];
 
   constructor() {
     const isSample = getStorage<boolean>("is_sample_active", false);
@@ -116,6 +128,7 @@ export class DemoDataStore implements DataStore {
     this.attendance = getStorage<CourseAttendance[]>("attendance", isSample ? SAMPLE_ATTENDANCE : []);
     this.examDates = getStorage<ExamDate[]>("exam_dates", []);
     this.timetableSlots = getStorage<ClassTimetableSlot[]>("timetable_slots", []);
+    this.recallHistory = getStorage<RecallHistoryEntry[]>("recall_history", []);
   }
 
   isDemoMode(): boolean {
@@ -155,6 +168,7 @@ export class DemoDataStore implements DataStore {
     this.examDates = [];
     this.snapshots = [];
     this.auditLogs = [];
+    this.recallHistory = [];
     this.persistAll();
   }
 
@@ -195,6 +209,7 @@ export class DemoDataStore implements DataStore {
     setStorage("attendance", this.attendance);
     setStorage("exam_dates", this.examDates);
     setStorage("timetable_slots", this.timetableSlots);
+    setStorage("recall_history", this.recallHistory);
   }
 
   async getUser(): Promise<UserProfile | null> {
@@ -329,6 +344,22 @@ export class DemoDataStore implements DataStore {
       updated.topicScore = updated.watchScore + updated.checkScore;
       updated.isDone = updated.topicScore >= 70;
     }
+
+    // Auto-schedule recall on first completion (score >= 70)
+    if (updated.isDone && (!updated.recallStage || updated.recallStage === 0)) {
+      const exam = this.examDates?.find((e) => e.courseId === updated.courseId);
+      const intervals = this.user.settings?.recallIntervals || [1, 3, 7, 14];
+      const scheduled = scheduleInitialRecall({
+        completedAt: new Date(),
+        intervals,
+        examDate: exam?.date,
+      });
+      updated.recallStage = scheduled.nextStage;
+      updated.recallDueAt = scheduled.nextDueDate;
+      updated.retentionLevel = scheduled.retentionLevel;
+      updated.recallGapDays = scheduled.gapDays;
+    }
+
     this.topics[idx] = updated;
     setStorage("topics", this.topics);
     return updated;
@@ -976,6 +1007,134 @@ export class DemoDataStore implements DataStore {
     setStorage("timetable_slots", this.timetableSlots);
   }
 
+  // Smart Spaced Recall Engine (Phase S1)
+  async getRecallCandidates(today?: string): Promise<RecallCandidate[]> {
+    const todayStr = today || toDateString(new Date());
+    const courseMap = new Map(this.courses.map((c) => [c.id, c]));
+
+    const candidates: RecallCandidate[] = [];
+    for (const t of this.topics) {
+      if (t.isDone || (t.topicScore || 0) >= 70) {
+        const c = courseMap.get(t.courseId);
+        candidates.push({
+          topicId: t.id,
+          courseId: t.courseId,
+          unitId: t.unitId,
+          title: t.title,
+          recallDueAt: t.recallDueAt || todayStr,
+          recallStage: t.recallStage || 1,
+          retentionLevel: t.retentionLevel || "none",
+          topicScore: t.topicScore || 0,
+          isDone: t.isDone,
+          isConsolidated: t.isConsolidated || false,
+          courseCode: c?.code,
+          courseTitle: c?.title,
+        });
+      }
+    }
+    return candidates;
+  }
+
+  async getPrioritizedDailyRecalls(today?: string): Promise<PrioritizedRecallsResult> {
+    const todayStr = today || toDateString(new Date());
+    const candidates = await this.getRecallCandidates(todayStr);
+
+    const examDatesByCourse: Record<string, string> = {};
+    for (const e of this.examDates) {
+      examDatesByCourse[e.courseId] = e.date;
+    }
+
+    const dailyCap = this.user.settings?.recallDailyCap || 20;
+
+    return prioritizeDailyRecalls({
+      candidates,
+      examDatesByCourse,
+      dailyCap,
+      today: todayStr,
+    });
+  }
+
+  async recordRecallReview(entry: {
+    topicId: string;
+    rating: RecallRating;
+    today?: string;
+  }): Promise<{ topic: Topic; historyEntry: RecallHistoryEntry }> {
+    const todayStr = entry.today || toDateString(new Date());
+    const idx = this.topics.findIndex((t) => t.id === entry.topicId);
+    if (idx === -1) throw new Error("Topic not found");
+
+    const topic = this.topics[idx];
+    const course = this.courses.find((c) => c.id === topic.courseId);
+    const exam = this.examDates.find((e) => e.courseId === topic.courseId);
+    const intervals = this.user.settings?.recallIntervals || [1, 3, 7, 14];
+
+    const currentStage = topic.recallStage || 1;
+    const currentScore = topic.topicScore || 70;
+    const prevRetention = topic.retentionLevel || "none";
+
+    const scheduled = processRecallRating({
+      currentStage,
+      rating: entry.rating,
+      intervals,
+      today: todayStr,
+      examDate: exam?.date,
+      currentScore,
+    });
+
+    const updatedTopic: Topic = {
+      ...topic,
+      recallStage: scheduled.nextStage,
+      recallDueAt: scheduled.nextDueDate,
+      retentionLevel: scheduled.retentionLevel,
+      isConsolidated: scheduled.isConsolidated,
+      recallGapDays: scheduled.gapDays,
+      lastRecallRating: entry.rating,
+      lastRecalledAt: todayStr,
+      topicScore: scheduled.newScore,
+      isDone: scheduled.newScore >= 70,
+    };
+
+    this.topics[idx] = updatedTopic;
+    setStorage("topics", this.topics);
+
+    const historyEntry: RecallHistoryEntry = {
+      id: `recall-hist-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      userId: this.user.uid,
+      topicId: topic.id,
+      courseId: topic.courseId,
+      topicTitle: topic.title,
+      courseCode: course?.code || "",
+      stage: scheduled.nextStage,
+      rating: entry.rating,
+      previousRetention: prevRetention,
+      newRetention: scheduled.retentionLevel,
+      scoreBefore: currentScore,
+      scoreAfter: scheduled.newScore,
+      reviewedAt: new Date().toISOString(),
+      date: todayStr,
+    };
+
+    this.recallHistory.unshift(historyEntry);
+    setStorage("recall_history", this.recallHistory);
+
+    return { topic: updatedTopic, historyEntry };
+  }
+
+  async getRecallHistory(limit?: number): Promise<RecallHistoryEntry[]> {
+    if (limit && limit > 0) {
+      return [...this.recallHistory.slice(0, limit)];
+    }
+    return [...this.recallHistory];
+  }
+
+  async updateCourseRecallStyle(courseId: string, style: RecallStyle): Promise<Course> {
+    const idx = this.courses.findIndex((c) => c.id === courseId);
+    if (idx === -1) throw new Error("Course not found");
+    this.courses[idx] = { ...this.courses[idx], recallStyle: style };
+    setStorage("courses", this.courses);
+    return { ...this.courses[idx] };
+  }
+
   async exportAllDataJson(): Promise<string> {
     const payload = {
       user: this.user,
@@ -999,6 +1158,7 @@ export class DemoDataStore implements DataStore {
       degreePlan: this.degreePlan,
       snapshots: this.snapshots,
       auditLogs: this.auditLogs,
+      recallHistory: this.recallHistory,
       exportedAt: new Date().toISOString(),
     };
     return JSON.stringify(payload, null, 2);
@@ -1027,6 +1187,7 @@ export class DemoDataStore implements DataStore {
     if (data.degreePlan) this.degreePlan = data.degreePlan;
     if (Array.isArray(data.snapshots)) this.snapshots = data.snapshots;
     if (Array.isArray(data.auditLogs)) this.auditLogs = data.auditLogs;
+    if (Array.isArray(data.recallHistory)) this.recallHistory = data.recallHistory;
     this.persistAll();
   }
 }
