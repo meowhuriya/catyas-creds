@@ -22,7 +22,7 @@ const MODE_DURATIONS: Record<TimerMode, number> = {
   custom: 45 * 60,
 };
 
-function playCollegiateChime() {
+export function playCollegiateChime() {
   try {
     const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
     if (!AudioCtx) return;

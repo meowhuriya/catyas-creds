@@ -104,6 +104,7 @@ export function ShortcutDialog({
     { key: "j", desc: "Next lesson (in Lesson Player)" },
     { key: "k", desc: "Previous lesson (in Lesson Player)" },
     { key: "n", desc: "Focus lesson notes (in Lesson Player)" },
+    { key: "f", desc: "Toggle Focus Mode (in Lesson Player)" },
   ];
 
   return (
