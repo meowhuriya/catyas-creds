@@ -358,7 +358,7 @@ export function ExamPrepMode({
                 / {stats.totalTopicsCount} total
               </span>
             </div>
-            <span className="text-[11px] text-[#5E7B5B] font-medium block mt-1">
+            <span className="text-[11px] text-[#3E5C3C] dark:text-[#78A875] font-medium block mt-1">
               {stats.completedTopicsCount} mastered
             </span>
           </div>
@@ -366,18 +366,18 @@ export function ExamPrepMode({
           {/* Card 3: Daily Target (The Hero Metric) */}
           <div className="col-span-2 p-4 rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
             <div className="flex items-center justify-between mb-1">
-              <span className="eyebrow-label text-[#8A1627]">
+              <span className="eyebrow-label text-[#8A1627] dark:text-[#F07B88]">
                 DAILY PREP TARGET
               </span>
               <span
                 className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                   stats.paceStatus === "mastered"
-                    ? "bg-[#5E7B5B]/15 text-[#5E7B5B]"
+                    ? "bg-[#5E7B5B]/15 text-[#3E5C3C] dark:text-[#78A875]"
                     : stats.paceStatus === "steady"
-                    ? "bg-[#5E7B5B]/15 text-[#5E7B5B]"
+                    ? "bg-[#5E7B5B]/15 text-[#3E5C3C] dark:text-[#78A875]"
                     : stats.paceStatus === "moderate"
-                    ? "bg-[#D9A441]/20 text-[#A06C16]"
-                    : "bg-[#C62F3C]/15 text-[#C62F3C]"
+                    ? "bg-[#D9A441]/20 text-[#7A4F0E] dark:text-[#F0B533]"
+                    : "bg-[#C62F3C]/15 text-[#C62F3C] dark:text-[#F07B88]"
                 }`}
               >
                 {stats.paceStatus === "intensive" && <Flame className="h-3 w-3" />}

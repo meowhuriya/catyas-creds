@@ -262,7 +262,7 @@ export default function DashboardPage() {
                 {activeTermCourses.length}
               </span>
               {dataStore.isSampleDataActive() && (
-                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#D9A441]/20 text-[#B8821F] border border-[#D9A441]/30">
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#D9A441]/20 text-[#7A4F0E] dark:text-[#F0B533] border border-[#D9A441]/30">
                   Sample data
                 </span>
               )}

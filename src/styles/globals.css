@@ -13,8 +13,10 @@
   --color-border-secondary: #CFC8BB;
   --color-ink: #14161F;
   --color-ink-muted: #4B5160;
+  --color-secondary: #4B5160;
   --color-eyebrow: #8A1627;
   --color-accent: #A51C30;
+  --color-crimson: #A51C30;
   --color-accent-hover: #881324;
   --color-tomato: #C62F3C;
   --color-mustard: #D9A441;
@@ -40,8 +42,10 @@
   --color-border-secondary: #524045;
   --color-ink: #F6EBD3;
   --color-ink-muted: #A89B9E;
+  --color-secondary: #D1C7B7;
   --color-eyebrow: #F07B88;
   --color-accent: #E25F70;
+  --color-crimson: #E25F70;
   --color-accent-hover: #EE7584;
   --color-tomato: #E84D58;
   --color-mustard: #F0B533;

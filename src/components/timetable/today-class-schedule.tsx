@@ -92,7 +92,7 @@ export function TodayClassSchedule({
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Link
             href="/planner?view=timetable"
-            className="text-[11px] font-semibold text-[#8A1627] hover:underline inline-flex items-center gap-1"
+            className="text-[11px] font-semibold text-[#8A1627] dark:text-[#F07B88] hover:underline inline-flex items-center gap-1"
           >
             <span>Full Timetable</span>
             <ChevronRight className="h-3 w-3" />
@@ -153,22 +153,22 @@ export function TodayClassSchedule({
                   <div className="min-w-0 flex-1">
                     {/* Header info */}
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-sans text-xs font-bold text-[#A51C30]">
+                      <span className="font-sans text-xs font-bold text-[#A51C30] dark:text-[#F07B88]">
                         {c?.code || "COURSE"}
                       </span>
                       <span
-                        className={`text-[9px] uppercase font-bold px-1.5 py-0.2 rounded ${
+                        className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded ${
                           slot.type === "lab"
-                            ? "bg-[#2F7F86]/15 text-[#2F7F86]"
+                            ? "bg-[#2F7F86]/15 text-[#1C5C62] dark:text-[#52ADB5]"
                             : slot.type === "tutorial"
-                            ? "bg-[#D9A441]/20 text-[#A06C16]"
-                            : "bg-[#5E7B5B]/15 text-[#5E7B5B]"
+                            ? "bg-[#D9A441]/20 text-[#7A4F0E] dark:text-[#F0B533]"
+                            : "bg-[#5E7B5B]/15 text-[#3E5C3C] dark:text-[#78A875]"
                         }`}
                       >
                         {slot.type}
                       </span>
                       {slot.isCurrent && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#5E7B5B] uppercase">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#3E5C3C] dark:text-[#78A875] uppercase">
                           <Radio className="h-2.5 w-2.5 animate-pulse" />
                           <span>In Session Now</span>
                         </span>
@@ -199,7 +199,7 @@ export function TodayClassSchedule({
                       <button
                         type="button"
                         onClick={() => handleMarkAttendance(c)}
-                        className="px-2.5 py-1 rounded-[6px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] text-[11px] font-sans font-semibold text-[#5E7B5B] hover:bg-[#5E7B5B]/10 hover:border-[#5E7B5B] transition-colors inline-flex items-center gap-1 cursor-pointer"
+                        className="px-2.5 py-1 rounded-[6px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-[11px] font-sans font-semibold text-[#3E5C3C] dark:text-[#78A875] hover:bg-[#5E7B5B]/10 hover:border-[#5E7B5B] transition-colors inline-flex items-center gap-1 cursor-pointer"
                         title="Mark attendance present for this lecture"
                       >
                         <UserCheck className="h-3 w-3" />

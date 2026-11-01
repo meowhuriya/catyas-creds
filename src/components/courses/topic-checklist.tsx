@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SplitTopicDialog } from "@/components/courses/split-topic-dialog";
 import { MergeTopicDialog } from "@/components/courses/merge-topic-dialog";
+import { SectionBar } from "@/components/ui/section-bar";
 import { Topic, Module, Course } from "@/types/schemas";
 import { cleanSyllabusTitle } from "@/lib/utils";
 
@@ -150,16 +151,16 @@ export function TopicChecklist({
         </div>
       )}
 
-      {/* Controls Bar above Checklist: Hide Completed Toggle */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-[var(--color-secondary)]">
+      {/* Controls Bar above Checklist: One solid cream SectionBar directly above topic list */}
+      <SectionBar className="flex items-center justify-between">
+        <span className="text-sm font-semibold text-[#14161F] dark:text-[#F6EBD3]">
           {topics.length} topics in this unit
         </span>
 
         <button
           type="button"
           onClick={() => setHideCompleted(!hideCompleted)}
-          className="btn-secondary text-xs px-2.5 py-1 inline-flex items-center gap-1.5 transition-colors"
+          className="btn-secondary text-xs px-2.5 py-1 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
           title={hideCompleted ? "Show all topics" : "Hide completed topics"}
         >
           {hideCompleted ? (
@@ -174,7 +175,7 @@ export function TopicChecklist({
             </>
           )}
         </button>
-      </div>
+      </SectionBar>
 
       {/* Checklist in ONE white card with hairline dividers between rows */}
       <div className="bg-white dark:bg-[#1E1416] rounded-[12px] border border-[#E5D5C5] shadow-card overflow-hidden divide-y divide-[#E5D5C5]/70">
@@ -316,9 +317,10 @@ export function TopicChecklist({
 
                 {/* Right: Score on the right + Icon-only action buttons */}
                 <div className="flex items-center gap-2 shrink-0">
-                  {/* Score on the right */}
-                  <span className="text-sm font-semibold tabular-nums text-[#14161F] dark:text-[#F6EBD3] min-w-[36px] text-right">
-                    {topic.topicScore || 0}
+                  {/* Score on the right: shows as "0/100" with "/100" in muted colour, using tabular numbers */}
+                  <span className="text-sm font-semibold tabular-nums text-[#14161F] dark:text-[#F6EBD3] min-w-[54px] text-right">
+                    <span>{topic.topicScore || 0}</span>
+                    <span className="text-[#4B5160] dark:text-[#A89B9E] font-normal text-xs">/100</span>
                   </span>
 
                   {/* Action icons: AI, Check and menu (icon-only with tooltips, visible on hover/focus) */}

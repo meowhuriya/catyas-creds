@@ -79,8 +79,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </button>
       </div>
 
-      {/* Main Navigation Items */}
-      <div className="flex-1 overflow-y-auto px-2 py-4">
+      {/* Part 1: Main Navigation Items (Fixed Height) */}
+      <div className="shrink-0 px-2 py-3">
         <nav className="space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -96,20 +96,20 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 className={cn(
                   "group relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-semibold"
-                    : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]",
+                    ? "bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                    : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#14161F] dark:hover:text-[#F6EBD3]",
                   collapsed && "justify-center px-0"
                 )}
                 title={collapsed ? item.label : undefined}
               >
                 {/* 4px crimson active indicator */}
                 {isActive && (
-                  <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[var(--color-accent)]" />
+                  <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#A51C30]" />
                 )}
                 <Icon
                   className={cn(
                     "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[var(--color-accent)]" : "text-[var(--color-ink-muted)] group-hover:text-[var(--color-ink)]"
+                    isActive ? "text-[#A51C30] dark:text-[#F07B88]" : "text-[#4B5160] dark:text-[#D1C7B7] group-hover:text-[#14161F]"
                   )}
                 />
                 {!collapsed && <span>{item.label}</span>}
@@ -117,82 +117,81 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             );
           })}
         </nav>
-
-        {/* Recent Courses List (under Courses) */}
-        {!collapsed && recentCourses.length > 0 && (
-          <div className="mt-8 border-t border-[var(--color-border)]/80 pt-4">
-            <div className="flex items-center justify-between px-3 mb-2">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-muted)]">
-                Recent Courses
-              </span>
-              <Link
-                href="/courses?action=new-course"
-                className="text-[var(--color-ink-muted)] hover:text-[var(--color-accent)] transition-colors"
-                title="Create Course"
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <ul className="space-y-1">
-              {recentCourses.map((c) => {
-                const isCourseActive = pathname.startsWith(`/courses/${c.id}`);
-                const tagColor =
-                  TOKENS.colors.courseTags[c.colorTag as CourseTagKey]?.hex ||
-                  TOKENS.colors.courseTags.slate.hex;
-
-                return (
-                  <li key={c.id}>
-                    <Link
-                      href={`/courses/${c.id}`}
-                      className={cn(
-                        "group relative flex items-center gap-2.5 rounded-[6px] px-3 py-1.5 text-xs transition-colors",
-                        isCourseActive
-                          ? "bg-[var(--color-surface-muted)] font-medium text-[var(--color-ink)]"
-                          : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]"
-                      )}
-                    >
-                      {/* Small 6px course dot */}
-                      <span
-                        className="h-1.5 w-1.5 rounded-full shrink-0"
-                        style={{ backgroundColor: tagColor }}
-                      />
-                      <span className="font-sans font-semibold tracking-wide uppercase text-[var(--color-ink)]/90 shrink-0 text-[11px]">
-                        {c.code}
-                      </span>
-                      <span className="line-clamp-2 leading-tight" title={c.title}>
-                        {c.title}
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
       </div>
 
-      {/* Footer Legal & Disclaimers */}
+      {/* Part 2: Recent Courses (flex: 1, min-height: 0, scrolls inside itself, 5 items, one line each with ellipsis & tooltip) */}
       {!collapsed && (
-        <div className="border-t border-[var(--color-border)] p-3 text-[11px] text-[var(--color-ink-muted)] flex flex-col gap-1">
-          <div className="flex items-center justify-between text-[var(--color-ink-muted)]/80">
-            <span className="font-medium">Valeria's Creds v1.0</span>
-            <span className="font-sans text-[11px] font-semibold">Academic</span>
+        <div className="flex-1 min-h-0 overflow-y-auto px-2 py-3 border-t border-[#E4D9C0] dark:border-[#3D2D31]">
+          <div className="flex items-center justify-between px-3 mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
+              Recent Courses
+            </span>
+            <Link
+              href="/courses?action=new-course"
+              className="text-[#4B5160] hover:text-[#A51C30] transition-colors"
+              title="Create Course"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </Link>
           </div>
-          <div className="flex items-center gap-2 text-[10px]">
+          <ul className="space-y-1">
+            {recentCourses.map((c) => {
+              const isCourseActive = pathname.startsWith(`/courses/${c.id}`);
+              const tagColor =
+                TOKENS.colors.courseTags[c.colorTag as CourseTagKey]?.hex ||
+                TOKENS.colors.courseTags.slate.hex;
+
+              return (
+                <li key={c.id}>
+                  <Link
+                    href={`/courses/${c.id}`}
+                    title={c.title}
+                    className={cn(
+                      "group relative flex items-center gap-2 rounded-[6px] px-3 py-1.5 text-xs transition-colors",
+                      isCourseActive
+                        ? "bg-[#A51C30]/10 font-semibold text-[#A51C30] dark:text-[#F07B88]"
+                        : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
+                    )}
+                  >
+                    <span
+                      className="h-1.5 w-1.5 rounded-full shrink-0"
+                      style={{ backgroundColor: tagColor }}
+                    />
+                    <span className="font-sans font-semibold tracking-wide uppercase text-[#14161F] dark:text-[#F6EBD3] shrink-0 text-[11px]">
+                      {c.code}
+                    </span>
+                    <span className="truncate flex-1 font-medium text-[12px]">
+                      {c.title}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      {/* Part 3: Footer pinned at bottom with its own solid background (List never runs under footer) */}
+      {!collapsed && (
+        <div className="shrink-0 bg-[#FBF6EC] dark:bg-[#221A1C] border-t border-[#E4D9C0] dark:border-[#3D2D31] p-3 space-y-1 text-xs">
+          <div className="text-[12px] font-semibold text-[#14161F] dark:text-[#F6EBD3]">
+            Valeria’s Creds v1.0
+          </div>
+          <div className="text-[12px] text-[#4B5160] dark:text-[#D1C7B7] flex items-center gap-1.5">
             <a
               href="https://www.youtube.com/t/terms"
               target="_blank"
               rel="noreferrer"
-              className="hover:underline"
+              className="hover:underline hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
             >
-              YouTube ToS
+              YouTube Terms
             </a>
-            <span>•</span>
+            <span>·</span>
             <a
               href="https://policies.google.com/privacy"
               target="_blank"
               rel="noreferrer"
-              className="hover:underline"
+              className="hover:underline hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
             >
               Google Privacy
             </a>

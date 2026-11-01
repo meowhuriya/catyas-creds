@@ -173,7 +173,7 @@ export function WeeklyTimetableView({
             <span className="eyebrow-label text-[#8A1627] text-[10px] block mb-0.5">
               LAB SESSIONS
             </span>
-            <span className="font-serif text-2xl font-bold text-[#2F7F86] tabular-nums">
+            <span className="font-serif text-2xl font-bold text-[#1C5C62] dark:text-[#52ADB5] tabular-nums">
               {slots.filter((s) => s.type === "lab").length}
             </span>
             <span className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7] block">
@@ -185,7 +185,7 @@ export function WeeklyTimetableView({
             <span className="eyebrow-label text-[#8A1627] text-[10px] block mb-0.5">
               DAILY AVERAGE
             </span>
-            <span className="font-serif text-2xl font-bold text-[#5E7B5B] tabular-nums">
+            <span className="font-serif text-2xl font-bold text-[#3E5C3C] dark:text-[#78A875] tabular-nums">
               {slots.length > 0 ? (slots.length / 5).toFixed(1) : 0}
             </span>
             <span className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7] block">
@@ -268,18 +268,18 @@ export function WeeklyTimetableView({
                             {formatTime12(slot.startTime)} - {formatTime12(slot.endTime)}
                           </span>
                           {slot.isCurrent ? (
-                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#5E7B5B] uppercase">
+                            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#3E5C3C] dark:text-[#78A875] uppercase">
                               <Radio className="h-2.5 w-2.5 animate-pulse" />
                               <span>Now</span>
                             </span>
                           ) : (
                             <span
-                              className={`text-[9px] uppercase font-bold px-1.5 py-0.2 rounded ${
+                              className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded ${
                                 slot.type === "lab"
-                                  ? "bg-[#2F7F86]/15 text-[#2F7F86]"
+                                  ? "bg-[#2F7F86]/15 text-[#1C5C62] dark:text-[#52ADB5]"
                                   : slot.type === "tutorial"
-                                  ? "bg-[#D9A441]/20 text-[#A06C16]"
-                                  : "bg-[#5E7B5B]/15 text-[#5E7B5B]"
+                                  ? "bg-[#D9A441]/20 text-[#7A4F0E] dark:text-[#F0B533]"
+                                  : "bg-[#5E7B5B]/15 text-[#3E5C3C] dark:text-[#78A875]"
                               }`}
                             >
                               {slot.type}

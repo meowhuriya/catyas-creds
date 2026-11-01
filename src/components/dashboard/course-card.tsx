@@ -104,7 +104,7 @@ export function CourseCard({
                 ) : (
                   <span
                     title={`Attendance is ${attStats.currentPercentage}% (${attStats.statusSentence})`}
-                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#5E7B5B]/10 border border-[#5E7B5B]/30 text-[11px] font-sans font-semibold text-[#5E7B5B]"
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#5E7B5B]/10 border border-[#5E7B5B]/30 text-[11px] font-sans font-semibold text-[#3E5C3C] dark:text-[#78A875]"
                   >
                     <span>{attStats.currentPercentage}% Att.</span>
                   </span>

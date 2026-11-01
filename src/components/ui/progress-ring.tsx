@@ -35,7 +35,7 @@ export function ProgressRing({
         height={size}
       >
         <circle
-          className="text-app-surface-muted"
+          className="text-[#E4D9C0] dark:text-[#3D2D31]"
           strokeWidth={strokeWidth}
           stroke="currentColor"
           fill="transparent"
@@ -49,7 +49,7 @@ export function ProgressRing({
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          stroke={color || "var(--color-accent)"}
+          stroke={color || "#A51C30"}
           fill="transparent"
           r={radius}
           cx={size / 2}

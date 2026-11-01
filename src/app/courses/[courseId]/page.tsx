@@ -459,7 +459,7 @@ export default function CourseDetailPage() {
               Total Watch Time: {totalKnownHours} hrs
             </span>
             {suggestedCredits !== course.credits && (
-              <span className="rounded bg-[var(--color-surface-muted)] px-1.5 py-0.5 text-[11px] text-[var(--color-info)] font-medium">
+              <span className="rounded bg-[var(--color-surface-muted)] px-1.5 py-0.5 text-[11px] text-[#1C5C62] dark:text-[#52ADB5] font-semibold">
                 Watch time suggestion: {suggestedCredits} cr (at {hoursPerCredit}h/cr)
               </span>
             )}
@@ -513,7 +513,7 @@ export default function CourseDetailPage() {
             variant="outline"
             size="sm"
             onClick={() => setResetSyllabusOpen(true)}
-            className="gap-1.5 text-xs text-[#B7791F] border-[#B7791F]/30 hover:bg-[#B7791F]/10"
+            className="gap-1.5 text-xs text-[#7A4F0E] dark:text-[#F0B533] border-[#7A4F0E]/30 dark:border-[#F0B533]/30 hover:bg-[#7A4F0E]/10"
             title="Reset this course to the original syllabus definition"
           >
             <RotateCcw className="h-3.5 w-3.5" />

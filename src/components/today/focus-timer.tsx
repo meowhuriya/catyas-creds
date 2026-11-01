@@ -291,7 +291,7 @@ export function FocusTimer({
           className={`gap-1.5 px-6 font-semibold shadow-xs ${
             isRunning
               ? "bg-amber-600 hover:bg-amber-700 text-white"
-              : "bg-[var(--color-accent)] hover:opacity-90 text-white"
+              : "bg-[#A51C30] hover:bg-[#881324] text-white"
           }`}
         >
           {isRunning ? (

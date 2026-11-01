@@ -386,11 +386,11 @@ export default function TranscriptPage() {
       {/* Official A4 Document Container */}
       <div className="official-transcript mx-auto max-w-[820px] rounded-card border border-app-border bg-white text-neutral-900 p-8 md:p-12 shadow-sm font-sans">
         {/* Double Crimson Rule Header */}
-        <div className="border-t-2 border-b border-app-accent py-3.5 text-center">
+        <div className="border-t-2 border-b border-[#A51C30] py-3.5 text-center">
           <h2 className="font-serif text-2xl font-bold tracking-widest uppercase text-neutral-900">
             Official Academic Transcript
           </h2>
-          <div className="text-[11px] font-serif tracking-widest text-app-accent uppercase mt-0.5 font-bold">
+          <div className="text-[11px] font-serif tracking-widest text-[#A51C30] uppercase mt-0.5 font-bold">
             Valeria’s Creds Registry of Academic Records
           </div>
         </div>
@@ -535,7 +535,7 @@ export default function TranscriptPage() {
             <span className="text-[10px] font-sans uppercase text-neutral-500 block font-semibold">
               Cumulative CGPA ({scale === "10_point" ? "10-Pt" : "4.0"})
             </span>
-            <span className="font-bold text-sm text-app-accent tabular-nums">
+            <span className="font-bold text-sm text-[#A51C30] tabular-nums">
               {cgpa.toFixed(2)} {scale === "10_point" ? "/ 10.00" : "/ 4.00"}
             </span>
           </div>
@@ -553,7 +553,7 @@ export default function TranscriptPage() {
         {/* Verification QR & Cryptographic Block */}
         <div className="mt-8 pt-4 border-t border-neutral-200 flex flex-wrap items-center justify-between gap-4 break-inside-avoid">
           <div className="space-y-1 text-xs">
-            <div className="flex items-center gap-1.5 text-app-accent font-semibold text-[11px] uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-[#A51C30] font-semibold text-[11px] uppercase tracking-wider">
               <ShieldCheck className="h-4 w-4" />
               <span>Official Digital Credential Verification</span>
             </div>
@@ -587,7 +587,7 @@ export default function TranscriptPage() {
                 className="h-24 w-24 object-contain"
               />
             ) : (
-              <div className="h-24 w-24 flex items-center justify-center text-[10px] text-neutral-400 border border-dashed border-neutral-200">
+              <div className="h-24 w-24 flex items-center justify-center text-[10px] text-neutral-600 border border-dashed border-neutral-300">
                 QR Pending
               </div>
             )}

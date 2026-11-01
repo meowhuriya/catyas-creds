@@ -16,6 +16,7 @@ import { Stat } from "@/components/ui/stat";
 import { Button } from "@/components/ui/button";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { Award, BookOpen, ChevronRight, Layers, Sliders, ExternalLink } from "lucide-react";
+import { SectionBar } from "@/components/ui/section-bar";
 
 export default function GradesPage() {
   const { dataStore, currentUser } = useDataStore();
@@ -235,7 +236,7 @@ export default function GradesPage() {
               onClick={() => setScale("10_point")}
               className={`rounded px-2.5 py-1 font-medium transition-colors ${
                 scale === "10_point"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -246,7 +247,7 @@ export default function GradesPage() {
               onClick={() => setScale("4_point")}
               className={`rounded px-2.5 py-1 font-medium transition-colors ${
                 scale === "4_point"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -438,14 +439,14 @@ export default function GradesPage() {
       </div>
 
       {/* Scale & Retake Policy Explanatory Note */}
-      <div className="rounded-card border border-app-border bg-app-surface-muted/30 p-4 text-xs text-app-ink-muted space-y-1">
+      <SectionBar className="text-xs text-app-ink-muted space-y-1">
         <span className="font-semibold text-app-ink block">
           Collegiate Grading & Retake Standards:
         </span>
         <p>
           Semester GPA (SGPA) is calculated as the sum of (Grade Points &times; Credits) divided by Total Term Credits. For repeated courses (flagged with <code className="font-bold text-amber-700 dark:text-amber-400">(R)</code>), the higher grade points are incorporated into the Cumulative CGPA, while both course registrations remain preserved in the permanent transcript record.
         </p>
-      </div>
+      </SectionBar>
     </div>
   );
 }

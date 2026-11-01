@@ -172,7 +172,7 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
         <Popover>
           <PopoverTrigger asChild>
             <button className="flex h-8 items-center gap-2 rounded-control border border-app-border bg-app-surface px-2 text-xs text-app-ink hover:bg-app-surface-muted transition-colors">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-app-accent text-[11px] font-bold text-white">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#A51C30] dark:bg-[#8A1627] text-[11px] font-bold text-white">
                 {currentUser?.displayName?.charAt(0) || "V"}
               </div>
               <span className="hidden md:inline font-medium">

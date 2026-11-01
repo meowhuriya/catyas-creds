@@ -163,7 +163,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
           )}
 
           {!stats.isBelowLimit && stats.classesHeld > 0 && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#5E7B5B]/10 text-[#5E7B5B] border border-[#5E7B5B]/30">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#5E7B5B]/10 text-[#3E5C3C] dark:text-[#78A875] border border-[#5E7B5B]/30">
               <CheckCircle2 className="h-3.5 w-3.5" />
               <span>On Track</span>
             </span>
@@ -304,7 +304,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
               / {stats.classesHeld} held
             </span>
           </div>
-          <span className="text-xs text-[#5E7B5B] font-medium block mt-1">
+          <span className="text-xs text-[#3E5C3C] dark:text-[#78A875] font-medium block mt-1">
             {stats.classesAbsent} absent
           </span>
         </div>
@@ -447,7 +447,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
 
                 <div>
                   {log.status === "present" ? (
-                    <span className="inline-flex items-center gap-1 font-semibold text-[#5E7B5B]">
+                    <span className="inline-flex items-center gap-1 font-semibold text-[#3E5C3C] dark:text-[#78A875]">
                       <Check className="h-3 w-3" />
                       <span>Present</span>
                     </span>

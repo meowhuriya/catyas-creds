@@ -92,8 +92,8 @@ export function UnitJourney({
                       unit.isFinished
                         ? "bg-[#5E7B5B] text-white shadow-sm"
                         : unit.isActive
-                        ? "bg-[var(--color-crimson)] text-white ring-2 ring-[var(--color-crimson)]/30 shadow-sm"
-                        : "bg-[var(--color-surface)] text-[var(--color-ink)] border border-[var(--color-border)] group-hover:border-[var(--color-secondary)]"
+                        ? "bg-[#A51C30] text-white ring-2 ring-[#A51C30]/30 shadow-sm"
+                        : "bg-[#FFFFFF] dark:bg-[#221A1C] text-[#14161F] dark:text-[#F6EBD3] border border-[#E4D9C0] dark:border-[#3D2D31] group-hover:border-[#A51C30]"
                     }`}
                   >
                     {unit.isFinished ? (

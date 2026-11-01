@@ -40,14 +40,14 @@ export function MobileTabBar() {
       {/* "More" Drawer for mobile */}
       {moreOpen && (
         <div className="fixed inset-0 z-50 md:hidden bg-black/50 backdrop-blur-sm animate-in fade-in-0">
-          <div className="fixed inset-x-0 bottom-16 rounded-t-[14px] border-t border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-dialog">
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border)] mb-3">
-              <span className="font-serif text-sm font-semibold text-[var(--color-ink)]">
+          <div className="fixed inset-x-0 bottom-16 rounded-t-[14px] border-t border-[#E4D9C0] dark:border-[#3D2D31] bg-[#FBF6EC] dark:bg-[#221A1C] p-4 shadow-dialog">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E4D9C0] dark:border-[#3D2D31] mb-3">
+              <span className="font-serif text-sm font-semibold text-[#14161F] dark:text-[#F6EBD3]">
                 More Academic Navigation
               </span>
               <button
                 onClick={() => setMoreOpen(false)}
-                className="rounded-[6px] p-1 text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)]"
+                className="rounded-[6px] p-1 text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -64,8 +64,8 @@ export function MobileTabBar() {
                     className={cn(
                       "flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-semibold"
-                        : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]"
+                        ? "bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                        : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -79,7 +79,7 @@ export function MobileTabBar() {
       )}
 
       {/* Persistent Bottom Bar on Mobile */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex h-16 items-center justify-around border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 px-2 backdrop-blur-md md:hidden select-none">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex h-16 items-center justify-around border-t border-[#E4D9C0] dark:border-[#3D2D31] bg-[#FBF6EC] dark:bg-[#221A1C] px-2 shadow-lg md:hidden select-none">
         {mainTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive =
@@ -92,8 +92,8 @@ export function MobileTabBar() {
               className={cn(
                 "flex flex-col items-center justify-center gap-1 rounded-[6px] py-1 px-3 text-[11px] font-medium transition-colors",
                 isActive
-                  ? "text-[var(--color-accent)] font-semibold"
-                  : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                  ? "text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                  : "text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
               )}
             >
               <Icon className="h-5 w-5" />
@@ -106,8 +106,8 @@ export function MobileTabBar() {
         <button
           onClick={() => setMoreOpen(!moreOpen)}
           className={cn(
-            "flex flex-col items-center justify-center gap-1 rounded-[6px] py-1 px-3 text-[11px] font-medium transition-colors text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]",
-            moreOpen && "text-[var(--color-accent)] font-semibold"
+            "flex flex-col items-center justify-center gap-1 rounded-[6px] py-1 px-3 text-[11px] font-medium transition-colors text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]",
+            moreOpen && "text-[#A51C30] dark:text-[#F07B88] font-semibold"
           )}
         >
           <Menu className="h-5 w-5" />

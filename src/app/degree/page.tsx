@@ -17,6 +17,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
+import { SectionBar } from "@/components/ui/section-bar";
 import {
   GraduationCap,
   Layers,
@@ -306,7 +307,7 @@ export default function DegreePage() {
 
       {/* Advisory Guidance Notice */}
       {biggestDeficitDept && biggestDeficitDept.remaining > 0 && (
-        <div className="flex items-start gap-3 rounded-card border border-app-accent/30 bg-app-accent/5 p-4 text-xs">
+        <SectionBar className="flex items-start gap-3 border-[#A51C30]/30 text-xs">
           <GraduationCap className="h-5 w-5 text-app-accent mt-0.5 shrink-0" />
           <div className="space-y-0.5">
             <span className="font-semibold text-app-ink block text-sm">
@@ -318,7 +319,7 @@ export default function DegreePage() {
               <strong className="text-app-ink font-semibold">{remainingCredits} credits overall</strong> to fulfill your graduation requirements.
             </p>
           </div>
-        </div>
+        </SectionBar>
       )}
 
       {/* Department & Level Distributions Grid */}
@@ -396,7 +397,7 @@ export default function DegreePage() {
               onClick={() => setAuditTab("completed")}
               className={`rounded px-3 py-1 font-medium transition-colors ${
                 auditTab === "completed"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -407,7 +408,7 @@ export default function DegreePage() {
               onClick={() => setAuditTab("in_progress")}
               className={`rounded px-3 py-1 font-medium transition-colors ${
                 auditTab === "in_progress"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -418,7 +419,7 @@ export default function DegreePage() {
               onClick={() => setAuditTab("remaining")}
               className={`rounded px-3 py-1 font-medium transition-colors ${
                 auditTab === "remaining"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -580,14 +581,14 @@ export default function DegreePage() {
       </div>
 
       {/* Mandatory Official Disclaimer */}
-      <div className="rounded-card border border-app-border bg-app-surface-muted/40 p-4 text-center text-xs text-app-ink-muted">
+      <SectionBar className="text-center text-xs text-app-ink-muted">
         <span className="font-serif font-semibold text-app-ink block text-sm">
           Self-awarded credits. Not accredited by any institution.
         </span>
         <p className="text-[11px] text-app-ink-muted mt-0.5 max-w-xl mx-auto">
           Valeria’s Creds degree audit calculations are mathematically modelled after standard university degree requirements for structured independent study and portfolio evidence.
         </p>
-      </div>
+      </SectionBar>
 
       {/* Edit Degree Target Dialog */}
       <Dialog open={editTargetOpen} onOpenChange={setEditTargetOpen}>

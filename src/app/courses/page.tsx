@@ -123,7 +123,7 @@ function CoursesContent() {
             onClick={() => setSelectedTermId("all")}
             className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
               selectedTermId === "all"
-                ? "bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm"
+                ? "bg-[#A51C30] text-white shadow-sm"
                 : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
             }`}
           >
@@ -135,7 +135,7 @@ function CoursesContent() {
               onClick={() => setSelectedTermId(t.id)}
               className={`px-3 py-1 rounded-[6px] font-semibold transition-all ${
                 selectedTermId === t.id
-                  ? "bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm"
+                  ? "bg-[#A51C30] text-white shadow-sm"
                   : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
               }`}
             >

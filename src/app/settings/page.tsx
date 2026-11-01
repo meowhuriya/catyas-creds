@@ -410,8 +410,8 @@ export default function SettingsPage() {
                       onClick={() => updateAppearance({ checkSize: sz.id as CheckSize })}
                       className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
                         (appearance.checkSize || "medium") === sz.id
-                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                          : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                          : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                       }`}
                     >
                       <span className="text-xs font-semibold">{sz.label}</span>
@@ -440,8 +440,8 @@ export default function SettingsPage() {
                       onClick={() => updateAppearance({ patternStrength: st.id as PatternStrength })}
                       className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
                         appearance.patternStrength === st.id
-                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                          : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                          : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                       }`}
                     >
                       <span className="text-xs font-semibold">{st.label}</span>
@@ -496,8 +496,8 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-[#E5D5C5]/60">
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-medium text-[#14161F]">Dark Dim Overlay</span>
-                    <span className="font-semibold text-[#8A1627] tabular-nums">{appearance.customDim}%</span>
+                    <span className="font-medium text-[#14161F] dark:text-[#F6EBD3]">Dark Dim Overlay</span>
+                    <span className="font-semibold text-[#8A1627] dark:text-[#F07B88] tabular-nums">{appearance.customDim}%</span>
                   </div>
                   <input
                     type="range"
@@ -507,13 +507,13 @@ export default function SettingsPage() {
                     onChange={(e) => updateAppearance({ customDim: Number(e.target.value) })}
                     className="w-full accent-[#A51C30]"
                   />
-                  <p className="text-[11px] text-[#4B5160]">Darkens the background so page text and cards stay WCAG AA legible.</p>
+                  <p className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7]">Darkens the background so page text and cards stay WCAG AA legible.</p>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="font-medium text-[#14161F]">Background Blur</span>
-                    <span className="font-semibold text-[#8A1627] tabular-nums">{appearance.customBlur}px</span>
+                    <span className="font-medium text-[#14161F] dark:text-[#F6EBD3]">Background Blur</span>
+                    <span className="font-semibold text-[#8A1627] dark:text-[#F07B88] tabular-nums">{appearance.customBlur}px</span>
                   </div>
                   <input
                     type="range"
@@ -523,7 +523,7 @@ export default function SettingsPage() {
                     onChange={(e) => updateAppearance({ customBlur: Number(e.target.value) })}
                     className="w-full accent-[#A51C30]"
                   />
-                  <p className="text-[11px] text-[#4B5160]">Softens sharp wallpaper details behind content gaps.</p>
+                  <p className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7]">Softens sharp wallpaper details behind content gaps.</p>
                 </div>
               </div>
             </div>
@@ -548,8 +548,8 @@ export default function SettingsPage() {
                   onClick={() => updateAppearance({ accentColor: acc.id as AccentColor })}
                   className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-[8px] border text-xs font-semibold transition-all ${
                     appearance.accentColor === acc.id
-                      ? "border-[#14161F] bg-[#14161F] text-white shadow-xs"
-                      : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#14161F] hover:bg-[#FAF7F2]"
+                      ? "border-[#14161F] dark:border-[#F6EBD3] bg-[#14161F] dark:bg-[#F6EBD3] text-white dark:text-[#14161F] shadow-xs"
+                      : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#14161F] dark:text-[#F6EBD3] hover:bg-[#FAF7F2] dark:hover:bg-[#251A1D]"
                   }`}
                 >
                   <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: acc.color }} />
@@ -575,8 +575,8 @@ export default function SettingsPage() {
                   onClick={() => updateAppearance({ textSize: ts.id as TextSize })}
                   className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
                     appearance.textSize === ts.id
-                      ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                      : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                      ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                      : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                   }`}
                 >
                   <span className="text-xs font-semibold">{ts.label}</span>
@@ -609,10 +609,10 @@ export default function SettingsPage() {
           {/* Restore Single Course */}
           <div className="p-4 rounded-[10px] border border-[#E5D5C5] bg-white dark:bg-[#1E1416] space-y-3 flex flex-col justify-between">
             <div>
-              <span className="font-semibold text-sm text-[#14161F] block">
+              <span className="font-semibold text-sm text-[#14161F] dark:text-[#F6EBD3] block">
                 Restore Individual Course
               </span>
-              <p className="text-xs text-[#4B5160] mt-1">
+              <p className="text-xs text-[#4B5160] dark:text-[#D1C7B7] mt-1">
                 Select a single course to reset its unit titles and topics to the original syllabus seed.
               </p>
             </div>
@@ -621,7 +621,7 @@ export default function SettingsPage() {
               <select
                 value={restoreCourseId}
                 onChange={(e) => setRestoreCourseId(e.target.value)}
-                className="w-full text-xs p-2 rounded-[6px] border border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#14161F]"
+                className="w-full text-xs p-2 rounded-[6px] border border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#14161F] dark:text-[#F6EBD3]"
               >
                 <option value="">-- Choose Course --</option>
                 {courses.map((c) => (
@@ -643,12 +643,12 @@ export default function SettingsPage() {
           </div>
 
           {/* Restore All Courses */}
-          <div className="p-4 rounded-[10px] border border-[#E5D5C5] bg-white dark:bg-[#1E1416] space-y-3 flex flex-col justify-between">
+          <div className="p-4 rounded-[10px] border border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] space-y-3 flex flex-col justify-between">
             <div>
-              <span className="font-semibold text-sm text-[#14161F] block">
+              <span className="font-semibold text-sm text-[#14161F] dark:text-[#F6EBD3] block">
                 Restore Entire Syllabus (All 19 Courses)
               </span>
-              <p className="text-xs text-[#4B5160] mt-1">
+              <p className="text-xs text-[#4B5160] dark:text-[#D1C7B7] mt-1">
                 Recalibrates all 19 courses across Semesters 1 and 2 (651 topics total).
               </p>
             </div>
@@ -675,11 +675,11 @@ export default function SettingsPage() {
             </h2>
           </div>
           {isSampleActive ? (
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#D9A441]/20 text-[#8A5A12] border border-[#D9A441]/40">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#D9A441]/20 text-[#8A5A12] dark:text-[#F0B533] border border-[#D9A441]/40">
               Sample data active
             </span>
           ) : (
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#5E7B5B]/15 text-[#234D20] border border-[#5E7B5B]/30">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#5E7B5B]/15 text-[#234D20] dark:text-[#88C485] border border-[#5E7B5B]/30">
               Real data only (Default)
             </span>
           )}
@@ -691,10 +691,10 @@ export default function SettingsPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <div>
-            <span className="font-semibold text-sm text-[#14161F] block">
+            <span className="font-semibold text-sm text-[#14161F] dark:text-[#F6EBD3] block">
               {isSampleActive ? "Sample Data Loaded" : "Clean State Active"}
             </span>
-            <span className="text-xs text-[#4B5160]">
+            <span className="text-xs text-[#4B5160] dark:text-[#D1C7B7]">
               {isSampleActive
                 ? "The dashboard currently reflects demo study hours and assessment attempts."
                 : "All metrics reflect 0.0 study hours and zero invented scores."}
@@ -816,7 +816,7 @@ export default function SettingsPage() {
                 onChange={(e) => setHoursPerCredit(Number(e.target.value))}
                 className="text-center tabular-nums text-sm font-semibold"
               />
-              <span className="text-[#4B5160] font-medium shrink-0 text-xs">hours / credit</span>
+              <span className="text-[#4B5160] dark:text-[#D1C7B7] font-medium shrink-0 text-xs">hours / credit</span>
             </div>
           </div>
 
@@ -831,8 +831,8 @@ export default function SettingsPage() {
                 onClick={() => handleThemeChange("light")}
                 className={`flex items-center justify-center gap-2 py-2 rounded-[8px] border transition-colors ${
                   theme === "light"
-                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                    : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                    : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                 }`}
               >
                 <Sun className="h-3.5 w-3.5" />
@@ -844,8 +844,8 @@ export default function SettingsPage() {
                 onClick={() => handleThemeChange("dark")}
                 className={`flex items-center justify-center gap-2 py-2 rounded-[8px] border transition-colors ${
                   theme === "dark"
-                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                    : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                    : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                 }`}
               >
                 <Moon className="h-3.5 w-3.5" />
@@ -857,8 +857,8 @@ export default function SettingsPage() {
                 onClick={() => handleThemeChange("system")}
                 className={`flex items-center justify-center gap-2 py-2 rounded-[8px] border transition-colors ${
                   theme === "system"
-                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] font-semibold"
-                    : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] text-[#4B5160] hover:text-[#14161F]"
+                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                    : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                 }`}
               >
                 <Laptop className="h-3.5 w-3.5" />
@@ -948,12 +948,12 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Export JSON */}
-          <div className="rounded-[10px] border border-[#E5D5C5] p-4 space-y-2 flex flex-col justify-between">
+          <div className="rounded-[10px] border border-[#E5D5C5] dark:border-[#3D2D31] p-4 space-y-2 flex flex-col justify-between">
             <div className="space-y-1">
-              <span className="font-semibold text-[#14161F] block text-sm">
+              <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block text-sm">
                 Export Complete Data Backup
               </span>
-              <p className="text-xs text-[#4B5160]">
+              <p className="text-xs text-[#4B5160] dark:text-[#D1C7B7]">
                 Download a clean, structured JSON file containing all courses, notes, assessments, attempt histories, and planner events.
               </p>
             </div>
@@ -968,12 +968,12 @@ export default function SettingsPage() {
           </div>
 
           {/* Import JSON */}
-          <div className="rounded-[10px] border border-[#E5D5C5] p-4 space-y-2 flex flex-col justify-between">
+          <div className="rounded-[10px] border border-[#E5D5C5] dark:border-[#3D2D31] p-4 space-y-2 flex flex-col justify-between">
             <div className="space-y-1">
-              <span className="font-semibold text-[#14161F] block text-sm">
+              <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block text-sm">
                 Restore from JSON Backup
               </span>
-              <p className="text-xs text-[#4B5160]">
+              <p className="text-xs text-[#4B5160] dark:text-[#D1C7B7]">
                 Upload a previously exported backup file to restore your coursework, lecture progress, and academic grades.
               </p>
             </div>
@@ -998,12 +998,12 @@ export default function SettingsPage() {
         </div>
 
         {/* Danger Zone */}
-        <div className="border-t border-[#E5D5C5] pt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="border-t border-[#E5D5C5] dark:border-[#3D2D31] pt-4 flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-0.5">
-            <span className="font-semibold text-[#14161F] block">
+            <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block">
               Danger Zone: Account Reset
             </span>
-            <span className="text-xs text-[#4B5160] block">
+            <span className="text-xs text-[#4B5160] dark:text-[#D1C7B7] block">
               Erase all local courses, notes, and study progress.
             </span>
           </div>

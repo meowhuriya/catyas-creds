@@ -265,7 +265,7 @@ function PlannerContent() {
               onClick={() => setViewMode("month")}
               className={`rounded px-3 py-1 font-medium transition-colors cursor-pointer ${
                 viewMode === "month"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -276,7 +276,7 @@ function PlannerContent() {
               onClick={() => setViewMode("week")}
               className={`rounded px-3 py-1 font-medium transition-colors cursor-pointer ${
                 viewMode === "week"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -287,7 +287,7 @@ function PlannerContent() {
               onClick={() => setViewMode("timetable")}
               className={`rounded px-3 py-1 font-medium transition-colors cursor-pointer ${
                 viewMode === "timetable"
-                  ? "bg-app-accent text-white font-semibold"
+                  ? "bg-[#A51C30] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -454,7 +454,7 @@ function PlannerContent() {
                     <span
                       className={`h-5 w-5 flex items-center justify-center rounded-full text-xs font-sans font-semibold font-bold tabular-nums ${
                         isCurrentDay
-                          ? "bg-app-accent text-white"
+                          ? "bg-[#A51C30] text-white"
                           : isCurrentMonth
                           ? "text-app-ink"
                           : "text-app-ink-muted/60"
