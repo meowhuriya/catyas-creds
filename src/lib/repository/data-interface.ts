@@ -19,6 +19,7 @@ import {
   AuditLog,
   Topic,
   StudySession,
+  CourseAttendance,
 } from "@/types/schemas";
 
 export interface DataStore {
@@ -148,6 +149,19 @@ export interface DataStore {
   logStudySession(
     session: Omit<StudySession, "id" | "userId">
   ): Promise<StudySession>;
+
+  // Course Attendance Tracker
+  getCourseAttendance(courseId: string): Promise<CourseAttendance>;
+  getAllAttendance(): Promise<CourseAttendance[]>;
+  updateCourseAttendance(
+    courseId: string,
+    updates: Partial<CourseAttendance>
+  ): Promise<CourseAttendance>;
+  recordAttendance(
+    courseId: string,
+    status: "present" | "absent",
+    note?: string
+  ): Promise<CourseAttendance>;
 
   // Demo / Sample Data Controls
   loadDemoData(): Promise<void>;

@@ -14,6 +14,7 @@ import {
   Submission,
   Note,
   Topic,
+  CourseAttendance,
 } from "@/types/schemas";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,8 @@ import { QuickCheckModal } from "@/components/courses/quick-check-modal";
 import { TopicAiChatModal } from "@/components/topics/topic-ai-chat-modal";
 import { MilestoneBanner } from "@/components/ui/milestone-banner";
 import { calculateUnitMastery, calculateCourseMastery } from "@/lib/mastery/mastery-engine";
+import { AttendanceTracker } from "@/components/courses/attendance-tracker";
+import { calculateAttendanceStats, AttendanceStats } from "@/lib/attendance/attendance-engine";
 import {
   DndContext,
   closestCenter,
@@ -74,6 +77,8 @@ import {
   FileCheck,
   ClipboardList,
   RotateCcw,
+  AlertTriangle,
+  UserCheck,
 } from "lucide-react";
 
 export default function CourseDetailPage() {
@@ -93,6 +98,8 @@ export default function CourseDetailPage() {
   const [attempts, setAttempts] = React.useState<Attempt[]>([]);
   const [submissions, setSubmissions] = React.useState<Submission[]>([]);
   const [notes, setNotes] = React.useState<Note[]>([]);
+  const [attendanceRecord, setAttendanceRecord] = React.useState<CourseAttendance | null>(null);
+  const [attStats, setAttStats] = React.useState<AttendanceStats>(calculateAttendanceStats(0, 0, 75));
   const [activeUnitId, setActiveUnitId] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(true);
 
@@ -124,7 +131,7 @@ export default function CourseDetailPage() {
       if (!course) {
         setLoading(true);
       }
-      const [c, m, top, l, p, a, n] = await Promise.all([
+      const [c, m, top, l, p, a, n, att] = await Promise.all([
         dataStore.getCourse(courseId),
         dataStore.getModules(courseId),
         dataStore.getAllTopics(courseId),
@@ -132,6 +139,7 @@ export default function CourseDetailPage() {
         dataStore.getAllLessonProgress(courseId),
         dataStore.getAssessments(courseId),
         dataStore.getAllNotes(courseId),
+        dataStore.getCourseAttendance(courseId),
       ]);
 
       setCourse(c);
@@ -141,6 +149,8 @@ export default function CourseDetailPage() {
       setProgressList(p);
       setAssessments(a);
       setNotes(n);
+      setAttendanceRecord(att);
+      setAttStats(calculateAttendanceStats(att.classesHeld, att.classesAttended, att.minimumPercentage));
 
       if (m.length > 0 && !activeUnitId) {
         setActiveUnitId(m[0].id);
@@ -448,6 +458,33 @@ export default function CourseDetailPage() {
                 Watch time suggestion: {suggestedCredits} cr (at {hoursPerCredit}h/cr)
               </span>
             )}
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setActiveTab("attendance")}
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] border text-[11px] font-sans font-semibold transition-colors cursor-pointer ${
+                attStats.isBelowLimit
+                  ? "bg-[#C62F3C]/10 text-[#C62F3C] border-[#C62F3C]/30 hover:bg-[#C62F3C]/20"
+                  : "bg-[var(--color-surface-muted)] text-[var(--color-ink)] border-[var(--color-border)] hover:bg-[var(--color-surface)]"
+              }`}
+              title="Click to view and manage attendance records"
+            >
+              {attStats.isBelowLimit ? (
+                <>
+                  <AlertTriangle className="h-3 w-3 text-[#C62F3C]" />
+                  <span>{attStats.currentPercentage}% Att. (Below {attStats.minimumPercentage}% limit)</span>
+                </>
+              ) : (
+                <>
+                  <UserCheck className="h-3 w-3 text-[#5E7B5B]" />
+                  <span>
+                    {attendanceRecord && attendanceRecord.classesHeld > 0
+                      ? `${attStats.currentPercentage}% Att. (${attStats.statusSentence})`
+                      : `Attendance: ${attStats.minimumPercentage}% Target`}
+                  </span>
+                </>
+              )}
+            </button>
           </div>
         </div>
 
@@ -520,6 +557,12 @@ export default function CourseDetailPage() {
         <TabsList>
           <TabsTrigger value="units">Units & Topics</TabsTrigger>
           <TabsTrigger value="classwork">Classwork & Modules</TabsTrigger>
+          <TabsTrigger value="attendance" className="gap-1.5">
+            <span>Attendance</span>
+            {attStats.isBelowLimit && (
+              <span className="h-2 w-2 rounded-full bg-[#C62F3C] animate-pulse" />
+            )}
+          </TabsTrigger>
           <TabsTrigger value="grades">Gradebook</TabsTrigger>
           <TabsTrigger value="syllabus">Syllabus</TabsTrigger>
           <TabsTrigger value="notes">Notes ({notes.length})</TabsTrigger>
@@ -947,6 +990,16 @@ export default function CourseDetailPage() {
               </div>
             </DndContext>
           )}
+        </TabsContent>
+
+        {/* Tab: Attendance Tracker */}
+        <TabsContent value="attendance" className="space-y-6 pt-2">
+          <AttendanceTracker
+            course={course}
+            onAttendanceChange={(newStats) => {
+              setAttStats(newStats);
+            }}
+          />
         </TabsContent>
 
         {/* Tab 2: Stream */}

@@ -400,3 +400,26 @@ export const AuditLogSchema = z.object({
   timestamp: z.string(),
 });
 export type AuditLog = z.infer<typeof AuditLogSchema>;
+
+// Course Attendance Schema
+export const AttendanceLogEntrySchema = z.object({
+  id: z.string(),
+  date: z.string(), // YYYY-MM-DD
+  status: z.enum(["present", "absent"]),
+  timestamp: z.string(),
+  note: z.string().optional(),
+});
+export type AttendanceLogEntry = z.infer<typeof AttendanceLogEntrySchema>;
+
+export const CourseAttendanceSchema = z.object({
+  id: z.string(),
+  courseId: z.string(),
+  userId: z.string(),
+  classesHeld: z.number().min(0).default(0),
+  classesAttended: z.number().min(0).default(0),
+  minimumPercentage: z.number().min(1).max(100).default(75),
+  logs: z.array(AttendanceLogEntrySchema).default([]),
+  updatedAt: z.string(),
+});
+export type CourseAttendance = z.infer<typeof CourseAttendanceSchema>;
+

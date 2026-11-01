@@ -16,6 +16,7 @@ import {
   AuditLog,
   Topic,
   StudySession,
+  CourseAttendance,
 } from "@/types/schemas";
 
 export const CLEAN_USER: UserProfile = {
@@ -11949,3 +11950,49 @@ export const DEMO_DEGREE_PLAN: DegreePlan = {
 };
 export const DEMO_AUDIT_LOGS: AuditLog[] = [];
 export const DEMO_STUDY_SESSIONS = SAMPLE_STUDY_SESSIONS;
+
+export const SAMPLE_ATTENDANCE: CourseAttendance[] = [
+  {
+    id: "att-course-ma101bs",
+    courseId: "course-ma101bs",
+    userId: "valeria-student",
+    classesHeld: 28,
+    classesAttended: 25,
+    minimumPercentage: 75,
+    logs: [
+      { id: "log-1", date: "2025-10-28", status: "present", timestamp: "2025-10-28T09:00:00.000Z" },
+      { id: "log-2", date: "2025-10-29", status: "present", timestamp: "2025-10-29T09:00:00.000Z" },
+      { id: "log-3", date: "2025-10-31", status: "absent", timestamp: "2025-10-31T09:00:00.000Z" },
+    ],
+    updatedAt: "2025-10-31T10:00:00.000Z",
+  },
+  {
+    id: "att-course-ch102bs",
+    courseId: "course-ch102bs",
+    userId: "valeria-student",
+    classesHeld: 26,
+    classesAttended: 18, // 69.2% -> below 75% limit, triggers warning chip
+    minimumPercentage: 75,
+    logs: [
+      { id: "log-ch-1", date: "2025-10-27", status: "absent", timestamp: "2025-10-27T10:00:00.000Z" },
+      { id: "log-ch-2", date: "2025-10-29", status: "present", timestamp: "2025-10-29T10:00:00.000Z" },
+      { id: "log-ch-3", date: "2025-10-30", status: "absent", timestamp: "2025-10-30T10:00:00.000Z" },
+    ],
+    updatedAt: "2025-10-30T11:00:00.000Z",
+  },
+  {
+    id: "att-course-cs105es",
+    courseId: "course-cs105es",
+    userId: "valeria-student",
+    classesHeld: 30,
+    classesAttended: 27, // 90%
+    minimumPercentage: 75,
+    logs: [
+      { id: "log-cs-1", date: "2025-10-28", status: "present", timestamp: "2025-10-28T14:00:00.000Z" },
+      { id: "log-cs-2", date: "2025-10-30", status: "present", timestamp: "2025-10-30T14:00:00.000Z" },
+    ],
+    updatedAt: "2025-10-30T15:00:00.000Z",
+  },
+];
+export const DEMO_ATTENDANCE = SAMPLE_ATTENDANCE;
+

@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Course, LessonProgress, Assessment, Module, Topic } from "@/types/schemas";
+import { Course, LessonProgress, Assessment, Module, Topic, CourseAttendance } from "@/types/schemas";
 import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen, AlertTriangle } from "lucide-react";
 import { cleanSyllabusTitle } from "@/lib/utils";
+import { calculateAttendanceStats } from "@/lib/attendance/attendance-engine";
 
 interface CourseCardProps {
   course: Course;
@@ -14,6 +15,7 @@ interface CourseCardProps {
   assessments?: Assessment[];
   modules?: Module[];
   topics?: Topic[];
+  attendance?: CourseAttendance;
 }
 
 export function CourseCard({
@@ -22,6 +24,7 @@ export function CourseCard({
   assessments = [],
   modules = [],
   topics = [],
+  attendance,
 }: CourseCardProps) {
   // Compute course mastery / progress percentage
   const courseTopics = topics.filter((t) => t.courseId === course.id);
@@ -34,6 +37,10 @@ export function CourseCard({
           (progressList.filter((p) => p.isCompleted).length / progressList.length) * 100
         )
       : 0;
+
+  const attStats = attendance && attendance.classesHeld > 0
+    ? calculateAttendanceStats(attendance.classesHeld, attendance.classesAttended, attendance.minimumPercentage)
+    : null;
 
   // Next unit calculation
   const courseModules = modules
@@ -60,14 +67,34 @@ export function CourseCard({
       {/* Card Body */}
       <div className="flex flex-col flex-1 p-5 justify-between">
         <div>
-          {/* Header row: Course Code & Credits Chip (No monospace font) */}
+          {/* Header row: Course Code & Credits Chip & Attendance Badge (No monospace font) */}
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <span className="font-sans text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">
               {course.code}
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs font-sans font-semibold text-[var(--color-ink)] tabular-nums">
-              {course.credits} Credits
-            </span>
+            <div className="flex items-center gap-1.5">
+              {attStats && (
+                attStats.isBelowLimit ? (
+                  <span
+                    title={`Attendance is ${attStats.currentPercentage}% - below required ${attStats.minimumPercentage}%`}
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#C62F3C]/10 border border-[#C62F3C]/30 text-[11px] font-sans font-semibold text-[#C62F3C]"
+                  >
+                    <AlertTriangle className="h-2.5 w-2.5" />
+                    <span>{attStats.currentPercentage}% Att.</span>
+                  </span>
+                ) : (
+                  <span
+                    title={`Attendance is ${attStats.currentPercentage}% (${attStats.statusSentence})`}
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#5E7B5B]/10 border border-[#5E7B5B]/30 text-[11px] font-sans font-semibold text-[#5E7B5B]"
+                  >
+                    <span>{attStats.currentPercentage}% Att.</span>
+                  </span>
+                )
+              )}
+              <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs font-sans font-semibold text-[var(--color-ink)] tabular-nums">
+                {course.credits} Credits
+              </span>
+            </div>
           </div>
 
           {/* Course Title (Fraunces, max 2 lines) */}

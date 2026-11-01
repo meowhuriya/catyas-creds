@@ -20,6 +20,8 @@ import {
   AuditLog,
   Topic,
   StudySession,
+  CourseAttendance,
+  AttendanceLogEntry,
 } from "@/types/schemas";
 import { db, auth } from "@/lib/firebase/config";
 import {
@@ -723,6 +725,79 @@ export class FirebaseDataStore implements DataStore {
     };
     await setDoc(doc(db, "studySessions", id), session);
     return session;
+  }
+
+  async getCourseAttendance(courseId: string): Promise<CourseAttendance> {
+    if (!db) throw new Error("Firestore not configured");
+    const q = query(
+      collection(db, "attendance"),
+      where("userId", "==", this.currentUid),
+      where("courseId", "==", courseId)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      return snap.docs[0].data() as CourseAttendance;
+    }
+    const defaultAtt: CourseAttendance = {
+      id: `att-${this.currentUid}-${courseId}`,
+      courseId,
+      userId: this.currentUid,
+      classesHeld: 0,
+      classesAttended: 0,
+      minimumPercentage: 75,
+      logs: [],
+      updatedAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db, "attendance", defaultAtt.id), defaultAtt);
+    return defaultAtt;
+  }
+
+  async getAllAttendance(): Promise<CourseAttendance[]> {
+    if (!db) return [];
+    const q = query(
+      collection(db, "attendance"),
+      where("userId", "==", this.currentUid)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => d.data() as CourseAttendance);
+  }
+
+  async updateCourseAttendance(
+    courseId: string,
+    updates: Partial<CourseAttendance>
+  ): Promise<CourseAttendance> {
+    if (!db) throw new Error("Firestore not configured");
+    const existing = await this.getCourseAttendance(courseId);
+    const updated: CourseAttendance = {
+      ...existing,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db, "attendance", existing.id), updated);
+    return updated;
+  }
+
+  async recordAttendance(
+    courseId: string,
+    status: "present" | "absent",
+    note?: string
+  ): Promise<CourseAttendance> {
+    const current = await this.getCourseAttendance(courseId);
+    const newHeld = current.classesHeld + 1;
+    const newAttended = status === "present" ? current.classesAttended + 1 : current.classesAttended;
+    const newLog: AttendanceLogEntry = {
+      id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      date: new Date().toISOString().split("T")[0],
+      status,
+      timestamp: new Date().toISOString(),
+      note,
+    };
+    const updatedLogs = [newLog, ...(current.logs || [])].slice(0, 50);
+    return this.updateCourseAttendance(courseId, {
+      classesHeld: newHeld,
+      classesAttended: newAttended,
+      logs: updatedLogs,
+    });
   }
 
   async exportAllDataJson(): Promise<string> {

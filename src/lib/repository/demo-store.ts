@@ -18,6 +18,8 @@ import {
   DegreePlan,
   TranscriptSnapshot,
   AuditLog,
+  CourseAttendance,
+  AttendanceLogEntry,
 } from "@/types/schemas";
 import {
   CLEAN_USER,
@@ -31,6 +33,7 @@ import {
   SAMPLE_ASSESSMENTS,
   SAMPLE_STUDY_SESSIONS,
   SAMPLE_PLANNER_EVENTS,
+  SAMPLE_ATTENDANCE,
   DEMO_DEGREE_PLAN,
   DEMO_MODULES,
   DEMO_TOPICS,
@@ -77,6 +80,7 @@ export class DemoDataStore implements DataStore {
   private auditLogs: AuditLog[];
   private topics: Topic[];
   private studySessions: StudySession[];
+  private attendance: CourseAttendance[];
 
   constructor() {
     const isSample = getStorage<boolean>("is_sample_active", false);
@@ -105,6 +109,7 @@ export class DemoDataStore implements DataStore {
     this.snapshots = getStorage<TranscriptSnapshot[]>("snapshots", []);
     this.auditLogs = getStorage<AuditLog[]>("auditLogs", []);
     this.studySessions = getStorage<StudySession[]>("studySessions", isSample ? SAMPLE_STUDY_SESSIONS : []);
+    this.attendance = getStorage<CourseAttendance[]>("attendance", isSample ? SAMPLE_ATTENDANCE : []);
   }
 
   isDemoMode(): boolean {
@@ -123,6 +128,7 @@ export class DemoDataStore implements DataStore {
     this.assessments = [...SAMPLE_ASSESSMENTS];
     this.plannerEvents = [...SAMPLE_PLANNER_EVENTS];
     this.studySessions = [...SAMPLE_STUDY_SESSIONS];
+    this.attendance = [...SAMPLE_ATTENDANCE];
     this.persistAll();
   }
 
@@ -139,6 +145,7 @@ export class DemoDataStore implements DataStore {
     this.notes = [];
     this.plannerEvents = [];
     this.studySessions = [];
+    this.attendance = [];
     this.snapshots = [];
     this.auditLogs = [];
     this.persistAll();
@@ -178,6 +185,7 @@ export class DemoDataStore implements DataStore {
     setStorage("auditLogs", this.auditLogs);
     setStorage("topics", this.topics);
     setStorage("studySessions", this.studySessions);
+    setStorage("attendance", this.attendance);
   }
 
   async getUser(): Promise<UserProfile | null> {
@@ -751,6 +759,81 @@ export class DemoDataStore implements DataStore {
     return newSession;
   }
 
+  async getCourseAttendance(courseId: string): Promise<CourseAttendance> {
+    let rec = this.attendance.find((a) => a.courseId === courseId);
+    if (!rec) {
+      rec = {
+        id: `att-${courseId}`,
+        courseId,
+        userId: this.user.uid,
+        classesHeld: 0,
+        classesAttended: 0,
+        minimumPercentage: 75,
+        logs: [],
+        updatedAt: new Date().toISOString(),
+      };
+      this.attendance.push(rec);
+      setStorage("attendance", this.attendance);
+    }
+    return { ...rec };
+  }
+
+  async getAllAttendance(): Promise<CourseAttendance[]> {
+    return [...this.attendance];
+  }
+
+  async updateCourseAttendance(
+    courseId: string,
+    updates: Partial<CourseAttendance>
+  ): Promise<CourseAttendance> {
+    let idx = this.attendance.findIndex((a) => a.courseId === courseId);
+    if (idx === -1) {
+      const newRec: CourseAttendance = {
+        id: `att-${courseId}`,
+        courseId,
+        userId: this.user.uid,
+        classesHeld: updates.classesHeld ?? 0,
+        classesAttended: updates.classesAttended ?? 0,
+        minimumPercentage: updates.minimumPercentage ?? 75,
+        logs: updates.logs ?? [],
+        updatedAt: new Date().toISOString(),
+      };
+      this.attendance.push(newRec);
+      idx = this.attendance.length - 1;
+    } else {
+      this.attendance[idx] = {
+        ...this.attendance[idx],
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      };
+    }
+    setStorage("attendance", this.attendance);
+    return { ...this.attendance[idx] };
+  }
+
+  async recordAttendance(
+    courseId: string,
+    status: "present" | "absent",
+    note?: string
+  ): Promise<CourseAttendance> {
+    const current = await this.getCourseAttendance(courseId);
+    const newHeld = current.classesHeld + 1;
+    const newAttended = status === "present" ? current.classesAttended + 1 : current.classesAttended;
+    const newLog: AttendanceLogEntry = {
+      id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      date: new Date().toISOString().split("T")[0],
+      status,
+      timestamp: new Date().toISOString(),
+      note,
+    };
+    const updatedLogs = [newLog, ...(current.logs || [])].slice(0, 50);
+    return this.updateCourseAttendance(courseId, {
+      classesHeld: newHeld,
+      classesAttended: newAttended,
+      logs: updatedLogs,
+    });
+  }
+
   async exportAllDataJson(): Promise<string> {
     const payload = {
       user: this.user,
@@ -768,6 +851,7 @@ export class DemoDataStore implements DataStore {
       notes: this.notes,
       plannerEvents: this.plannerEvents,
       studySessions: this.studySessions,
+      attendance: this.attendance,
       degreePlan: this.degreePlan,
       snapshots: this.snapshots,
       auditLogs: this.auditLogs,
@@ -793,6 +877,7 @@ export class DemoDataStore implements DataStore {
     if (Array.isArray(data.notes)) this.notes = data.notes;
     if (Array.isArray(data.plannerEvents)) this.plannerEvents = data.plannerEvents;
     if (Array.isArray(data.studySessions)) this.studySessions = data.studySessions;
+    if (Array.isArray(data.attendance)) this.attendance = data.attendance;
     if (data.degreePlan) this.degreePlan = data.degreePlan;
     if (Array.isArray(data.snapshots)) this.snapshots = data.snapshots;
     if (Array.isArray(data.auditLogs)) this.auditLogs = data.auditLogs;
