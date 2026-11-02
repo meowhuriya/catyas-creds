@@ -82,17 +82,17 @@ export default function MasteryTopicPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-5 py-2">
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center gap-2 text-xs text-[#4B5160] dark:text-[#CFC8BB] flex-wrap">
-        <Link href="/courses" className="hover:text-[#8A1627] hover:underline">
+      {/* Breadcrumb Navigation (Solid cream surface pill) */}
+      <div className="px-4 py-2 rounded-[12px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-xs w-fit flex items-center gap-2 text-xs text-[#4B5160] dark:text-[#CFC8BB] flex-wrap">
+        <Link href="/courses" className="hover:text-[#8A1627] hover:underline font-medium">
           Courses
         </Link>
         <ChevronRight className="h-3 w-3" />
-        <Link href={`/courses/${course.id}`} className="hover:text-[#8A1627] hover:underline">
+        <Link href={`/courses/${course.id}`} className="hover:text-[#8A1627] hover:underline font-medium">
           {course.code}
         </Link>
         <ChevronRight className="h-3 w-3" />
-        <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3]">
+        <span className="font-semibold text-[#8A1627] dark:text-[#F07B88]">
           Mastery Check
         </span>
       </div>

@@ -180,22 +180,22 @@ export default function LeaderboardPage() {
   }, [badgesCatalog]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#E4D9C0] dark:border-[#3D2D31] pb-6">
+    <div className="max-w-6xl mx-auto space-y-6 pb-12 select-none">
+      {/* 1. Header Banner (Solid cream floating panel) */}
+      <div className="p-5 md:p-6 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-[#8A1627] dark:text-[#F07B88]">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8A1627]/10 text-[#8A1627] dark:text-[#F07B88] border border-[#8A1627]/20 uppercase tracking-widest">
               Academic Honor Roll
             </span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D9A441]/15 text-[#8A5A12] dark:text-[#D9A441] border border-[#D9A441]/30">
               Live Season 1
             </span>
           </div>
-          <h1 className="text-3xl font-serif font-black text-[#14161F] dark:text-[#F6EBD3] mt-1">
-            Squad Leaderboard & Badge Vault
+          <h1 className="text-2xl md:text-3xl font-serif font-black text-[#14161F] dark:text-[#F6EBD3] mt-2 tracking-tight">
+            Squad Leaderboard &amp; Badge Vault
           </h1>
-          <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-1">
+          <p className="text-xs md:text-sm text-[#4B5160] dark:text-[#CFC8BB] mt-1">
             Compete with classmates, master curriculum topics, and mint custom milestone badges.
           </p>
         </div>
@@ -213,26 +213,26 @@ export default function LeaderboardPage() {
           {/* Privacy Switch */}
           <button
             onClick={handleTogglePrivacy}
-            className="h-9 px-3 rounded-[8px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white/70 dark:bg-black/20 text-xs flex items-center gap-1.5 hover:border-[#8A1627] transition-colors"
+            className="h-9 px-3 rounded-[8px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black/30 text-xs flex items-center gap-1.5 hover:border-[#8A1627] transition-colors shadow-xs"
             title="Toggle leaderboard visibility"
           >
             {myProfile?.showOnLeaderboard ? (
               <>
                 <Eye className="h-3.5 w-3.5 text-emerald-600" />
-                <span className="text-[11px] font-medium">Public</span>
+                <span className="text-[11px] font-medium text-[#14161F] dark:text-[#F6EBD3]">Public</span>
               </>
             ) : (
               <>
                 <EyeOff className="h-3.5 w-3.5 text-[#8A1627]" />
-                <span className="text-[11px] font-medium">Hidden</span>
+                <span className="text-[11px] font-medium text-[#14161F] dark:text-[#F6EBD3]">Hidden</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Tabs & Squad Invite Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* 2. Tabs & Squad Invite Bar (Solid cream surface panel) */}
+      <div className="p-3.5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Toggle View */}
         <div className="flex rounded-[10px] p-1 bg-[#E4D9C0]/50 dark:bg-[#2D1E22] w-fit border border-[#E4D9C0] dark:border-[#3D2D31]">
           <button
@@ -261,14 +261,14 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Squad Invite / Join Box */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {myProfile?.squadCode ? (
             <button
               onClick={handleCopySquadCode}
-              className="h-9 px-3 rounded-[8px] border border-[#D9A441]/40 bg-[#D9A441]/10 text-xs font-semibold text-[#8A5A12] dark:text-[#E5B555] flex items-center gap-1.5 hover:bg-[#D9A441]/20 transition-colors"
+              className="h-9 px-3 rounded-[8px] border border-[#D9A441]/50 bg-[#D9A441]/15 text-xs font-semibold text-[#8A5A12] dark:text-[#E5B555] flex items-center gap-1.5 hover:bg-[#D9A441]/25 transition-colors"
             >
-              <span>Squad Code: <span className="font-mono">{myProfile.squadCode}</span></span>
-              {copiedSquadCode ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+              <span>Squad Code: <span className="font-mono font-bold">{myProfile.squadCode}</span></span>
+              {copiedSquadCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
             </button>
           ) : null}
 
@@ -289,9 +289,143 @@ export default function LeaderboardPage() {
       </div>
 
       {/* =============================================================== */}
-      {/* PODIUM: TOP 3 CARDS */}
+      {/* 3. PODIUM: TOP RANK CARDS (REAL DATA ONLY, NO FAKE PEOPLE) */}
       {/* =============================================================== */}
-      {topThree.length > 0 && (
+      {topThree.length === 1 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+          {/* #1 Champion (Gold) */}
+          <div className="academic-card p-6 text-center relative border-2 border-[#D9A441] bg-gradient-to-b from-[#D9A441]/15 to-transparent shadow-xl">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#D9A441] text-white text-[10px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+              <Trophy className="h-3 w-3" />
+              <span>#1 Champion</span>
+            </div>
+            <div className="h-20 w-20 mx-auto rounded-full overflow-hidden border-2 border-[#D9A441] bg-white dark:bg-black p-0.5 mt-2 ring-4 ring-[#D9A441]/20">
+              {topThree[0].avatarUrl ? (
+                <img src={topThree[0].avatarUrl} alt={topThree[0].displayName} className="h-full w-full object-cover rounded-full" />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center font-bold text-2xl bg-[#D9A441]/20 text-[#8A5A12] dark:text-[#E5B555]">
+                  {topThree[0].displayName[0] || "U"}
+                </div>
+              )}
+            </div>
+            <div className="font-serif font-black text-lg mt-2.5 truncate text-[#14161F] dark:text-[#F6EBD3]">
+              {topThree[0].displayName}
+            </div>
+            <div className="text-2xl font-serif font-black text-[#D9A441] mt-0.5">
+              {topThree[0].xp.toLocaleString()} XP
+            </div>
+
+            {/* Equipped Badges */}
+            <div className="flex justify-center gap-2 mt-3 min-h-[28px]">
+              {topThree[0].equippedBadges.map((bId) => {
+                const b = badgeMap.get(bId);
+                return b ? (
+                  <img key={bId} src={b.imageUrl} alt={b.title} title={b.title} className="h-7 w-7 rounded-full border-2 border-[#D9A441]" />
+                ) : null;
+              })}
+            </div>
+
+            <div className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-2.5 flex justify-center gap-3 font-semibold">
+              <span>{topThree[0].topicsMasteredCount} Topics Mastered</span>
+              <span>·</span>
+              <span>{Math.round(topThree[0].weeklyStudyMinutes / 60)}h Studied</span>
+            </div>
+          </div>
+
+          {/* Squad Invite Card */}
+          <div className="academic-card p-6 flex flex-col justify-center items-center text-center space-y-3 border-2 border-dashed border-[#E4D9C0] dark:border-[#3D2D31]">
+            <div className="h-12 w-12 rounded-full bg-[#D9A441]/15 text-[#8A5A12] dark:text-[#D9A441] flex items-center justify-center">
+              <Users className="h-6 w-6" />
+            </div>
+            <h3 className="font-serif font-bold text-base text-[#14161F] dark:text-[#F6EBD3]">
+              Invite Your Study Squad
+            </h3>
+            <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] max-w-xs leading-relaxed">
+              You are currently leading your squad. Share invite code <span className="font-mono font-bold text-[#8A1627] dark:text-[#F07B88]">{myProfile?.squadCode || "CYBER9"}</span> with classmates to compete on this leaderboard!
+            </p>
+            <Button
+              onClick={handleCopySquadCode}
+              className="btn-secondary text-xs h-9 px-4 gap-1.5"
+            >
+              {copiedSquadCode ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+              <span>Copy Squad Invite Code</span>
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {topThree.length === 2 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+          {/* #1 Champion */}
+          <div className="academic-card p-6 text-center relative border-2 border-[#D9A441] bg-gradient-to-b from-[#D9A441]/15 to-transparent shadow-xl">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#D9A441] text-white text-[10px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+              <Trophy className="h-3 w-3" />
+              <span>#1 Champion</span>
+            </div>
+            <div className="h-20 w-20 mx-auto rounded-full overflow-hidden border-2 border-[#D9A441] bg-white dark:bg-black p-0.5 mt-2 ring-4 ring-[#D9A441]/20">
+              {topThree[0].avatarUrl ? (
+                <img src={topThree[0].avatarUrl} alt={topThree[0].displayName} className="h-full w-full object-cover rounded-full" />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center font-bold text-2xl bg-[#D9A441]/20">
+                  {topThree[0].displayName[0] || "U"}
+                </div>
+              )}
+            </div>
+            <div className="font-serif font-black text-lg mt-2.5 truncate">{topThree[0].displayName}</div>
+            <div className="text-2xl font-serif font-black text-[#D9A441] mt-0.5">
+              {topThree[0].xp.toLocaleString()} XP
+            </div>
+            <div className="flex justify-center gap-2 mt-3 min-h-[28px]">
+              {topThree[0].equippedBadges.map((bId) => {
+                const b = badgeMap.get(bId);
+                return b ? (
+                  <img key={bId} src={b.imageUrl} alt={b.title} title={b.title} className="h-7 w-7 rounded-full border-2 border-[#D9A441]" />
+                ) : null;
+              })}
+            </div>
+            <div className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-2.5 flex justify-center gap-3 font-semibold">
+              <span>{topThree[0].topicsMasteredCount} Topics Mastered</span>
+              <span>·</span>
+              <span>{Math.round(topThree[0].weeklyStudyMinutes / 60)}h Studied</span>
+            </div>
+          </div>
+
+          {/* #2 Silver */}
+          <div className="academic-card p-6 text-center relative border-t-4 border-t-[#8C92AC] shadow-md">
+            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-[#8C92AC] text-white text-[10px] font-black uppercase tracking-wider shadow-sm">
+              #2 Silver
+            </div>
+            <div className="h-16 w-16 mx-auto rounded-full overflow-hidden border-2 border-[#8C92AC] bg-white dark:bg-black p-0.5 mt-2">
+              {topThree[1].avatarUrl ? (
+                <img src={topThree[1].avatarUrl} alt={topThree[1].displayName} className="h-full w-full object-cover rounded-full" />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center font-bold text-lg bg-[#8C92AC]/20">
+                  {topThree[1].displayName[0] || "U"}
+                </div>
+              )}
+            </div>
+            <div className="font-serif font-bold text-base mt-2 truncate">{topThree[1].displayName}</div>
+            <div className="text-xl font-serif font-black text-[#8A1627] dark:text-[#F07B88] mt-0.5">
+              {topThree[1].xp.toLocaleString()} XP
+            </div>
+            <div className="flex justify-center gap-1.5 mt-2.5 min-h-[24px]">
+              {topThree[1].equippedBadges.map((bId) => {
+                const b = badgeMap.get(bId);
+                return b ? (
+                  <img key={bId} src={b.imageUrl} alt={b.title} title={b.title} className="h-6 w-6 rounded-full border border-[#8C92AC]/50" />
+                ) : null;
+              })}
+            </div>
+            <div className="text-[11px] text-[#4B5160] dark:text-[#CFC8BB] mt-2 flex justify-center gap-3">
+              <span>{topThree[1].topicsMasteredCount} Mastered</span>
+              <span>·</span>
+              <span>{Math.round(topThree[1].weeklyStudyMinutes / 60)}h Studied</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {topThree.length >= 3 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4 items-end">
           {/* #2 Rank (Silver) */}
           {topThree[1] && (
@@ -304,7 +438,7 @@ export default function LeaderboardPage() {
                   <img src={topThree[1].avatarUrl} alt={topThree[1].displayName} className="h-full w-full object-cover rounded-full" />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center font-bold text-lg bg-[#8C92AC]/20">
-                    {topThree[1].displayName[0]}
+                    {topThree[1].displayName[0] || "U"}
                   </div>
                 )}
               </div>
@@ -312,9 +446,7 @@ export default function LeaderboardPage() {
               <div className="text-xl font-serif font-black text-[#8A1627] dark:text-[#F07B88] mt-0.5">
                 {topThree[1].xp.toLocaleString()} XP
               </div>
-
-              {/* Equipped Badges */}
-              <div className="flex justify-center gap-1.5 mt-2.5">
+              <div className="flex justify-center gap-1.5 mt-2.5 min-h-[24px]">
                 {topThree[1].equippedBadges.map((bId) => {
                   const b = badgeMap.get(bId);
                   return b ? (
@@ -322,7 +454,6 @@ export default function LeaderboardPage() {
                   ) : null;
                 })}
               </div>
-
               <div className="text-[11px] text-[#4B5160] dark:text-[#CFC8BB] mt-2 flex justify-center gap-3">
                 <span>{topThree[1].topicsMasteredCount} Mastered</span>
                 <span>·</span>
@@ -338,12 +469,12 @@ export default function LeaderboardPage() {
                 <Trophy className="h-3 w-3" />
                 <span>#1 Champion</span>
               </div>
-              <div className="h-20 w-20 mx-auto rounded-full overflow-hidden border-3 border-[#D9A441] bg-white dark:bg-black p-0.5 mt-2 ring-4 ring-[#D9A441]/20">
+              <div className="h-20 w-20 mx-auto rounded-full overflow-hidden border-2 border-[#D9A441] bg-white dark:bg-black p-0.5 mt-2 ring-4 ring-[#D9A441]/20">
                 {topThree[0].avatarUrl ? (
                   <img src={topThree[0].avatarUrl} alt={topThree[0].displayName} className="h-full w-full object-cover rounded-full" />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center font-bold text-2xl bg-[#D9A441]/20">
-                    {topThree[0].displayName[0]}
+                    {topThree[0].displayName[0] || "U"}
                   </div>
                 )}
               </div>
@@ -351,9 +482,7 @@ export default function LeaderboardPage() {
               <div className="text-2xl font-serif font-black text-[#D9A441] mt-0.5">
                 {topThree[0].xp.toLocaleString()} XP
               </div>
-
-              {/* Equipped Badges */}
-              <div className="flex justify-center gap-2 mt-3">
+              <div className="flex justify-center gap-2 mt-3 min-h-[28px]">
                 {topThree[0].equippedBadges.map((bId) => {
                   const b = badgeMap.get(bId);
                   return b ? (
@@ -361,7 +490,6 @@ export default function LeaderboardPage() {
                   ) : null;
                 })}
               </div>
-
               <div className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-2.5 flex justify-center gap-3 font-semibold">
                 <span>{topThree[0].topicsMasteredCount} Topics Mastered</span>
                 <span>·</span>
@@ -381,7 +509,7 @@ export default function LeaderboardPage() {
                   <img src={topThree[2].avatarUrl} alt={topThree[2].displayName} className="h-full w-full object-cover rounded-full" />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center font-bold text-lg bg-[#B87333]/20">
-                    {topThree[2].displayName[0]}
+                    {topThree[2].displayName[0] || "U"}
                   </div>
                 )}
               </div>
@@ -389,9 +517,7 @@ export default function LeaderboardPage() {
               <div className="text-xl font-serif font-black text-[#8A1627] dark:text-[#F07B88] mt-0.5">
                 {topThree[2].xp.toLocaleString()} XP
               </div>
-
-              {/* Equipped Badges */}
-              <div className="flex justify-center gap-1.5 mt-2.5">
+              <div className="flex justify-center gap-1.5 mt-2.5 min-h-[24px]">
                 {topThree[2].equippedBadges.map((bId) => {
                   const b = badgeMap.get(bId);
                   return b ? (
@@ -399,7 +525,6 @@ export default function LeaderboardPage() {
                   ) : null;
                 })}
               </div>
-
               <div className="text-[11px] text-[#4B5160] dark:text-[#CFC8BB] mt-2 flex justify-center gap-3">
                 <span>{topThree[2].topicsMasteredCount} Mastered</span>
                 <span>·</span>
@@ -410,97 +535,121 @@ export default function LeaderboardPage() {
         </div>
       )}
 
+      {topThree.length === 0 && !loading && (
+        <div className="academic-card p-8 text-center space-y-2">
+          <Trophy className="h-10 w-10 text-[#D9A441] mx-auto opacity-70" />
+          <h3 className="font-serif font-bold text-base text-[#14161F] dark:text-[#F6EBD3]">
+            No Active Rankings Yet
+          </h3>
+          <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] max-w-sm mx-auto">
+            Complete a lecture, master a topic with the Khan exercise loop, or finish a recall review to earn XP and claim the #1 spot!
+          </p>
+        </div>
+      )}
+
       {/* =============================================================== */}
-      {/* RANKED TABLE */}
+      {/* 4. RANKED TABLE */}
       {/* =============================================================== */}
       <div className="academic-card overflow-hidden">
         <div className="p-4 border-b border-[#E4D9C0] dark:border-[#3D2D31] flex items-center justify-between">
-          <span className="font-serif font-bold text-sm">Full Peer Standings</span>
-          <span className="text-xs text-[#4B5160] dark:text-[#CFC8BB]">{profiles.length} Active Students</span>
+          <span className="font-serif font-bold text-sm text-[#14161F] dark:text-[#F6EBD3]">Full Peer Standings</span>
+          <span className="text-xs text-[#4B5160] dark:text-[#CFC8BB]">{profiles.length} Active Student{profiles.length === 1 ? "" : "s"}</span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#E4D9C0]/30 dark:bg-[#221A1C] border-b border-[#E4D9C0] dark:border-[#3D2D31] text-[11px] font-bold uppercase tracking-wider text-[#4B5160] dark:text-[#CFC8BB]">
-              <tr>
-                <th className="py-3 px-4 w-12 text-center">Rank</th>
-                <th className="py-3 px-4">Student</th>
-                <th className="py-3 px-4">Equipped Badges</th>
-                <th className="py-3 px-4 text-center">Mastered</th>
-                <th className="py-3 px-4 text-center">Weekly Hours</th>
-                <th className="py-3 px-4 text-right">Total XP</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E4D9C0]/50 dark:divide-[#3D2D31]">
-              {profiles.map((prof, idx) => {
-                const isMe = prof.uid === currentUid;
-                return (
-                  <tr
-                    key={prof.uid}
-                    className={`transition-colors ${
-                      isMe
-                        ? "bg-[#8A1627]/10 font-bold text-[#8A1627] dark:text-[#F07B88]"
-                        : "hover:bg-black/5 dark:hover:bg-white/5"
-                    }`}
-                  >
-                    <td className="py-3 px-4 text-center font-serif font-bold">
-                      {idx + 1}
-                    </td>
-                    <td className="py-3 px-4 flex items-center gap-2.5">
-                      <div className="h-7 w-7 rounded-full overflow-hidden border border-[#CFC8BB] shrink-0 bg-white dark:bg-black">
-                        {prof.avatarUrl ? (
-                          <img src={prof.avatarUrl} alt={prof.displayName} className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="h-full w-full flex items-center justify-center text-[10px] font-bold">
-                            {prof.displayName[0]}
-                          </div>
-                        )}
-                      </div>
-                      <span className="truncate max-w-[140px] sm:max-w-xs">{prof.displayName} {isMe && "(You)"}</span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-1.5">
-                        {prof.equippedBadges.map((bId) => {
-                          const b = badgeMap.get(bId);
-                          return b ? (
-                            <img
-                              key={bId}
-                              src={b.imageUrl}
-                              alt={b.title}
-                              title={`${b.title}: ${b.description}`}
-                              className="h-5 w-5 rounded-full border border-[#D9A441]"
-                            />
-                          ) : null;
-                        })}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-center">{prof.topicsMasteredCount}</td>
-                    <td className="py-3 px-4 text-center">{Math.round(prof.weeklyStudyMinutes / 60)}h</td>
-                    <td className="py-3 px-4 text-right font-serif font-bold text-sm">
-                      {prof.xp.toLocaleString()} XP
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        {profiles.length === 0 ? (
+          <div className="p-8 text-center text-xs text-[#4B5160] dark:text-[#CFC8BB]">
+            No public profiles found in this squad yet. Toggle &quot;Public&quot; above or share your squad code to join!
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#E4D9C0]/30 dark:bg-[#221A1C] border-b border-[#E4D9C0] dark:border-[#3D2D31] text-[11px] font-bold uppercase tracking-wider text-[#4B5160] dark:text-[#CFC8BB]">
+                <tr>
+                  <th className="py-3 px-4 w-12 text-center">Rank</th>
+                  <th className="py-3 px-4">Student</th>
+                  <th className="py-3 px-4">Equipped Badges</th>
+                  <th className="py-3 px-4 text-center">Mastered</th>
+                  <th className="py-3 px-4 text-center">Weekly Hours</th>
+                  <th className="py-3 px-4 text-right">Total XP</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E4D9C0]/50 dark:divide-[#3D2D31]">
+                {profiles.map((prof, idx) => {
+                  const isMe = prof.uid === currentUid;
+                  return (
+                    <tr
+                      key={prof.uid}
+                      className={`transition-colors ${
+                        isMe
+                          ? "bg-[#8A1627]/10 font-bold text-[#8A1627] dark:text-[#F07B88]"
+                          : "hover:bg-black/5 dark:hover:bg-white/5"
+                      }`}
+                    >
+                      <td className="py-3 px-4 text-center font-serif font-bold">
+                        {idx + 1}
+                      </td>
+                      <td className="py-3 px-4 flex items-center gap-2.5">
+                        <div className="h-7 w-7 rounded-full overflow-hidden border border-[#CFC8BB] shrink-0 bg-white dark:bg-black">
+                          {prof.avatarUrl ? (
+                            <img src={prof.avatarUrl} alt={prof.displayName} className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-[10px] font-bold">
+                              {prof.displayName[0] || "U"}
+                            </div>
+                          )}
+                        </div>
+                        <span className="truncate max-w-[140px] sm:max-w-xs">{prof.displayName} {isMe && "(You)"}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-1.5">
+                          {prof.equippedBadges.map((bId) => {
+                            const b = badgeMap.get(bId);
+                            return b ? (
+                              <img
+                                key={bId}
+                                src={b.imageUrl}
+                                alt={b.title}
+                                title={`${b.title}: ${b.description}`}
+                                className="h-5 w-5 rounded-full border border-[#D9A441]"
+                              />
+                            ) : null;
+                          })}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">{prof.topicsMasteredCount}</td>
+                      <td className="py-3 px-4 text-center">{Math.round(prof.weeklyStudyMinutes / 60)}h</td>
+                      <td className="py-3 px-4 text-right font-serif font-bold text-sm">
+                        {prof.xp.toLocaleString()} XP
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* =============================================================== */}
-      {/* BADGE VAULT */}
+      {/* 5. BADGE VAULT (SOLID SURFACE HEADER AND CARDS) */}
       {/* =============================================================== */}
       <div className="space-y-4 pt-4">
-        <div className="flex items-center justify-between">
+        {/* Header Panel */}
+        <div className="p-4 sm:p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
               Milestone Collection
-            </div>
-            <h2 className="text-xl font-serif font-bold">Badge Vault</h2>
+            </span>
+            <h2 className="text-xl font-serif font-bold text-[#14161F] dark:text-[#F6EBD3] mt-0.5">
+              Badge Vault
+            </h2>
+            <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-0.5">
+              Collect, mint, and showcase your earned academic achievements.
+            </p>
           </div>
-          <span className="text-xs text-[#4B5160] dark:text-[#CFC8BB]">
+          <div className="px-3 py-1.5 rounded-[10px] bg-white dark:bg-black/40 border border-[#E4D9C0] dark:border-[#3D2D31] text-xs font-semibold text-[#8A1627] dark:text-[#F07B88] self-start sm:self-center">
             Equipped ({myProfile?.equippedBadges?.length || 0}/3)
-          </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -522,10 +671,10 @@ export default function LeaderboardPage() {
             return (
               <div
                 key={b.id}
-                className={`p-4 rounded-[14px] border-2 transition-all flex flex-col justify-between ${
+                className={`p-4 rounded-[14px] border-2 transition-all flex flex-col justify-between bg-[#FBF6EC] dark:bg-[#221A1C] shadow-sm ${
                   isUnlocked
-                    ? "academic-card border-[#D9A441]/50 shadow-sm"
-                    : "border-[#E4D9C0] dark:border-[#3D2D31] bg-black/5 dark:bg-black/20 opacity-60"
+                    ? "border-[#D9A441] ring-1 ring-[#D9A441]/30"
+                    : "border-[#E4D9C0] dark:border-[#3D2D31] opacity-75"
                 }`}
               >
                 <div>
@@ -553,7 +702,7 @@ export default function LeaderboardPage() {
                     )}
                   </div>
 
-                  <div className="font-serif font-bold text-sm mt-3">{b.title}</div>
+                  <div className="font-serif font-bold text-sm mt-3 text-[#14161F] dark:text-[#F6EBD3]">{b.title}</div>
                   <p className="text-[11px] text-[#4B5160] dark:text-[#CFC8BB] mt-1 line-clamp-2">
                     {b.description}
                   </p>
@@ -562,7 +711,7 @@ export default function LeaderboardPage() {
                 {/* Progress bar if locked */}
                 {!isUnlocked && (
                   <div className="mt-3 pt-2 border-t border-[#E4D9C0] dark:border-[#3D2D31]">
-                    <div className="flex justify-between text-[10px] text-[#4B5160] mb-1">
+                    <div className="flex justify-between text-[10px] text-[#4B5160] dark:text-[#CFC8BB] mb-1">
                       <span>Progress</span>
                       <span>
                         {currentVal} / {b.thresholdValue}

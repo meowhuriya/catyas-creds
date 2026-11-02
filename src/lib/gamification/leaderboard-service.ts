@@ -80,61 +80,6 @@ const DEFAULT_SYSTEM_BADGES: BadgeItem[] = [
   },
 ];
 
-const MOCK_PEER_PROFILES: LeaderboardProfile[] = [
-  {
-    uid: "peer-diya-k",
-    displayName: "Diya K.",
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
-    squadCode: "CYBER9",
-    xp: 3450,
-    weeklyStudyMinutes: 720,
-    topicsMasteredCount: 28,
-    currentStreakDays: 14,
-    equippedBadges: ["badge-first-mastery", "badge-pps-ace", "badge-streak-7"],
-    showOnLeaderboard: true,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    uid: "peer-aarav-s",
-    displayName: "Aarav S.",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-    squadCode: "CYBER9",
-    xp: 2890,
-    weeklyStudyMinutes: 580,
-    topicsMasteredCount: 22,
-    currentStreakDays: 9,
-    equippedBadges: ["badge-first-mastery", "badge-calculus-king"],
-    showOnLeaderboard: true,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    uid: "peer-vikram-r",
-    displayName: "Vikram R.",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-    squadCode: "DEVSEC",
-    xp: 2420,
-    weeklyStudyMinutes: 490,
-    topicsMasteredCount: 19,
-    currentStreakDays: 5,
-    equippedBadges: ["badge-first-mastery", "badge-perfect-khan"],
-    showOnLeaderboard: true,
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    uid: "peer-ananya-p",
-    displayName: "Ananya P.",
-    avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
-    squadCode: "DEVSEC",
-    xp: 2150,
-    weeklyStudyMinutes: 440,
-    topicsMasteredCount: 16,
-    currentStreakDays: 6,
-    equippedBadges: ["badge-first-mastery", "badge-pps-ace"],
-    showOnLeaderboard: true,
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 const LOCAL_STORAGE_PROFILES_KEY = "valeria_leaderboard_profiles";
 const LOCAL_STORAGE_BADGES_KEY = "valeria_badges_catalog";
 
@@ -295,12 +240,28 @@ export class LeaderboardService {
       }
     }
 
-    // Blend with mock peer profiles to ensure rich social atmosphere
-    const knownUids = new Set(profiles.map((p) => p.uid));
-    for (const peer of MOCK_PEER_PROFILES) {
-      if (!knownUids.has(peer.uid)) {
-        if (!squadCode || peer.squadCode === squadCode.toUpperCase()) {
-          profiles.push(peer);
+    // Read from localStorage if any real profiles saved
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(LOCAL_STORAGE_PROFILES_KEY);
+        if (raw) {
+          const list = JSON.parse(raw) as LeaderboardProfile[];
+          for (const item of list) {
+            if (!profiles.some((p) => p.uid === item.uid)) {
+              if (item.showOnLeaderboard && (!squadCode || item.squadCode === squadCode.toUpperCase())) {
+                profiles.push(item);
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // Read from inMemoryProfiles (for tests and active session)
+    for (const [uid, item] of inMemoryProfiles.entries()) {
+      if (!profiles.some((p) => p.uid === uid)) {
+        if (item.showOnLeaderboard && (!squadCode || item.squadCode === squadCode.toUpperCase())) {
+          profiles.push(item);
         }
       }
     }
