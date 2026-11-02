@@ -28,6 +28,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/__/auth/:path*",
+        destination: "https://valeria-s-creds.firebaseapp.com/__/auth/:path*",
+      },
+      {
+        source: "/__/firebase/init.json",
+        destination: "https://valeria-s-creds.firebaseapp.com/__/firebase/init.json",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
