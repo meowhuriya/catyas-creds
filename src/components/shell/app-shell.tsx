@@ -10,6 +10,7 @@ import { ShortcutDialog } from "./shortcut-dialog";
 import { useToast } from "@/components/ui/toast";
 import { useDataStore } from "@/lib/repository";
 import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@/lib/appearance";
+import { validateSeedTotals } from "@/lib/syllabus/seed-loader";
 import { Loader2, Info } from "lucide-react";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -20,7 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [shortcutOpen, setShortcutOpen] = React.useState(false);
-  const { info } = useToast();
+  const { info, error: toastError } = useToast();
 
   React.useEffect(() => {
     // Apply saved appearance
@@ -36,13 +37,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
     const notified = localStorage.getItem("valerias_creds_syllabus_notified");
     if (!notified) {
-      info(
-        "Syllabus loaded: 19 courses, 651 topics",
-        "Sem 1 = 9 courses, 20 credits, 325 topics. Sem 2 = 10 courses, 20 credits, 326 topics."
-      );
-      localStorage.setItem("valerias_creds_syllabus_notified", "true");
+      const validation = validateSeedTotals();
+      if (validation.isValid) {
+        info(
+          "Syllabus loaded: 19 courses, 651 topics",
+          `Sem 1 = ${validation.sem1.courses} courses, ${validation.sem1.credits} credits, ${validation.sem1.topics} topics; Sem 2 = ${validation.sem2.courses} courses, ${validation.sem2.credits} credits, ${validation.sem2.topics} topics.`
+        );
+        localStorage.setItem("valerias_creds_syllabus_notified", "true");
+      } else {
+        toastError(
+          "Syllabus count mismatch",
+          validation.errorMessage || "The syllabus totals in meridian-year1-seed.json do not match the required totals."
+        );
+      }
     }
-  }, [info]);
+  }, [info, toastError]);
 
   // Route protection in Real Mode
   React.useEffect(() => {

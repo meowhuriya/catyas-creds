@@ -34,10 +34,16 @@ export function parseTimeToSeconds(timeStr: string): number {
 export function cleanSyllabusTitle(s?: string): string {
   if (!s) return "";
   return s
-    .replace(/\[\s*\d+\s*\]/g, "")
-    .replace(/\b\d+\s*L\b/gi, "")
-    .replace(/^[\s\-–•*]+/, "")
-    .replace(/[\s:]+$/, "")
+    // Strip bracketed hour markers: [8], [8L], [8 Hours], [8 hrs], (8L), etc.
+    .replace(/\[\s*\d+\s*(?:L|hrs?|hours?)?\s*\]/gi, "")
+    .replace(/\(\s*\d+\s*(?:L|hrs?|hours?)?\s*\)/gi, "")
+    // Strip standalone hour markers: 8L, 10L, 8 Hours, 8 hrs
+    .replace(/\b\d+\s*(?:L|hrs|hours)\b/gi, "")
+    // Strip leading dashes, bullets, colons
+    .replace(/^[\s\-–•*:]+/, "")
+    // Strip trailing colons, semicolons, dashes
+    .replace(/[\s:;\-]+$/, "")
+    // Collapse whitespace
     .replace(/\s+/g, " ")
     .trim();
 }

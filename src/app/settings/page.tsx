@@ -1076,8 +1076,13 @@ export default function SettingsPage() {
               <RotateCcw className="h-5 w-5" />
               <DialogTitle>Restore Course Syllabus?</DialogTitle>
             </div>
-            <DialogDescription>
-              Are you sure you want to restore the canonical syllabus for this course? All default unit titles and topics from the Meridian Year 1 curriculum seed will be restored. Your existing notes and lecture progress will not be deleted.
+            <DialogDescription className="space-y-2 text-xs text-[#4B5160] dark:text-[#E5D5C5]">
+              <span className="block font-medium text-[#14161F] dark:text-[#F6EBD3]">
+                Are you sure you want to restore the original syllabus for this course?
+              </span>
+              <span className="block p-2.5 rounded-lg bg-[#FAF4E8] dark:bg-[#1C1618] border border-[#E5D5C5] text-[#8A1627] dark:text-[#F5B4BC]">
+                <strong>What will be reset:</strong> Topic names and order; the progress of reset topics. Your lecture videos and lesson notes will not be deleted.
+              </span>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-2 border-t border-[#E5D5C5]">
@@ -1107,8 +1112,13 @@ export default function SettingsPage() {
               <RotateCcw className="h-5 w-5" />
               <DialogTitle>Restore All 19 Courses?</DialogTitle>
             </div>
-            <DialogDescription>
-              This will recalibrate all 19 courses across Semesters 1 and 2 to the exact 651 syllabus topics (Sem 1: 325 topics, Sem 2: 326 topics). Any edited unit titles will revert to canonical syllabus text.
+            <DialogDescription className="space-y-2 text-xs text-[#4B5160] dark:text-[#E5D5C5]">
+              <span className="block font-medium text-[#14161F] dark:text-[#F6EBD3]">
+                This will recalibrate all 19 courses across Semesters 1 and 2 to the canonical 651 syllabus topics (Sem 1: 325 topics, Sem 2: 326 topics).
+              </span>
+              <span className="block p-2.5 rounded-lg bg-[#FAF4E8] dark:bg-[#1C1618] border border-[#E5D5C5] text-[#8A1627] dark:text-[#F5B4BC]">
+                <strong>What will be reset:</strong> Topic names and order; the progress of reset topics. Your lecture videos and lesson notes will not be deleted.
+              </span>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-2 border-t border-[#E5D5C5]">

@@ -39,7 +39,7 @@ import { AiQuizDraftModal } from "@/components/assessments/ai-quiz-draft-modal";
 import { WhatIfCalculator } from "@/components/grades/what-if-calculator";
 import { calculateCourseGrades } from "@/lib/grading/grading-engine";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
-import { formatSecondsToTime, cleanSyllabusTitle } from "@/lib/utils";
+import { formatSecondsToTime, cleanSyllabusTitle, getYoutubeSearchUrl } from "@/lib/utils";
 import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
 import { UnitJourney } from "@/components/courses/unit-journey";
 import { TopicChecklist } from "@/components/courses/topic-checklist";
@@ -87,6 +87,7 @@ import {
   AlertTriangle,
   UserCheck,
   Brain,
+  Search,
 } from "lucide-react";
 
 export default function CourseDetailPage() {
@@ -718,6 +719,17 @@ export default function CourseDetailPage() {
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0">
+                      <a
+                        href={getYoutubeSearchUrl(course.title, cleanSyllabusTitle(activeUnit.title))}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 shrink-0"
+                        title={`Search YouTube for ${course.title} ${cleanSyllabusTitle(activeUnit.title)}`}
+                      >
+                        <Search className="h-3.5 w-3.5 text-[#8A1627]" />
+                        <span>Find videos</span>
+                      </a>
+
                       <ProgressRing
                         percentage={
                           activeUnitTopics.length > 0
