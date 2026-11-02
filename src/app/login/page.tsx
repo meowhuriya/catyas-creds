@@ -3,15 +3,18 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { useDataStore } from "@/lib/repository";
+import { auth, googleProvider } from "@/lib/firebase/config";
+import { signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { LogoMark } from "@/components/brand/logo";
-import { ShieldCheck, Copy, Check, AlertCircle, Compass, Loader2 } from "lucide-react";
+import { ShieldCheck, Copy, Check, AlertCircle, Compass, Loader2, RefreshCw } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signInWithGoogle, isRealMode, firebaseUser, authLoading } = useDataStore();
+  const { isRealMode, firebaseUser, authLoading } = useDataStore();
 
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [isSafariBlocked, setIsSafariBlocked] = React.useState(false);
   const [isInAppBrowser, setIsInAppBrowser] = React.useState(false);
   const [copied, setCopied] = React.useState(false);
 
@@ -21,6 +24,43 @@ export default function LoginPage() {
       router.push("/");
     }
   }, [authLoading, firebaseUser, router]);
+
+  // Helper to clear stuck redirect storage
+  const clearStuckRedirectStorage = () => {
+    if (typeof window !== "undefined") {
+      try {
+        for (let i = sessionStorage.length - 1; i >= 0; i--) {
+          const key = sessionStorage.key(i);
+          if (key && (key.startsWith("firebase:") || key.includes("redirect"))) {
+            sessionStorage.removeItem(key);
+          }
+        }
+      } catch {}
+    }
+  };
+
+  // Check for redirect result once on load
+  React.useEffect(() => {
+    if (isRealMode && auth) {
+      getRedirectResult(auth)
+        .then((cred) => {
+          if (cred?.user) {
+            router.push("/");
+          }
+        })
+        .catch((err: any) => {
+          console.warn("getRedirectResult on LoginPage caught:", err?.code, err?.message);
+          const code = err?.code;
+          if (code === "auth/missing-initial-state" || code === "auth/popup-blocked") {
+            clearStuckRedirectStorage();
+            setIsSafariBlocked(true);
+            setErrorMessage(
+              "Safari blocked the sign-in step. Allow pop-ups for this site, or open the page in Chrome"
+            );
+          }
+        });
+    }
+  }, [isRealMode, router]);
 
   // Detect in-app browsers (WhatsApp, Instagram, FB, Telegram, Line, WeChat)
   React.useEffect(() => {
@@ -39,35 +79,72 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  /**
+   * Primary Sign-in Trigger:
+   * Rule 1: Call signInWithPopup directly inside the button's click handler as the VERY FIRST action.
+   * No await, and nothing asynchronous before it.
+   */
+  const handleGoogleSignIn = () => {
+    if (!isRealMode || !auth || !googleProvider) {
+      alert("Firebase is not configured. Running in local demo mode.");
+      return;
+    }
+
+    // Direct synchronous call to signInWithPopup in the user-gesture tick:
+    const popupPromise = signInWithPopup(auth, googleProvider);
+
     setLoading(true);
     setErrorMessage(null);
-    try {
-      await signInWithGoogle();
-      router.push("/");
-    } catch (err: any) {
-      console.error("Sign-in failed:", err);
-      const code = err?.code;
-      const currentHost = typeof window !== "undefined" ? window.location.hostname : "localhost";
+    setIsSafariBlocked(false);
 
-      if (code === "auth/popup-blocked") {
-        setErrorMessage("The sign-in popup was blocked by your browser. Please allow popups for this site or refresh to try redirect sign-in.");
-      } else if (code === "auth/popup-closed-by-user") {
-        setErrorMessage("The sign-in window was closed before completion. Please click Continue with Google to try again.");
-      } else if (code === "auth/network-request-failed") {
-        setErrorMessage("Network connection error. Please check your internet connection.");
-      } else if (code === "auth/unauthorized-domain") {
-        setErrorMessage(
-          `Domain "${currentHost}" is not authorized in Firebase. Please add "${currentHost}" to Firebase Console > Authentication > Settings > Authorized domains.`
-        );
-      } else if (code === "auth/cancelled-popup-request") {
-        // Ignored duplicate click
-      } else {
-        setErrorMessage(err?.message || "Sign-in could not be completed. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
+    popupPromise
+      .then((result) => {
+        if (result?.user) {
+          router.push("/");
+        }
+      })
+      .catch((err: any) => {
+        console.warn("Sign-in popup error:", err?.code, err?.message);
+        const code = err?.code;
+        const currentHost = typeof window !== "undefined" ? window.location.hostname : "localhost";
+
+        // Catch auth/missing-initial-state and auth/popup-blocked
+        if (code === "auth/popup-blocked" || code === "auth/missing-initial-state") {
+          setIsSafariBlocked(true);
+          setErrorMessage(
+            "Safari blocked the sign-in step. Allow pop-ups for this site, or open the page in Chrome"
+          );
+          clearStuckRedirectStorage();
+
+          // Rule 2: Use redirect flow only if the pop-up is blocked (on browsers where redirect storage works)
+          const isSafari =
+            typeof window !== "undefined" &&
+            /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          if (!isSafari && auth && googleProvider) {
+            signInWithRedirect(auth, googleProvider).catch((e) => console.warn(e));
+          }
+          return;
+        }
+
+        if (code === "auth/popup-closed-by-user") {
+          setErrorMessage(
+            "The sign-in window was closed before completion. Please click Continue with Google to try again."
+          );
+        } else if (code === "auth/network-request-failed") {
+          setErrorMessage("Network connection error. Please check your internet connection.");
+        } else if (code === "auth/unauthorized-domain") {
+          setErrorMessage(
+            `Domain "${currentHost}" is not authorized in Firebase. Please add "${currentHost}" to Firebase Console > Authentication > Settings > Authorized domains.`
+          );
+        } else if (code === "auth/cancelled-popup-request") {
+          // Ignored duplicate click
+        } else {
+          setErrorMessage(err?.message || "Sign-in could not be completed. Please try again.");
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -112,11 +189,25 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Error Message Box */}
+        {/* Error Message Box with Try Again button */}
         {errorMessage && (
-          <div className="p-3.5 rounded-[10px] bg-red-500/10 border border-red-500/30 text-left text-xs text-red-900 dark:text-red-200 flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
-            <p className="leading-relaxed">{errorMessage}</p>
+          <div className="p-3.5 rounded-[10px] bg-red-500/10 border border-red-500/30 text-left text-xs text-red-900 dark:text-red-200 space-y-2.5">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400 mt-0.5" />
+              <p className="leading-relaxed">{errorMessage}</p>
+            </div>
+            {isSafariBlocked && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[#A51C30] hover:bg-[#8A1627] text-white text-xs font-semibold transition-colors shadow-sm"
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  <span>Try again</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 

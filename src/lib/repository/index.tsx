@@ -28,7 +28,7 @@ interface DataStoreContextValue {
   terms: Term[];
   courses: Course[];
   refreshData: () => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
+  signInWithGoogle: () => Promise<any>;
   signOut: () => Promise<void>;
   deleteMyAccountAndData: () => Promise<void>;
   loadDemoData: () => Promise<void>;
@@ -61,7 +61,7 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
   // Listen to Firebase Auth state if in real mode
   useEffect(() => {
     if (isRealMode && auth) {
-      // Check for redirect sign-in result first
+      // Check for redirect sign-in result once on load and clear any stuck pending-redirect state
       getRedirectResult(auth)
         .then((cred) => {
           if (cred?.user) {
@@ -69,7 +69,19 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
           }
         })
         .catch((err) => {
-          console.warn("Redirect sign-in check failed:", err);
+          console.warn("Redirect sign-in check caught:", err?.code, err?.message);
+          if (err?.code === "auth/missing-initial-state" || err?.code === "auth/popup-blocked") {
+            try {
+              if (typeof window !== "undefined") {
+                for (let i = sessionStorage.length - 1; i >= 0; i--) {
+                  const key = sessionStorage.key(i);
+                  if (key && (key.startsWith("firebase:") || key.includes("redirect"))) {
+                    sessionStorage.removeItem(key);
+                  }
+                }
+              }
+            } catch {}
+          }
         });
 
       const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -111,21 +123,16 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, [refreshData, version, authLoading]);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = () => {
     if (isRealMode && auth && googleProvider) {
-      try {
-        await signInWithPopup(auth, googleProvider);
+      // Must be called synchronously to avoid Safari blocking the popup window
+      return signInWithPopup(auth, googleProvider).then((res) => {
         setVersion((v) => v + 1);
-      } catch (err: any) {
-        if (err?.code === "auth/popup-blocked") {
-          console.warn("Popup blocked. Falling back to redirect...");
-          await signInWithRedirect(auth, googleProvider);
-          return;
-        }
-        throw err;
-      }
+        return res;
+      });
     } else {
       alert("Firebase is not configured. Running in local demo mode.");
+      return Promise.reject(new Error("Firebase is not configured"));
     }
   };
 
