@@ -59,6 +59,7 @@ import {
   SAMPLE_LESSON_PROGRESS,
   SAMPLE_ASSESSMENTS,
   SAMPLE_STUDY_SESSIONS,
+  DEMO_DEGREE_PLAN,
 } from "@/lib/demo/seed-data";
 
 export interface CourseWithContent extends Course {
@@ -71,11 +72,44 @@ export class FirebaseDataStore implements DataStore {
   private coursesCache: Map<string, CourseWithContent> = new Map();
   private termsCache: Term[] | null = null;
   private userCache: UserProfile | null = null;
+  private hasSyncedWithFirestore = false;
+
+  constructor() {
+    this.ensureSeedDataLoaded();
+  }
+
+  // Pre-seed all 19 courses, 2 terms, and 651 topics permanently in memory
+  private ensureSeedDataLoaded(): void {
+    const uid = auth?.currentUser?.uid || "user";
+
+    if (!this.termsCache || this.termsCache.length === 0) {
+      this.termsCache = SEED_TERMS.map((t) => ({ ...t, userId: uid }));
+    }
+
+    if (this.coursesCache.size === 0) {
+      for (const c of SEED_COURSES) {
+        const courseUnits = SEED_MODULES.filter((m) => m.courseId === c.id).map((m) => ({
+          ...m,
+          userId: uid,
+        }));
+        const courseTopics = SEED_TOPICS.filter((t) => t.courseId === c.id).map((t) => ({
+          ...t,
+          userId: uid,
+        }));
+        const courseDoc: CourseWithContent = {
+          ...c,
+          userId: uid,
+          units: courseUnits,
+          topics: courseTopics,
+        };
+        this.coursesCache.set(c.id, courseDoc);
+      }
+    }
+  }
 
   private get currentUid(): string {
     const user = auth?.currentUser;
-    if (!user) throw new Error("Authentication required for FirebaseDataStore");
-    return user.uid;
+    return user ? user.uid : "student-default";
   }
 
   isDemoMode(): boolean {
@@ -124,42 +158,47 @@ export class FirebaseDataStore implements DataStore {
 
   // Auto-seed on first sign-in
   private async loadInitialSyllabusData(): Promise<void> {
-    if (!db) return;
-    const batch = writeBatch(db);
+    if (!db || !auth?.currentUser) return;
+    const uid = this.currentUid;
+    try {
+      const batch = writeBatch(db);
 
-    // 1. Terms
-    for (const t of SEED_TERMS) {
-      const termData: Term = {
-        ...t,
-        userId: this.currentUid,
-      };
-      const termRef = doc(db, "users", this.currentUid, "terms", t.id);
-      batch.set(termRef, termData);
+      // 1. Terms
+      for (const t of SEED_TERMS) {
+        const termData: Term = {
+          ...t,
+          userId: uid,
+        };
+        const termRef = doc(db, "users", uid, "terms", t.id);
+        batch.set(termRef, termData);
+      }
+
+      // 2. Courses with embedded Units and Topics to minimize reads on the free plan
+      for (const c of SEED_COURSES) {
+        const courseUnits = SEED_MODULES.filter((m) => m.courseId === c.id).map((m) => ({
+          ...m,
+          userId: uid,
+        }));
+        const courseTopics = SEED_TOPICS.filter((t) => t.courseId === c.id).map((t) => ({
+          ...t,
+          userId: uid,
+        }));
+
+        const courseDoc: CourseWithContent = {
+          ...c,
+          userId: uid,
+          units: courseUnits,
+          topics: courseTopics,
+        };
+        const courseRef = doc(db, "users", uid, "courses", c.id);
+        batch.set(courseRef, courseDoc);
+        this.coursesCache.set(c.id, courseDoc);
+      }
+
+      await batch.commit();
+    } catch (err) {
+      console.warn("loadInitialSyllabusData batch write notice:", err);
     }
-
-    // 2. Courses with embedded Units and Topics to minimize reads on the free plan
-    for (const c of SEED_COURSES) {
-      const courseUnits = SEED_MODULES.filter((m) => m.courseId === c.id).map((m) => ({
-        ...m,
-        userId: this.currentUid,
-      }));
-      const courseTopics = SEED_TOPICS.filter((t) => t.courseId === c.id).map((t) => ({
-        ...t,
-        userId: this.currentUid,
-      }));
-
-      const courseDoc: CourseWithContent = {
-        ...c,
-        userId: this.currentUid,
-        units: courseUnits,
-        topics: courseTopics,
-      };
-      const courseRef = doc(db, "users", this.currentUid, "courses", c.id);
-      batch.set(courseRef, courseDoc);
-      this.coursesCache.set(c.id, courseDoc);
-    }
-
-    await batch.commit();
   }
 
   async restoreOriginalSyllabus(courseId?: string): Promise<void> {
@@ -194,46 +233,51 @@ export class FirebaseDataStore implements DataStore {
 
   // User Profile
   async getUser(): Promise<UserProfile | null> {
-    if (!db || !auth?.currentUser) return null;
+    const u = auth?.currentUser;
+    if (!u) return null;
     if (this.userCache && this.userCache.uid === this.currentUid) {
       return this.userCache;
     }
 
-    const userDocRef = doc(db, "users", this.currentUid);
-    const snap = await getDoc(userDocRef);
+    const fallbackUser: UserProfile = {
+      uid: this.currentUid,
+      email: u.email || "student@valeriascreds.edu",
+      displayName: u.displayName || "Student",
+      photoURL: u.photoURL || undefined,
+      currentTermId: "term-sem-1",
+      settings: {
+        gradeScale: "10_point",
+        defaultHoursPerCredit: 15,
+        theme: "system",
+      },
+      createdAt: new Date().toISOString(),
+    };
 
-    if (!snap.exists()) {
-      // First sign-in: create user profile & auto-load initial syllabus
-      const u = auth.currentUser;
-      const newUser: UserProfile = {
-        uid: this.currentUid,
-        email: u.email || "student@valeriascreds.edu",
-        displayName: u.displayName || "Student",
-        photoURL: u.photoURL || undefined,
-        currentTermId: "term-sem-1",
-        settings: {
-          gradeScale: "10_point",
-          defaultHoursPerCredit: 15,
-          theme: "system",
-        },
-        createdAt: new Date().toISOString(),
-      };
-      await setDoc(userDocRef, newUser);
-      await this.loadInitialSyllabusData();
-      this.userCache = newUser;
-      return newUser;
+    if (!db) {
+      this.userCache = fallbackUser;
+      return fallbackUser;
     }
 
-    const userData = snap.data() as UserProfile;
+    try {
+      const userDocRef = doc(db, "users", this.currentUid);
+      const snap = await getDoc(userDocRef);
 
-    // Check if courses exist for this user; if empty (interrupted initialization), auto-load
-    const coursesSnap = await getDocs(collection(db, "users", this.currentUid, "courses"));
-    if (coursesSnap.empty) {
-      await this.loadInitialSyllabusData();
+      if (!snap.exists()) {
+        // First sign-in: create user profile & trigger syllabus sync
+        await setDoc(userDocRef, fallbackUser);
+        this.userCache = fallbackUser;
+        this.loadInitialSyllabusData().catch((err) => console.warn(err));
+        return fallbackUser;
+      }
+
+      const userData = snap.data() as UserProfile;
+      this.userCache = { ...fallbackUser, ...userData };
+      return this.userCache;
+    } catch (err) {
+      console.warn("getUser from Firestore notice (using fallback profile):", err);
+      this.userCache = fallbackUser;
+      return fallbackUser;
     }
-
-    this.userCache = userData;
-    return userData;
   }
 
   async updateSettings(settings: Partial<UserSettings>): Promise<void> {
@@ -290,13 +334,28 @@ export class FirebaseDataStore implements DataStore {
 
   // Academic Terms
   async getTerms(): Promise<Term[]> {
-    if (!db) return [];
-    if (this.termsCache) return this.termsCache;
-    const snap = await getDocs(collection(db, "users", this.currentUid, "terms"));
-    const terms = snap.docs.map((d) => d.data() as Term);
-    terms.sort((a, b) => a.id.localeCompare(b.id));
-    this.termsCache = terms;
-    return terms;
+    this.ensureSeedDataLoaded();
+    if (db && auth?.currentUser) {
+      try {
+        const snap = await getDocs(collection(db, "users", this.currentUid, "terms"));
+        if (!snap.empty) {
+          const terms = snap.docs.map((d) => d.data() as Term);
+          terms.sort((a, b) => a.id.localeCompare(b.id));
+          this.termsCache = terms;
+        } else {
+          // If terms don't exist in Firestore yet, write SEED_TERMS in the background
+          const uid = this.currentUid;
+          const batch = writeBatch(db);
+          for (const t of SEED_TERMS) {
+            batch.set(doc(db, "users", uid, "terms", t.id), { ...t, userId: uid });
+          }
+          batch.commit().catch((err) => console.warn("Auto-seed terms notice:", err));
+        }
+      } catch (err) {
+        console.warn("Could not query terms from Firestore (using permanent baseline):", err);
+      }
+    }
+    return this.termsCache || SEED_TERMS.map((t) => ({ ...t, userId: auth?.currentUser?.uid || "user" }));
   }
 
   async getCurrentTerm(): Promise<Term | null> {
@@ -334,32 +393,93 @@ export class FirebaseDataStore implements DataStore {
 
   // Courses (Embed units and topics for minimal reads)
   async getCourses(termId?: string): Promise<Course[]> {
-    if (!db) return [];
-    if (this.coursesCache.size === 0) {
-      const snap = await getDocs(collection(db, "users", this.currentUid, "courses"));
-      snap.docs.forEach((d) => {
-        const c = d.data() as CourseWithContent;
-        this.coursesCache.set(c.id, c);
-      });
+    this.ensureSeedDataLoaded();
+    if (db && !this.hasSyncedWithFirestore && auth?.currentUser) {
+      try {
+        const snap = await getDocs(collection(db, "users", this.currentUid, "courses"));
+        if (!snap.empty) {
+          snap.docs.forEach((d) => {
+            const remoteCourse = d.data() as CourseWithContent;
+            const existing = this.coursesCache.get(remoteCourse.id);
+            // Merge remote progress while ensuring units and topics are never empty
+            const mergedUnits = (remoteCourse.units && remoteCourse.units.length > 0)
+              ? remoteCourse.units
+              : existing?.units || SEED_MODULES.filter((m) => m.courseId === remoteCourse.id);
+            const mergedTopics = (remoteCourse.topics && remoteCourse.topics.length > 0)
+              ? remoteCourse.topics
+              : existing?.topics || SEED_TOPICS.filter((t) => t.courseId === remoteCourse.id);
+            this.coursesCache.set(remoteCourse.id, {
+              ...remoteCourse,
+              units: mergedUnits,
+              topics: mergedTopics,
+            });
+          });
+        } else {
+          // Empty in Firestore: auto-seed all 19 courses asynchronously
+          this.loadInitialSyllabusData().catch((e) => console.warn("Courses sync notice:", e));
+        }
+        this.hasSyncedWithFirestore = true;
+      } catch (err) {
+        console.warn("Could not query courses from Firestore (using permanent baseline):", err);
+      }
     }
 
     const list = Array.from(this.coursesCache.values());
-    if (termId) {
+    if (termId && termId !== "all") {
       return list.filter((c) => c.termId === termId);
     }
     return list;
   }
 
   async getCourse(courseId: string): Promise<Course | null> {
-    if (!db) return null;
-    if (this.coursesCache.has(courseId)) {
-      return this.coursesCache.get(courseId)!;
+    this.ensureSeedDataLoaded();
+    let course = this.coursesCache.get(courseId);
+    if (!course && db && auth?.currentUser) {
+      try {
+        const snap = await getDoc(doc(db, "users", this.currentUid, "courses", courseId));
+        if (snap.exists()) {
+          course = snap.data() as CourseWithContent;
+          this.coursesCache.set(courseId, course);
+        }
+      } catch (err) {
+        console.warn(`getCourse(${courseId}) notice:`, err);
+      }
     }
-    const snap = await getDoc(doc(db, "users", this.currentUid, "courses", courseId));
-    if (!snap.exists()) return null;
-    const data = snap.data() as CourseWithContent;
-    this.coursesCache.set(courseId, data);
-    return data;
+    if (!course) {
+      const seedCourse = SEED_COURSES.find((c) => c.id === courseId);
+      if (seedCourse) {
+        const courseUnits = SEED_MODULES.filter((m) => m.courseId === courseId).map((m) => ({
+          ...m,
+          userId: this.currentUid,
+        }));
+        const courseTopics = SEED_TOPICS.filter((t) => t.courseId === courseId).map((t) => ({
+          ...t,
+          userId: this.currentUid,
+        }));
+        course = {
+          ...seedCourse,
+          userId: this.currentUid,
+          units: courseUnits,
+          topics: courseTopics,
+        };
+        this.coursesCache.set(courseId, course);
+      }
+    }
+    if (course) {
+      if (!course.units || course.units.length === 0) {
+        course.units = SEED_MODULES.filter((m) => m.courseId === courseId).map((m) => ({
+          ...m,
+          userId: this.currentUid,
+        }));
+      }
+      if (!course.topics || course.topics.length === 0) {
+        course.topics = SEED_TOPICS.filter((t) => t.courseId === courseId).map((t) => ({
+          ...t,
+          userId: this.currentUid,
+        }));
+      }
+    }
+    return course || null;
   }
 
   async createCourse(courseData: Omit<Course, "id" | "userId" | "createdAt">): Promise<Course> {
@@ -400,9 +520,14 @@ export class FirebaseDataStore implements DataStore {
 
   // Modules / Units
   async getModules(courseId: string): Promise<Module[]> {
+    this.ensureSeedDataLoaded();
     const course = (await this.getCourse(courseId)) as CourseWithContent | null;
-    if (!course || !course.units) return [];
-    return [...course.units].sort((a, b) => a.order - b.order);
+    if (course && course.units && course.units.length > 0) {
+      return [...course.units].sort((a, b) => a.order - b.order);
+    }
+    return SEED_MODULES.filter((m) => m.courseId === courseId)
+      .map((m) => ({ ...m, userId: this.currentUid }))
+      .sort((a, b) => a.order - b.order);
   }
 
   async getUnits(courseId: string): Promise<Module[]> {
@@ -489,6 +614,7 @@ export class FirebaseDataStore implements DataStore {
 
   // Topics
   async getTopics(unitId: string): Promise<Topic[]> {
+    this.ensureSeedDataLoaded();
     const courses = (await this.getCourses()) as CourseWithContent[];
     for (const c of courses) {
       if (c.topics) {
@@ -498,20 +624,33 @@ export class FirebaseDataStore implements DataStore {
         }
       }
     }
-    return [];
+    return SEED_TOPICS.filter((t) => t.unitId === unitId)
+      .map((t) => ({ ...t, userId: this.currentUid }))
+      .sort((a, b) => a.order - b.order);
   }
 
   async getAllTopics(courseId?: string): Promise<Topic[]> {
+    this.ensureSeedDataLoaded();
     const courses = (await this.getCourses()) as CourseWithContent[];
     if (courseId) {
       const c = courses.find((crs) => crs.id === courseId);
-      return (c?.topics || []).sort((a, b) => a.order - b.order);
+      if (c && c.topics && c.topics.length > 0) {
+        return [...c.topics].sort((a, b) => a.order - b.order);
+      }
+      return SEED_TOPICS.filter((t) => t.courseId === courseId)
+        .map((t) => ({ ...t, userId: this.currentUid }))
+        .sort((a, b) => a.order - b.order);
     }
     const all: Topic[] = [];
     courses.forEach((c) => {
-      if (c.topics) all.push(...c.topics);
+      if (c.topics && c.topics.length > 0) {
+        all.push(...c.topics);
+      }
     });
-    return all.sort((a, b) => a.order - b.order);
+    if (all.length > 0) {
+      return all.sort((a, b) => a.order - b.order);
+    }
+    return SEED_TOPICS.map((t) => ({ ...t, userId: this.currentUid })).sort((a, b) => a.order - b.order);
   }
 
   async createTopic(topicData: Omit<Topic, "id" | "userId" | "createdAt">): Promise<Topic> {
@@ -930,10 +1069,16 @@ export class FirebaseDataStore implements DataStore {
 
   // Degree Plan
   async getDegreePlan(): Promise<DegreePlan | null> {
-    if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "degreePlan", "current"));
-    if (!snap.exists()) return null;
-    return snap.data() as DegreePlan;
+    if (!db) return DEMO_DEGREE_PLAN ? { ...DEMO_DEGREE_PLAN, userId: this.currentUid } : null;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "degreePlan", "current"));
+      if (!snap.exists()) {
+        return DEMO_DEGREE_PLAN ? { ...DEMO_DEGREE_PLAN, userId: this.currentUid } : null;
+      }
+      return snap.data() as DegreePlan;
+    } catch {
+      return DEMO_DEGREE_PLAN ? { ...DEMO_DEGREE_PLAN, userId: this.currentUid } : null;
+    }
   }
 
   async updateDegreePlan(plan: Partial<DegreePlan>): Promise<DegreePlan> {

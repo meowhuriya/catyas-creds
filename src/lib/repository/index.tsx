@@ -15,6 +15,7 @@ import {
   User,
 } from "firebase/auth";
 import { UserProfile, Term, Course } from "@/types/schemas";
+import { SEED_TERMS, SEED_COURSES } from "@/lib/demo/seed-data";
 
 interface DataStoreContextValue {
   dataStore: DataStore;
@@ -45,9 +46,9 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(isRealMode);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
-  const [terms, setTerms] = useState<Term[]>([]);
-  const [currentTerm, setCurrentTerm] = useState<Term | null>(null);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [terms, setTerms] = useState<Term[]>(() => SEED_TERMS.map((t) => ({ ...t })));
+  const [currentTerm, setCurrentTerm] = useState<Term | null>(() => ({ ...SEED_TERMS[0] }));
+  const [courses, setCourses] = useState<Course[]>(() => SEED_COURSES.map((c) => ({ ...c })));
   const [version, setVersion] = useState(0);
 
   // Initialize data store instance
@@ -97,21 +98,26 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
   const refreshData = useCallback(async () => {
     if (isRealMode && !firebaseUser) {
       setCurrentUser(null);
-      setTerms([]);
-      setCourses([]);
+      setTerms(SEED_TERMS.map((t) => ({ ...t })));
+      setCurrentTerm({ ...SEED_TERMS[0] });
+      setCourses(SEED_COURSES.map((c) => ({ ...c })));
       return;
     }
     try {
-      const [u, tList, cList] = await Promise.all([
-        dataStore.getUser(),
-        dataStore.getTerms(),
-        dataStore.getCourses(),
-      ]);
+      const u = await dataStore.getUser();
       setCurrentUser(u);
-      setTerms(tList);
-      const curr = tList.find((t) => t.isCurrent) || tList[0] || null;
-      setCurrentTerm(curr);
-      setCourses(cList);
+
+      const tList = await dataStore.getTerms();
+      if (tList && tList.length > 0) {
+        setTerms(tList);
+        const curr = tList.find((t) => t.isCurrent) || tList[0] || null;
+        setCurrentTerm(curr);
+      }
+
+      const cList = await dataStore.getCourses();
+      if (cList && cList.length > 0) {
+        setCourses(cList);
+      }
     } catch (err) {
       console.error("Failed to load repository data:", err);
     }
