@@ -433,26 +433,69 @@ export class FirebaseDataStore implements DataStore {
 
   async getCourse(courseId: string): Promise<Course | null> {
     this.ensureSeedDataLoaded();
-    let course = this.coursesCache.get(courseId);
+    const idLower = (courseId || "").toLowerCase();
+    const cleanCode = idLower.replace(/^course-/, "");
+    const withPrefix = `course-${cleanCode}`;
+
+    // 1. Check in-memory cache with fallback keys
+    let course =
+      this.coursesCache.get(courseId) ||
+      this.coursesCache.get(idLower) ||
+      this.coursesCache.get(withPrefix) ||
+      Array.from(this.coursesCache.values()).find(
+        (c) =>
+          c.id.toLowerCase() === idLower ||
+          c.id.toLowerCase() === withPrefix ||
+          c.code.toLowerCase() === cleanCode
+      );
+
+    // 2. Query Firestore if available and not found
     if (!course && db && auth?.currentUser) {
       try {
-        const snap = await getDoc(doc(db, "users", this.currentUid, "courses", courseId));
+        const snap = await getDoc(doc(db, "users", this.currentUid, "courses", withPrefix));
         if (snap.exists()) {
           course = snap.data() as CourseWithContent;
-          this.coursesCache.set(courseId, course);
+          this.coursesCache.set(withPrefix, course);
+        } else if (courseId !== withPrefix) {
+          const snap2 = await getDoc(doc(db, "users", this.currentUid, "courses", courseId));
+          if (snap2.exists()) {
+            course = snap2.data() as CourseWithContent;
+            this.coursesCache.set(courseId, course);
+          }
         }
       } catch (err) {
         console.warn(`getCourse(${courseId}) notice:`, err);
       }
     }
+
+    // 3. Fallback to SEED_COURSES
     if (!course) {
-      const seedCourse = SEED_COURSES.find((c) => c.id === courseId);
+      const seedCourse = SEED_COURSES.find(
+        (c) =>
+          c.id === courseId ||
+          c.id.toLowerCase() === idLower ||
+          c.id.toLowerCase() === withPrefix ||
+          c.code.toLowerCase() === cleanCode
+      );
       if (seedCourse) {
-        const courseUnits = SEED_MODULES.filter((m) => m.courseId === courseId).map((m) => ({
+        const targetId = seedCourse.id;
+        const courseUnits = SEED_MODULES.filter(
+          (m) =>
+            m.courseId === targetId ||
+            m.courseId.toLowerCase() === withPrefix ||
+            m.courseId.toLowerCase() === idLower ||
+            m.courseId === courseId
+        ).map((m) => ({
           ...m,
           userId: this.currentUid,
         }));
-        const courseTopics = SEED_TOPICS.filter((t) => t.courseId === courseId).map((t) => ({
+        const courseTopics = SEED_TOPICS.filter(
+          (t) =>
+            t.courseId === targetId ||
+            t.courseId.toLowerCase() === withPrefix ||
+            t.courseId.toLowerCase() === idLower ||
+            t.courseId === courseId
+        ).map((t) => ({
           ...t,
           userId: this.currentUid,
         }));
@@ -462,23 +505,38 @@ export class FirebaseDataStore implements DataStore {
           units: courseUnits,
           topics: courseTopics,
         };
-        this.coursesCache.set(courseId, course);
+        this.coursesCache.set(targetId, course);
+        this.coursesCache.set(withPrefix, course);
       }
     }
+
+    // 4. Guarantee units and topics are populated
     if (course) {
+      const canonicalId = course.id;
       if (!course.units || course.units.length === 0) {
-        course.units = SEED_MODULES.filter((m) => m.courseId === courseId).map((m) => ({
+        course.units = SEED_MODULES.filter(
+          (m) =>
+            m.courseId === canonicalId ||
+            m.courseId.toLowerCase() === withPrefix ||
+            m.courseId.toLowerCase() === idLower
+        ).map((m) => ({
           ...m,
           userId: this.currentUid,
         }));
       }
       if (!course.topics || course.topics.length === 0) {
-        course.topics = SEED_TOPICS.filter((t) => t.courseId === courseId).map((t) => ({
+        course.topics = SEED_TOPICS.filter(
+          (t) =>
+            t.courseId === canonicalId ||
+            t.courseId.toLowerCase() === withPrefix ||
+            t.courseId.toLowerCase() === idLower
+        ).map((t) => ({
           ...t,
           userId: this.currentUid,
         }));
       }
     }
+
     return course || null;
   }
 
@@ -525,7 +583,15 @@ export class FirebaseDataStore implements DataStore {
     if (course && course.units && course.units.length > 0) {
       return [...course.units].sort((a, b) => a.order - b.order);
     }
-    return SEED_MODULES.filter((m) => m.courseId === courseId)
+    const idLower = (courseId || "").toLowerCase();
+    const cleanCode = idLower.replace(/^course-/, "");
+    const withPrefix = `course-${cleanCode}`;
+    return SEED_MODULES.filter(
+      (m) =>
+        m.courseId === courseId ||
+        m.courseId.toLowerCase() === idLower ||
+        m.courseId.toLowerCase() === withPrefix
+    )
       .map((m) => ({ ...m, userId: this.currentUid }))
       .sort((a, b) => a.order - b.order);
   }
@@ -633,11 +699,25 @@ export class FirebaseDataStore implements DataStore {
     this.ensureSeedDataLoaded();
     const courses = (await this.getCourses()) as CourseWithContent[];
     if (courseId) {
-      const c = courses.find((crs) => crs.id === courseId);
+      const idLower = courseId.toLowerCase();
+      const cleanCode = idLower.replace(/^course-/, "");
+      const withPrefix = `course-${cleanCode}`;
+      const c = courses.find(
+        (crs) =>
+          crs.id === courseId ||
+          crs.id.toLowerCase() === idLower ||
+          crs.id.toLowerCase() === withPrefix ||
+          crs.code.toLowerCase() === cleanCode
+      );
       if (c && c.topics && c.topics.length > 0) {
         return [...c.topics].sort((a, b) => a.order - b.order);
       }
-      return SEED_TOPICS.filter((t) => t.courseId === courseId)
+      return SEED_TOPICS.filter(
+        (t) =>
+          t.courseId === courseId ||
+          t.courseId.toLowerCase() === idLower ||
+          t.courseId.toLowerCase() === withPrefix
+      )
         .map((t) => ({ ...t, userId: this.currentUid }))
         .sort((a, b) => a.order - b.order);
     }
@@ -711,19 +791,29 @@ export class FirebaseDataStore implements DataStore {
   // Lessons / Videos (subcollection under users/{uid}/videos)
   async getLessons(courseId: string): Promise<Lesson[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "videos"),
-      where("courseId", "==", courseId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Lesson).sort((a, b) => a.order - b.order);
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "videos"),
+        where("courseId", "==", courseId)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Lesson).sort((a, b) => a.order - b.order);
+    } catch (err) {
+      console.warn(`getLessons(${courseId}) notice:`, err);
+      return [];
+    }
   }
 
   async getLesson(lessonId: string): Promise<Lesson | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "videos", lessonId));
-    if (!snap.exists()) return null;
-    return snap.data() as Lesson;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "videos", lessonId));
+      if (!snap.exists()) return null;
+      return snap.data() as Lesson;
+    } catch (err) {
+      console.warn(`getLesson(${lessonId}) notice:`, err);
+      return null;
+    }
   }
 
   async addLessons(
@@ -783,21 +873,31 @@ export class FirebaseDataStore implements DataStore {
   // Watch Progress
   async getLessonProgress(lessonId: string): Promise<LessonProgress | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "videoProgress", lessonId));
-    if (!snap.exists()) return null;
-    return snap.data() as LessonProgress;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "videoProgress", lessonId));
+      if (!snap.exists()) return null;
+      return snap.data() as LessonProgress;
+    } catch (err) {
+      console.warn(`getLessonProgress(${lessonId}) notice:`, err);
+      return null;
+    }
   }
 
   async getAllLessonProgress(courseId?: string): Promise<LessonProgress[]> {
     if (!db) return [];
-    const q = courseId
-      ? query(
-          collection(db, "users", this.currentUid, "videoProgress"),
-          where("courseId", "==", courseId)
-        )
-      : collection(db, "users", this.currentUid, "videoProgress");
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as LessonProgress);
+    try {
+      const q = courseId
+        ? query(
+            collection(db, "users", this.currentUid, "videoProgress"),
+            where("courseId", "==", courseId)
+          )
+        : collection(db, "users", this.currentUid, "videoProgress");
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as LessonProgress);
+    } catch (err) {
+      console.warn(`getAllLessonProgress(${courseId}) notice:`, err);
+      return [];
+    }
   }
 
   async updateLessonProgress(
@@ -834,9 +934,14 @@ export class FirebaseDataStore implements DataStore {
   // Notes
   async getNote(lessonId: string): Promise<Note | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "notes", lessonId));
-    if (!snap.exists()) return null;
-    return snap.data() as Note;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "notes", lessonId));
+      if (!snap.exists()) return null;
+      return snap.data() as Note;
+    } catch (err) {
+      console.warn(`getNote(${lessonId}) notice:`, err);
+      return null;
+    }
   }
 
   async saveNote(
@@ -863,32 +968,47 @@ export class FirebaseDataStore implements DataStore {
 
   async getAllNotes(courseId?: string): Promise<Note[]> {
     if (!db) return [];
-    const q = courseId
-      ? query(
-          collection(db, "users", this.currentUid, "notes"),
-          where("courseId", "==", courseId)
-        )
-      : collection(db, "users", this.currentUid, "notes");
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Note);
+    try {
+      const q = courseId
+        ? query(
+            collection(db, "users", this.currentUid, "notes"),
+            where("courseId", "==", courseId)
+          )
+        : collection(db, "users", this.currentUid, "notes");
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Note);
+    } catch (err) {
+      console.warn(`getAllNotes(${courseId}) notice:`, err);
+      return [];
+    }
   }
 
   // Assessments & Question Bank
   async getAssessments(courseId: string): Promise<Assessment[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "assessments"),
-      where("courseId", "==", courseId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Assessment);
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "assessments"),
+        where("courseId", "==", courseId)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Assessment);
+    } catch (err) {
+      console.warn(`getAssessments(${courseId}) notice:`, err);
+      return [];
+    }
   }
 
   async getAssessment(assessmentId: string): Promise<Assessment | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "assessments", assessmentId));
-    if (!snap.exists()) return null;
-    return snap.data() as Assessment;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "assessments", assessmentId));
+      if (!snap.exists()) return null;
+      return snap.data() as Assessment;
+    } catch (err) {
+      console.warn(`getAssessment(${assessmentId}) notice:`, err);
+      return null;
+    }
   }
 
   async createAssessment(
@@ -908,12 +1028,17 @@ export class FirebaseDataStore implements DataStore {
 
   async getQuestions(assessmentId: string): Promise<Question[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "questions"),
-      where("assessmentId", "==", assessmentId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Question);
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "questions"),
+        where("assessmentId", "==", assessmentId)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Question);
+    } catch (err) {
+      console.warn(`getQuestions(${assessmentId}) notice:`, err);
+      return [];
+    }
   }
 
   async saveQuestions(
@@ -944,12 +1069,17 @@ export class FirebaseDataStore implements DataStore {
   // Attempts
   async getAttempts(assessmentId: string): Promise<Attempt[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "attempts"),
-      where("assessmentId", "==", assessmentId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Attempt);
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "attempts"),
+        where("assessmentId", "==", assessmentId)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Attempt);
+    } catch (err) {
+      console.warn(`getAttempts(${assessmentId}) notice:`, err);
+      return [];
+    }
   }
 
   async submitAttempt(attemptData: Omit<Attempt, "id" | "userId">): Promise<Attempt> {
@@ -967,19 +1097,29 @@ export class FirebaseDataStore implements DataStore {
   // Rubrics & Submissions
   async getRubrics(assessmentId: string): Promise<Rubric[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "rubrics"),
-      where("assessmentId", "==", assessmentId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Rubric);
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "rubrics"),
+        where("assessmentId", "==", assessmentId)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Rubric);
+    } catch (err) {
+      console.warn(`getRubrics(${assessmentId}) notice:`, err);
+      return [];
+    }
   }
 
   async getRubric(assessmentId: string): Promise<Rubric | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "rubrics", assessmentId));
-    if (!snap.exists()) return null;
-    return snap.data() as Rubric;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "rubrics", assessmentId));
+      if (!snap.exists()) return null;
+      return snap.data() as Rubric;
+    } catch (err) {
+      console.warn(`getRubric(${assessmentId}) notice:`, err);
+      return null;
+    }
   }
 
   async saveRubric(rubricData: Omit<Rubric, "id" | "userId">): Promise<Rubric> {
@@ -996,19 +1136,29 @@ export class FirebaseDataStore implements DataStore {
 
   async getSubmissions(assessmentId: string): Promise<Submission[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "submissions"),
-      where("assessmentId", "==", assessmentId)
-    );
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as Submission);
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "submissions"),
+        where("assessmentId", "==", assessmentId)
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as Submission);
+    } catch (err) {
+      console.warn(`getSubmissions(${assessmentId}) notice:`, err);
+      return [];
+    }
   }
 
   async getSubmission(assessmentId: string): Promise<Submission | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "submissions", assessmentId));
-    if (!snap.exists()) return null;
-    return snap.data() as Submission;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "submissions", assessmentId));
+      if (!snap.exists()) return null;
+      return snap.data() as Submission;
+    } catch (err) {
+      console.warn(`getSubmission(${assessmentId}) notice:`, err);
+      return null;
+    }
   }
 
   async saveSubmission(submissionData: Omit<Submission, "id" | "userId">): Promise<Submission> {
@@ -1030,9 +1180,14 @@ export class FirebaseDataStore implements DataStore {
   // Planner Events
   async getPlannerEvents(start?: string, end?: string): Promise<PlannerEvent[]> {
     if (!db) return [];
-    const snap = await getDocs(collection(db, "users", this.currentUid, "plannerEvents"));
-    const list = snap.docs.map((d) => d.data() as PlannerEvent);
-    return list.filter((e) => (!start || e.date >= start) && (!end || e.date <= end));
+    try {
+      const snap = await getDocs(collection(db, "users", this.currentUid, "plannerEvents"));
+      const list = snap.docs.map((d) => d.data() as PlannerEvent);
+      return list.filter((e) => (!start || e.date >= start) && (!end || e.date <= end));
+    } catch (err) {
+      console.warn("getPlannerEvents notice:", err);
+      return [];
+    }
   }
 
   async createPlannerEvent(
@@ -1098,9 +1253,14 @@ export class FirebaseDataStore implements DataStore {
   // Transcript Snapshots
   async getTranscriptSnapshots(): Promise<TranscriptSnapshot[]> {
     if (!db) return [];
-    const q = query(collection(db, "transcriptSnapshots"), where("userId", "==", this.currentUid));
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as TranscriptSnapshot);
+    try {
+      const q = query(collection(db, "transcriptSnapshots"), where("userId", "==", this.currentUid));
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as TranscriptSnapshot);
+    } catch (err) {
+      console.warn("getTranscriptSnapshots notice:", err);
+      return [];
+    }
   }
 
   async createTranscriptSnapshot(
@@ -1126,19 +1286,24 @@ export class FirebaseDataStore implements DataStore {
 
   async getPublicVerificationSnapshot(idOrHash: string): Promise<TranscriptSnapshot | null> {
     if (!db) return null;
-    const docSnap = await getDoc(doc(db, "transcriptSnapshots", idOrHash));
-    if (docSnap.exists()) {
-      return docSnap.data() as TranscriptSnapshot;
+    try {
+      const docSnap = await getDoc(doc(db, "transcriptSnapshots", idOrHash));
+      if (docSnap.exists()) {
+        return docSnap.data() as TranscriptSnapshot;
+      }
+      const q = query(
+        collection(db, "transcriptSnapshots"),
+        where("verificationHash", "==", idOrHash)
+      );
+      const snap = await getDocs(q);
+      if (!snap.empty) {
+        return snap.docs[0].data() as TranscriptSnapshot;
+      }
+      return null;
+    } catch (err) {
+      console.warn("getPublicVerificationSnapshot notice:", err);
+      return null;
     }
-    const q = query(
-      collection(db, "transcriptSnapshots"),
-      where("verificationHash", "==", idOrHash)
-    );
-    const snap = await getDocs(q);
-    if (!snap.empty) {
-      return snap.docs[0].data() as TranscriptSnapshot;
-    }
-    return null;
   }
 
   // Audit Log
@@ -1162,21 +1327,31 @@ export class FirebaseDataStore implements DataStore {
 
   async getAuditLogs(): Promise<AuditLog[]> {
     if (!db) return [];
-    const snap = await getDocs(collection(db, "users", this.currentUid, "auditLog"));
-    return snap.docs.map((d) => d.data() as AuditLog).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+    try {
+      const snap = await getDocs(collection(db, "users", this.currentUid, "auditLog"));
+      return snap.docs.map((d) => d.data() as AuditLog).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+    } catch (err) {
+      console.warn("getAuditLogs notice:", err);
+      return [];
+    }
   }
 
   // Study Sessions
   async getStudySessions(courseId?: string): Promise<StudySession[]> {
     if (!db) return [];
-    const q = courseId
-      ? query(
-          collection(db, "users", this.currentUid, "studySessions"),
-          where("courseId", "==", courseId)
-        )
-      : collection(db, "users", this.currentUid, "studySessions");
-    const snap = await getDocs(q);
-    return snap.docs.map((d) => d.data() as StudySession);
+    try {
+      const q = courseId
+        ? query(
+            collection(db, "users", this.currentUid, "studySessions"),
+            where("courseId", "==", courseId)
+          )
+        : collection(db, "users", this.currentUid, "studySessions");
+      const snap = await getDocs(q);
+      return snap.docs.map((d) => d.data() as StudySession);
+    } catch (err) {
+      console.warn(`getStudySessions(${courseId}) notice:`, err);
+      return [];
+    }
   }
 
   async saveStudySession(sessionData: Omit<StudySession, "id" | "userId">): Promise<StudySession> {
@@ -1197,22 +1372,6 @@ export class FirebaseDataStore implements DataStore {
 
   // Course Attendance
   async getCourseAttendance(courseId: string): Promise<CourseAttendance> {
-    if (!db) {
-      return {
-        id: `att-${this.currentUid}-${courseId}`,
-        courseId,
-        userId: this.currentUid,
-        classesHeld: 0,
-        classesAttended: 0,
-        minimumPercentage: 75,
-        logs: [],
-        updatedAt: new Date().toISOString(),
-      };
-    }
-    const snap = await getDoc(doc(db, "users", this.currentUid, "attendance", courseId));
-    if (snap.exists()) {
-      return snap.data() as CourseAttendance;
-    }
     const defaultAtt: CourseAttendance = {
       id: `att-${this.currentUid}-${courseId}`,
       courseId,
@@ -1223,14 +1382,32 @@ export class FirebaseDataStore implements DataStore {
       logs: [],
       updatedAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, "users", this.currentUid, "attendance", courseId), defaultAtt);
-    return defaultAtt;
+    if (!db) {
+      return defaultAtt;
+    }
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "attendance", courseId));
+      if (snap.exists()) {
+        return snap.data() as CourseAttendance;
+      }
+      // Non-blocking background initialization
+      setDoc(doc(db, "users", this.currentUid, "attendance", courseId), defaultAtt).catch(() => {});
+      return defaultAtt;
+    } catch (err) {
+      console.warn(`getCourseAttendance(${courseId}) notice:`, err);
+      return defaultAtt;
+    }
   }
 
   async getAllAttendance(): Promise<CourseAttendance[]> {
     if (!db) return [];
-    const snap = await getDocs(collection(db, "users", this.currentUid, "attendance"));
-    return snap.docs.map((d) => d.data() as CourseAttendance);
+    try {
+      const snap = await getDocs(collection(db, "users", this.currentUid, "attendance"));
+      return snap.docs.map((d) => d.data() as CourseAttendance);
+    } catch (err) {
+      console.warn("getAllAttendance notice:", err);
+      return [];
+    }
   }
 
   async updateCourseAttendance(
@@ -1278,17 +1455,27 @@ export class FirebaseDataStore implements DataStore {
   // Exam Dates
   async getCourseExamDate(courseId: string): Promise<ExamDate | null> {
     if (!db) return null;
-    const snap = await getDoc(doc(db, "users", this.currentUid, "examDates", courseId));
-    if (snap.exists()) {
-      return snap.data() as ExamDate;
+    try {
+      const snap = await getDoc(doc(db, "users", this.currentUid, "examDates", courseId));
+      if (snap.exists()) {
+        return snap.data() as ExamDate;
+      }
+      return null;
+    } catch (err) {
+      console.warn(`getCourseExamDate(${courseId}) notice:`, err);
+      return null;
     }
-    return null;
   }
 
   async getAllExamDates(): Promise<ExamDate[]> {
     if (!db) return [];
-    const snap = await getDocs(collection(db, "users", this.currentUid, "examDates"));
-    return snap.docs.map((d) => d.data() as ExamDate);
+    try {
+      const snap = await getDocs(collection(db, "users", this.currentUid, "examDates"));
+      return snap.docs.map((d) => d.data() as ExamDate);
+    } catch (err) {
+      console.warn("getAllExamDates notice:", err);
+      return [];
+    }
   }
 
   async saveCourseExamDate(
@@ -1316,15 +1503,21 @@ export class FirebaseDataStore implements DataStore {
   // Weekly Class Timetable
   async getTimetableSlots(): Promise<ClassTimetableSlot[]> {
     if (!db) return [];
-    const snap = await getDocs(collection(db, "users", this.currentUid, "timetableSlots"));
-    const slots = snap.docs.map((d) => d.data() as ClassTimetableSlot);
-    if (slots.length === 0) {
-      const courses = await this.getCourses();
-      if (courses.length > 0) {
-        return this.generateDefaultWeeklyTimetable(courses);
+    try {
+      const snap = await getDocs(collection(db, "users", this.currentUid, "timetableSlots"));
+      const slots = snap.docs.map((d) => d.data() as ClassTimetableSlot);
+      if (slots.length === 0) {
+        const courses = await this.getCourses();
+        if (courses.length > 0) {
+          return this.generateDefaultWeeklyTimetable(courses);
+        }
       }
+      return slots;
+    } catch (err) {
+      console.warn("getTimetableSlots notice:", err);
+      const courses = await this.getCourses();
+      return courses.length > 0 ? this.generateDefaultWeeklyTimetable(courses) : [];
     }
-    return slots;
   }
 
   async saveTimetableSlot(
@@ -1532,13 +1725,18 @@ export class FirebaseDataStore implements DataStore {
 
   async getRecallHistory(limitCount?: number): Promise<RecallHistoryEntry[]> {
     if (!db) return [];
-    const q = query(
-      collection(db, "users", this.currentUid, "recallHistory"),
-      orderBy("reviewedAt", "desc")
-    );
-    const snap = await getDocs(q);
-    const list = snap.docs.map((d) => d.data() as RecallHistoryEntry);
-    return limitCount && limitCount > 0 ? list.slice(0, limitCount) : list;
+    try {
+      const q = query(
+        collection(db, "users", this.currentUid, "recallHistory"),
+        orderBy("reviewedAt", "desc")
+      );
+      const snap = await getDocs(q);
+      const list = snap.docs.map((d) => d.data() as RecallHistoryEntry);
+      return limitCount && limitCount > 0 ? list.slice(0, limitCount) : list;
+    } catch (err) {
+      console.warn("getRecallHistory notice:", err);
+      return [];
+    }
   }
 
   async updateCourseRecallStyle(courseId: string, style: RecallStyle): Promise<Course> {

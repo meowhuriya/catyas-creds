@@ -263,7 +263,18 @@ export class DemoDataStore implements DataStore {
   }
 
   async getCourse(courseId: string): Promise<Course | null> {
-    return this.courses.find((c) => c.id === courseId) || null;
+    const idLower = (courseId || "").toLowerCase();
+    const cleanCode = idLower.replace(/^course-/, "");
+    const withPrefix = `course-${cleanCode}`;
+    return (
+      this.courses.find(
+        (c) =>
+          c.id === courseId ||
+          c.id.toLowerCase() === idLower ||
+          c.id.toLowerCase() === withPrefix ||
+          c.code.toLowerCase() === cleanCode
+      ) || null
+    );
   }
 
   async createCourse(courseData: Omit<Course, "id" | "userId" | "createdAt">): Promise<Course> {
@@ -295,8 +306,16 @@ export class DemoDataStore implements DataStore {
   }
 
   async getModules(courseId: string): Promise<Module[]> {
+    const idLower = (courseId || "").toLowerCase();
+    const cleanCode = idLower.replace(/^course-/, "");
+    const withPrefix = `course-${cleanCode}`;
     return this.modules
-      .filter((m) => m.courseId === courseId)
+      .filter(
+        (m) =>
+          m.courseId === courseId ||
+          m.courseId.toLowerCase() === idLower ||
+          m.courseId.toLowerCase() === withPrefix
+      )
       .sort((a, b) => a.order - b.order);
   }
 
@@ -312,8 +331,16 @@ export class DemoDataStore implements DataStore {
 
   async getAllTopics(courseId?: string): Promise<Topic[]> {
     if (courseId) {
+      const idLower = courseId.toLowerCase();
+      const cleanCode = idLower.replace(/^course-/, "");
+      const withPrefix = `course-${cleanCode}`;
       return this.topics
-        .filter((t) => t.courseId === courseId)
+        .filter(
+          (t) =>
+            t.courseId === courseId ||
+            t.courseId.toLowerCase() === idLower ||
+            t.courseId.toLowerCase() === withPrefix
+        )
         .sort((a, b) => a.order - b.order);
     }
     return [...this.topics];

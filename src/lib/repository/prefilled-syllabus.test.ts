@@ -142,4 +142,49 @@ describe("Permanent Pre-Filled CSE Year 1 Syllabus Verification", () => {
     expect(url).toContain("https://www.youtube.com/results?search_query=");
     expect(url).toContain(encodeURIComponent("Engineering Chemistry Polymers"));
   });
+
+  it("verifies flexible course ID matching and resilient retrieval for course detail views", async () => {
+    const fbStore = new FirebaseDataStore();
+    const demoStore = new DemoDataStore();
+
+    // 1. FirebaseDataStore with different ID formats
+    const c1 = await fbStore.getCourse("course-ma101bs");
+    const c2 = await fbStore.getCourse("ma101bs");
+    const c3 = await fbStore.getCourse("MA101BS");
+
+    expect(c1).not.toBeNull();
+    expect(c2).not.toBeNull();
+    expect(c3).not.toBeNull();
+    expect(c1?.code).toBe("MA101BS");
+    expect(c2?.code).toBe("MA101BS");
+    expect(c3?.code).toBe("MA101BS");
+
+    // Modules and topics populated
+    const mWithPrefix = await fbStore.getModules("course-ma101bs");
+    const mWithoutPrefix = await fbStore.getModules("ma101bs");
+    expect(mWithPrefix.length).toBe(5);
+    expect(mWithoutPrefix.length).toBe(5);
+
+    const tWithPrefix = await fbStore.getAllTopics("course-ma101bs");
+    const tWithoutPrefix = await fbStore.getAllTopics("ma101bs");
+    expect(tWithPrefix.length).toBeGreaterThan(0);
+    expect(tWithoutPrefix.length).toBe(tWithPrefix.length);
+
+    // Attendance safe defaults without throwing
+    const att = await fbStore.getCourseAttendance("course-ma101bs");
+    expect(att).toBeDefined();
+    expect(att.classesHeld).toBe(0);
+    expect(att.classesAttended).toBe(0);
+    expect(att.minimumPercentage).toBe(75);
+
+    // 2. DemoDataStore flexible lookup
+    const demoC1 = await demoStore.getCourse("course-ma101bs");
+    const demoC2 = await demoStore.getCourse("ma101bs");
+    const demoC3 = await demoStore.getCourse("MA101BS");
+
+    expect(demoC1).not.toBeNull();
+    expect(demoC2).not.toBeNull();
+    expect(demoC3).not.toBeNull();
+    expect(demoC1?.code).toBe("MA101BS");
+  });
 });

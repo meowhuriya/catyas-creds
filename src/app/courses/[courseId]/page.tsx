@@ -141,45 +141,97 @@ export default function CourseDetailPage() {
       if (!course) {
         setLoading(true);
       }
-      const [c, m, top, l, p, a, n, att, exm] = await Promise.all([
-        dataStore.getCourse(courseId),
-        dataStore.getModules(courseId),
-        dataStore.getAllTopics(courseId),
-        dataStore.getLessons(courseId),
-        dataStore.getAllLessonProgress(courseId),
-        dataStore.getAssessments(courseId),
-        dataStore.getAllNotes(courseId),
-        dataStore.getCourseAttendance(courseId),
-        dataStore.getCourseExamDate(courseId),
+
+      // 1. Fetch Course with resilient multi-key fallback
+      let c = await dataStore.getCourse(courseId).catch((err) => {
+        console.warn("getCourse error:", err);
+        return null;
+      });
+
+      if (!c) {
+        try {
+          const all = await dataStore.getCourses();
+          const idLower = (courseId || "").toLowerCase();
+          const cleanCode = idLower.replace(/^course-/, "");
+          c =
+            all.find(
+              (item) =>
+                item.id.toLowerCase() === idLower ||
+                item.id.toLowerCase() === `course-${cleanCode}` ||
+                item.code.toLowerCase() === cleanCode
+            ) || null;
+        } catch (err) {
+          console.warn("getCourses fallback error:", err);
+        }
+      }
+
+      if (c) {
+        setCourse(c);
+      }
+
+      const targetCourseId = c?.id || courseId;
+
+      // 2. Fetch Modules (Units) & Topics safely
+      const [m, top] = await Promise.all([
+        dataStore.getModules(targetCourseId).catch(() => []),
+        dataStore.getAllTopics(targetCourseId).catch(() => []),
       ]);
 
-      setCourse(c);
-      setModules(m);
-      setTopics(top);
-      setLessons(l);
-      setProgressList(p);
-      setAssessments(a);
-      setNotes(n);
-      setAttendanceRecord(att);
-      setCourseExamDate(exm);
-      setAttStats(calculateAttendanceStats(att.classesHeld, att.classesAttended, att.minimumPercentage));
+      setModules(m || []);
+      setTopics(top || []);
 
-      if (m.length > 0 && !activeUnitId) {
+      if (m && m.length > 0 && !activeUnitId) {
         setActiveUnitId(m[0].id);
       }
 
-      // Load attempts & submissions for all assessments
-      const [allAttempts, allSubmissions] = await Promise.all([
-        Promise.all(a.map((asm) => dataStore.getAttempts(asm.id))).then((res) =>
-          res.flat()
-        ),
-        Promise.all(a.map((asm) => dataStore.getSubmission(asm.id))).then((res) =>
-          res.filter(Boolean) as Submission[]
-        ),
+      // 3. Fetch auxiliary resources independently without blocking view
+      const [l, p, a, n, att, exm] = await Promise.all([
+        dataStore.getLessons(targetCourseId).catch(() => []),
+        dataStore.getAllLessonProgress(targetCourseId).catch(() => []),
+        dataStore.getAssessments(targetCourseId).catch(() => []),
+        dataStore.getAllNotes(targetCourseId).catch(() => []),
+        dataStore.getCourseAttendance(targetCourseId).catch(() => null),
+        dataStore.getCourseExamDate(targetCourseId).catch(() => null),
       ]);
 
-      setAttempts(allAttempts);
-      setSubmissions(allSubmissions);
+      setLessons(l || []);
+      setProgressList(p || []);
+      setAssessments(a || []);
+      setNotes(n || []);
+
+      if (att) {
+        setAttendanceRecord(att);
+        setAttStats(
+          calculateAttendanceStats(
+            att.classesHeld || 0,
+            att.classesAttended || 0,
+            att.minimumPercentage || 75
+          )
+        );
+      } else {
+        setAttStats(calculateAttendanceStats(0, 0, 75));
+      }
+
+      setCourseExamDate(exm || null);
+
+      // 4. Load attempts & submissions for assessments safely
+      if (a && a.length > 0) {
+        try {
+          const [allAttempts, allSubmissions] = await Promise.all([
+            Promise.all(a.map((asm) => dataStore.getAttempts(asm.id).catch(() => []))).then(
+              (res) => res.flat()
+            ),
+            Promise.all(
+              a.map((asm) => dataStore.getSubmission(asm.id).catch(() => null))
+            ).then((res) => res.filter(Boolean) as Submission[]),
+          ]);
+
+          setAttempts(allAttempts);
+          setSubmissions(allSubmissions);
+        } catch (err) {
+          console.warn("Error loading assessment attempts/submissions:", err);
+        }
+      }
     } catch (err) {
       console.error("Failed to load course details:", err);
     } finally {
