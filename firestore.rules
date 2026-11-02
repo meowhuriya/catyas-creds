@@ -559,6 +559,25 @@ service cloud.firestore {
     }
 
     // ===============================================================
+    // Squad Leaderboard & Badge Engine Architecture
+    // ===============================================================
+
+    // leaderboard_profiles: Privacy-safe public peer ranking
+    match /leaderboard_profiles/{uid} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // badges_catalog: System milestones and custom user-minted badges
+    match /badges_catalog/{badgeId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() &&
+                    request.resource.data.createdByUid == request.auth.uid;
+      allow update, delete: if isAuthenticated() &&
+                               resource.data.createdByUid == request.auth.uid;
+    }
+
+    // ===============================================================
     // Backwards-Compatibility Fallback: Top-Level User-Isolated Collections
     // ===============================================================
 

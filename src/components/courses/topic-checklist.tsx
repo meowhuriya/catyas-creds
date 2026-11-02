@@ -14,6 +14,7 @@ import {
   Award,
   FlaskConical,
   Sparkles,
+  Target,
   Eye,
   EyeOff,
 } from "lucide-react";
@@ -43,6 +44,7 @@ interface TopicChecklistProps {
   onMergeTopics: (primaryId: string, secondaryId: string, combinedTitle: string) => Promise<void>;
   onStartQuickCheck?: (topic: Topic) => void;
   onOpenTopicAi?: (topic: Topic) => void;
+  onStartMasteryLoop?: (topic: Topic) => void;
   className?: string;
 }
 
@@ -57,6 +59,7 @@ export function TopicChecklist({
   onMergeTopics,
   onStartQuickCheck,
   onOpenTopicAi,
+  onStartMasteryLoop,
   className = "",
 }: TopicChecklistProps) {
   const [editingTopicId, setEditingTopicId] = React.useState<string | null>(null);
@@ -368,6 +371,22 @@ export function TopicChecklist({
                         <Sparkles className="h-4 w-4" />
                       </button>
                     )}
+
+                    {/* Khan-Style Note Check & Exercise Loop Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onStartMasteryLoop) {
+                          onStartMasteryLoop(topic);
+                        } else {
+                          window.location.href = `/courses/${course.id}/mastery/${topic.id}`;
+                        }
+                      }}
+                      className="p-1.5 rounded-[6px] text-[#8A1627] dark:text-[#F07B88] hover:bg-[#8A1627]/10 transition-colors"
+                      title="Khan-Style Note Audit & 5-Question Mastery Exercise Set"
+                    >
+                      <Target className="h-4 w-4" />
+                    </button>
 
                     {/* Take Quick Check Button */}
                     <button

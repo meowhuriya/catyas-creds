@@ -11,6 +11,7 @@ import {
   GraduationCap,
   FileText,
   Award,
+  Trophy,
   Settings,
   RotateCcw,
   ChevronLeft,
@@ -40,6 +41,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     { label: "Grades", href: "/grades", icon: GraduationCap },
     { label: "Transcript", href: "/transcript", icon: FileText },
     { label: "Degree Progress", href: "/degree", icon: Award },
+    { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 
