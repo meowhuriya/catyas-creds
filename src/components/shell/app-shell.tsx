@@ -7,6 +7,7 @@ import { TopBar } from "./top-bar";
 import { MobileTabBar } from "./mobile-nav";
 import { CommandPalette } from "./command-palette";
 import { ShortcutDialog } from "./shortcut-dialog";
+import { CelebrationOverlay } from "@/components/ui/CelebrationOverlay";
 import { useToast } from "@/components/ui/toast";
 import { useDataStore } from "@/lib/repository";
 import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@/lib/appearance";
@@ -189,6 +190,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         onOpenChange={setShortcutOpen}
         onOpenCommand={() => setCommandOpen(true)}
       />
+
+      {/* Procedural Sound Celebration & Floating Reward Overlay */}
+      <CelebrationOverlay />
     </div>
   );
 }

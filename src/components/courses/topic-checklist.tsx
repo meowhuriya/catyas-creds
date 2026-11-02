@@ -32,6 +32,8 @@ import { MergeTopicDialog } from "@/components/courses/merge-topic-dialog";
 import { SectionBar } from "@/components/ui/section-bar";
 import { Topic, Module, Course } from "@/types/schemas";
 import { cleanSyllabusTitle } from "@/lib/utils";
+import { SoundEngine } from "@/lib/sound-engine";
+import { triggerCelebration, triggerFloatingReward } from "@/components/ui/CelebrationOverlay";
 
 interface TopicChecklistProps {
   course: Course;
@@ -102,13 +104,28 @@ export function TopicChecklist({
 
   const handleToggleStudied = async (t: Topic) => {
     const willBeStudied = !t.isStudiedManually;
+    SoundEngine.getInstance().playToggle(willBeStudied);
     const newWatchScore = willBeStudied ? 40 : 0;
     const newTopicScore = newWatchScore + (t.checkScore || 0);
+    const willBeDone = newTopicScore >= 70;
+
+    if (willBeStudied) {
+      triggerFloatingReward("+40 Study Pts");
+      if (willBeDone && !t.isDone) {
+        SoundEngine.getInstance().playMasteryFanfare();
+        triggerCelebration({
+          title: "Topic Mastered!",
+          subtitle: cleanSyllabusTitle(t.title),
+          xp: 100,
+        });
+      }
+    }
+
     await onUpdateTopic(t.id, {
       isStudiedManually: willBeStudied,
       watchScore: newWatchScore,
       topicScore: newTopicScore,
-      isDone: newTopicScore >= 70,
+      isDone: willBeDone,
     });
   };
 

@@ -34,7 +34,12 @@ import {
   Type,
   Sliders,
   Sparkles,
+  Volume2,
+  VolumeX,
+  Headphones,
+  Waves,
 } from "lucide-react";
+import { useSound } from "@/lib/sound-engine";
 import {
   AppearanceSettings,
   BackgroundType,
@@ -95,6 +100,7 @@ export default function SettingsPage() {
   // File import ref & wallpaper input ref
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const wallpaperInputRef = React.useRef<HTMLInputElement>(null);
+  const sound = useSound();
 
   const fetchSettingsAndTerms = React.useCallback(async () => {
     try {
@@ -598,7 +604,157 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* 2. Syllabus Restore & Curriculum Integrity (PART B) */}
+      {/* 2. Procedural Sound & Acoustic Preferences */}
+      <div className="academic-card p-5 space-y-6 text-sm">
+        <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
+          <div className="flex items-center gap-2">
+            <Volume2 className="h-4 w-4 text-[#8A1627] dark:text-[#F07B88]" />
+            <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
+              Procedural Sound &amp; Acoustic Engine
+            </h2>
+          </div>
+          <span className="eyebrow-label text-[#8A1627] dark:text-[#F07B88]">
+            Web Audio Synthesizer
+          </span>
+        </div>
+
+        <div className="space-y-5">
+          {/* Sound Toggle */}
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-semibold text-sm text-[#14161F] dark:text-[#F6EBD3]">
+                Micro-Interaction Sound Effects
+              </div>
+              <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] mt-0.5">
+                Zero external audio files. Synthesized tactile clicks, marimba triads, and academic fanfares.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                sound.playToggle(!sound.soundEnabled);
+                sound.toggleSound();
+              }}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                sound.soundEnabled ? "bg-[#8A1627]" : "bg-gray-300 dark:bg-gray-700"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                  sound.soundEnabled ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Volume Slider */}
+          {sound.soundEnabled && (
+            <div className="space-y-2 pt-2 border-t border-[#E5D5C5]/70">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3]">Master Volume</span>
+                <span className="font-mono font-bold text-[#8A1627] dark:text-[#F07B88]">
+                  {Math.round(sound.volume * 100)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={sound.volume}
+                onChange={(e) => sound.setVolume(parseFloat(e.target.value))}
+                className="w-full h-2 bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-lg appearance-none cursor-pointer accent-[#8A1627]"
+              />
+            </div>
+          )}
+
+          {/* Focus Brown Noise */}
+          <div className="p-4 rounded-[12px] border border-[#E5D5C5] dark:border-[#3D2D31] bg-white/60 dark:bg-black/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Waves className={`h-5 w-5 ${sound.brownNoiseActive ? "text-[#8A1627] dark:text-[#F07B88] animate-pulse" : "text-gray-400"}`} />
+                <div>
+                  <div className="font-semibold text-sm text-[#14161F] dark:text-[#F6EBD3]">
+                    Focus Brown Noise Generator
+                  </div>
+                  <div className="text-xs text-[#4B5160] dark:text-[#CFC8BB]">
+                    Continuous low-pass Brownian acoustic mask for deep focus study sessions.
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = sound.toggleBrownNoise();
+                  sound.playToggle(next);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  sound.brownNoiseActive ? "bg-[#8A1627]" : "bg-gray-300 dark:bg-gray-700"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                    sound.brownNoiseActive ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+            {sound.brownNoiseActive && (
+              <div className="text-xs text-[#8A1627] dark:text-[#F07B88] font-medium flex items-center justify-between pt-1">
+                <span>● Ambient Brown Noise Session Active</span>
+                <span className="font-mono">Web Audio BiquadFilter (380Hz)</span>
+              </div>
+            )}
+          </div>
+
+          {/* Audio Synthesizer Previews */}
+          <div className="space-y-2 pt-2 border-t border-[#E5D5C5]/70">
+            <label className="font-semibold text-xs text-[#14161F] dark:text-[#F6EBD3] block">
+              Test Procedural Audio Cues
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => sound.playClick()}
+                className="text-xs h-8"
+              >
+                12ms Click
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => sound.playToggle(true)}
+                className="text-xs h-8"
+              >
+                Woodblock
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => sound.playCorrect(3)}
+                className="text-xs h-8"
+              >
+                Marimba Triad
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => sound.playMasteryFanfare()}
+                className="text-xs h-8 text-[#8A1627] dark:text-[#F07B88] font-semibold"
+              >
+                Mastery Fanfare
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Syllabus Restore & Curriculum Integrity (PART B) */}
       <div className="academic-card p-5 space-y-5 text-sm">
         <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
           <div className="flex items-center gap-2">

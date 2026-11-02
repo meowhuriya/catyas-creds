@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { SoundControlPopover } from "./sound-control-popover";
+import { useSound } from "@/lib/sound-engine";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -194,6 +196,9 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
               </div>
             </PopoverContent>
           </Popover>
+
+          {/* Sound & Focus Ambience Popover */}
+          <SoundControlPopover />
 
           {/* Dark Mode Toggle */}
           <button

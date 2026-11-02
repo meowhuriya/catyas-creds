@@ -23,6 +23,8 @@ import {
 } from "@/lib/recall/recall-content-generator";
 import { SectionBar } from "@/components/ui/section-bar";
 import { Button } from "@/components/ui/button";
+import { SoundEngine } from "@/lib/sound-engine";
+import { triggerCelebration, triggerFloatingReward } from "@/components/ui/CelebrationOverlay";
 import {
   RotateCcw,
   CheckCircle2,
@@ -122,6 +124,20 @@ export default function RecallPage() {
   const handleRate = async (rating: RecallRating) => {
     if (!currentCandidate || submitting) return;
 
+    // Trigger audio & micro-interaction reward
+    if (rating === "forgot") {
+      SoundEngine.getInstance().playWrong();
+    } else if (rating === "hard") {
+      SoundEngine.getInstance().playCorrect(1);
+      triggerFloatingReward("+10 Recall XP");
+    } else if (rating === "good") {
+      SoundEngine.getInstance().playCorrect(2);
+      triggerFloatingReward("+25 Recall XP");
+    } else if (rating === "easy") {
+      SoundEngine.getInstance().playCorrect(3);
+      triggerFloatingReward("+35 Recall XP");
+    }
+
     try {
       setSubmitting(true);
       const { topic, historyEntry } = await dataStore.recordRecallReview({
@@ -142,7 +158,19 @@ export default function RecallPage() {
       // Move to next card in queue
       setRevealed(false);
       setScratchpadText("");
-      setCurrentIndex((idx) => idx + 1);
+      const nextIdx = currentIndex + 1;
+      setCurrentIndex(nextIdx);
+
+      // Check if session queue completed
+      if (nextIdx >= candidates.length) {
+        SoundEngine.getInstance().playMasteryFanfare();
+        triggerCelebration({
+          title: "Daily Recall Block Complete!",
+          subtitle: `Reviewed ${candidates.length} topics on active SM-2 schedule`,
+          xp: 50,
+        });
+        triggerFloatingReward("+50 Queue Bonus XP");
+      }
     } catch (err) {
       console.error("Failed to record recall rating:", err);
     } finally {

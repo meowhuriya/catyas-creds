@@ -27,6 +27,9 @@ import {
   BadgeItem,
   BadgeCriteriaType,
 } from "@/types/mastery-gamification";
+import { HolographicBadge } from "@/components/leaderboard/HolographicBadge";
+import { triggerCelebration, triggerFloatingReward } from "@/components/ui/CelebrationOverlay";
+import { SoundEngine } from "@/lib/sound-engine";
 
 export default function LeaderboardPage() {
   const { currentUser, firebaseUser } = useDataStore();
@@ -82,15 +85,19 @@ export default function LeaderboardPage() {
   const handleJoinSquad = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!squadCodeInput.trim()) return;
+    SoundEngine.getInstance().playClick();
     const updated = await LeaderboardService.updateSquad(currentUid, squadCodeInput.trim());
     setMyProfile(updated);
     setSquadCodeInput("");
     loadLeaderboardData();
+    SoundEngine.getInstance().playCorrect(2);
+    triggerFloatingReward("Joined Squad " + squadCodeInput.trim());
   };
 
   const handleCopySquadCode = () => {
     if (myProfile?.squadCode) {
       navigator.clipboard.writeText(myProfile.squadCode);
+      SoundEngine.getInstance().playClick();
       setCopiedSquadCode(true);
       setTimeout(() => setCopiedSquadCode(false), 2000);
     }
@@ -99,6 +106,7 @@ export default function LeaderboardPage() {
   const handleTogglePrivacy = async () => {
     if (!myProfile) return;
     const newSetting = !myProfile.showOnLeaderboard;
+    SoundEngine.getInstance().playToggle(newSetting);
     const updated = await LeaderboardService.toggleVisibility(currentUid, newSetting);
     setMyProfile(updated);
     loadLeaderboardData();
@@ -147,8 +155,9 @@ export default function LeaderboardPage() {
     setMintingBadge(true);
 
     try {
+      const createdTitle = badgeTitle.trim();
       await LeaderboardService.createCustomBadge({
-        title: badgeTitle.trim(),
+        title: createdTitle,
         description: badgeLore.trim(),
         imageUrl: badgeImageBase64,
         criteriaType: badgeCriteria,
@@ -161,6 +170,14 @@ export default function LeaderboardPage() {
       setBadgeImageBase64(null);
       setBadgeStudioOpen(false);
       await loadLeaderboardData();
+
+      // Trigger Celebration & Fanfare
+      triggerCelebration({
+        title: "New Badge Minted!",
+        subtitle: `"${createdTitle}" is now unlocked in your Badge Vault`,
+        xp: 50,
+      });
+      triggerFloatingReward("+50 Badge XP");
     } catch (err) {
       console.warn("Error minting badge:", err);
     } finally {
@@ -669,63 +686,14 @@ export default function LeaderboardPage() {
             }
 
             return (
-              <div
+              <HolographicBadge
                 key={b.id}
-                className={`p-4 rounded-[14px] border-2 transition-all flex flex-col justify-between bg-[#FBF6EC] dark:bg-[#221A1C] shadow-sm ${
-                  isUnlocked
-                    ? "border-[#D9A441] ring-1 ring-[#D9A441]/30"
-                    : "border-[#E4D9C0] dark:border-[#3D2D31] opacity-75"
-                }`}
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div
-                      className={`h-14 w-14 rounded-full overflow-hidden border-2 p-0.5 shrink-0 ${
-                        isUnlocked ? "border-[#D9A441] bg-white dark:bg-black" : "border-gray-400 grayscale"
-                      }`}
-                    >
-                      <img src={b.imageUrl} alt={b.title} className="h-full w-full object-cover rounded-full" />
-                    </div>
-                    {isUnlocked ? (
-                      <button
-                        onClick={() => handleToggleEquipBadge(b.id)}
-                        className={`text-[10px] font-bold px-2 py-1 rounded-[6px] transition-colors ${
-                          isEquipped
-                            ? "bg-[#8A1627] text-white"
-                            : "bg-[#E4D9C0]/60 hover:bg-[#8A1627] hover:text-white"
-                        }`}
-                      >
-                        {isEquipped ? "Equipped" : "Equip"}
-                      </button>
-                    ) : (
-                      <Lock className="h-4 w-4 text-gray-400" />
-                    )}
-                  </div>
-
-                  <div className="font-serif font-bold text-sm mt-3 text-[#14161F] dark:text-[#F6EBD3]">{b.title}</div>
-                  <p className="text-[11px] text-[#4B5160] dark:text-[#CFC8BB] mt-1 line-clamp-2">
-                    {b.description}
-                  </p>
-                </div>
-
-                {/* Progress bar if locked */}
-                {!isUnlocked && (
-                  <div className="mt-3 pt-2 border-t border-[#E4D9C0] dark:border-[#3D2D31]">
-                    <div className="flex justify-between text-[10px] text-[#4B5160] dark:text-[#CFC8BB] mb-1">
-                      <span>Progress</span>
-                      <span>
-                        {currentVal} / {b.thresholdValue}
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#8A1627] rounded-full"
-                        style={{ width: `${Math.min(100, (currentVal / b.thresholdValue) * 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+                badge={b}
+                isUnlocked={isUnlocked}
+                isEquipped={isEquipped || false}
+                onToggleEquip={() => handleToggleEquipBadge(b.id)}
+                currentVal={currentVal}
+              />
             );
           })}
         </div>

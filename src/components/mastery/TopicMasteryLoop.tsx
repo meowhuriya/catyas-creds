@@ -30,6 +30,8 @@ import {
 } from "@/types/mastery-gamification";
 import { useDataStore } from "@/lib/repository";
 import { useSyncLeaderboard } from "@/hooks/useSyncLeaderboard";
+import { SoundEngine } from "@/lib/sound-engine";
+import { triggerCelebration, triggerFloatingReward } from "@/components/ui/CelebrationOverlay";
 
 type MasteryStage = "UPLOAD_NOTES" | "AUDIT_FEEDBACK" | "EXERCISE_RUNNER" | "SUMMARY_CELEBRATION";
 
@@ -174,6 +176,13 @@ export function TopicMasteryLoop({
     const isCorrect = selectedIndex === currentQ.correctIndex;
     const pts = isCorrect ? 12 : 0;
 
+    if (isCorrect) {
+      SoundEngine.getInstance().playCorrect(currentQuestionIndex + 1);
+      triggerFloatingReward("+12 Mastery Pts");
+    } else {
+      SoundEngine.getInstance().playWrong();
+    }
+
     setQuestionAnswers((prev) => ({
       ...prev,
       [currentQuestionIndex]: {
@@ -194,6 +203,13 @@ export function TopicMasteryLoop({
       (ans) => ans.trim().toLowerCase().replace(/[\s\-_]+/g, "") === normalizedInput
     );
     const pts = isMatch ? 12 : 0;
+
+    if (isMatch) {
+      SoundEngine.getInstance().playCorrect(currentQuestionIndex + 1);
+      triggerFloatingReward("+12 Mastery Pts");
+    } else {
+      SoundEngine.getInstance().playWrong();
+    }
 
     setQuestionAnswers((prev) => ({
       ...prev,
@@ -238,6 +254,13 @@ export function TopicMasteryLoop({
       }
 
       const result: GradeExerciseResult = await res.json();
+
+      if (result.isCorrect) {
+        SoundEngine.getInstance().playCorrect(5);
+        triggerFloatingReward(`+${result.awardedPoints} Synthesis Pts`);
+      } else {
+        SoundEngine.getInstance().playWrong();
+      }
 
       setQuestionAnswers((prev) => ({
         ...prev,
@@ -311,9 +334,20 @@ export function TopicMasteryLoop({
       // 3. Award Leaderboard XP
       if (isNowDone) {
         await awardActivity("TOPIC_MASTERED", { isMastered: true });
+        SoundEngine.getInstance().playMasteryFanfare();
+        triggerCelebration({
+          title: "Topic Mastered!",
+          subtitle: topic.title,
+          xp: 100,
+        });
+        triggerFloatingReward("+100 Academic XP");
+      } else {
+        SoundEngine.getInstance().playCorrect(3);
+        triggerFloatingReward(`+${cappedEarned} Mastery Pts`);
       }
       if (cappedEarned === 60) {
         await awardActivity("PERFECT_EXERCISE");
+        triggerFloatingReward("+50 Perfect Bonus XP");
       }
 
       onMasteryUpdated?.(updatedTopic);

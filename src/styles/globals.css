@@ -284,3 +284,34 @@ h1, h2, h3, h4, .font-heading {
     margin: 15mm;
   }
 }
+
+/* Floating Reward & Micro-Interaction Animations */
+@keyframes floatReward {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.85);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -12px) scale(1.05);
+  }
+  30% {
+    transform: translate(-50%, -20px) scale(1);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -45px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -60px) scale(0.95);
+  }
+}
+
+.animate-float-reward {
+  animation: floatReward 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.clip-ribbon {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
+}
