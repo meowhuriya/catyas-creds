@@ -9,6 +9,7 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:rules": "firebase emulators:exec --only firestore \"vitest run tests/firestore-rules.test.ts --config tests/vitest-rules.config.ts\"",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -34,17 +35,20 @@
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-is": "^19.3.1",
     "recharts": "^3.10.1",
     "tailwind-merge": "^2.6.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@playwright/test": "^1.50.1",
     "@types/node": "^22.13.4",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.20",
+    "firebase-tools": "^15.34.2",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",

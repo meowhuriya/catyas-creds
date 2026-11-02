@@ -34,9 +34,10 @@ service cloud.firestore {
     //
     // PUBLIC ACCESS ARCHITECTURE:
     //   transcriptSnapshots/{snapshotId}
-    //   - Opt-in public verification snapshot, readable by any public visitor
+    //   - Opt-in public verification snapshot, gettable by direct ID by any public visitor
     //     ONLY IF resource.data.isPublic == true.
-    //   - Owner can always read and manage (create, update, revoke, delete) their snapshots.
+    //   - Enumeration/listing is strictly disabled (allow list: if false).
+    //   - Owner can always get and manage (create, update, revoke, delete) their snapshots.
     //
     // BACKWARDS-COMPATIBILITY FALLBACK:
     // Top-level collections with strict doc.userId == request.auth.uid user isolation:
@@ -511,15 +512,17 @@ service cloud.firestore {
     // ===============================================================
 
     // User document and all nested private subcollections under users/{userId}/...
+    // Strict user-isolation: Signed-out users can read/write nothing, User A cannot access User B's data,
+    // and authenticated users can only access their own userId path.
     match /users/{userId} {
-      allow read, write, delete: if isAuthenticated() && request.auth.uid == userId;
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
 
       // Recursive wildcard: grants the authenticated user full CRUD to all their own
       // private subcollections (terms, courses, units, topics, videos, videoProgress,
       // notes, plannerEvents, studySessions, attendance, examDates, timetableSlots,
       // recallHistory, assessments, attempts, questions, submissions, rubrics, etc.)
       match /{allChildren=**} {
-        allow read, write, delete: if isAuthenticated() && request.auth.uid == userId;
+        allow read, write, delete: if request.auth != null && request.auth.uid == userId;
       }
     }
 
@@ -529,11 +532,13 @@ service cloud.firestore {
 
     // transcriptSnapshots: Public verification route & owner management
     match /transcriptSnapshots/{snapshotId} {
-      // Opt-in public verification: readable by anyone (including unauthenticated public visitors)
-      // ONLY IF resource.data.isPublic == true.
-      // Owner can always read their own snapshot regardless of isPublic flag.
-      allow read: if ('isPublic' in resource.data && resource.data.isPublic == true) ||
-                     (isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid);
+      // Opt-in public verification: single snapshot lookup allowed by direct ID ONLY IF
+      // resource.data.isPublic == true, or by the authenticated owner.
+      allow get: if ('isPublic' in resource.data && resource.data.isPublic == true) ||
+                    (isAuthenticated() && 'userId' in resource.data && resource.data.userId == request.auth.uid);
+
+      // Enumeration / list queries across transcriptSnapshots are strictly denied
+      allow list: if false;
 
       // Owner can create their own snapshot
       allow create: if isAuthenticated() &&

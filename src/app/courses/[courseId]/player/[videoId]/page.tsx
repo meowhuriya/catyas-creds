@@ -79,6 +79,9 @@ export default function VideoPlayerPage() {
   const lastWallTimeRef = React.useRef<number>(0);
   const trackingIntervalRef = React.useRef<NodeJS.Timeout | null>(null);
   const hasTriggeredCompletionToast = React.useRef<boolean>(false);
+  const pendingProgressRef = React.useRef<any>(null);
+  const lastSaveTimeRef = React.useRef<number>(Date.now());
+  const flushSaveRef = React.useRef<() => Promise<void>>(async () => {});
 
   // Load course, lesson (by id or youtubeVideoId), and associated records
   const loadData = React.useCallback(async () => {
@@ -174,7 +177,7 @@ export default function VideoPlayerPage() {
     }
   }, [courseId, videoParam, loadData]);
 
-  // Autosave notes with debouncing
+  // Autosave notes with debouncing (2 seconds)
   React.useEffect(() => {
     const timer = setTimeout(async () => {
       if (
@@ -190,10 +193,52 @@ export default function VideoPlayerPage() {
         );
         setNote(saved);
       }
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [noteText, timestamps, courseId, lesson, note, dataStore]);
+
+  // Flush pending progress save to repository
+  const flushProgressSave = React.useCallback(async () => {
+    if (!pendingProgressRef.current || !lesson) return;
+    const toSave = { ...pendingProgressRef.current };
+    try {
+      const updatedProg = await dataStore.updateLessonProgress(toSave);
+      setProgress(updatedProg);
+      lastSaveTimeRef.current = Date.now();
+
+      // Trigger celebration toast on first 90% crossing
+      if (toSave.isCompleted && !hasTriggeredCompletionToast.current) {
+        hasTriggeredCompletionToast.current = true;
+        toast.success(
+          "Lecture Completed!",
+          `Verified 90%+ watch time for "${lesson.title}". 40 mastery points awarded to linked syllabus topics.`
+        );
+        await dataStore.logAudit(
+          "lesson_watched",
+          lesson.id,
+          `Verified 90%+ completion of "${lesson.title}" (${toSave.watchedSeconds}s watched)`
+        );
+        await refreshData();
+      }
+    } catch (e) {
+      console.warn("Failed to flush progress save:", e);
+    }
+  }, [lesson, dataStore, refreshData]);
+
+  flushSaveRef.current = flushProgressSave;
+
+  // Save progress on window close, tab switch, or unmount
+  React.useEffect(() => {
+    const handleBeforeUnload = () => {
+      flushSaveRef.current();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      flushSaveRef.current();
+    };
+  }, []);
 
   // Initialize YouTube IFrame Player API
   React.useEffect(() => {
@@ -268,6 +313,12 @@ export default function VideoPlayerPage() {
    */
   const handlePlayerStateChange = (event: any) => {
     const isPlaying = event.data === 1; // 1 = YT.PlayerState.PLAYING
+    const isPausedOrEnded = event.data === 2 || event.data === 0;
+
+    // Save progress immediately on pause or video completion
+    if (isPausedOrEnded) {
+      flushProgressSave();
+    }
 
     if (trackingIntervalRef.current) {
       clearInterval(trackingIntervalRef.current);
@@ -293,14 +344,15 @@ export default function VideoPlayerPage() {
 
           // Check if video made legitimate forward progress
           if (deltaVideoSec > 0 && deltaVideoSec <= maxAllowedDelta) {
-            const currentWatched = progress?.watchedSeconds || 0;
+            const currentWatched =
+              (pendingProgressRef.current?.watchedSeconds ?? progress?.watchedSeconds) || 0;
             const newWatched = currentWatched + deltaVideoSec;
             const totalDuration =
               lesson.durationSeconds || playerRef.current.getDuration() || 1;
             const percent = Math.min(100, (newWatched / totalDuration) * 100);
             const isCompleted = percent >= 90;
 
-            const updatedProg = await dataStore.updateLessonProgress({
+            const nextProg = {
               lessonId: lesson.id,
               courseId,
               watchedSeconds: Math.round(newWatched),
@@ -308,24 +360,26 @@ export default function VideoPlayerPage() {
               percentWatched: percent,
               isCompleted,
               lastPositionSeconds: Math.round(currentTime),
-              completedAt: isCompleted ? new Date().toISOString() : progress?.completedAt,
-            });
+              completedAt: isCompleted
+                ? progress?.completedAt || new Date().toISOString()
+                : progress?.completedAt,
+            };
 
-            setProgress(updatedProg);
+            pendingProgressRef.current = nextProg;
+            setProgress((prev) =>
+              prev
+                ? { ...prev, ...nextProg, updatedAt: new Date().toISOString() }
+                : {
+                    id: `progress-${lesson.id}`,
+                    userId: "user",
+                    updatedAt: new Date().toISOString(),
+                    ...nextProg,
+                  }
+            );
 
-            // Trigger celebration toast on first 90% crossing
-            if (isCompleted && !hasTriggeredCompletionToast.current) {
-              hasTriggeredCompletionToast.current = true;
-              toast.success(
-                "Lecture Completed!",
-                `Verified 90%+ watch time for "${lesson.title}". 40 mastery points awarded to linked syllabus topics.`
-              );
-              await dataStore.logAudit(
-                "lesson_watched",
-                lesson.id,
-                `Verified 90%+ completion of "${lesson.title}" (${Math.round(newWatched)}s watched)`
-              );
-              await refreshData();
+            // Save to persistent repository every 15 seconds
+            if (Date.now() - lastSaveTimeRef.current >= 15000) {
+              await flushProgressSave();
             }
           }
 
