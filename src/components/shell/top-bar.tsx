@@ -15,10 +15,12 @@ import {
   Settings,
   Download,
   Trash2,
+  GraduationCap,
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SoundControlPopover } from "./sound-control-popover";
+import { ThemeSwitcher } from "./theme-switcher";
 import { useSound } from "@/lib/sound-engine";
 import { Button } from "@/components/ui/button";
 import {
@@ -133,8 +135,12 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
   return (
     <>
       <header className="h-14 w-full bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] rounded-[18px] shadow-sm px-4 md:px-5 flex items-center justify-between">
-        {/* Left: Breadcrumbs */}
+        {/* Left: Breadcrumbs & Harvard Portal Badge */}
         <div className="flex items-center gap-3">
+          <div className="hidden [html[data-theme='harvard']_&]:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#7C1222] border border-white/20 text-white font-serif font-bold text-[10px] tracking-wider uppercase">
+            <GraduationCap className="h-3 w-3 text-amber-300" />
+            <span>Harvard / Valeria Academic Portal</span>
+          </div>
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
@@ -200,19 +206,8 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
           {/* Sound & Focus Ambience Popover */}
           <SoundControlPopover />
 
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleTheme}
-            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-            className="flex h-8 w-8 items-center justify-center rounded-control border border-app-border bg-app-surface text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink transition-colors"
-          >
-            {theme === "light" ? (
-              <Moon className="h-4 w-4" />
-            ) : (
-              <Sun className="h-4 w-4 text-amber-400" />
-            )}
-            <span className="sr-only">Toggle Theme</span>
-          </button>
+          {/* 1-Click Multi-Theme Engine Switcher */}
+          <ThemeSwitcher />
 
           {/* Account Menu */}
           <Popover>

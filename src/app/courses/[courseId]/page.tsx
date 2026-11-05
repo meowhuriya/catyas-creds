@@ -1597,6 +1597,9 @@ export default function CourseDetailPage() {
         open={addLessonsOpen}
         onOpenChange={setAddLessonsOpen}
         onSuccess={loadData}
+        onLessonsAdded={(newLessons) => {
+          setLessons((prev) => [...prev, ...newLessons]);
+        }}
       />
 
       {/* Group Modules Dialog */}

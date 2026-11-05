@@ -97,6 +97,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                data-active={isActive ? "true" : "false"}
                 className={cn(
                   "group relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
                   isActive

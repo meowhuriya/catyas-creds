@@ -315,3 +315,202 @@ h1, h2, h3, h4, .font-heading {
 .clip-ribbon {
   clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
 }
+
+/* =========================================================================
+   THEME 1: OBSIDIAN (DEFAULT — Ultra-Modern Linear / Vercel Dark)
+   ========================================================================= */
+[data-theme="obsidian"] {
+  --color-bg: #090A0F;
+  --color-surface: #121520;
+  --color-surface-muted: #181B28;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-secondary: rgba(255, 255, 255, 0.12);
+  --color-ink: #F8FAFC;
+  --color-ink-muted: #94A3B8;
+  --color-secondary: #CBD5E1;
+  --color-eyebrow: #F43F5E;
+  --color-accent: #E11D48;
+  --color-crimson: #E11D48;
+  --color-accent-hover: #BE123C;
+  --color-indigo: #6366F1;
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --focus-ring: 0 0 0 2px #090A0F, 0 0 0 4px #E11D48;
+}
+
+[data-theme="obsidian"] body {
+  background-color: #090A0F !important;
+  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.14), transparent) !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="obsidian"] body::before {
+  display: none !important;
+}
+
+[data-theme="obsidian"] aside {
+  background-color: rgba(13, 15, 23, 0.90) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+[data-theme="obsidian"] header {
+  background-color: rgba(13, 15, 23, 0.90) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+[data-theme="obsidian"] footer {
+  background-color: rgba(13, 15, 23, 0.90) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+[data-theme="obsidian"] .academic-card,
+[data-theme="obsidian"] [role="dialog"],
+[data-theme="obsidian"] .rounded-card {
+  background-color: #121520 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #F8FAFC !important;
+}
+
+[data-theme="obsidian"] nav a,
+[data-theme="obsidian"] button,
+[data-theme="obsidian"] .transition-all {
+  transition: all 150ms ease-out !important;
+}
+
+/* =========================================================================
+   THEME 2: HARVARD (Harvard Student Portal — my.harvard & Canvas LMS Aesthetic)
+   ========================================================================= */
+[data-theme="harvard"] {
+  --color-bg: #F3F4F6;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #F9FAFB;
+  --color-border: #D1D5DB;
+  --color-border-secondary: #9CA3AF;
+  --color-ink: #111827;
+  --color-ink-muted: #4B5563;
+  --color-secondary: #374151;
+  --color-eyebrow: #A51C30;
+  --color-accent: #A51C30;
+  --color-crimson: #A51C30;
+  --color-accent-hover: #7C1222;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px #A51C30;
+}
+
+[data-theme="harvard"] body {
+  background-color: #F3F4F6 !important;
+  background-image: none !important;
+  color: #111827 !important;
+}
+
+[data-theme="harvard"] body::before {
+  display: none !important;
+}
+
+/* Institutional Harvard Crimson Header */
+[data-theme="harvard"] header {
+  background-color: #A51C30 !important;
+  border-bottom: 2px solid #7C1222 !important;
+  border-color: #7C1222 !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="harvard"] header span,
+[data-theme="harvard"] header a,
+[data-theme="harvard"] header button {
+  color: #FFFFFF !important;
+}
+
+[data-theme="harvard"] header input,
+[data-theme="harvard"] header button {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Institutional Deep Charcoal Sidebar */
+[data-theme="harvard"] aside {
+  background-color: #1E1E1E !important;
+  border-color: #2D2D2D !important;
+  color: #E5E7EB !important;
+}
+
+[data-theme="harvard"] aside span,
+[data-theme="harvard"] aside a {
+  color: #D1D5DB !important;
+}
+
+[data-theme="harvard"] aside a:hover {
+  background-color: #2B2B2B !important;
+  color: #FFFFFF !important;
+}
+
+/* Active Nav State in Harvard: 3px solid #A51C30 left indicator bar */
+[data-theme="harvard"] aside a.active,
+[data-theme="harvard"] aside a[data-active="true"] {
+  background-color: #282828 !important;
+  color: #FFFFFF !important;
+  border-left: 3px solid #A51C30 !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+/* Workspace & Cards: Sharp 6px corners & 1px solid #D1D5DB */
+[data-theme="harvard"] .academic-card,
+[data-theme="harvard"] [role="dialog"],
+[data-theme="harvard"] .rounded-card,
+[data-theme="harvard"] .rounded-\[14px\],
+[data-theme="harvard"] .rounded-\[16px\],
+[data-theme="harvard"] .rounded-\[18px\] {
+  border-radius: 6px !important;
+  background-color: #FFFFFF !important;
+  border: 1px solid #D1D5DB !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="harvard"] footer {
+  background-color: #FFFFFF !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 6px !important;
+}
+
+/* Classic Editorial Serif Typography */
+[data-theme="harvard"] h1,
+[data-theme="harvard"] h2,
+[data-theme="harvard"] h3,
+[data-theme="harvard"] .font-serif {
+  font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
+}
+
+/* =========================================================================
+   THEME 3: HERITAGE (Classic Valeria Gingham)
+   ========================================================================= */
+[data-theme="heritage"] {
+  --color-bg: #EADFC6;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #FBF6EC;
+  --color-border: #E5D5C5;
+  --color-border-secondary: #CFC8BB;
+  --color-ink: #14161F;
+  --color-ink-muted: #4B5160;
+  --color-secondary: #4B5160;
+  --color-eyebrow: #8A1627;
+  --color-accent: #A51C30;
+  --color-crimson: #A51C30;
+}
+
+[data-theme="heritage"] body {
+  background-color: #EADFC6 !important;
+  background-image: url('/gingham-tile.jpg') !important;
+  background-repeat: repeat !important;
+  background-size: calc(243px * var(--check-scale, 0.6)) auto !important;
+  background-attachment: fixed !important;
+  color: #14161F !important;
+}
+
+[data-theme="heritage"] body::before {
+  display: block !important;
+}
+

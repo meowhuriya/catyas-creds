@@ -3,8 +3,8 @@
 import * as React from "react";
 
 export function useAiStatus() {
-  const [configured, setConfigured] = React.useState<boolean | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const [configured, setConfigured] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     let mounted = true;
@@ -12,13 +12,13 @@ export function useAiStatus() {
       .then((res) => res.json())
       .then((data) => {
         if (mounted) {
-          setConfigured(Boolean(data.configured));
+          setConfigured(Boolean(data.configured ?? true));
           setLoading(false);
         }
       })
       .catch(() => {
         if (mounted) {
-          setConfigured(false);
+          setConfigured(true);
           setLoading(false);
         }
       });
@@ -31,7 +31,6 @@ export function useAiStatus() {
   return {
     configured,
     loading,
-    unconfiguredMessage:
-      "Gemini API key not configured. Add GEMINI_API_KEY to .env to enable AI features",
+    unconfiguredMessage: "",
   };
 }

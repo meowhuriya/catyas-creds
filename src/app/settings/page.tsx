@@ -38,7 +38,10 @@ import {
   VolumeX,
   Headphones,
   Waves,
+  GraduationCap,
+  Grid,
 } from "lucide-react";
+import { useTheme, AppTheme } from "@/lib/theme/theme-context";
 import { useSound } from "@/lib/sound-engine";
 import {
   AppearanceSettings,
@@ -79,6 +82,7 @@ export default function SettingsPage() {
   const [savedMessage, setSavedMessage] = React.useState<string | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const { theme: appTheme, setTheme: setAppTheme } = useTheme();
 
   // Appearance state (PART D)
   const [appearance, setAppearance] = React.useState<AppearanceSettings>(DEFAULT_APPEARANCE);
@@ -987,49 +991,69 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Theme Selection */}
-          <div className="space-y-1.5 pt-1">
-            <label className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block">
-              Light / Dark Mode
-            </label>
-            <div className="grid grid-cols-3 gap-2.5 max-w-sm">
+          {/* Multi-Theme Engine Selection */}
+          <div className="space-y-2 pt-2">
+            <div className="flex items-center justify-between">
+              <label className="font-semibold text-[#14161F] dark:text-[#F8FAFC] block text-sm">
+                Portal Theme Engine
+              </label>
+              <span className="text-[11px] text-[var(--color-ink-muted)]">
+                Switches theme and canvas texture instantly
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
                 type="button"
-                onClick={() => handleThemeChange("light")}
-                className={`flex items-center justify-center gap-2 py-2 rounded-[8px] border transition-colors ${
-                  theme === "light"
-                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
-                    : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
+                onClick={() => setAppTheme("obsidian")}
+                className={`flex flex-col items-start gap-1 p-3 rounded-[10px] border text-left transition-all ${
+                  appTheme === "obsidian"
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 ring-1 ring-[var(--color-accent)] font-semibold"
+                    : "border-app-border bg-app-surface hover:border-[var(--color-accent)]/40"
                 }`}
               >
-                <Sun className="h-3.5 w-3.5" />
-                <span>Light</span>
+                <div className="flex items-center gap-2 font-bold text-xs">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
+                  <span>Obsidian (Default)</span>
+                </div>
+                <p className="text-[10px] text-[var(--color-ink-muted)]">
+                  Ultra-Modern Dark matte carbon with translucent glass and crisp contrast.
+                </p>
               </button>
 
               <button
                 type="button"
-                onClick={() => handleThemeChange("dark")}
-                className={`flex items-center justify-center gap-2 py-2 rounded-[8px] border transition-colors ${
-                  theme === "dark"
-                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
-                    : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
+                onClick={() => setAppTheme("harvard")}
+                className={`flex flex-col items-start gap-1 p-3 rounded-[10px] border text-left transition-all ${
+                  appTheme === "harvard"
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 ring-1 ring-[var(--color-accent)] font-semibold"
+                    : "border-app-border bg-app-surface hover:border-[var(--color-accent)]/40"
                 }`}
               >
-                <Moon className="h-3.5 w-3.5" />
-                <span>Dark</span>
+                <div className="flex items-center gap-2 font-bold text-xs">
+                  <GraduationCap className="h-3.5 w-3.5 text-[#A51C30]" />
+                  <span>Harvard Portal</span>
+                </div>
+                <p className="text-[10px] text-[var(--color-ink-muted)]">
+                  Canvas LMS aesthetic with official crimson bar, deep charcoal nav, and alabaster desk.
+                </p>
               </button>
 
               <button
                 type="button"
-                onClick={() => handleThemeChange("system")}
-                className={`flex items-center justify-center gap-2 py-2 rounded-[8px] border transition-colors ${
-                  theme === "system"
-                    ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
-                    : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
+                onClick={() => setAppTheme("heritage")}
+                className={`flex flex-col items-start gap-1 p-3 rounded-[10px] border text-left transition-all ${
+                  appTheme === "heritage"
+                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 ring-1 ring-[var(--color-accent)] font-semibold"
+                    : "border-app-border bg-app-surface hover:border-[var(--color-accent)]/40"
                 }`}
               >
-                <Laptop className="h-3.5 w-3.5" />
-                <span>System</span>
+                <div className="flex items-center gap-2 font-bold text-xs">
+                  <Grid className="h-3.5 w-3.5 text-[#8A1627]" />
+                  <span>Heritage Gingham</span>
+                </div>
+                <p className="text-[10px] text-[var(--color-ink-muted)]">
+                  Classic Valeria burgundy & cream checkered canvas with wax seal accents.
+                </p>
               </button>
             </div>
           </div>

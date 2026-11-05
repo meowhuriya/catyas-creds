@@ -3,6 +3,7 @@ import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import { DataStoreProvider } from "@/lib/repository";
 import { ToastProvider } from "@/components/ui/toast";
+import { ThemeProvider } from "@/lib/theme/theme-context";
 import { AppShell } from "@/components/shell/app-shell";
 
 const fraunces = Fraunces({
@@ -34,8 +35,33 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${plusJakartaSans.variable} antialiased`} suppressHydrationWarning>
+    <html
+      lang="en"
+      data-theme="obsidian"
+      className={`${fraunces.variable} ${plusJakartaSans.variable} dark antialiased`}
+      suppressHydrationWarning
+    >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem("app_theme") || "obsidian";
+                  document.documentElement.setAttribute("data-theme", t);
+                  if (t === "obsidian") {
+                    document.documentElement.classList.add("dark");
+                  } else {
+                    document.documentElement.classList.remove("dark");
+                  }
+                } catch (e) {
+                  document.documentElement.setAttribute("data-theme", "obsidian");
+                  document.documentElement.classList.add("dark");
+                }
+              })();
+            `,
+          }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -46,7 +72,9 @@ export default function RootLayout({
       <body className="min-h-screen text-[var(--color-ink)] font-sans">
         <DataStoreProvider>
           <ToastProvider>
-            <AppShell>{children}</AppShell>
+            <ThemeProvider>
+              <AppShell>{children}</AppShell>
+            </ThemeProvider>
           </ToastProvider>
         </DataStoreProvider>
       </body>

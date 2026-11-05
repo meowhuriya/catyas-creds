@@ -104,7 +104,7 @@ export function TopicAiChatModal({
   );
 
   React.useEffect(() => {
-    if (open && configured) {
+    if (open) {
       if (activeTab === "explain" && !explainResult) {
         handleFetchAction("explain");
       } else if (activeTab === "test" && !testResult) {
@@ -113,7 +113,7 @@ export function TopicAiChatModal({
         handleFetchAction("flashcards");
       }
     }
-  }, [open, activeTab, configured, explainResult, testResult, flashcardsResult, handleFetchAction]);
+  }, [open, activeTab, explainResult, testResult, flashcardsResult, handleFetchAction]);
 
   const toggleCardFlip = (idx: number) => {
     setFlippedCards((prev) => ({ ...prev, [idx]: !prev[idx] }));
@@ -134,17 +134,6 @@ export function TopicAiChatModal({
           </DialogDescription>
         </DialogHeader>
 
-        {configured === false && (
-          <div className="rounded-card border border-app-border bg-app-surface-muted/50 p-4 text-xs space-y-2">
-            <div className="flex items-center gap-2 text-app-ink font-semibold">
-              <AlertCircle className="h-4 w-4 text-app-accent" />
-              <span>{unconfiguredMessage}</span>
-            </div>
-            <p className="text-app-ink-muted text-[11px]">
-              Set GEMINI_API_KEY in your deployment environment or .env.local to enable real-time conceptual explanations, auto-diagnostic checks, and flashcards.
-            </p>
-          </div>
-        )}
 
         {/* Tab Controls */}
         <div className="flex items-center gap-1.5 border-b border-app-border pb-2 text-xs">
@@ -187,19 +176,17 @@ export function TopicAiChatModal({
             <span>Flashcards</span>
           </button>
 
-          {configured && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => handleFetchAction(activeTab)}
-              disabled={loading}
-              className="ml-auto h-7 text-[10px] gap-1"
-            >
-              <RotateCcw className="h-3 w-3" />
-              <span>{loading ? "Generating..." : "Regenerate"}</span>
-            </Button>
-          )}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => handleFetchAction(activeTab)}
+            disabled={loading}
+            className="ml-auto h-7 text-[10px] gap-1"
+          >
+            <RotateCcw className="h-3 w-3" />
+            <span>{loading ? "Generating..." : "Regenerate"}</span>
+          </Button>
         </div>
 
         {/* Content Pane */}

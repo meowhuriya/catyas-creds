@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type } from "@google/genai";
 import {
+  resolveGeminiApiKey,
+  GEMINI_MODEL,
+  GEMINI_FALLBACK_MODEL,
+} from "@/lib/ai/gemini-client";
+import {
   GradeExerciseRequestSchema,
   GradeExerciseResult,
 } from "@/types/mastery-gamification";
 
-export async function GET() {
-  const isConfigured = Boolean(process.env.GEMINI_API_KEY);
-  return NextResponse.json({ enabled: isConfigured, model: "gemini-3.8-flash" });
+export async function GET(req: NextRequest) {
+  const apiKey = resolveGeminiApiKey(req);
+  return NextResponse.json({ enabled: Boolean(apiKey), model: GEMINI_MODEL });
 }
 
 export async function POST(req: NextRequest) {
@@ -36,7 +41,7 @@ export async function POST(req: NextRequest) {
     imageMimeType,
   } = parsed.data;
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = resolveGeminiApiKey(req);
 
   // Graceful fallback if no GEMINI_API_KEY (Demo Mode)
   if (!apiKey) {
