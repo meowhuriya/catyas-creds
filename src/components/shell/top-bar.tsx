@@ -134,27 +134,24 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
 
   return (
     <>
-      <header className="h-14 w-full bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] rounded-[18px] shadow-sm px-4 md:px-5 flex items-center justify-between">
-        {/* Left: Breadcrumbs & Harvard Portal Badge */}
-        <div className="flex items-center gap-3">
-          <div className="hidden [html[data-theme='harvard']_&]:inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#7C1222] border border-white/20 text-white font-serif font-bold text-[10px] tracking-wider uppercase">
-            <GraduationCap className="h-3 w-3 text-amber-300" />
-            <span>Harvard / Valeria Academic Portal</span>
-          </div>
+      <header className="h-14 w-full bg-app-surface border border-app-border rounded-[18px] shadow-sm px-4 md:px-5 flex items-center justify-between gap-3 min-w-0">
+        {/* Left: Breadcrumbs */}
+        <div className="flex items-center gap-2.5 shrink-0 min-w-0">
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
         {/* Centre: Command / Search Trigger */}
-        <div className="flex-1 max-w-md mx-4 hidden sm:block">
+        <div className="flex-1 max-w-xs md:max-w-sm mx-2 hidden md:block min-w-0">
           <button
+            type="button"
             onClick={onOpenCommand}
-            className="flex h-9 w-full items-center justify-between rounded-control border border-app-border bg-app-surface-muted/60 px-3 text-xs text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink transition-colors"
+            className="flex h-8.5 w-full items-center justify-between rounded-control border border-app-border bg-app-surface-muted/60 px-3 text-xs text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink transition-colors min-w-0"
           >
-            <div className="flex items-center gap-2">
-              <Search className="h-3.5 w-3.5" />
-              <span>Search courses, lessons, assessments...</span>
+            <div className="flex items-center gap-2 min-w-0 truncate">
+              <Search className="h-3.5 w-3.5 shrink-0" />
+              <span className="truncate whitespace-nowrap text-xs">Search courses, lessons...</span>
             </div>
-            <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-app-border bg-app-surface px-1.5 py-0.5 font-sans font-semibold text-[10px] text-app-ink-muted">
+            <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded border border-app-border bg-app-surface px-1.5 py-0.5 font-sans font-semibold text-[10px] text-app-ink-muted shrink-0 ml-2">
               <span className="text-[9px]">⌘</span>K
             </kbd>
           </button>

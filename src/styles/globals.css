@@ -34,32 +34,32 @@
 }
 
 .dark {
-  --check-alpha: 0.10;
-  --color-bg: #1A1214;
-  --color-surface: #221A1C;
-  --color-surface-muted: #2B2124;
-  --color-border: #3D2D31;
-  --color-border-secondary: #524045;
-  --color-ink: #F6EBD3;
-  --color-ink-muted: #A89B9E;
-  --color-secondary: #D1C7B7;
-  --color-eyebrow: #F07B88;
-  --color-accent: #E25F70;
-  --color-crimson: #E25F70;
-  --color-accent-hover: #EE7584;
-  --color-tomato: #E84D58;
-  --color-mustard: #F0B533;
-  --color-sage: #6E936B;
-  --color-teal: #449EA6;
-  --color-burgundy: #280A0E;
-  --color-gold: #F0B533;
-  --color-success: #6E936B;
-  --color-warning: #F0B533;
-  --color-danger: #E84D58;
-  --color-info: #449EA6;
+  --check-alpha: 0;
+  --color-bg: #000000;
+  --color-surface: #0A0A0E;
+  --color-surface-muted: #111116;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-secondary: rgba(255, 255, 255, 0.14);
+  --color-ink: #FFFFFF;
+  --color-ink-muted: #94A3B8;
+  --color-secondary: #CBD5E1;
+  --color-eyebrow: #F43F5E;
+  --color-accent: #E11D48;
+  --color-crimson: #E11D48;
+  --color-accent-hover: #BE123C;
+  --color-tomato: #F43F5E;
+  --color-mustard: #F59E0B;
+  --color-sage: #10B981;
+  --color-teal: #06B6D4;
+  --color-burgundy: #0A0A0E;
+  --color-gold: #F59E0B;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #06B6D4;
 
-  --focus-ring: 0 0 0 2px #1A1214, 0 0 0 4px #E25F70;
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --focus-ring: 0 0 0 2px #000000, 0 0 0 4px #E11D48;
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 /* Full-Page Gingham Background (Covers the ENTIRE page, behind everything) */
@@ -101,10 +101,14 @@ body::before {
   }
 }
 
-/* Dark mode: keep gingham with dark veil so it reads as dim maroon check */
+/* Dark mode & Obsidian: Disable gingham veil completely so it is pure pitch black */
 html.dark body::before,
-.dark body::before {
-  background: rgba(20, 14, 16, 0.70) !important;
+.dark body::before,
+[data-theme="obsidian"] body::before,
+[data-theme="harvard"] body::before {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
 /* Background Variations: Plain Paper */
@@ -317,15 +321,16 @@ h1, h2, h3, h4, .font-heading {
 }
 
 /* =========================================================================
-   THEME 1: OBSIDIAN (DEFAULT — Ultra-Modern Linear / Vercel Dark)
+   THEME 1: OBSIDIAN (Pure Pitch Black & Cool Zinc)
    ========================================================================= */
-[data-theme="obsidian"] {
-  --color-bg: #090A0F;
-  --color-surface: #121520;
-  --color-surface-muted: #181B28;
+[data-theme="obsidian"],
+html.dark[data-theme="obsidian"] {
+  --color-bg: #000000;
+  --color-surface: #0A0A0E;
+  --color-surface-muted: #111116;
   --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-secondary: rgba(255, 255, 255, 0.12);
-  --color-ink: #F8FAFC;
+  --color-border-secondary: rgba(255, 255, 255, 0.14);
+  --color-ink: #FFFFFF;
   --color-ink-muted: #94A3B8;
   --color-secondary: #CBD5E1;
   --color-eyebrow: #F43F5E;
@@ -333,155 +338,520 @@ h1, h2, h3, h4, .font-heading {
   --color-crimson: #E11D48;
   --color-accent-hover: #BE123C;
   --color-indigo: #6366F1;
-  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  --focus-ring: 0 0 0 2px #090A0F, 0 0 0 4px #E11D48;
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --focus-ring: 0 0 0 2px #000000, 0 0 0 4px #E11D48;
 }
 
-[data-theme="obsidian"] body {
-  background-color: #090A0F !important;
-  background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.14), transparent) !important;
-  background-repeat: no-repeat !important;
-  background-attachment: fixed !important;
-  color: #F8FAFC !important;
+[data-theme="obsidian"] body,
+html.dark[data-theme="obsidian"] body {
+  background-color: #000000 !important;
+  background-image: none !important;
+  background: #000000 !important;
+  color: #FFFFFF !important;
 }
 
-[data-theme="obsidian"] body::before {
+[data-theme="obsidian"] body::before,
+[data-theme="obsidian"] body::after,
+html.dark[data-theme="obsidian"] body::before,
+html.dark[data-theme="obsidian"] body::after {
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
-[data-theme="obsidian"] aside {
-  background-color: rgba(13, 15, 23, 0.90) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-color: rgba(255, 255, 255, 0.07) !important;
-}
-
-[data-theme="obsidian"] header {
-  background-color: rgba(13, 15, 23, 0.90) !important;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-color: rgba(255, 255, 255, 0.07) !important;
-}
-
-[data-theme="obsidian"] footer {
-  background-color: rgba(13, 15, 23, 0.90) !important;
-  border-color: rgba(255, 255, 255, 0.07) !important;
-}
-
+/* Ensure ALL surfaces in Obsidian are pure sleek deep black (never reddish/burgundy) */
+[data-theme="obsidian"] [class*="dark:bg-[#"],
+[data-theme="obsidian"] [class*="bg-[#FBF6EC]"],
+[data-theme="obsidian"] .dark\:bg-\[\#221A1C\],
+[data-theme="obsidian"] .dark\:bg-\[\#1A1214\],
+[data-theme="obsidian"] .dark\:bg-\[\#1E1416\],
+[data-theme="obsidian"] .dark\:bg-\[\#1E1618\],
+[data-theme="obsidian"] .dark\:bg-\[\#2B2124\],
+[data-theme="obsidian"] .dark\:bg-\[\#2D1E22\],
+[data-theme="obsidian"] .dark\:bg-\[\#280A0E\],
+[data-theme="obsidian"] .dark\:bg-\[\#140E10\],
+[data-theme="obsidian"] .dark\:bg-\[\#150F11\],
+[data-theme="obsidian"] .dark\:bg-\[\#1C1618\],
+[data-theme="obsidian"] .dark\:bg-\[\#251A1D\],
+[data-theme="obsidian"] .dark\:bg-\[\#3D2D31\],
+[data-theme="obsidian"] .dark\:bg-\[\#4B3639\],
+[data-theme="obsidian"] .bg-\[\#FBF6EC\],
+[data-theme="obsidian"] .bg-white,
 [data-theme="obsidian"] .academic-card,
 [data-theme="obsidian"] [role="dialog"],
-[data-theme="obsidian"] .rounded-card {
-  background-color: #121520 !important;
+[data-theme="obsidian"] .rounded-card,
+[data-theme="obsidian"] .rounded-\[18px\],
+[data-theme="obsidian"] .rounded-\[16px\],
+[data-theme="obsidian"] .rounded-\[14px\],
+[data-theme="obsidian"] .rounded-\[12px\],
+[data-theme="obsidian"] .bg-app-surface {
+  background-color: #0A0A0E !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
-  color: #F8FAFC !important;
+  color: #FFFFFF !important;
 }
 
-[data-theme="obsidian"] nav a,
-[data-theme="obsidian"] button,
-[data-theme="obsidian"] .transition-all {
-  transition: all 150ms ease-out !important;
+/* Header, Sidebar, Footer in Obsidian: Deep pitch black */
+[data-theme="obsidian"] aside,
+[data-theme="obsidian"] header,
+[data-theme="obsidian"] footer {
+  background-color: #070709 !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+}
+
+/* Secondary/muted wells & inputs in Obsidian */
+[data-theme="obsidian"] .bg-app-surface-muted,
+[data-theme="obsidian"] input,
+[data-theme="obsidian"] select,
+[data-theme="obsidian"] textarea {
+  background-color: #111116 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #FFFFFF !important;
+}
+
+/* All borders in Obsidian: Dark sleek zinc */
+[data-theme="obsidian"] [class*="dark:border-[#"],
+[data-theme="obsidian"] [class*="border-[#E4D9C0]"],
+[data-theme="obsidian"] [class*="border-[#E5D5C5]"],
+[data-theme="obsidian"] [class*="border-[#CFC8BB]"],
+[data-theme="obsidian"] .border-app-border {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Typography in Obsidian: Crisp white headings, cool silver body */
+[data-theme="obsidian"] h1,
+[data-theme="obsidian"] h2,
+[data-theme="obsidian"] h3,
+[data-theme="obsidian"] h4,
+[data-theme="obsidian"] .font-serif,
+[data-theme="obsidian"] [class*="text-[#14161F]"],
+[data-theme="obsidian"] [class*="dark:text-[#F6EBD3]"],
+[data-theme="obsidian"] .text-app-ink {
+  color: #FFFFFF !important;
+}
+
+[data-theme="obsidian"] p,
+[data-theme="obsidian"] [class*="text-[#4B5160]"],
+[data-theme="obsidian"] [class*="dark:text-[#CFC8BB]"],
+[data-theme="obsidian"] [class*="dark:text-[#D1C7B7]"],
+[data-theme="obsidian"] [class*="dark:text-[#A89B9E]"],
+[data-theme="obsidian"] .text-app-ink-muted {
+  color: #94A3B8 !important;
+}
+
+/* Sidebar navigation in Obsidian */
+[data-theme="obsidian"] aside nav a:not([data-active="true"]) {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="obsidian"] aside nav a:not([data-active="true"]) svg {
+  color: #94A3B8 !important;
+}
+
+[data-theme="obsidian"] aside nav a:not([data-active="true"]):hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="obsidian"] aside nav a[data-active="true"] {
+  background-color: #161622 !important;
+  border-left: 3px solid #E11D48 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="obsidian"] aside nav a[data-active="true"] svg,
+[data-theme="obsidian"] aside nav a[data-active="true"] span {
+  color: #FFFFFF !important;
+}
+
+/* Sidebar Recent courses in Obsidian */
+[data-theme="obsidian"] aside ul li a {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="obsidian"] aside ul li a span {
+  color: #CBD5E1 !important;
+}
+
+[data-theme="obsidian"] aside ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="obsidian"] aside ul li a:hover span {
+  color: #FFFFFF !important;
+}
+
+[data-theme="obsidian"] aside ul li a[data-course-active="true"],
+[data-theme="obsidian"] aside ul li a.bg-\[\#A51C30\]\/10 {
+  background-color: rgba(225, 29, 72, 0.15) !important;
+  border: 1px solid rgba(225, 29, 72, 0.3) !important;
+}
+
+[data-theme="obsidian"] aside ul li a[data-course-active="true"] span,
+[data-theme="obsidian"] aside ul li a.bg-\[\#A51C30\]\/10 span {
+  color: #FFFFFF !important;
+}
+
+/* Buttons in Obsidian */
+[data-theme="obsidian"] button[variant="outline"],
+[data-theme="obsidian"] button.border {
+  background-color: #111116 !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+[data-theme="obsidian"] button[variant="outline"]:hover,
+[data-theme="obsidian"] button.border:hover {
+  background-color: #1A1A22 !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="obsidian"] .btn-primary,
+[data-theme="obsidian"] button[class*="bg-[#A51C30]"],
+[data-theme="obsidian"] button.shadow-sm:has(.lucide-plus) {
+  background-color: #E11D48 !important;
+  color: #FFFFFF !important;
 }
 
 /* =========================================================================
-   THEME 2: HARVARD (Harvard Student Portal — my.harvard & Canvas LMS Aesthetic)
+   THEME 2: HARVARD (Institutional Academic Portal — High Contrast, Clean, Readable)
    ========================================================================= */
 [data-theme="harvard"] {
-  --color-bg: #F3F4F6;
+  --color-bg: #F4F5F7;
   --color-surface: #FFFFFF;
-  --color-surface-muted: #F9FAFB;
-  --color-border: #D1D5DB;
-  --color-border-secondary: #9CA3AF;
+  --color-surface-muted: #F8F9FA;
+  --color-border: #E5E7EB;
+  --color-border-secondary: #D1D5DB;
   --color-ink: #111827;
   --color-ink-muted: #4B5563;
   --color-secondary: #374151;
   --color-eyebrow: #A51C30;
   --color-accent: #A51C30;
   --color-crimson: #A51C30;
-  --color-accent-hover: #7C1222;
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --color-accent-hover: #881324;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
   --focus-ring: 0 0 0 2px #FFFFFF, 0 0 0 4px #A51C30;
 }
 
 [data-theme="harvard"] body {
-  background-color: #F3F4F6 !important;
+  background-color: #F4F5F7 !important;
   background-image: none !important;
+  background: #F4F5F7 !important;
   color: #111827 !important;
 }
 
-[data-theme="harvard"] body::before {
+[data-theme="harvard"] body::before,
+[data-theme="harvard"] body::after {
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
 }
 
-/* Institutional Harvard Crimson Header */
-[data-theme="harvard"] header {
-  background-color: #A51C30 !important;
-  border-bottom: 2px solid #7C1222 !important;
-  border-color: #7C1222 !important;
-  color: #FFFFFF !important;
-}
-
-[data-theme="harvard"] header span,
-[data-theme="harvard"] header a,
-[data-theme="harvard"] header button {
-  color: #FFFFFF !important;
-}
-
-[data-theme="harvard"] header input,
-[data-theme="harvard"] header button {
-  border-color: rgba(255, 255, 255, 0.25) !important;
-}
-
-/* Institutional Deep Charcoal Sidebar */
-[data-theme="harvard"] aside {
-  background-color: #1E1E1E !important;
-  border-color: #2D2D2D !important;
-  color: #E5E7EB !important;
-}
-
-[data-theme="harvard"] aside span,
-[data-theme="harvard"] aside a {
-  color: #D1D5DB !important;
-}
-
-[data-theme="harvard"] aside a:hover {
-  background-color: #2B2B2B !important;
-  color: #FFFFFF !important;
-}
-
-/* Active Nav State in Harvard: 3px solid #A51C30 left indicator bar */
-[data-theme="harvard"] aside a.active,
-[data-theme="harvard"] aside a[data-active="true"] {
-  background-color: #282828 !important;
-  color: #FFFFFF !important;
-  border-left: 3px solid #A51C30 !important;
-  border-radius: 0 6px 6px 0 !important;
-}
-
-/* Workspace & Cards: Sharp 6px corners & 1px solid #D1D5DB */
+/* All panels & cards in Harvard: Pure solid white, sharp clean border, 0 cream tint */
+[data-theme="harvard"] .bg-\[\#FBF6EC\],
+[data-theme="harvard"] [class*="bg-[#FBF6EC]"],
 [data-theme="harvard"] .academic-card,
 [data-theme="harvard"] [role="dialog"],
 [data-theme="harvard"] .rounded-card,
-[data-theme="harvard"] .rounded-\[14px\],
+[data-theme="harvard"] .rounded-\[18px\],
 [data-theme="harvard"] .rounded-\[16px\],
-[data-theme="harvard"] .rounded-\[18px\] {
-  border-radius: 6px !important;
+[data-theme="harvard"] .rounded-\[14px\],
+[data-theme="harvard"] .rounded-\[12px\],
+[data-theme="harvard"] .bg-app-surface {
   background-color: #FFFFFF !important;
-  border: 1px solid #D1D5DB !important;
+  border-color: #E5E7EB !important;
+  color: #111827 !important;
+}
+
+/* Subtle secondary surfaces in Harvard (table headers, wells) */
+[data-theme="harvard"] .bg-app-surface-muted,
+[data-theme="harvard"] thead {
+  background-color: #F9FAFB !important;
+  border-color: #E5E7EB !important;
+}
+
+/* Clean Institutional Header: Pure white with 2px Harvard Crimson bottom border */
+[data-theme="harvard"] header {
+  background-color: #FFFFFF !important;
+  border-bottom: 2px solid #A51C30 !important;
+  border-color: #E5E7EB !important;
+  color: #111827 !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
 }
 
-[data-theme="harvard"] footer {
+/* Header breadcrumbs in Harvard */
+[data-theme="harvard"] header nav a {
+  color: #4B5563 !important;
+}
+
+[data-theme="harvard"] header nav a:hover {
+  color: #A51C30 !important;
+}
+
+[data-theme="harvard"] header nav span {
+  color: #111827 !important;
+}
+
+[data-theme="harvard"] header nav svg {
+  color: #9CA3AF !important;
+}
+
+/* Header search bar button in Harvard */
+[data-theme="harvard"] header button:has(.lucide-search) {
+  background-color: #F9FAFB !important;
+  border: 1px solid #D1D5DB !important;
+  color: #374151 !important;
+}
+
+[data-theme="harvard"] header button:has(.lucide-search):hover {
+  background-color: #F3F4F6 !important;
+  color: #111827 !important;
+  border-color: #9CA3AF !important;
+}
+
+[data-theme="harvard"] header button:has(.lucide-search) span {
+  color: #4B5563 !important;
+}
+
+[data-theme="harvard"] header button:has(.lucide-search) svg {
+  color: #6B7280 !important;
+}
+
+[data-theme="harvard"] header button:has(.lucide-search) kbd {
+  background-color: #FFFFFF !important;
+  border-color: #D1D5DB !important;
+  color: #4B5563 !important;
+}
+
+/* Header Term & User buttons in Harvard */
+[data-theme="harvard"] header button:has(.lucide-calendar),
+[data-theme="harvard"] header button:has(.lucide-chevron-down) {
   background-color: #FFFFFF !important;
   border: 1px solid #D1D5DB !important;
+  color: #111827 !important;
+}
+
+[data-theme="harvard"] header button:has(.lucide-volume-2),
+[data-theme="harvard"] header button:has(.lucide-volume-x),
+[data-theme="harvard"] header button:has(.lucide-headphones) {
+  background-color: #FFFFFF !important;
+  border: 1px solid #D1D5DB !important;
+  color: #374151 !important;
+}
+
+/* Theme Switcher in Harvard */
+[data-theme="harvard"] header div[role="group"] {
+  background-color: #FFFFFF !important;
+  border: 1px solid #D1D5DB !important;
+}
+
+[data-theme="harvard"] header div[role="group"] button {
+  color: #4B5563 !important;
+}
+
+[data-theme="harvard"] header div[role="group"] button[aria-pressed="true"] {
+  background-color: #A51C30 !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="harvard"] header div[role="group"] button[aria-pressed="true"] * {
+  color: #FFFFFF !important;
+}
+
+/* Clean Institutional Sidebar in Harvard */
+[data-theme="harvard"] aside {
+  background-color: #FFFFFF !important;
+  border: 1px solid #E5E7EB !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Sidebar Brand Wordmark in Harvard */
+[data-theme="harvard"] aside .font-heading {
+  color: #111827 !important;
+}
+
+[data-theme="harvard"] aside span.tracking-\[0\.18em\] {
+  color: #A51C30 !important;
+  font-weight: 700 !important;
+}
+
+/* Sidebar Nav Links in Harvard */
+[data-theme="harvard"] aside nav a:not([data-active="true"]) {
+  color: #1F2937 !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="harvard"] aside nav a:not([data-active="true"]) svg {
+  color: #4B5563 !important;
+}
+
+[data-theme="harvard"] aside nav a:not([data-active="true"]):hover {
+  background-color: #F3F4F6 !important;
+  color: #A51C30 !important;
+}
+
+[data-theme="harvard"] aside nav a:not([data-active="true"]):hover svg {
+  color: #A51C30 !important;
+}
+
+/* Active Nav Link in Harvard: Bold Harvard Crimson pill with pure white text */
+[data-theme="harvard"] aside nav a[data-active="true"] {
+  background-color: #A51C30 !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
   border-radius: 6px !important;
 }
 
-/* Classic Editorial Serif Typography */
+[data-theme="harvard"] aside nav a[data-active="true"] span,
+[data-theme="harvard"] aside nav a[data-active="true"] svg {
+  color: #FFFFFF !important;
+}
+
+/* Sidebar Recent Courses in Harvard */
+[data-theme="harvard"] aside span.uppercase {
+  color: #A51C30 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="harvard"] aside ul li a {
+  color: #1F2937 !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="harvard"] aside ul li a span {
+  color: #1F2937 !important;
+}
+
+[data-theme="harvard"] aside ul li a:hover {
+  background-color: #F3F4F6 !important;
+  color: #A51C30 !important;
+}
+
+[data-theme="harvard"] aside ul li a:hover span {
+  color: #A51C30 !important;
+}
+
+/* Active Recent Course in Harvard: High-contrast crimson card with visible text */
+[data-theme="harvard"] aside ul li a[data-course-active="true"],
+[data-theme="harvard"] aside ul li a.bg-\[\#A51C30\]\/10 {
+  background-color: #FEE2E2 !important;
+  border: 1px solid #FECACA !important;
+  border-radius: 6px !important;
+}
+
+[data-theme="harvard"] aside ul li a[data-course-active="true"] span,
+[data-theme="harvard"] aside ul li a.bg-\[\#A51C30\]\/10 span {
+  color: #991B1B !important;
+  font-weight: 700 !important;
+}
+
+/* Sidebar Footer in Harvard */
+[data-theme="harvard"] aside > div:last-child {
+  background-color: #FFFFFF !important;
+  border-top: 1px solid #E5E7EB !important;
+}
+
+[data-theme="harvard"] aside > div:last-child * {
+  color: #4B5563 !important;
+}
+
+/* Typography contrast in Harvard: Pitch black headings, dark charcoal body */
 [data-theme="harvard"] h1,
 [data-theme="harvard"] h2,
 [data-theme="harvard"] h3,
-[data-theme="harvard"] .font-serif {
-  font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
+[data-theme="harvard"] h4,
+[data-theme="harvard"] .font-serif,
+[data-theme="harvard"] [class*="text-[#14161F]"] {
+  color: #111827 !important;
+}
+
+[data-theme="harvard"] p,
+[data-theme="harvard"] [class*="text-[#4B5160]"] {
+  color: #374151 !important;
+}
+
+/* Action buttons in Harvard */
+[data-theme="harvard"] .btn-primary,
+[data-theme="harvard"] button[class*="bg-[#A51C30]"],
+[data-theme="harvard"] button.shadow-sm:has(.lucide-plus) {
+  background-color: #A51C30 !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="harvard"] .btn-primary *,
+[data-theme="harvard"] button[class*="bg-[#A51C30]"] *,
+[data-theme="harvard"] button.shadow-sm:has(.lucide-plus) * {
+  color: #FFFFFF !important;
+}
+
+[data-theme="harvard"] button[variant="outline"],
+[data-theme="harvard"] button.border {
+  background-color: #FFFFFF !important;
+  color: #1F2937 !important;
+  border: 1px solid #D1D5DB !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="harvard"] button[variant="outline"]:hover,
+[data-theme="harvard"] button.border:hover {
+  background-color: #F9FAFB !important;
+  color: #A51C30 !important;
+  border-color: #A51C30 !important;
+}
+
+/* Specific Course Action Buttons in Harvard */
+[data-theme="harvard"] button:has(.lucide-rotate-ccw) {
+  background-color: #FFFFFF !important;
+  color: #92400E !important;
+  border-color: #FCD34D !important;
+}
+
+[data-theme="harvard"] button:has(.lucide-rotate-ccw):hover {
+  background-color: #FEF3C7 !important;
+  color: #78350F !important;
+}
+
+[data-theme="harvard"] button:has(.lucide-sparkles) {
+  background-color: #FFFFFF !important;
+  color: #A51C30 !important;
+  border-color: #FECACA !important;
+}
+
+[data-theme="harvard"] button:has(.lucide-sparkles):hover {
+  background-color: #FEE2E2 !important;
+  color: #7F1D1D !important;
+}
+
+[data-theme="harvard"] button:has(.lucide-sliders) {
+  background-color: #FFFFFF !important;
+  color: #1F2937 !important;
+  border-color: #D1D5DB !important;
+}
+
+[data-theme="harvard"] button:has(.lucide-sliders):hover {
+  background-color: #F3F4F6 !important;
+  color: #A51C30 !important;
+}
+
+/* Metadata badges in Harvard */
+[data-theme="harvard"] button:has(.lucide-calendar),
+[data-theme="harvard"] button:has(.lucide-user-check) {
+  background-color: #F9FAFB !important;
+  border: 1px solid #D1D5DB !important;
+  color: #1F2937 !important;
+}
+
+[data-theme="harvard"] button:has(.lucide-calendar) span,
+[data-theme="harvard"] button:has(.lucide-user-check) span {
+  color: #1F2937 !important;
+}
+
+/* Unit Journey in Harvard */
+[data-theme="harvard"] .academic-card span {
+  color: #1F2937 !important;
 }
 
 /* =========================================================================

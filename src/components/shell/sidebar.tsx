@@ -50,7 +50,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "relative hidden md:flex flex-col bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] rounded-[18px] shadow-sm transition-all duration-200 select-none shrink-0 h-[calc(100vh-32px)] sticky top-4 overflow-hidden",
+        "relative hidden md:flex flex-col bg-app-surface border border-app-border rounded-[18px] shadow-sm transition-all duration-200 select-none shrink-0 h-[calc(100vh-32px)] sticky top-4 overflow-hidden",
         collapsed ? "w-16" : "w-[264px]"
       )}
     >
@@ -126,7 +126,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Part 2: Recent Courses (flex: 1, min-height: 0, scrolls inside itself, 5 items, one line each with ellipsis & tooltip) */}
       {!collapsed && (
-        <div className="flex-1 min-h-0 overflow-y-auto px-2 py-3 border-t border-[#E4D9C0] dark:border-[#3D2D31]">
+        <div className="flex-1 min-h-0 overflow-y-auto px-2 py-3 border-t border-app-border">
           <div className="flex items-center justify-between px-3 mb-2">
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
               Recent Courses
@@ -151,6 +151,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <Link
                     href={`/courses/${c.id}`}
                     title={c.title}
+                    data-course-active={isCourseActive ? "true" : "false"}
                     className={cn(
                       "group relative flex items-center gap-2 rounded-[6px] px-3 py-1.5 text-xs transition-colors",
                       isCourseActive
@@ -178,7 +179,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Part 3: Footer pinned at bottom with its own solid background (List never runs under footer) */}
       {!collapsed && (
-        <div className="shrink-0 bg-[#FBF6EC] dark:bg-[#221A1C] border-t border-[#E4D9C0] dark:border-[#3D2D31] p-3 space-y-1 text-xs">
+        <div className="shrink-0 bg-app-surface border-t border-app-border p-3 space-y-1 text-xs">
           <div className="text-[12px] font-semibold text-[#14161F] dark:text-[#F6EBD3]">
             Valeria’s Creds v1.0
           </div>

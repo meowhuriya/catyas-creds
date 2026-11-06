@@ -98,7 +98,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (isRealMode && !firebaseUser) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 select-none">
-        <div className="p-8 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] text-center space-y-3 shadow-xl">
+        <div className="p-8 rounded-[18px] bg-app-surface border border-app-border text-center space-y-3 shadow-xl">
           <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#A51C30]" />
           <p className="text-xs font-medium text-app-ink">Redirecting to sign in...</p>
         </div>
@@ -135,7 +135,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         >
           {/* Demo Mode Banner when Firebase is not configured */}
           {isDemo && (
-            <div className="rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-amber-500/40 p-3 px-4 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200 shadow-xs">
+            <div className="rounded-[14px] bg-app-surface border border-amber-500/40 p-3 px-4 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200 shadow-xs">
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />
                 <span className="font-semibold">Demo mode (not saved online)</span>
@@ -148,8 +148,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           {children}
 
-          {/* Academic Portal Footer (Solid cream panel) */}
-          <footer className="mt-12 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] p-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm no-print">
+          {/* Academic Portal Footer (Solid panel) */}
+          <footer className="mt-12 rounded-[18px] bg-app-surface border border-app-border p-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm no-print">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-semibold text-app-ink">Valeria's Creds</span>
               <span>·</span>

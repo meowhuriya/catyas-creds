@@ -496,8 +496,8 @@ export default function CourseDetailPage() {
         />
       </div>
 
-      {/* Course Hero Meta & Actions (Solid cream panel) */}
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
+      {/* Course Hero Meta & Actions */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 p-5 rounded-[18px] bg-app-surface border border-app-border shadow-sm">
         <div>
           <div className="flex items-center gap-2 text-xs text-[var(--color-ink-muted)]">
             <span
@@ -645,7 +645,7 @@ export default function CourseDetailPage() {
       )}
 
       {/* Exam Readiness Forecast & Recall Style Card (Phase S1) */}
-      <div className="rounded-[16px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-[#FBF6EC] dark:bg-[#221A1C] p-4 sm:p-5 shadow-sm space-y-3">
+      <div className="rounded-[16px] border border-app-border bg-app-surface p-4 sm:p-5 shadow-sm space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Brain className="h-4 w-4 text-[#A51C30]" />
