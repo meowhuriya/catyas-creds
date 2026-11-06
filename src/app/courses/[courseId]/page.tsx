@@ -196,7 +196,49 @@ export default function CourseDetailPage() {
         dataStore.getCourseExamDate(targetCourseId).catch(() => null),
       ]);
 
-      setLessons(l || []);
+      // Check localStorage for locally persisted lessons if dataStore query returned empty
+      let fetchedLessons: Lesson[] = l || [];
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("lessons");
+          if (raw) {
+            const allLocal: Lesson[] = JSON.parse(raw);
+            const idLower = (targetCourseId || "").toLowerCase();
+            const cleanCode = idLower.replace(/^course-/, "");
+            const withPrefix = `course-${cleanCode}`;
+            const candidates = new Set([
+              targetCourseId,
+              idLower,
+              cleanCode,
+              withPrefix,
+              cleanCode.toUpperCase(),
+            ]);
+            const matchedLocal = allLocal.filter(
+              (item) =>
+                candidates.has(item.courseId) ||
+                candidates.has((item.courseId || "").toLowerCase())
+            );
+            if (matchedLocal.length > 0) {
+              const map = new Map<string, Lesson>();
+              fetchedLessons.forEach((item) => map.set(item.id, item));
+              matchedLocal.forEach((item) => {
+                if (!map.has(item.id)) map.set(item.id, item);
+              });
+              fetchedLessons = Array.from(map.values()).sort((x, y) => x.order - y.order);
+            }
+          }
+        } catch {}
+      }
+
+      setLessons((prev) => {
+        if (fetchedLessons.length === 0 && prev.length > 0) {
+          return prev;
+        }
+        const map = new Map<string, Lesson>();
+        prev.forEach((item) => map.set(item.id, item));
+        fetchedLessons.forEach((item) => map.set(item.id, item));
+        return Array.from(map.values()).sort((x, y) => x.order - y.order);
+      });
       setProgressList(p || []);
       setAssessments(a || []);
       setNotes(n || []);
@@ -1598,7 +1640,12 @@ export default function CourseDetailPage() {
         onOpenChange={setAddLessonsOpen}
         onSuccess={loadData}
         onLessonsAdded={(newLessons) => {
-          setLessons((prev) => [...prev, ...newLessons]);
+          setLessons((prev) => {
+            const map = new Map<string, Lesson>();
+            prev.forEach((item) => map.set(item.id, item));
+            newLessons.forEach((item) => map.set(item.id, item));
+            return Array.from(map.values()).sort((x, y) => x.order - y.order);
+          });
         }}
       />
 

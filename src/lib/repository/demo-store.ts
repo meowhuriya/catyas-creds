@@ -439,8 +439,13 @@ export class DemoDataStore implements DataStore {
   }
 
   async getLessons(courseId: string): Promise<Lesson[]> {
+    const idLower = (courseId || "").toLowerCase();
+    const cleanCode = idLower.replace(/^course-/, "");
+    const withPrefix = `course-${cleanCode}`;
+    const candidates = new Set([courseId, idLower, cleanCode, withPrefix, cleanCode.toUpperCase()]);
+
     return this.lessons
-      .filter((l) => l.courseId === courseId)
+      .filter((l) => candidates.has(l.courseId) || candidates.has((l.courseId || "").toLowerCase()))
       .sort((a, b) => a.order - b.order);
   }
 
@@ -449,21 +454,27 @@ export class DemoDataStore implements DataStore {
   }
 
   async addLessons(
-    newLessonsData: Omit<Lesson, "id" | "userId" | "createdAt">[]
+    newLessonsData: (Omit<Lesson, "id" | "userId" | "createdAt"> & { id?: string })[]
   ): Promise<Lesson[]> {
     const added: Lesson[] = [];
     const timestamp = new Date().toISOString();
     let orderOffset = this.lessons.length;
 
     for (const data of newLessonsData) {
+      const id = data.id || ("les-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7));
       const lesson: Lesson = {
         ...data,
-        id: "les-" + Date.now() + "-" + Math.random().toString(36).substring(2, 7),
+        id,
         userId: this.user.uid,
         order: data.order ?? orderOffset++,
         createdAt: timestamp,
       };
-      this.lessons.push(lesson);
+      const existingIdx = this.lessons.findIndex((x) => x.id === id);
+      if (existingIdx !== -1) {
+        this.lessons[existingIdx] = lesson;
+      } else {
+        this.lessons.push(lesson);
+      }
       added.push(lesson);
     }
     setStorage("lessons", this.lessons);

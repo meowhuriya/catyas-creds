@@ -276,44 +276,44 @@ export function AddLessonsDialog({
       };
     });
 
-    // 1. Optimistic Local State + Persistence
+    // 1. Optimistic Local State & Persistence
     try {
       if (typeof window !== "undefined") {
         const storedLessonsRaw = localStorage.getItem("lessons");
         const storedLessons: Lesson[] = storedLessonsRaw ? JSON.parse(storedLessonsRaw) : [];
-        localStorage.setItem("lessons", JSON.stringify([...storedLessons, ...createdLessons]));
+        const existingIds = new Set(storedLessons.map((x) => x.id));
+        const filteredNew = createdLessons.filter((x) => !existingIds.has(x.id));
+        localStorage.setItem("lessons", JSON.stringify([...storedLessons, ...filteredNew]));
       }
     } catch (err) {
       console.warn("localStorage persistence notice:", err);
     }
 
-    // 2. In-memory data store update
-    try {
-      if ((dataStore as any)?.lessons) {
-        (dataStore as any).lessons.push(...createdLessons);
-      }
-    } catch {}
-
-    // 3. Immediately notify parent state so lecture card renders (0 -> 1)
+    // 2. Immediately notify parent state so lecture card renders instantly (0 -> 1)
     onLessonsAdded?.(createdLessons);
 
-    // 4. Asynchronous non-blocking Firestore write
+    // 3. Await DataStore / Firestore write so data is committed BEFORE calling onSuccess
     try {
-      dataStore.addLessons(createdLessons).catch((err) => {
-        console.error("Non-blocking Firestore addLessons error:", err);
-      });
+      const saved = await dataStore.addLessons(createdLessons);
+      if (saved && saved.length > 0) {
+        onLessonsAdded?.(saved);
+      }
     } catch (err) {
-      console.warn("Non-blocking addLessons notice:", err);
+      console.warn("dataStore.addLessons error (optimistic state preserved):", err);
     }
 
-    // 5. Close modal, toast success, and trigger refresh
+    // 4. Close modal, toast success, and trigger loadData
     setIsSaving(false);
     onOpenChange(false);
     toastSuccess(
       "Lecture saved",
       `Added ${createdLessons.length} lecture video(s) to this unit.`
     );
-    onSuccess?.();
+    try {
+      await onSuccess?.();
+    } catch (err) {
+      console.warn("onSuccess refresh notice:", err);
+    }
   };
 
   const readyCount = previewItems.filter(

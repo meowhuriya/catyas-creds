@@ -792,15 +792,32 @@ export class FirebaseDataStore implements DataStore {
   async getLessons(courseId: string): Promise<Lesson[]> {
     if (!db) return [];
     try {
+      const idLower = (courseId || "").toLowerCase();
+      const cleanCode = idLower.replace(/^course-/, "");
+      const withPrefix = `course-${cleanCode}`;
+      const candidates = Array.from(new Set([courseId, idLower, cleanCode, withPrefix, cleanCode.toUpperCase()]));
+
       const q = query(
         collection(db, "users", this.currentUid, "videos"),
-        where("courseId", "==", courseId)
+        where("courseId", "in", candidates)
       );
       const snap = await getDocs(q);
       return snap.docs.map((d) => d.data() as Lesson).sort((a, b) => a.order - b.order);
     } catch (err) {
       console.warn(`getLessons(${courseId}) notice:`, err);
-      return [];
+      try {
+        const snap = await getDocs(collection(db, "users", this.currentUid, "videos"));
+        const idLower = (courseId || "").toLowerCase();
+        const cleanCode = idLower.replace(/^course-/, "");
+        const withPrefix = `course-${cleanCode}`;
+        const candidates = new Set([courseId, idLower, cleanCode, withPrefix, cleanCode.toUpperCase()]);
+        return snap.docs
+          .map((d) => d.data() as Lesson)
+          .filter((l) => candidates.has(l.courseId) || candidates.has((l.courseId || "").toLowerCase()))
+          .sort((a, b) => a.order - b.order);
+      } catch {
+        return [];
+      }
     }
   }
 
@@ -828,7 +845,7 @@ export class FirebaseDataStore implements DataStore {
 
     for (let i = 0; i < lessons.length; i++) {
       const l = lessons[i];
-      const id = "video-" + Date.now() + "-" + i;
+      const id = (l as any).id || ("video-" + Date.now() + "-" + i);
       const lesson: Lesson = {
         ...l,
         id,

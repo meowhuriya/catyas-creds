@@ -44,12 +44,50 @@ export function UnitVideoGallery({
   const [activeFilter, setActiveFilter] = React.useState<FilterStatus>("all");
   const [editingLessonForTopics, setEditingLessonForTopics] = React.useState<Lesson | null>(null);
 
-  // Filter lessons belonging to this unit
+  // Filter lessons belonging to this unit with resilient ID & unitNumber matching
   const unitVideos = React.useMemo(() => {
+    const uId = (unit.id || "").toLowerCase();
+    const uNum = unit.unitNumber;
+
     return videos
-      .filter((v) => v.unitId === unit.id || v.moduleId === unit.id)
+      .filter((v) => {
+        const vUnit = (v.unitId || "").toLowerCase();
+        const vMod = (v.moduleId || "").toLowerCase();
+
+        // 1. Exact match on unitId or moduleId
+        if (vUnit === uId || vMod === uId) return true;
+
+        // 2. Unit number match (e.g. 5, "5", "unit-5", "u5", "-u5")
+        if (uNum !== undefined && uNum !== null) {
+          const numStr = String(uNum);
+          if (
+            vUnit === numStr ||
+            vMod === numStr ||
+            vUnit === `unit-${numStr}` ||
+            vMod === `unit-${numStr}` ||
+            vUnit.endsWith(`-u${numStr}`) ||
+            vMod.endsWith(`-u${numStr}`) ||
+            vUnit.includes(`-u${numStr}-`) ||
+            vMod.includes(`-u${numStr}-`)
+          ) {
+            return true;
+          }
+        }
+
+        // 3. Fallback: check if any linked topic belongs to this unit
+        if (v.linkedTopicIds && v.linkedTopicIds.length > 0 && topics.length > 0) {
+          const unitTopicIds = new Set(
+            topics.filter((t) => (t.unitId || "").toLowerCase() === uId).map((t) => t.id)
+          );
+          if (v.linkedTopicIds.some((tId) => unitTopicIds.has(tId))) {
+            return true;
+          }
+        }
+
+        return false;
+      })
       .sort((a, b) => a.order - b.order);
-  }, [videos, unit.id]);
+  }, [videos, unit.id, unit.unitNumber, topics]);
 
   // Unit topics
   const unitTopics = React.useMemo(() => {
