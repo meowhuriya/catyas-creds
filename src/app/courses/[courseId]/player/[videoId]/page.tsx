@@ -37,6 +37,8 @@ import {
   Minimize2,
   Sparkles,
   X,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 
 declare global {
@@ -70,6 +72,7 @@ export default function VideoPlayerPage() {
   // Manual duration modal
   const [showDurationModal, setShowDurationModal] = React.useState(false);
   const [manualDurationInput, setManualDurationInput] = React.useState("");
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   // Refs for tracking
   const playerRef = React.useRef<any>(null);
@@ -478,6 +481,38 @@ export default function VideoPlayerPage() {
     }
   };
 
+  const handleDeleteCurrentLesson = async () => {
+    if (!lesson) return;
+    if (!window.confirm(`Delete lecture "${lesson.title}" from this course?`)) return;
+
+    try {
+      setIsDeleting(true);
+      // 1. Remove from localStorage
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("lessons");
+          if (raw) {
+            const list: Lesson[] = JSON.parse(raw);
+            localStorage.setItem(
+              "lessons",
+              JSON.stringify(list.filter((l) => l.id !== lesson.id))
+            );
+          }
+        } catch {}
+      }
+
+      // 2. Persist in dataStore
+      await dataStore.deleteLesson(lesson.id);
+      await refreshData();
+      toast.success("Lecture deleted", "The lecture video has been removed from the course.");
+      router.push(`/courses/${courseId}`);
+    } catch (err) {
+      console.error("Failed to delete lesson:", err);
+      toast.error("Delete failed", "Could not remove the lecture video.");
+      setIsDeleting(false);
+    }
+  };
+
   if (loading || !lesson) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center p-8 text-xs text-[var(--color-ink-muted)]">
@@ -621,6 +656,21 @@ export default function VideoPlayerPage() {
               <span className="hidden sm:inline">Next (j)</span>
               <ChevronRight className="h-3.5 w-3.5" />
             </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDeleteCurrentLesson}
+              disabled={isDeleting}
+              className="text-xs h-7 px-2 text-[#4B5160] hover:text-[#C62F3C] hover:bg-[#C62F3C]/10 border-[#CFC8BB]"
+              title={`Delete lecture "${lesson.title}"`}
+            >
+              {isDeleting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C62F3C]" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
+            </Button>
           </div>
         </div>
       )}
@@ -747,8 +797,24 @@ export default function VideoPlayerPage() {
                   )}
                 </div>
 
-                {/* Status Badge */}
+                {/* Status Badge & Actions */}
                 <div className="shrink-0 flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDeleteCurrentLesson}
+                    disabled={isDeleting}
+                    className="text-xs h-7 px-2 text-[#4B5160] hover:text-[#C62F3C] hover:bg-[#C62F3C]/10 transition-colors"
+                    title={`Delete lecture "${lesson.title}"`}
+                  >
+                    {isDeleting ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C62F3C]" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                    <span className="hidden sm:inline ml-1 text-xs">Delete</span>
+                  </Button>
+
                   {isCompleted ? (
                     <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#1F7A4D]/15 text-[#1F7A4D] text-xs font-bold border border-[#1F7A4D]/30">
                       <CheckCircle2 className="h-3.5 w-3.5" />

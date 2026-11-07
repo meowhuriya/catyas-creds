@@ -14,6 +14,7 @@ import {
   Award,
   Settings,
   X,
+  FlaskConical,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,8 @@ export function MobileTabBar() {
   ];
 
   const moreItems = [
+    { label: "Research & Lab (NotebookLM)", href: "/research", icon: FlaskConical },
+    { label: "Certificates & Comps", href: "/certificates", icon: Award },
     { label: "Grades & GPA", href: "/grades", icon: GraduationCap },
     { label: "Official Transcript", href: "/transcript", icon: FileText },
     { label: "Degree Progress", href: "/degree", icon: Award },

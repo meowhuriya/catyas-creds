@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Plus,
+  FlaskConical,
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { TOKENS, CourseTagKey } from "@/styles/tokens";
@@ -37,6 +38,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     { label: "Today", href: "/today", icon: Clock },
     { label: "Smart Recall", href: "/recall", icon: RotateCcw },
     { label: "Courses", href: "/courses", icon: BookOpen },
+    { label: "Research & Lab", href: "/research", icon: FlaskConical },
+    { label: "Certificates & Comps", href: "/certificates", icon: Award },
     { label: "Planner", href: "/planner", icon: Calendar },
     { label: "Grades", href: "/grades", icon: GraduationCap },
     { label: "Transcript", href: "/transcript", icon: FileText },

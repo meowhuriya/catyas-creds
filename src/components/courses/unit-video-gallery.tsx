@@ -11,6 +11,8 @@ import {
   Tag,
   ChevronUp,
   ChevronDown,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { Lesson, LessonProgress, Course, Module, Topic } from "@/types/schemas";
 import { formatSecondsToTime, cleanSyllabusTitle, getYoutubeSearchUrl } from "@/lib/utils";
@@ -25,6 +27,7 @@ interface UnitVideoGalleryProps {
   progressList: LessonProgress[];
   topics: Topic[];
   onOpenAddVideos: () => void;
+  onDeleteVideo?: (lessonId: string) => Promise<void> | void;
   className?: string;
 }
 
@@ -37,12 +40,14 @@ export function UnitVideoGallery({
   progressList,
   topics,
   onOpenAddVideos,
+  onDeleteVideo,
   className = "",
 }: UnitVideoGalleryProps) {
   const { dataStore, refreshData } = useDataStore();
 
   const [activeFilter, setActiveFilter] = React.useState<FilterStatus>("all");
   const [editingLessonForTopics, setEditingLessonForTopics] = React.useState<Lesson | null>(null);
+  const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
   // Filter lessons belonging to this unit with resilient ID & unitNumber matching
   const unitVideos = React.useMemo(() => {
@@ -145,6 +150,37 @@ export function UnitVideoGallery({
 
     await dataStore.updateLessonOrder(updates);
     await refreshData();
+  };
+
+  const handleDeleteVideo = async (video: Lesson) => {
+    if (!window.confirm(`Delete lecture "${video.title}" from this course?`)) return;
+
+    try {
+      setDeletingId(video.id);
+
+      // Clean from localStorage
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("lessons");
+          if (raw) {
+            const parsed: Lesson[] = JSON.parse(raw);
+            const remaining = parsed.filter((l) => l.id !== video.id);
+            localStorage.setItem("lessons", JSON.stringify(remaining));
+          }
+        } catch {}
+      }
+
+      if (onDeleteVideo) {
+        await onDeleteVideo(video.id);
+      } else {
+        await dataStore.deleteLesson(video.id);
+        await refreshData();
+      }
+    } catch (err) {
+      console.error("Error deleting lecture:", err);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   const searchUrl = getYoutubeSearchUrl(course.title, cleanSyllabusTitle(unit.title));
@@ -421,6 +457,20 @@ export function UnitVideoGallery({
                         <span>YouTube</span>
                         <ExternalLink className="h-3 w-3" />
                       </a>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteVideo(video)}
+                        disabled={deletingId === video.id}
+                        className="p-1 rounded text-[#4B5160] hover:text-[#C62F3C] hover:bg-[#C62F3C]/10 transition-colors ml-1"
+                        title={`Delete lecture "${video.title}"`}
+                      >
+                        {deletingId === video.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C62F3C]" />
+                        ) : (
+                          <Trash2 className="h-3.5 w-3.5" />
+                        )}
+                      </button>
                     </div>
                   </div>
                 </div>

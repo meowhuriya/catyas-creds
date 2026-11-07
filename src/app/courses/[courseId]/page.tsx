@@ -389,9 +389,28 @@ export default function CourseDetailPage() {
   };
 
   const handleDeleteLesson = async (lessonId: string) => {
-    if (confirm("Are you sure you want to delete this lecture video from the course?")) {
+    // 1. Optimistic removal from state
+    setLessons((prev) => prev.filter((l) => l.id !== lessonId));
+
+    // 2. LocalStorage cleanup
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("lessons");
+        if (raw) {
+          const list: Lesson[] = JSON.parse(raw);
+          localStorage.setItem(
+            "lessons",
+            JSON.stringify(list.filter((l) => l.id !== lessonId))
+          );
+        }
+      } catch {}
+    }
+
+    // 3. Persist delete in dataStore
+    try {
       await dataStore.deleteLesson(lessonId);
-      await loadData();
+    } catch (err) {
+      console.warn("deleteLesson error:", err);
     }
   };
 
@@ -893,6 +912,7 @@ export default function CourseDetailPage() {
                     progressList={progressList}
                     topics={topics}
                     onOpenAddVideos={() => setAddLessonsOpen(true)}
+                    onDeleteVideo={handleDeleteLesson}
                   />
                 </div>
               </div>
