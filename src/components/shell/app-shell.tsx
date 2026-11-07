@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import { useDataStore } from "@/lib/repository";
 import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@/lib/appearance";
 import { validateSeedTotals } from "@/lib/syllabus/seed-loader";
+import { SoundEngine } from "@/lib/sound-engine";
 import { Loader2, Info } from "lucide-react";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -23,6 +24,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [commandOpen, setCommandOpen] = React.useState(false);
   const [shortcutOpen, setShortcutOpen] = React.useState(false);
   const { info, error: toastError } = useToast();
+
+  React.useEffect(() => {
+    // Attach modern professional click sound listener across all working elements
+    const detachSound = SoundEngine.getInstance().attachGlobalClickListener();
+    return () => {
+      detachSound();
+    };
+  }, []);
 
   React.useEffect(() => {
     // Apply saved appearance

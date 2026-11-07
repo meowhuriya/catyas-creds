@@ -72,6 +72,13 @@ describe("Procedural Web Audio Sound & Micro-Interaction Engine", () => {
     }).not.toThrow();
   });
 
+  it("attaches and cleans up global interactive click sound listener safely", () => {
+    const engine = SoundEngine.getInstance();
+    const detach = engine.attachGlobalClickListener();
+    expect(typeof detach).toBe("function");
+    expect(() => detach()).not.toThrow();
+  });
+
   it("dispatches celebration and floating reward custom events safely", () => {
     expect(() => {
       triggerFloatingReward("+100 XP", 200, 300);

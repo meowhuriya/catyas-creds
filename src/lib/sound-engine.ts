@@ -32,6 +32,8 @@ export class SoundEngine {
 
   private listeners: Set<() => void> = new Set();
   private shimmerThrottle: number = 0;
+  private isGlobalClickListenerAttached: boolean = false;
+  private lastClickSoundTime: number = 0;
 
   private constructor() {
     if (typeof window !== "undefined") {
@@ -143,25 +145,34 @@ export class SoundEngine {
   }
 
   // =========================================================================
-  // 1. playClick(): 12ms tactile mechanical switch sound
+  // 1. playClick(): Modern, silky, tactile acoustic transient sound (pleasant to ears, anti-fatigue)
   // =========================================================================
   public playClick(): void {
     if (!this.soundEnabled || this.volume <= 0 || !this.initContext() || !this.ctx || !this.masterGain) {
       return;
     }
 
-    const t = this.ctx.currentTime;
-    const dur = 0.012; // 12ms
+    const now = typeof performance !== "undefined" ? performance.now() : Date.now();
+    // 25ms throttle to eliminate double-clicks from event bubbling
+    if (now - this.lastClickSoundTime < 25) {
+      return;
+    }
+    this.lastClickSoundTime = now;
 
-    // A. Sub-bass sine pitch drop: 800Hz -> 180Hz
+    const t = this.ctx.currentTime;
+    // Anti-fatigue organic micro-pitch jitter (±1.5%) so repeated clicks stay pleasant and natural
+    const pitchJitter = 1 + (Math.random() - 0.5) * 0.03;
+    const dur = 0.016; // 16ms
+
+    // A. Warm Organic Sine Core: Smooth glide 560Hz -> 260Hz
     const osc = this.ctx.createOscillator();
     const oscGain = this.ctx.createGain();
     osc.type = "sine";
-    osc.frequency.setValueAtTime(800, t);
-    osc.frequency.exponentialRampToValueAtTime(180, t + dur);
+    osc.frequency.setValueAtTime(560 * pitchJitter, t);
+    osc.frequency.exponentialRampToValueAtTime(260 * pitchJitter, t + dur);
 
     oscGain.gain.setValueAtTime(0.001, t);
-    oscGain.gain.linearRampToValueAtTime(0.3, t + 0.001);
+    oscGain.gain.linearRampToValueAtTime(0.22, t + 0.0015);
     oscGain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
 
     osc.connect(oscGain);
@@ -170,12 +181,14 @@ export class SoundEngine {
     osc.start(t);
     osc.stop(t + dur + 0.002);
 
-    // B. Band-pass filtered tactile noise burst
-    const bufferSize = Math.floor(this.ctx.sampleRate * dur);
+    // B. Silky Acoustic Tap Transient: Warm low-bandpass filtered noise (1450Hz, Q: 1.5)
+    // Non-fatiguing gentle acoustic impulse, like a smooth ceramic or pebble tap
+    const bufferSize = Math.max(1, Math.floor(this.ctx.sampleRate * 0.008));
     const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
     const noiseData = noiseBuffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
-      noiseData[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      // Soft decayed pink noise distribution
+      noiseData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 1.8);
     }
 
     const noiseSource = this.ctx.createBufferSource();
@@ -183,19 +196,124 @@ export class SoundEngine {
 
     const bandpass = this.ctx.createBiquadFilter();
     bandpass.type = "bandpass";
-    bandpass.frequency.setValueAtTime(2400, t);
-    bandpass.Q.setValueAtTime(2.5, t);
+    bandpass.frequency.setValueAtTime(1450 * pitchJitter, t);
+    bandpass.Q.setValueAtTime(1.5, t);
 
     const noiseGain = this.ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.2, t);
-    noiseGain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    noiseGain.gain.setValueAtTime(0.08, t);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.008);
 
     noiseSource.connect(bandpass);
     bandpass.connect(noiseGain);
     noiseGain.connect(this.masterGain);
 
     noiseSource.start(t);
-    noiseSource.stop(t + dur + 0.002);
+    noiseSource.stop(t + 0.01);
+
+    // C. Subtle High-Frequency Air Harmonic (Precision Snap)
+    const airOsc = this.ctx.createOscillator();
+    const airGain = this.ctx.createGain();
+    airOsc.type = "triangle";
+    airOsc.frequency.setValueAtTime(1120 * pitchJitter, t);
+    airOsc.frequency.exponentialRampToValueAtTime(740 * pitchJitter, t + 0.009);
+
+    airGain.gain.setValueAtTime(0.001, t);
+    airGain.gain.linearRampToValueAtTime(0.06, t + 0.001);
+    airGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.009);
+
+    airOsc.connect(airGain);
+    airGain.connect(this.masterGain);
+
+    airOsc.start(t);
+    airOsc.stop(t + 0.011);
+  }
+
+  /**
+   * Automatically captures every click on any working/interactive element in the app,
+   * generating a modern, pleasant, professional tactile sound with anti-fatigue tuning.
+   */
+  public attachGlobalClickListener(): () => void {
+    if (typeof window === "undefined" || this.isGlobalClickListenerAttached) {
+      return () => {};
+    }
+
+    this.isGlobalClickListenerAttached = true;
+
+    const handleGlobalClick = (event: MouseEvent) => {
+      // Respect global sound enabled and master volume
+      if (!this.soundEnabled || this.volume <= 0) return;
+
+      const target = event.target as HTMLElement | null;
+      if (!target || !(target instanceof Element)) return;
+
+      // Match any clickable/interactive working element
+      const interactiveSelector = [
+        "button",
+        "a[href]",
+        "input",
+        "select",
+        "textarea",
+        "summary",
+        '[role="button"]',
+        '[role="tab"]',
+        '[role="switch"]',
+        '[role="checkbox"]',
+        '[role="radio"]',
+        '[role="menuitem"]',
+        '[role="option"]',
+        '[role="link"]',
+        "[data-clickable]",
+        "[data-interactive]",
+        ".cursor-pointer",
+      ].join(", ");
+
+      const workingElement = target.closest(interactiveSelector) as HTMLElement | null;
+
+      if (!workingElement) {
+        // Fallback: check if the computed style has cursor: pointer
+        try {
+          const style = window.getComputedStyle(target);
+          if (style && style.cursor === "pointer") {
+            this.playClick();
+          }
+        } catch {}
+        return;
+      }
+
+      // Check if element is disabled or non-working
+      const isDisabled =
+        (workingElement as any).disabled ||
+        workingElement.getAttribute("aria-disabled") === "true" ||
+        workingElement.classList.contains("disabled") ||
+        workingElement.classList.contains("pointer-events-none") ||
+        workingElement.closest("[aria-disabled='true'], [disabled]");
+
+      if (isDisabled) return;
+
+      // Distinguish toggles/checkboxes vs standard clicks
+      const isCheckboxOrRadio =
+        workingElement instanceof HTMLInputElement &&
+        (workingElement.type === "checkbox" || workingElement.type === "radio");
+      const isSwitchRole = workingElement.getAttribute("role") === "switch";
+
+      if (isCheckboxOrRadio) {
+        const input = workingElement as HTMLInputElement;
+        this.playToggle(input.checked);
+      } else if (isSwitchRole) {
+        const isChecked = workingElement.getAttribute("aria-checked") === "true";
+        this.playToggle(!isChecked);
+      } else {
+        this.playClick();
+      }
+    };
+
+    // Use capture phase so all dynamic React elements, portals, modals, and drawers are covered
+    window.addEventListener("click", handleGlobalClick, { capture: true, passive: true });
+
+    return () => {
+      window.removeEventListener("click", handleGlobalClick, { capture: true });
+      this.isGlobalClickListenerAttached = false;
+    };
   }
 
   // =========================================================================
@@ -543,5 +661,6 @@ export function useSound() {
     playWrong: () => engine.playWrong(),
     playMasteryFanfare: () => engine.playMasteryFanfare(),
     playBadgeShimmer: () => engine.playBadgeShimmer(),
+    attachGlobalClickListener: () => engine.attachGlobalClickListener(),
   };
 }
