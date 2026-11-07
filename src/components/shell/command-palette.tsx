@@ -17,6 +17,7 @@ import {
   Sun,
   Search,
   FlaskConical,
+  ClipboardCheck,
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { cn } from "@/lib/utils";
@@ -90,6 +91,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               >
                 <BookOpen className="h-4 w-4 text-app-ink-muted" />
                 <span>Courses</span>
+              </Command.Item>
+              <Command.Item
+                onSelect={() => runCommand(() => router.push("/college-works"))}
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
+              >
+                <ClipboardCheck className="h-4 w-4 text-app-ink-muted" />
+                <span>College Works (Assignments & Lab Records)</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/research"))}
