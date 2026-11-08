@@ -94,6 +94,35 @@ describe("College Works Academic Management System", () => {
     expect(updatedItem.lastUpdatedAt).toBe(nowIso);
   });
 
+  it("detects overdue assignments when deadline has passed and work is not submitted", () => {
+    const todayStr = "2026-11-08";
+    const overdueWork: CollegeWorkItem = {
+      id: "cw-overdue",
+      courseCode: "CS105ES",
+      courseTitle: "Programming for Problem Solving",
+      type: "assignment",
+      title: "Assignment 4: Recursion",
+      unitOrExp: "Unit 4",
+      dueDate: "2026-11-04",
+      status: "pending",
+      lastUpdatedAt: "2026-11-01T10:00:00.000Z",
+    };
+
+    const isCompleted = overdueWork.status === "submitted" || overdueWork.status === "graded";
+    const isOverdue = !isCompleted && Boolean(overdueWork.dueDate) && overdueWork.dueDate < todayStr;
+    expect(isOverdue).toBe(true);
+
+    // Completed works with past due date are NOT overdue
+    const completedWork: CollegeWorkItem = {
+      ...overdueWork,
+      status: "submitted",
+      submittedAt: "2026-11-03T12:00:00.000Z",
+    };
+    const isCompletedDone = completedWork.status === "submitted" || completedWork.status === "graded";
+    const isCompletedOverdue = !isCompletedDone && Boolean(completedWork.dueDate) && completedWork.dueDate < todayStr;
+    expect(isCompletedOverdue).toBe(false);
+  });
+
   it("deletes an item by id cleanly", () => {
     const remaining = mockWorks.filter((w) => w.id !== "cw-1");
     expect(remaining.length).toBe(2);
