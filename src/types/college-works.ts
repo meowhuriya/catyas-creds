@@ -3,6 +3,7 @@ export type WorkStatus = "pending" | "in_progress" | "submitted" | "graded";
 
 export interface CollegeWorkItem {
   id: string;
+  userId?: string;
   courseCode: string;
   courseTitle: string;
   type: WorkType;

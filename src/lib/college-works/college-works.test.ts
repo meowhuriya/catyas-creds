@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { CollegeWorkItem, ALL_COURSES } from "@/types/college-works";
+import { SEED_COLLEGE_WORKS } from "./seed-data";
+import { sanitizeWorkForFirestore, mergeWorksLists } from "./sync-service";
 
 describe("College Works Academic Management System", () => {
   const mockWorks: CollegeWorkItem[] = [
@@ -127,5 +129,108 @@ describe("College Works Academic Management System", () => {
     const remaining = mockWorks.filter((w) => w.id !== "cw-1");
     expect(remaining.length).toBe(2);
     expect(remaining.some((w) => w.id === "cw-1")).toBe(false);
+  });
+
+  describe("Cross-Device Cloud Sync Service", () => {
+    it("sanitizes work items to prevent Firestore undefined field errors", () => {
+      const itemWithUndefined: CollegeWorkItem = {
+        id: "work-test",
+        courseCode: "MA101BS",
+        courseTitle: "Matrices and Calculus",
+        type: "assignment",
+        title: "Test Work",
+        unitOrExp: "Unit 1",
+        dueDate: "2026-11-20",
+        status: "pending",
+        lastUpdatedAt: "2026-11-08T10:00:00.000Z",
+        gradeOrMarks: undefined,
+        notes: undefined,
+        submissionUrl: undefined,
+        attachmentName: undefined,
+        submittedAt: undefined,
+      };
+
+      const sanitized = sanitizeWorkForFirestore(itemWithUndefined, "user-123");
+      expect(sanitized.id).toBe("work-test");
+      expect(sanitized.userId).toBe("user-123");
+      expect("gradeOrMarks" in sanitized).toBe(false);
+      expect("notes" in sanitized).toBe(false);
+      expect("submissionUrl" in sanitized).toBe(false);
+      expect("attachmentName" in sanitized).toBe(false);
+      expect("submittedAt" in sanitized).toBe(false);
+    });
+
+    it("merges cloud and local works picking the latest lastUpdatedAt", () => {
+      const cloudWorks: CollegeWorkItem[] = [
+        {
+          id: "work-1",
+          courseCode: "CH106BS",
+          courseTitle: "Chemistry Lab",
+          type: "record",
+          title: "Cloud Version Exp 1",
+          unitOrExp: "Exp 1",
+          dueDate: "2026-11-10",
+          status: "pending",
+          lastUpdatedAt: "2026-11-05T10:00:00.000Z",
+        },
+        {
+          id: "work-2",
+          courseCode: "MA101BS",
+          courseTitle: "Calculus",
+          type: "assignment",
+          title: "Only on Cloud Work",
+          unitOrExp: "Unit 1",
+          dueDate: "2026-11-12",
+          status: "submitted",
+          lastUpdatedAt: "2026-11-06T10:00:00.000Z",
+        },
+      ];
+
+      const localWorks: CollegeWorkItem[] = [
+        {
+          id: "work-1",
+          courseCode: "CH106BS",
+          courseTitle: "Chemistry Lab",
+          type: "record",
+          title: "Laptop Edited Version Exp 1",
+          unitOrExp: "Exp 1",
+          dueDate: "2026-11-10",
+          status: "graded",
+          gradeOrMarks: "10/10",
+          lastUpdatedAt: "2026-11-08T10:00:00.000Z", // Newer than cloud
+        },
+        {
+          id: "work-3",
+          courseCode: "CS105ES",
+          courseTitle: "Programming",
+          type: "assignment",
+          title: "Brand New Work on Laptop",
+          unitOrExp: "Unit 2",
+          dueDate: "2026-11-15",
+          status: "pending",
+          lastUpdatedAt: "2026-11-08T11:00:00.000Z", // Local-only
+        },
+      ];
+
+      const { merged, hasNewLocalItems } = mergeWorksLists(cloudWorks, localWorks);
+      expect(merged.length).toBe(3);
+      expect(hasNewLocalItems).toBe(true);
+
+      const work1 = merged.find((w) => w.id === "work-1");
+      expect(work1?.title).toBe("Laptop Edited Version Exp 1");
+      expect(work1?.status).toBe("graded");
+
+      const work2 = merged.find((w) => w.id === "work-2");
+      expect(work2?.title).toBe("Only on Cloud Work");
+
+      const work3 = merged.find((w) => w.id === "work-3");
+      expect(work3?.title).toBe("Brand New Work on Laptop");
+    });
+
+    it("verifies canonical seed works are populated", () => {
+      expect(SEED_COLLEGE_WORKS.length).toBe(8);
+      expect(SEED_COLLEGE_WORKS.some((w) => w.type === "record")).toBe(true);
+      expect(SEED_COLLEGE_WORKS.some((w) => w.type === "assignment")).toBe(true);
+    });
   });
 });

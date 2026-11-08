@@ -26,8 +26,14 @@ import {
   Tag,
   ArrowUpDown,
   Download,
+  Cloud,
+  CloudOff,
+  RefreshCw,
+  Smartphone,
+  Laptop,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { useDataStore } from "@/lib/repository";
 import { cn } from "@/lib/utils";
 import {
   CollegeWorkItem,
@@ -35,6 +41,14 @@ import {
   WorkStatus,
   ALL_COURSES,
 } from "@/types/college-works";
+import { SEED_COLLEGE_WORKS } from "@/lib/college-works/seed-data";
+import {
+  getLocalCollegeWorks,
+  saveCollegeWorkToCloud,
+  deleteCollegeWorkFromCloud,
+  subscribeCollegeWorks,
+  syncAndMergeWorks,
+} from "@/lib/college-works/sync-service";
 
 function formatTimestamp(isoOrDateString?: string): string {
   if (!isoOrDateString) return "Not recorded";
@@ -135,141 +149,21 @@ function getBigStatusBarConfig(work: CollegeWorkItem) {
   };
 }
 
-const SEED_COLLEGE_WORKS: CollegeWorkItem[] = [
-  {
-    id: "work-1",
-    courseCode: "CH106BS",
-    courseTitle: "Engineering Chemistry Lab",
-    type: "record",
-    title: "Exp 3: Conductometric Titration of Strong Acid (HCl) with Strong Base (NaOH)",
-    unitOrExp: "Experiment #3",
-    dueDate: "2026-10-28",
-    status: "graded",
-    gradeOrMarks: "10/10",
-    notes:
-      "Calculated equivalence point at sharp conductance minimum (14.2 mL). Verification endorsed by Prof. K. Rao. Viva questions covered Kohlrausch's law.",
-    submissionUrl: "https://drive.google.com/open?id=ch106bs-exp3-record",
-    attachmentName: "CH106BS_Exp3_Observation_Record.pdf",
-    submittedAt: "2026-10-27T16:45:00",
-    lastUpdatedAt: "2026-10-29T11:15:00",
-  },
-  {
-    id: "work-2",
-    courseCode: "MA101BS",
-    courseTitle: "Matrices and Calculus",
-    type: "assignment",
-    title: "Assignment 2: Cayley-Hamilton Theorem & Diagonalization of Symmetric Matrices",
-    unitOrExp: "Unit 2 Tutorial",
-    dueDate: "2026-11-05",
-    status: "submitted",
-    gradeOrMarks: "Pending Grading",
-    notes:
-      "Verified characteristic polynomial det(A - λI) = 0 for 3x3 matrices and evaluated inverse matrix A^-1 via Cayley-Hamilton expansion.",
-    submissionUrl: "https://drive.google.com/open?id=ma101bs-assign2",
-    attachmentName: "MA101BS_Assignment2_Calculus.pdf",
-    submittedAt: "2026-11-04T18:20:00",
-    lastUpdatedAt: "2026-11-04T18:20:00",
-  },
-  {
-    id: "work-3",
-    courseCode: "CS107ES",
-    courseTitle: "Programming for Problem Solving Lab",
-    type: "record",
-    title: "Exp 5: Dynamic Memory Allocation (malloc, calloc, realloc) & Pointer Manipulation",
-    unitOrExp: "Experiment #5",
-    dueDate: "2026-10-30",
-    status: "graded",
-    gradeOrMarks: "9.5/10",
-    notes:
-      "Implemented dynamic 2D matrix allocation and freed all memory blocks with zero Valgrind memory leaks. Deducted 0.5 for missing boundary assertions.",
-    submissionUrl: "https://github.com/valeria/cs107es-lab/tree/exp5",
-    attachmentName: "CS107ES_Exp5_Pointer_Report.pdf",
-    submittedAt: "2026-10-29T21:10:00",
-    lastUpdatedAt: "2026-11-01T09:30:00",
-  },
-  {
-    id: "work-4",
-    courseCode: "CH102BS",
-    courseTitle: "Engineering Chemistry",
-    type: "assignment",
-    title: "Assignment 3: Corrosion Kinetics and Sacrificial Anode Cathodic Protection",
-    unitOrExp: "Unit 3 Tutorial",
-    dueDate: "2026-11-18",
-    status: "in_progress",
-    notes:
-      "Deriving Nernst equation for galvanic cells and calculating corrosion rates via Faraday's Law. 3 of 5 questions completed.",
-    lastUpdatedAt: "2026-11-06T14:10:00",
-  },
-  {
-    id: "work-5",
-    courseCode: "CS105ES",
-    courseTitle: "Programming for Problem Solving",
-    type: "assignment",
-    title: "Assignment 4: Recursive Algorithms — Tower of Hanoi and Fibonacci Time Complexity",
-    unitOrExp: "Unit 4 Problem Set",
-    dueDate: "2026-11-04",
-    status: "pending",
-    notes:
-      "Formulate recurrence relations T(n) = 2T(n-1) + 1 and trace call-stack execution diagrams.",
-    lastUpdatedAt: "2026-11-05T10:00:00",
-  },
-  {
-    id: "work-6",
-    courseCode: "ME109ES",
-    courseTitle: "Engineering Workshop",
-    type: "record",
-    title: "Exp 2: Carpentry Joint Fabrication — Mortise and Tenon Woodworking Joint",
-    unitOrExp: "Experiment #2",
-    dueDate: "2026-11-02",
-    status: "submitted",
-    gradeOrMarks: "Grade A",
-    notes:
-      "Chiseled 50mm x 25mm mortise cavity and planed tenon tongue to ±0.5mm tolerance. Verified right angle with try square.",
-    submissionUrl: "https://drive.google.com/open?id=me109es-exp2",
-    attachmentName: "ME109ES_Exp2_Carpentry_Record.pdf",
-    submittedAt: "2026-11-01T15:40:00",
-    lastUpdatedAt: "2026-11-03T16:00:00",
-  },
-  {
-    id: "work-7",
-    courseCode: "EC104ES",
-    courseTitle: "Electronic Devices and Circuits",
-    type: "assignment",
-    title: "Assignment 1: V-I Characteristics of PN Junction Diode and Zener Breakdown",
-    unitOrExp: "Unit 1 Assignment",
-    dueDate: "2026-11-22",
-    status: "pending",
-    notes:
-      "Plot forward bias threshold voltage (0.7V for Si) and calculate reverse saturation current I_s.",
-    lastUpdatedAt: "2026-11-05T12:00:00",
-  },
-  {
-    id: "work-8",
-    courseCode: "CS208ES",
-    courseTitle: "Python Programming Lab",
-    type: "record",
-    title: "Exp 4: Object-Oriented File I/O & Custom Exception Handling in Python 3",
-    unitOrExp: "Experiment #4",
-    dueDate: "2026-11-04",
-    status: "graded",
-    gradeOrMarks: "10/10",
-    notes:
-      "Designed CSV parsing class with context managers (with open) and custom NegativeBalanceException for banking simulator.",
-    submissionUrl: "https://github.com/valeria/cs208es-python/exp4",
-    attachmentName: "CS208ES_Exp4_Python_Record.pdf",
-    submittedAt: "2026-11-03T19:25:00",
-    lastUpdatedAt: "2026-11-05T17:15:00",
-  },
-];
-
 export default function CollegeWorksPage() {
   const toast = useToast();
+  const { firebaseUser, signInWithGoogle, isRealMode, authLoading } = useDataStore();
 
-  const [works, setWorks] = React.useState<CollegeWorkItem[]>(SEED_COLLEGE_WORKS);
+  const [works, setWorks] = React.useState<CollegeWorkItem[]>(() =>
+    getLocalCollegeWorks(firebaseUser?.uid)
+  );
   const [selectedSubsection, setSelectedSubsection] = React.useState<"all" | "assignment" | "record">("all");
   const [selectedCourseFilter, setSelectedCourseFilter] = React.useState<string>("all");
   const [selectedStatusFilter, setSelectedStatusFilter] = React.useState<string>("all");
   const [searchQuery, setSearchQuery] = React.useState("");
+
+  // Cloud Sync State
+  const [isSyncing, setIsSyncing] = React.useState(false);
+  const [syncStatus, setSyncStatus] = React.useState<"synced" | "syncing" | "offline" | "guest">("syncing");
 
   // Modals
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -287,32 +181,58 @@ export default function CollegeWorksPage() {
   const [formSubmissionUrl, setFormSubmissionUrl] = React.useState("");
   const [formAttachmentName, setFormAttachmentName] = React.useState("");
 
-  // Load from localStorage
+  // 1. Load cached works immediately on mount or when user changes
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("valeria_college_works");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setWorks(parsed);
-          }
-        }
-      } catch (err) {
-        console.warn("Error reading college works from localStorage:", err);
-      }
-    }
-  }, []);
+    const cached = getLocalCollegeWorks(firebaseUser?.uid);
+    setWorks(cached);
+  }, [firebaseUser?.uid]);
 
-  // Save to localStorage
-  const saveWorks = (list: CollegeWorkItem[]) => {
-    setWorks(list);
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.setItem("valeria_college_works", JSON.stringify(list));
-      } catch (err) {
-        console.warn("Error saving college works to localStorage:", err);
+  // 2. Real-time Cloud Firestore subscription: syncs across all devices logged into this Gmail
+  React.useEffect(() => {
+    if (!firebaseUser?.uid) {
+      setSyncStatus("guest");
+      return;
+    }
+
+    setSyncStatus("syncing");
+    const unsubscribe = subscribeCollegeWorks(
+      firebaseUser.uid,
+      (syncedWorks) => {
+        setWorks(syncedWorks);
+        setSyncStatus("synced");
+      },
+      (err) => {
+        console.warn("Real-time cloud sync notice:", err);
+        setSyncStatus("offline");
       }
+    );
+
+    return () => unsubscribe();
+  }, [firebaseUser?.uid]);
+
+  // Manual force sync trigger
+  const handleManualSync = async () => {
+    if (!firebaseUser?.uid) {
+      toast.info("Google Sign-In", "Sign in with your Google account to sync all assignments with your phone.");
+      try {
+        await signInWithGoogle();
+      } catch (err) {
+        console.warn("Sign in cancelled:", err);
+      }
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      const merged = await syncAndMergeWorks(firebaseUser.uid, works);
+      setWorks(merged);
+      setSyncStatus("synced");
+      toast.success("Synchronized", `All works are in sync across your phone and laptop (${firebaseUser.email || "Google Account"}).`);
+    } catch (err) {
+      console.error("Sync error:", err);
+      toast.error("Sync Failed", "Could not synchronize with cloud. Check network connection.");
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -349,7 +269,7 @@ export default function CollegeWorksPage() {
   };
 
   // Save (Create or Update)
-  const handleSaveItem = () => {
+  const handleSaveItem = async () => {
     if (!formTitle.trim()) {
       toast.error("Title required", "Please enter a title for this college work.");
       return;
@@ -373,33 +293,32 @@ export default function CollegeWorksPage() {
           ? undefined
           : editingItem.submittedAt || nowIso;
 
-      const updatedList = works.map((w) => {
-        if (w.id !== editingItem.id) return w;
-        return {
-          ...w,
-          courseCode: formCourseCode,
-          courseTitle: courseObj.title,
-          type: formType,
-          title: formTitle.trim(),
-          unitOrExp: formUnitOrExp.trim() || (formType === "assignment" ? "Assignment" : "Lab Record"),
-          dueDate: formDueDate || w.dueDate,
-          status: formStatus,
-          gradeOrMarks: formGradeOrMarks.trim() || undefined,
-          notes: formNotes.trim() || undefined,
-          submissionUrl: formSubmissionUrl.trim() || undefined,
-          attachmentName: formAttachmentName.trim() || undefined,
-          submittedAt: newSubmittedAt,
-          lastUpdatedAt: nowIso,
-        };
-      });
+      const updatedWork: CollegeWorkItem = {
+        ...editingItem,
+        courseCode: formCourseCode,
+        courseTitle: courseObj.title,
+        type: formType,
+        title: formTitle.trim(),
+        unitOrExp: formUnitOrExp.trim() || (formType === "assignment" ? "Assignment" : "Lab Record"),
+        dueDate: formDueDate || editingItem.dueDate,
+        status: formStatus,
+        gradeOrMarks: formGradeOrMarks.trim() || undefined,
+        notes: formNotes.trim() || undefined,
+        submissionUrl: formSubmissionUrl.trim() || undefined,
+        attachmentName: formAttachmentName.trim() || undefined,
+        submittedAt: newSubmittedAt,
+        lastUpdatedAt: nowIso,
+        userId: firebaseUser?.uid || editingItem.userId,
+      };
 
-      saveWorks(updatedList);
-      toast.success("Updated", `"${formTitle.trim()}" has been updated.`);
+      const updatedList = await saveCollegeWorkToCloud(firebaseUser?.uid, updatedWork, works);
+      setWorks(updatedList);
+      toast.success("Updated & Synced", `"${formTitle.trim()}" updated and synced across all devices.`);
     } else {
       // Create New
       const isSubmitted = formStatus === "submitted" || formStatus === "graded";
       const newItem: CollegeWorkItem = {
-        id: `work-${Date.now()}`,
+        id: `work-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         courseCode: formCourseCode,
         courseTitle: courseObj.title,
         type: formType,
@@ -413,27 +332,28 @@ export default function CollegeWorksPage() {
         attachmentName: formAttachmentName.trim() || undefined,
         submittedAt: isSubmitted ? nowIso : undefined,
         lastUpdatedAt: nowIso,
+        userId: firebaseUser?.uid,
       };
 
-      const updatedList = [newItem, ...works];
-      saveWorks(updatedList);
-      toast.success("Created", `New ${formType} added for ${formCourseCode}.`);
+      const updatedList = await saveCollegeWorkToCloud(firebaseUser?.uid, newItem, works);
+      setWorks(updatedList);
+      toast.success("Created & Synced", `New ${formType} saved and synced across all devices.`);
     }
 
     setIsModalOpen(false);
   };
 
   // Delete
-  const handleDeleteItem = (id: string, title: string) => {
+  const handleDeleteItem = async (id: string, title: string) => {
     if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
 
-    const remaining = works.filter((w) => w.id !== id);
-    saveWorks(remaining);
-    toast.success("Deleted", `Item removed from College Works.`);
+    const remaining = await deleteCollegeWorkFromCloud(firebaseUser?.uid, id, works);
+    setWorks(remaining);
+    toast.success("Deleted & Synced", `Item deleted and removed from all connected devices.`);
   };
 
   // Quick Toggle Status
-  const handleQuickToggleStatus = (item: CollegeWorkItem) => {
+  const handleQuickToggleStatus = async (item: CollegeWorkItem) => {
     const nextStatus: WorkStatus =
       item.status === "pending"
         ? "in_progress"
@@ -444,17 +364,19 @@ export default function CollegeWorksPage() {
         : "pending";
 
     const nowIso = new Date().toISOString();
-    const updated = works.map((w) => {
-      if (w.id !== item.id) return w;
-      return {
-        ...w,
-        status: nextStatus,
-        submittedAt: nextStatus === "submitted" || nextStatus === "graded" ? w.submittedAt || nowIso : undefined,
-        lastUpdatedAt: nowIso,
-      };
-    });
+    const isNowSubmitted = nextStatus === "submitted" || nextStatus === "graded";
+    const wasSubmitted = item.status === "submitted" || item.status === "graded";
 
-    saveWorks(updated);
+    const updatedWork: CollegeWorkItem = {
+      ...item,
+      status: nextStatus,
+      lastUpdatedAt: nowIso,
+      submittedAt: isNowSubmitted && !wasSubmitted ? nowIso : !isNowSubmitted ? undefined : item.submittedAt,
+      userId: firebaseUser?.uid || item.userId,
+    };
+
+    const updatedList = await saveCollegeWorkToCloud(firebaseUser?.uid, updatedWork, works);
+    setWorks(updatedList);
     toast.info("Status updated", `Moved to ${nextStatus.replace("_", " ")}.`);
   };
 
@@ -519,6 +441,50 @@ export default function CollegeWorksPage() {
               manage theory <strong>Assignments</strong> and practical <strong>Lab Records</strong>, and
               track exact submission timestamps.
             </p>
+
+            {/* Cloud Sync Status Indicator & Multi-Device Bar */}
+            <div className="flex flex-wrap items-center gap-2 pt-2">
+              {firebaseUser ? (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#EAF7EE] text-[#14532D] border border-[#B7E4C7] dark:bg-[#102619] dark:text-[#86EFAC] dark:border-[#1F4E31] shadow-xs">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <Cloud className="h-3.5 w-3.5 shrink-0 text-[#16A34A] dark:text-[#86EFAC]" />
+                  <span className="truncate max-w-[200px] sm:max-w-none">
+                    Cloud Synced: <strong className="font-bold">{firebaseUser.email || "Google Account"}</strong>
+                  </span>
+                  <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-[#D1F2D9] dark:bg-[#183B25] text-[#14532D] dark:text-[#86EFAC] border border-[#A3E6B7] dark:border-[#285A3B]">
+                    Phone &amp; Laptop Live
+                  </span>
+                  <button
+                    onClick={handleManualSync}
+                    disabled={isSyncing}
+                    title="Force sync now with Cloud Firestore"
+                    className="inline-flex items-center gap-1 ml-1 text-xs font-bold text-[#14532D] dark:text-[#86EFAC] hover:underline cursor-pointer"
+                  >
+                    <RefreshCw className={cn("h-3 w-3", isSyncing && "animate-spin")} />
+                    <span className="hidden sm:inline">Sync Now</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="inline-flex flex-wrap items-center gap-2 p-2 px-3 rounded-[12px] text-xs font-medium bg-[#FEFCE8] text-[#713F12] border border-[#FEF08A] dark:bg-[#24220F] dark:text-[#FEF08A] dark:border-[#4E4416]">
+                  <div className="flex items-center gap-1.5">
+                    <Smartphone className="h-4 w-4 shrink-0 text-[#854D0E] dark:text-[#FEF08A]" />
+                    <span>
+                      <strong>Local Device Mode:</strong> Sign in with your Google account to sync all assignments in real time with your phone.
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => signInWithGoogle()}
+                    className="ml-auto inline-flex items-center gap-1 px-3 py-1 rounded-[6px] bg-[#854D0E] hover:bg-[#713F12] text-white text-[11px] font-bold shadow-xs transition-colors cursor-pointer"
+                  >
+                    <Cloud className="h-3 w-3" />
+                    <span>Sign In with Gmail</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
