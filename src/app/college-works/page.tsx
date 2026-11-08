@@ -62,8 +62,10 @@ function getBigStatusBarConfig(work: CollegeWorkItem) {
   if (work.status === "graded") {
     return {
       statusType: "graded" as const,
-      bannerClass: "bg-gradient-to-r from-purple-700 via-purple-600 to-indigo-700 text-white",
-      borderClass: "border-purple-500/50 hover:border-purple-500",
+      // Pastel Green (Soft Mint / Sage)
+      bannerClass: "bg-[#EAF7EE] text-[#14532D] border-b border-[#B7E4C7] dark:bg-[#102619] dark:text-[#86EFAC] dark:border-[#1F4E31]",
+      badgeClass: "bg-[#D1F2D9] text-[#14532D] border-[#A3E6B7] dark:bg-[#183B25] dark:text-[#86EFAC] dark:border-[#285A3B]",
+      borderClass: "border-[#B7E4C7] dark:border-[#1F4E31] hover:border-[#48BB78]",
       icon: Award,
       title: "COMPLETED & GRADED",
       badge: work.gradeOrMarks ? `Marks: ${work.gradeOrMarks}` : "Verified",
@@ -74,8 +76,10 @@ function getBigStatusBarConfig(work: CollegeWorkItem) {
   if (work.status === "submitted") {
     return {
       statusType: "completed" as const,
-      bannerClass: "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 text-white",
-      borderClass: "border-emerald-500/50 hover:border-emerald-500",
+      // Pastel Green (Soft Mint / Sage)
+      bannerClass: "bg-[#EAF7EE] text-[#14532D] border-b border-[#B7E4C7] dark:bg-[#102619] dark:text-[#86EFAC] dark:border-[#1F4E31]",
+      badgeClass: "bg-[#D1F2D9] text-[#14532D] border-[#A3E6B7] dark:bg-[#183B25] dark:text-[#86EFAC] dark:border-[#285A3B]",
+      borderClass: "border-[#B7E4C7] dark:border-[#1F4E31] hover:border-[#48BB78]",
       icon: CheckCircle2,
       title: "COMPLETED & SUBMITTED",
       badge: "Turned In",
@@ -93,8 +97,10 @@ function getBigStatusBarConfig(work: CollegeWorkItem) {
     );
     return {
       statusType: "overdue" as const,
-      bannerClass: "bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white",
-      borderClass: "border-red-500/60 hover:border-red-500 ring-1 ring-red-500/30",
+      // Pastel Soft Rose (Gentle Alert, 0% Orange)
+      bannerClass: "bg-[#FFF1F2] text-[#9F1239] border-b border-[#FECDD3] dark:bg-[#2C1318] dark:text-[#FDA4AF] dark:border-[#4E1C25]",
+      badgeClass: "bg-[#FFE4E6] text-[#9F1239] border-[#FECDD3] dark:bg-[#3D1820] dark:text-[#FDA4AF] dark:border-[#672230]",
+      borderClass: "border-[#FECDD3] dark:border-[#4E1C25] hover:border-[#FB7185] ring-1 ring-[#FECDD3]/50 dark:ring-[#4E1C25]/50",
       icon: AlertTriangle,
       title: "OVER THE DUE DATE — NOT COMPLETED",
       badge: `${diffDays} Day${diffDays > 1 ? "s" : ""} Overdue`,
@@ -105,8 +111,10 @@ function getBigStatusBarConfig(work: CollegeWorkItem) {
   if (work.status === "in_progress") {
     return {
       statusType: "in_progress" as const,
-      bannerClass: "bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 text-white",
-      borderClass: "border-sky-500/40 hover:border-sky-500",
+      // Pastel Blue (Soft Powder Sky)
+      bannerClass: "bg-[#EBF3FD] text-[#1E40AF] border-b border-[#BFDBFE] dark:bg-[#102038] dark:text-[#93C5FD] dark:border-[#1E3A8A]",
+      badgeClass: "bg-[#DBEAFE] text-[#1E40AF] border-[#BFDBFE] dark:bg-[#172D4D] dark:text-[#93C5FD] dark:border-[#2563EB]/40",
+      borderClass: "border-[#BFDBFE] dark:border-[#1E3A8A] hover:border-[#60A5FA]",
       icon: Clock,
       title: "IN PROGRESS — NOT COMPLETED YET",
       badge: "In Progress",
@@ -114,11 +122,12 @@ function getBigStatusBarConfig(work: CollegeWorkItem) {
     };
   }
 
-  // Pending
+  // Pending (Not completed) - Pure Pastel Butter / Lemon Yellow (Strictly NOT Orange)
   return {
     statusType: "pending" as const,
-    bannerClass: "bg-gradient-to-r from-amber-600 via-amber-500 to-orange-600 text-white",
-    borderClass: "border-amber-500/40 hover:border-amber-500",
+    bannerClass: "bg-[#FEFCE8] text-[#713F12] border-b border-[#FEF08A] dark:bg-[#24220F] dark:text-[#FEF08A] dark:border-[#4B4216]",
+    badgeClass: "bg-[#FEF9C3] text-[#713F12] border-[#FDE047] dark:bg-[#332E14] dark:text-[#FEF08A] dark:border-[#5E521C]",
+    borderClass: "border-[#FEF08A] dark:border-[#4B4216] hover:border-[#EAB308]",
     icon: Clock,
     title: "PENDING SUBMISSION — NOT COMPLETED",
     badge: "Pending",
@@ -564,7 +573,7 @@ export default function CollegeWorksPage() {
             <span
               className={cn(
                 "font-serif text-xl font-bold",
-                overdueCount > 0 ? "text-red-600 dark:text-red-400" : "text-[var(--color-ink)]"
+                overdueCount > 0 ? "text-[#9F1239] dark:text-[#FDA4AF]" : "text-[var(--color-ink)]"
               )}
             >
               {overdueCount}
@@ -575,7 +584,7 @@ export default function CollegeWorksPage() {
             <span className="text-[11px] font-semibold text-[var(--color-ink-muted)] uppercase tracking-wider block">
               Completed &amp; Graded
             </span>
-            <span className="font-serif text-xl font-bold text-purple-600 dark:text-purple-400">
+            <span className="font-serif text-xl font-bold text-[#15803D] dark:text-[#86EFAC]">
               {submittedOrGradedCount} / {totalCount}
             </span>
           </div>
@@ -739,7 +748,7 @@ export default function CollegeWorksPage() {
                 {/* 1. BIG BOLD STATUS BAR ACROSS ENTIRE TOP OF CARD */}
                 <div
                   className={cn(
-                    "w-full px-4 py-2.5 flex items-center justify-between text-white font-sans text-xs font-bold tracking-wide shadow-xs",
+                    "w-full px-4 py-2.5 flex items-center justify-between font-sans text-xs font-bold tracking-wide shadow-xs transition-colors",
                     barConfig.bannerClass
                   )}
                 >
@@ -749,7 +758,12 @@ export default function CollegeWorksPage() {
                       {barConfig.title}
                     </span>
                   </div>
-                  <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-black/25 text-white border border-white/20 uppercase tracking-wider ml-2">
+                  <span
+                    className={cn(
+                      "shrink-0 px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ml-2",
+                      barConfig.badgeClass
+                    )}
+                  >
                     {barConfig.badge}
                   </span>
                 </div>
@@ -809,14 +823,12 @@ export default function CollegeWorksPage() {
                         title="Click to cycle status (Pending -> In Progress -> Submitted -> Graded)"
                         className={cn(
                           "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-colors",
-                          work.status === "graded" &&
-                            "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
-                          work.status === "submitted" &&
-                            "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+                          (work.status === "graded" || work.status === "submitted") &&
+                            "bg-[#EAF7EE] text-[#14532D] border-[#B7E4C7] dark:bg-[#102619] dark:text-[#86EFAC] dark:border-[#1F4E31]",
                           work.status === "in_progress" &&
-                            "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
+                            "bg-[#EBF3FD] text-[#1E40AF] border-[#BFDBFE] dark:bg-[#102038] dark:text-[#93C5FD] dark:border-[#1E3A8A]",
                           work.status === "pending" &&
-                            "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                            "bg-[#FEFCE8] text-[#713F12] border-[#FEF08A] dark:bg-[#24220F] dark:text-[#FEF08A] dark:border-[#4B4216]"
                         )}
                       >
                         <StatusIcon className="h-3.5 w-3.5" />
@@ -835,7 +847,7 @@ export default function CollegeWorksPage() {
                         className={cn(
                           "inline-flex items-center gap-1 ml-auto font-medium",
                           barConfig.statusType === "overdue"
-                            ? "text-red-600 dark:text-red-400 font-bold"
+                            ? "text-[#9F1239] dark:text-[#FDA4AF] font-bold"
                             : "text-[var(--color-ink-muted)]"
                         )}
                       >
@@ -893,19 +905,19 @@ export default function CollegeWorksPage() {
                         <CheckCircle2
                           className={cn(
                             "h-3.5 w-3.5",
-                            isSubmitted ? "text-emerald-500" : "text-amber-500"
+                            isSubmitted ? "text-[#16A34A] dark:text-[#86EFAC]" : "text-[#CA8A04] dark:text-[#FEF08A]"
                           )}
                         />
                         <span>
                           {isSubmitted ? (
                             <>
                               Submitted:{" "}
-                              <strong className="text-emerald-600 dark:text-emerald-400 font-medium">
+                              <strong className="text-[#15803D] dark:text-[#86EFAC] font-medium">
                                 {formatTimestamp(work.submittedAt)}
                               </strong>
                             </>
                           ) : (
-                            <span className="text-amber-600 dark:text-amber-400 font-medium">
+                            <span className="text-[#854D0E] dark:text-[#FEF08A] font-medium">
                               Not submitted yet
                             </span>
                           )}
