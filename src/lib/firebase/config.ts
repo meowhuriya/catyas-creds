@@ -6,6 +6,7 @@ import {
   Firestore,
   persistentLocalCache,
   persistentMultipleTabManager,
+  memoryLocalCache,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -37,9 +38,18 @@ if (typeof window !== "undefined" && isFirebaseConfigured) {
         localCache: persistentLocalCache({
           tabManager: persistentMultipleTabManager(),
         }),
+        experimentalAutoDetectLongPolling: true,
       });
     } catch {
-      db = getFirestore(app);
+      try {
+        // Fallback when IndexedDB / multi-tab persistence is restricted (e.g. Safari Private Mode)
+        db = initializeFirestore(app, {
+          localCache: memoryLocalCache(),
+          experimentalAutoDetectLongPolling: true,
+        });
+      } catch {
+        db = getFirestore(app);
+      }
     }
     googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({ prompt: "select_account" });

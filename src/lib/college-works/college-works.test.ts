@@ -1,7 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { CollegeWorkItem, ALL_COURSES } from "@/types/college-works";
 import { SEED_COLLEGE_WORKS } from "./seed-data";
-import { sanitizeWorkForFirestore, mergeWorksLists } from "./sync-service";
+import {
+  sanitizeWorkForFirestore,
+  mergeWorksLists,
+  classifyFirestoreError,
+  getLocalCollegeWorks,
+  LOCAL_STORAGE_KEY,
+  getUserStorageKey,
+} from "./sync-service";
 
 describe("College Works Academic Management System", () => {
   const mockWorks: CollegeWorkItem[] = [
@@ -231,6 +238,136 @@ describe("College Works Academic Management System", () => {
       expect(SEED_COLLEGE_WORKS.length).toBe(8);
       expect(SEED_COLLEGE_WORKS.some((w) => w.type === "record")).toBe(true);
       expect(SEED_COLLEGE_WORKS.some((w) => w.type === "assignment")).toBe(true);
+    });
+
+    it("classifies permission-denied accurately instead of blaming network connectivity", () => {
+      const permErr = classifyFirestoreError({
+        code: "permission-denied",
+        message: "Missing or insufficient permissions.",
+      });
+      expect(permErr.kind).toBe("permission-denied");
+      expect(permErr.code).toBe("permission-denied");
+      expect(permErr.title).toContain("Rules");
+      expect(permErr.actionHint.toLowerCase()).toContain("firestore.rules");
+
+      const offlineErr = classifyFirestoreError({
+        code: "unavailable",
+        message: "Failed to get document because the client is offline.",
+      });
+      expect(offlineErr.kind).toBe("offline");
+
+      const authErr = classifyFirestoreError({
+        code: "unauthenticated",
+        message: "Request does not have valid authentication credentials.",
+      });
+      expect(authErr.kind).toBe("unauthenticated");
+    });
+
+    it("respects deletion tombstones and drops remote-deleted works on synced devices", () => {
+      const cloudWorks: CollegeWorkItem[] = [
+        {
+          id: "cw-keep",
+          courseCode: "MA101BS",
+          courseTitle: "Matrices and Calculus",
+          type: "assignment",
+          title: "Keep Me",
+          unitOrExp: "Unit 1",
+          dueDate: "2026-11-15",
+          status: "pending",
+          lastUpdatedAt: "2026-11-10T10:00:00.000Z",
+        },
+        {
+          id: "cw-deleted-locally",
+          courseCode: "CH106BS",
+          courseTitle: "Engineering Chemistry Lab",
+          type: "record",
+          title: "Should Stay Deleted",
+          unitOrExp: "Exp 1",
+          dueDate: "2026-11-12",
+          status: "pending",
+          lastUpdatedAt: "2026-11-09T10:00:00.000Z",
+        },
+      ];
+
+      const localWorks: CollegeWorkItem[] = [
+        {
+          id: "cw-deleted-on-other-device",
+          courseCode: "CH102BS",
+          courseTitle: "Engineering Chemistry",
+          type: "assignment",
+          title: "Was Deleted On Phone",
+          unitOrExp: "Unit 2",
+          dueDate: "2026-11-14",
+          status: "pending",
+          lastUpdatedAt: "2026-11-09T12:00:00.000Z",
+        },
+        {
+          id: "cw-offline-created",
+          courseCode: "CS105ES",
+          courseTitle: "Programming",
+          type: "assignment",
+          title: "Created Offline On Laptop",
+          unitOrExp: "Unit 3",
+          dueDate: "2026-11-20",
+          status: "pending",
+          lastUpdatedAt: "2026-11-11T09:00:00.000Z",
+        },
+      ];
+
+      const { merged, hasNewLocalItems, deletedIdsToRemoveFromCloud } = mergeWorksLists(
+        cloudWorks,
+        localWorks,
+        {
+          deletedIds: {
+            "cw-deleted-locally": "2026-11-10T12:00:00.000Z",
+          },
+          pendingUploadIds: new Set(["cw-offline-created"]),
+          treatLocalOnlyAsNew: false,
+        }
+      );
+
+      expect(merged.map((w) => w.id).sort()).toEqual(["cw-keep", "cw-offline-created"]);
+      expect(hasNewLocalItems).toBe(true);
+      expect(deletedIdsToRemoveFromCloud).toEqual(["cw-deleted-locally"]);
+    });
+
+    it("prevents fresh signed-in devices from re-injecting seed works before cloud loads", () => {
+      const store = new Map<string, string>();
+      const prevWindow = (globalThis as any).window;
+      const prevStorage = (globalThis as any).localStorage;
+
+      try {
+        (globalThis as any).window = {};
+        (globalThis as any).localStorage = {
+          getItem: (key: string) => store.get(key) ?? null,
+          setItem: (key: string, val: string) => store.set(key, val),
+        };
+
+        // Signed-in fresh second device has no local user/generic keys -> [] instead of SEED_COLLEGE_WORKS
+        expect(getLocalCollegeWorks("uid-fresh-phone")).toEqual([]);
+
+        // Guest mode with empty array stored intentionally respects []
+        store.set(LOCAL_STORAGE_KEY, JSON.stringify([]));
+        expect(getLocalCollegeWorks(undefined)).toEqual([]);
+
+        // Signed-in device with existing works reads user key
+        const customWork: CollegeWorkItem = {
+          id: "custom-1",
+          courseCode: "CH102BS",
+          courseTitle: "Engineering Chemistry",
+          type: "assignment",
+          title: "Assignment 02 questions",
+          unitOrExp: "Unit 1",
+          dueDate: "2026-11-08",
+          status: "pending",
+          lastUpdatedAt: "2026-11-08T10:00:00.000Z",
+        };
+        store.set(getUserStorageKey("uid-mac"), JSON.stringify([customWork]));
+        expect(getLocalCollegeWorks("uid-mac")).toEqual([customWork]);
+      } finally {
+        (globalThis as any).window = prevWindow;
+        (globalThis as any).localStorage = prevStorage;
+      }
     });
   });
 });

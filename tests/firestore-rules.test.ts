@@ -205,4 +205,57 @@ describe("Firestore Security Rules Tests", () => {
       deleteDoc(doc(ownerDb, "transcriptSnapshots", "my-new-snapshot"))
     );
   });
+
+  // 6. Signed-in user can read, list, update, and delete their own collegeWorks across devices
+  it("owner can sync (create, list, update, delete) users/{uid}/collegeWorks while strangers cannot", async () => {
+    const ownerDb = testEnv.authenticatedContext("userA").firestore();
+    const strangerDb = testEnv.authenticatedContext("userB").firestore();
+    const unauthedDb = testEnv.unauthenticatedContext().firestore();
+
+    const sampleWork = {
+      id: "work-sync-1",
+      userId: "userA",
+      courseCode: "CH102BS",
+      courseTitle: "Engineering Chemistry",
+      type: "assignment",
+      title: "Assignment 02 questions",
+      unitOrExp: "Unit 1 Assignment",
+      dueDate: "2026-11-08",
+      status: "pending",
+      lastUpdatedAt: "2026-11-08T10:00:00.000Z",
+    };
+
+    // Owner creates and lists collegeWorks collection
+    await assertSucceeds(
+      setDoc(doc(ownerDb, "users", "userA", "collegeWorks", "work-sync-1"), sampleWork)
+    );
+    await assertSucceeds(
+      getDocs(collection(ownerDb, "users", "userA", "collegeWorks"))
+    );
+
+    // Owner can update and delete their college work
+    await assertSucceeds(
+      setDoc(
+        doc(ownerDb, "users", "userA", "collegeWorks", "work-sync-1"),
+        { status: "submitted", submittedAt: "2026-11-11T12:00:00.000Z" },
+        { merge: true }
+      )
+    );
+
+    // Stranger & signed-out visitor cannot list, read, write, or delete User A's collegeWorks
+    await assertFails(getDocs(collection(strangerDb, "users", "userA", "collegeWorks")));
+    await assertFails(getDocs(collection(unauthedDb, "users", "userA", "collegeWorks")));
+    await assertFails(
+      setDoc(doc(strangerDb, "users", "userA", "collegeWorks", "work-sync-1"), {
+        status: "hacked",
+      })
+    );
+    await assertFails(
+      deleteDoc(doc(strangerDb, "users", "userA", "collegeWorks", "work-sync-1"))
+    );
+
+    await assertSucceeds(
+      deleteDoc(doc(ownerDb, "users", "userA", "collegeWorks", "work-sync-1"))
+    );
+  });
 });

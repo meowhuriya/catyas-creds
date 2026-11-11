@@ -48,6 +48,8 @@ import {
   deleteCollegeWorkFromCloud,
   subscribeCollegeWorks,
   syncAndMergeWorks,
+  classifyFirestoreError,
+  SyncErrorInfo,
 } from "@/lib/college-works/sync-service";
 
 function formatTimestamp(isoOrDateString?: string): string {
@@ -163,7 +165,10 @@ export default function CollegeWorksPage() {
 
   // Cloud Sync State
   const [isSyncing, setIsSyncing] = React.useState(false);
-  const [syncStatus, setSyncStatus] = React.useState<"synced" | "syncing" | "offline" | "guest">("syncing");
+  const [syncStatus, setSyncStatus] = React.useState<
+    "synced" | "syncing" | "cached" | "offline" | "error" | "guest"
+  >(firebaseUser?.uid ? "syncing" : "guest");
+  const [syncError, setSyncError] = React.useState<SyncErrorInfo | null>(null);
 
   // Modals
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -187,27 +192,72 @@ export default function CollegeWorksPage() {
     setWorks(cached);
   }, [firebaseUser?.uid]);
 
-  // 2. Real-time Cloud Firestore subscription: syncs across all devices logged into this Gmail
+  // 2. Real-time Cloud Firestore subscription + server verification
   React.useEffect(() => {
     if (!firebaseUser?.uid) {
       setSyncStatus("guest");
+      setSyncError(null);
       return;
     }
 
+    let isCancelled = false;
+    let receivedServerSnapshot = false;
+    const uid = firebaseUser.uid;
+
     setSyncStatus("syncing");
-    const unsubscribe = subscribeCollegeWorks(
-      firebaseUser.uid,
-      (syncedWorks) => {
-        setWorks(syncedWorks);
+    setSyncError(null);
+
+    const runServerVerification = async () => {
+      try {
+        const merged = await syncAndMergeWorks(uid, getLocalCollegeWorks(uid));
+        if (isCancelled) return;
+        receivedServerSnapshot = true;
+        setWorks(merged);
         setSyncStatus("synced");
+        setSyncError(null);
+      } catch (err) {
+        if (isCancelled) return;
+        const info = classifyFirestoreError(err);
+        setSyncError(info);
+        setSyncStatus(info.kind === "offline" ? "offline" : "error");
+      }
+    };
+
+    const unsubscribe = subscribeCollegeWorks(
+      uid,
+      (syncedWorks, source) => {
+        if (isCancelled) return;
+        setWorks(syncedWorks);
+        if (source === "server") {
+          receivedServerSnapshot = true;
+          setSyncStatus("synced");
+          setSyncError(null);
+        } else if (!receivedServerSnapshot) {
+          setSyncStatus("cached");
+        }
       },
-      (err) => {
-        console.warn("Real-time cloud sync notice:", err);
-        setSyncStatus("offline");
+      (_err, info) => {
+        if (isCancelled) return;
+        setSyncError(info);
+        setSyncStatus(info.kind === "offline" ? "offline" : "error");
       }
     );
 
-    return () => unsubscribe();
+    // Actively verify server connection on load so Safari/offline/permission issues are detected immediately
+    runServerVerification();
+
+    const handleOnline = () => {
+      if (!isCancelled) {
+        runServerVerification();
+      }
+    };
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      isCancelled = true;
+      window.removeEventListener("online", handleOnline);
+      unsubscribe();
+    };
   }, [firebaseUser?.uid]);
 
   // Manual force sync trigger
@@ -223,14 +273,19 @@ export default function CollegeWorksPage() {
     }
 
     setIsSyncing(true);
+    setSyncStatus("syncing");
     try {
       const merged = await syncAndMergeWorks(firebaseUser.uid, works);
       setWorks(merged);
       setSyncStatus("synced");
+      setSyncError(null);
       toast.success("Synchronized", `All works are in sync across your phone and laptop (${firebaseUser.email || "Google Account"}).`);
     } catch (err) {
+      const info = classifyFirestoreError(err);
       console.error("Sync error:", err);
-      toast.error("Sync Failed", "Could not synchronize with cloud. Check network connection.");
+      setSyncError(info);
+      setSyncStatus(info.kind === "offline" ? "offline" : "error");
+      toast.error(info.title, `${info.message} ${info.actionHint}`);
     } finally {
       setIsSyncing(false);
     }
@@ -311,9 +366,25 @@ export default function CollegeWorksPage() {
         userId: firebaseUser?.uid || editingItem.userId,
       };
 
-      const updatedList = await saveCollegeWorkToCloud(firebaseUser?.uid, updatedWork, works);
-      setWorks(updatedList);
-      toast.success("Updated & Synced", `"${formTitle.trim()}" updated and synced across all devices.`);
+      const result = await saveCollegeWorkToCloud(firebaseUser?.uid, updatedWork, works);
+      setWorks(result.works);
+      if (!firebaseUser?.uid) {
+        toast.success("Updated Locally", `"${formTitle.trim()}" saved on this device.`);
+      } else if (result.synced) {
+        setSyncStatus("synced");
+        setSyncError(null);
+        toast.success("Updated & Synced", `"${formTitle.trim()}" updated and synced across all devices.`);
+      } else {
+        setSyncError(result.error || null);
+        setSyncStatus(result.error?.kind === "offline" ? "offline" : "error");
+        toast.showToast({
+          type: "warning",
+          title: result.error?.title || "Saved Locally Only",
+          description: result.error
+            ? `${result.error.message} ${result.error.actionHint}`
+            : "Saved locally; cloud sync is pending.",
+        });
+      }
     } else {
       // Create New
       const isSubmitted = formStatus === "submitted" || formStatus === "graded";
@@ -335,9 +406,25 @@ export default function CollegeWorksPage() {
         userId: firebaseUser?.uid,
       };
 
-      const updatedList = await saveCollegeWorkToCloud(firebaseUser?.uid, newItem, works);
-      setWorks(updatedList);
-      toast.success("Created & Synced", `New ${formType} saved and synced across all devices.`);
+      const result = await saveCollegeWorkToCloud(firebaseUser?.uid, newItem, works);
+      setWorks(result.works);
+      if (!firebaseUser?.uid) {
+        toast.success("Created Locally", `New ${formType} saved on this device.`);
+      } else if (result.synced) {
+        setSyncStatus("synced");
+        setSyncError(null);
+        toast.success("Created & Synced", `New ${formType} saved and synced across all devices.`);
+      } else {
+        setSyncError(result.error || null);
+        setSyncStatus(result.error?.kind === "offline" ? "offline" : "error");
+        toast.showToast({
+          type: "warning",
+          title: result.error?.title || "Saved Locally Only",
+          description: result.error
+            ? `${result.error.message} ${result.error.actionHint}`
+            : "Saved locally; cloud sync is pending.",
+        });
+      }
     }
 
     setIsModalOpen(false);
@@ -347,9 +434,25 @@ export default function CollegeWorksPage() {
   const handleDeleteItem = async (id: string, title: string) => {
     if (!window.confirm(`Are you sure you want to delete "${title}"?`)) return;
 
-    const remaining = await deleteCollegeWorkFromCloud(firebaseUser?.uid, id, works);
-    setWorks(remaining);
-    toast.success("Deleted & Synced", `Item deleted and removed from all connected devices.`);
+    const result = await deleteCollegeWorkFromCloud(firebaseUser?.uid, id, works);
+    setWorks(result.works);
+    if (!firebaseUser?.uid) {
+      toast.success("Deleted Locally", "Item removed from this device.");
+    } else if (result.synced) {
+      setSyncStatus("synced");
+      setSyncError(null);
+      toast.success("Deleted & Synced", `Item deleted and removed from all connected devices.`);
+    } else {
+      setSyncError(result.error || null);
+      setSyncStatus(result.error?.kind === "offline" ? "offline" : "error");
+      toast.showToast({
+        type: "warning",
+        title: result.error?.title || "Deleted Locally Only",
+        description: result.error
+          ? `${result.error.message} ${result.error.actionHint}`
+          : "Removed locally; cloud deletion is pending.",
+      });
+    }
   };
 
   // Quick Toggle Status
@@ -375,9 +478,23 @@ export default function CollegeWorksPage() {
       userId: firebaseUser?.uid || item.userId,
     };
 
-    const updatedList = await saveCollegeWorkToCloud(firebaseUser?.uid, updatedWork, works);
-    setWorks(updatedList);
-    toast.info("Status updated", `Moved to ${nextStatus.replace("_", " ")}.`);
+    const result = await saveCollegeWorkToCloud(firebaseUser?.uid, updatedWork, works);
+    setWorks(result.works);
+    if (firebaseUser?.uid && !result.synced && result.error) {
+      setSyncError(result.error);
+      setSyncStatus(result.error.kind === "offline" ? "offline" : "error");
+      toast.showToast({
+        type: "warning",
+        title: "Status Saved Locally",
+        description: `${result.error.title}: ${result.error.actionHint}`,
+      });
+    } else {
+      if (result.synced) {
+        setSyncStatus("synced");
+        setSyncError(null);
+      }
+      toast.info("Status updated", `Moved to ${nextStatus.replace("_", " ")}.`);
+    }
   };
 
   // Filtered List
@@ -443,30 +560,84 @@ export default function CollegeWorksPage() {
             </p>
 
             {/* Cloud Sync Status Indicator & Multi-Device Bar */}
-            <div className="flex flex-wrap items-center gap-2 pt-2">
+            <div className="flex flex-col items-start gap-2 pt-2">
               {firebaseUser ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#EAF7EE] text-[#14532D] border border-[#B7E4C7] dark:bg-[#102619] dark:text-[#86EFAC] dark:border-[#1F4E31] shadow-xs">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  <Cloud className="h-3.5 w-3.5 shrink-0 text-[#16A34A] dark:text-[#86EFAC]" />
-                  <span className="truncate max-w-[200px] sm:max-w-none">
-                    Cloud Synced: <strong className="font-bold">{firebaseUser.email || "Google Account"}</strong>
-                  </span>
-                  <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-[#D1F2D9] dark:bg-[#183B25] text-[#14532D] dark:text-[#86EFAC] border border-[#A3E6B7] dark:border-[#285A3B]">
-                    Phone &amp; Laptop Live
-                  </span>
-                  <button
-                    onClick={handleManualSync}
-                    disabled={isSyncing}
-                    title="Force sync now with Cloud Firestore"
-                    className="inline-flex items-center gap-1 ml-1 text-xs font-bold text-[#14532D] dark:text-[#86EFAC] hover:underline cursor-pointer"
-                  >
-                    <RefreshCw className={cn("h-3 w-3", isSyncing && "animate-spin")} />
-                    <span className="hidden sm:inline">Sync Now</span>
-                  </button>
-                </div>
+                <>
+                  {syncStatus === "synced" ? (
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#EAF7EE] text-[#14532D] border border-[#B7E4C7] dark:bg-[#102619] dark:text-[#86EFAC] dark:border-[#1F4E31] shadow-xs">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <Cloud className="h-3.5 w-3.5 shrink-0 text-[#16A34A] dark:text-[#86EFAC]" />
+                      <span className="truncate max-w-[200px] sm:max-w-none">
+                        Cloud Synced: <strong className="font-bold">{firebaseUser.email || "Google Account"}</strong>
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-[#D1F2D9] dark:bg-[#183B25] text-[#14532D] dark:text-[#86EFAC] border border-[#A3E6B7] dark:border-[#285A3B]">
+                        Phone &amp; Laptop Live
+                      </span>
+                      <button
+                        onClick={handleManualSync}
+                        disabled={isSyncing}
+                        title="Force sync now with Cloud Firestore"
+                        className="inline-flex items-center gap-1 ml-1 text-xs font-bold text-[#14532D] dark:text-[#86EFAC] hover:underline cursor-pointer"
+                      >
+                        <RefreshCw className={cn("h-3 w-3", isSyncing && "animate-spin")} />
+                        <span className="hidden sm:inline">Sync Now</span>
+                      </button>
+                    </div>
+                  ) : syncStatus === "syncing" || syncStatus === "cached" ? (
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#EFF6FF] text-[#1E3A8A] border border-[#BFDBFE] dark:bg-[#0F1E36] dark:text-[#93C5FD] dark:border-[#1D3557] shadow-xs">
+                      <RefreshCw className="h-3.5 w-3.5 shrink-0 text-[#2563EB] dark:text-[#93C5FD] animate-spin" />
+                      <span className="truncate max-w-[220px] sm:max-w-none">
+                        {syncStatus === "cached"
+                          ? `Connecting Cloud (${firebaseUser.email || "Google Account"})...`
+                          : `Syncing: ${firebaseUser.email || "Google Account"}...`}
+                      </span>
+                      <button
+                        onClick={handleManualSync}
+                        disabled={isSyncing}
+                        title="Verify connection with Cloud Firestore"
+                        className="inline-flex items-center gap-1 ml-1 text-xs font-bold text-[#1E3A8A] dark:text-[#93C5FD] hover:underline cursor-pointer"
+                      >
+                        <span className="hidden sm:inline">Sync Now</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#FFF1F2] text-[#9F1239] border border-[#FECDD3] dark:bg-[#2C1219] dark:text-[#FDA4AF] dark:border-[#5B2130] shadow-xs">
+                      <CloudOff className="h-3.5 w-3.5 shrink-0 text-[#BE123C] dark:text-[#FDA4AF]" />
+                      <span className="truncate max-w-[230px] sm:max-w-none">
+                        {syncError?.title || "Cloud Sync Offline"}:{" "}
+                        <strong className="font-bold">{firebaseUser.email || "Google Account"}</strong>
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider font-extrabold px-1.5 py-0.5 rounded bg-[#FFE4E6] dark:bg-[#451A25] text-[#9F1239] dark:text-[#FDA4AF] border border-[#FECDD3] dark:border-[#6B2638]">
+                        Local Cache Only
+                      </span>
+                      <button
+                        onClick={handleManualSync}
+                        disabled={isSyncing}
+                        title="Retry syncing with Cloud Firestore"
+                        className="inline-flex items-center gap-1 ml-1 text-xs font-bold text-[#9F1239] dark:text-[#FDA4AF] hover:underline cursor-pointer"
+                      >
+                        <RefreshCw className={cn("h-3 w-3", isSyncing && "animate-spin")} />
+                        <span>Retry Sync</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {syncError && (syncStatus === "offline" || syncStatus === "error") && (
+                    <div className="flex items-start gap-2 max-w-2xl p-2.5 px-3 rounded-[10px] text-xs bg-[#FEFCE8] text-[#713F12] border border-[#FEF08A] dark:bg-[#24220F] dark:text-[#FEF08A] dark:border-[#4E4416]">
+                      <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-[#A16207] dark:text-[#FEF08A]" />
+                      <div className="space-y-0.5">
+                        <p className="font-semibold">
+                          {syncError.message}{" "}
+                          <span className="font-mono text-[11px] opacity-80">({syncError.code})</span>
+                        </p>
+                        <p className="text-[11px] opacity-90">{syncError.actionHint}</p>
+                      </div>
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="inline-flex flex-wrap items-center gap-2 p-2 px-3 rounded-[12px] text-xs font-medium bg-[#FEFCE8] text-[#713F12] border border-[#FEF08A] dark:bg-[#24220F] dark:text-[#FEF08A] dark:border-[#4E4416]">
                   <div className="flex items-center gap-1.5">
