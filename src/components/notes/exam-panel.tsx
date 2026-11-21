@@ -5,6 +5,7 @@ import { CalendarDays, Pencil, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Exam, daysLeft, examProgress, examTopicProgress, progressOf, useExams, useNoteTopics } from "@/lib/notes/study";
 import { VaultNote } from "@/lib/notes/vault-types";
+import { getSubject } from "@/lib/notes/curriculum";
 
 export function Bar({ pct, className = "" }: { pct: number; className?: string }) {
   return (
@@ -14,11 +15,15 @@ export function Bar({ pct, className = "" }: { pct: number; className?: string }
   );
 }
 
-function ExamForm({ subjectId, notes, exam, onClose }: { subjectId: string; notes: VaultNote[]; exam?: Exam; onClose: () => void }) {
+export function ExamForm({ subjectId, notes, exam, onClose }: { subjectId?: string; notes: VaultNote[]; exam?: Exam; onClose: () => void }) {
+  const [subj, setSubj] = React.useState(subjectId ?? exam?.subjectId ?? "");
+  const subjectChoices = Array.from(new Set(notes.map((n) => n.courseId)));
+  const shown = notes.filter((n) => n.courseId === subj);
   const { save } = useExams();
   const [name, setName] = React.useState(exam?.name ?? "");
   const [date, setDate] = React.useState(exam?.date ?? "");
   const [picked, setPicked] = React.useState<string[]>(exam?.noteIds ?? []);
+  void shown;
   const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={onClose}>
@@ -26,8 +31,8 @@ function ExamForm({ subjectId, notes, exam, onClose }: { subjectId: string; note
         onClick={(e) => e.stopPropagation()}
         onSubmit={(e) => {
           e.preventDefault();
-          if (!name.trim()) return;
-          save({ id: exam?.id, subjectId, name: name.trim(), date, noteIds: picked, todos: exam?.todos });
+          if (!name.trim() || !subj) return;
+          save({ id: exam?.id, subjectId: subj, name: name.trim(), date, noteIds: picked, todos: exam?.todos });
           onClose();
         }}
         className="w-full max-w-md space-y-4 rounded-2xl border border-app-border bg-app-surface p-5 shadow-2xl"
@@ -38,6 +43,12 @@ function ExamForm({ subjectId, notes, exam, onClose }: { subjectId: string; note
         </div>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Mid-1, Internals, Semester exam" autoFocus
           className="w-full rounded-control border border-app-border bg-app-surface px-3 py-2 text-sm outline-none focus:border-app-accent" />
+        {!subjectId && (
+          <select value={subj} onChange={(e) => { setSubj(e.target.value); setPicked([]); }} className="w-full rounded-control border border-app-border bg-app-surface px-3 py-2 text-sm">
+            <option value="">Choose subject…</option>
+            {subjectChoices.map((id) => (<option key={id} value={id}>{getSubject(id)?.title ?? id}</option>))}
+          </select>
+        )}
         <label className="flex items-center gap-2 text-xs text-app-ink-muted">
           <CalendarDays className="h-3.5 w-3.5" /> Exam date
           <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
@@ -45,8 +56,8 @@ function ExamForm({ subjectId, notes, exam, onClose }: { subjectId: string; note
         <div className="space-y-1">
           <p className="text-xs font-medium text-app-ink">Notes for this exam</p>
           <div className="max-h-52 space-y-1 overflow-y-auto rounded-control border border-app-border p-2">
-            {notes.length === 0 && <p className="text-xs text-app-ink-muted">Add some notes to this subject first.</p>}
-            {notes.map((n) => (
+            {shown.length === 0 && <p className="text-xs text-app-ink-muted">{subj ? "Add some notes to this subject first." : "Choose a subject to see its notes."}</p>}
+            {shown.map((n) => (
               <label key={n.id} className="flex items-center gap-2 rounded px-1 py-1 text-sm text-app-ink hover:bg-app-surface-muted">
                 <input type="checkbox" checked={picked.includes(n.id)} onChange={() => toggle(n.id)} className="h-4 w-4 accent-[var(--accent)]" />
                 <span className="truncate">{n.title}</span>
@@ -54,7 +65,7 @@ function ExamForm({ subjectId, notes, exam, onClose }: { subjectId: string; note
             ))}
           </div>
         </div>
-        <Button type="submit" className="w-full" disabled={!name.trim()}>Save exam</Button>
+        <Button type="submit" className="w-full" disabled={!name.trim() || !subj}>Save exam</Button>
       </form>
     </div>
   );

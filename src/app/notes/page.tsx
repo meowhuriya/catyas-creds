@@ -14,8 +14,8 @@ import {
 } from "@/lib/notes/curriculum";
 import { VAULT_SECTIONS, VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
-import { Bar } from "@/components/notes/exam-panel";
-import { daysLeft, examProgress, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
+import { Bar, ExamForm } from "@/components/notes/exam-panel";
+import { daysLeft, examProgress, examTopicProgress, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
 import { Butterfly, Diamond } from "@/components/brand/butterfly";
 import { SubjectArt } from "@/components/brand/subject-art";
 
@@ -36,10 +36,10 @@ export default function NotesVaultPage() {
   const { topics } = useNoteTopics();
   const { exams } = useExams();
   const overall = sumProgress(notes.map((n) => progressOf(topics[n.id])));
+  const [examForm, setExamForm] = React.useState<boolean>(false);
   const upcoming = exams
     .filter((e) => (daysLeft(e.date) ?? 1) >= 0)
-    .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"))
-    .slice(0, 4);
+    .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"));
 
   React.useEffect(() => {
     setView(loadView());
@@ -150,28 +150,61 @@ export default function NotesVaultPage() {
         </p>
       </div>
 
-      {!q && (overall.total > 0 || upcoming.length > 0) && (
-        <section className="vc-tile grid gap-5 p-5 lg:grid-cols-[1fr_1.4fr]" aria-label="Study progress">
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-app-ink">Overall progress</p>
-            <p className="font-display text-4xl text-app-ink">{overall.pct}%</p>
-            <Bar pct={overall.pct} />
-            <p className="text-xs text-app-ink-muted">{overall.done} of {overall.total} topics done across all your notes</p>
+      {!q && (
+        <section className="space-y-3" aria-label="Study progress">
+          <div className="vc-tile flex flex-wrap items-center gap-5 p-5">
+            <div className="min-w-[200px] flex-1 space-y-2">
+              <p className="text-sm font-semibold text-app-ink">Overall progress</p>
+              <p className="font-display text-4xl text-app-ink">{overall.pct}%</p>
+              <Bar pct={overall.pct} />
+              <p className="text-xs text-app-ink-muted">{overall.done} of {overall.total} topics done across all your notes</p>
+            </div>
+            <button onClick={() => setExamForm(true)} disabled={notes.length === 0} className="rounded-control bg-app-accent px-4 py-2 text-sm font-semibold text-white disabled:opacity-40">+ Add exam</button>
           </div>
-          <div className="space-y-2">
-            <p className="text-sm font-semibold text-app-ink">Upcoming exams</p>
-            {upcoming.length === 0 && <p className="text-xs text-app-ink-muted">Open a subject and add an exam to track it here.</p>}
-            {upcoming.map((e) => {
-              const p = examProgress(e, topics);
-              const left = daysLeft(e.date);
-              return (
-                <Link key={e.id} href={`/notes/${encodeURIComponent(e.subjectId)}`} className="block space-y-1 rounded-control p-1.5 hover:bg-app-surface-muted">
-                  <div className="flex justify-between text-xs"><span className="truncate font-medium text-app-ink">{getSubject(e.subjectId)?.title} · {e.name}</span><span className="shrink-0 text-app-ink-muted">{left === 0 ? "today" : left !== null ? `${left}d` : ""} · {p.pct}%</span></div>
-                  <Bar pct={p.pct} className="h-1" />
-                </Link>
-              );
-            })}
-          </div>
+          {upcoming.length === 0 ? (
+            <p className="text-sm text-app-ink-muted">No exams yet. Add one, tag the notes you need to study, and track it here.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              {upcoming.map((e) => {
+                const exNotes = e.noteIds.map((id) => notes.find((n) => n.id === id)).filter(Boolean) as VaultNote[];
+                const scoped = { ...e, noteIds: exNotes.map((n) => n.id) };
+                const p = examProgress(scoped, topics);
+                const tp = examTopicProgress(scoped, topics);
+                const dp = progressOf(e.todos);
+                const left = daysLeft(e.date);
+                return (
+                  <article key={e.id} className="vc-tile space-y-3 p-4">
+                    <Link href={`/notes/${encodeURIComponent(e.subjectId)}`} className="block">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="truncate font-display text-lg text-app-ink">{getSubject(e.subjectId)?.title} · {e.name}</p>
+                          <p className="text-xs text-app-ink-muted">{left === null ? "No date" : left === 0 ? "Today" : `${left} day${left === 1 ? "" : "s"} left`}{e.date && ` · ${new Date(e.date + "T00:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" })}`}</p>
+                        </div>
+                        <span className="font-display text-2xl text-app-ink">{p.pct}%</span>
+                      </div>
+                      <Bar pct={p.pct} className="mt-2" />
+                      <p className="mt-1 text-[11px] text-app-ink-muted">Topics {tp.done}/{tp.total} · To-do {dp.done}/{dp.total}</p>
+                    </Link>
+                    <ul className="space-y-1.5 border-t border-app-border pt-2">
+                      {exNotes.map((n) => {
+                        const np = progressOf(topics[n.id]);
+                        return (
+                          <li key={n.id}>
+                            <Link href={`/notes/${encodeURIComponent(n.courseId)}`} className="block">
+                              <div className="flex justify-between text-xs"><span className="truncate text-app-ink">{n.title}</span><span className="shrink-0 text-app-ink-muted">{np.total ? `${np.done}/${np.total}` : "no topics yet"}</span></div>
+                              <Bar pct={np.pct} className="mt-0.5 h-1" />
+                            </Link>
+                          </li>
+                        );
+                      })}
+                      {exNotes.length === 0 && <li className="text-xs text-app-ink-muted">No notes tagged yet. Open the subject and edit this exam.</li>}
+                    </ul>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+          {examForm && <ExamForm notes={notes} onClose={() => setExamForm(false)} />}
         </section>
       )}
 
