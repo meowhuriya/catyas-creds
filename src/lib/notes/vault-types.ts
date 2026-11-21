@@ -80,3 +80,32 @@ export function formatBytes(n: number): string {
   if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`;
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
 }
+
+/** Turns a Drive / Docs / YouTube link into an embeddable URL (null = can't embed). */
+export function toEmbedUrl(rawUrl: string): string | null {
+  let u: URL;
+  try {
+    u = new URL(rawUrl);
+  } catch {
+    return null;
+  }
+  const host = u.hostname.replace(/^www\./, "");
+  const path = u.pathname;
+  if (host === "drive.google.com") {
+    const folder = path.match(/\/folders\/([\w-]+)/);
+    if (folder) return `https://drive.google.com/embeddedfolderview?id=${folder[1]}#list`;
+    const file = path.match(/\/file\/d\/([\w-]+)/) ?? null;
+    const id = file?.[1] ?? u.searchParams.get("id");
+    return id ? `https://drive.google.com/file/d/${id}/preview` : null;
+  }
+  if (host === "docs.google.com") {
+    const m = path.match(/^\/(document|spreadsheets|presentation|forms)\/d\/([\w-]+)/);
+    if (!m) return null;
+    return m[1] === "forms"
+      ? `https://docs.google.com/forms/d/${m[2]}/viewform?embedded=true`
+      : `https://docs.google.com/${m[1]}/d/${m[2]}/preview`;
+  }
+  const yt = rawUrl.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+  if (yt && /youtube\.com$|youtu\.be$/.test(host)) return `https://www.youtube.com/embed/${yt[1]}`;
+  return null;
+}
