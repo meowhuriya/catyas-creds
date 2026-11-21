@@ -3,7 +3,7 @@
 import * as React from "react";
 import { CalendarDays, Pencil, Plus, Sparkles, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Exam, daysLeft, examProgress, progressOf, useExams, useNoteTopics } from "@/lib/notes/study";
+import { Exam, daysLeft, examProgress, examTopicProgress, progressOf, useExams, useNoteTopics } from "@/lib/notes/study";
 import { VaultNote } from "@/lib/notes/vault-types";
 
 export function Bar({ pct, className = "" }: { pct: number; className?: string }) {
@@ -27,7 +27,7 @@ function ExamForm({ subjectId, notes, exam, onClose }: { subjectId: string; note
         onSubmit={(e) => {
           e.preventDefault();
           if (!name.trim()) return;
-          save({ id: exam?.id, subjectId, name: name.trim(), date, noteIds: picked });
+          save({ id: exam?.id, subjectId, name: name.trim(), date, noteIds: picked, todos: exam?.todos });
           onClose();
         }}
         className="w-full max-w-md space-y-4 rounded-2xl border border-app-border bg-app-surface p-5 shadow-2xl"
@@ -71,7 +71,8 @@ export function ExamPanel({
   onOpenNote: (id: string) => void;
   onPractice: (notes: VaultNote[]) => void;
 }) {
-  const { exams, remove } = useExams();
+  const { exams, remove, addTodo, toggleTodo, removeTodo } = useExams();
+  const [todoText, setTodoText] = React.useState<Record<string, string>>({});
   const { topics } = useNoteTopics();
   const [form, setForm] = React.useState<{ exam?: Exam } | null>(null);
   const mine = exams.filter((e) => e.subjectId === subjectId).sort((a, b) => (a.date || "9").localeCompare(b.date || "9"));
@@ -88,7 +89,10 @@ export function ExamPanel({
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {mine.map((ex) => {
             const exNotes = ex.noteIds.map((id) => notes.find((n) => n.id === id)).filter(Boolean) as VaultNote[];
-            const p = examProgress({ ...ex, noteIds: exNotes.map((n) => n.id) }, topics);
+            const scoped = { ...ex, noteIds: exNotes.map((n) => n.id) };
+            const p = examProgress(scoped, topics);
+            const tp = examTopicProgress(scoped, topics);
+            const dp = progressOf(ex.todos);
             const left = daysLeft(ex.date);
             return (
               <article key={ex.id} className="vc-tile space-y-3 p-4">
@@ -104,8 +108,32 @@ export function ExamPanel({
                   <button onClick={() => remove(ex.id)} aria-label="Delete exam"><Trash2 className="h-3.5 w-3.5 text-app-ink-muted" /></button>
                 </div>
                 <div>
-                  <div className="mb-1 flex justify-between text-xs text-app-ink-muted"><span>{p.done} of {p.total} topics</span><span className="font-semibold text-app-ink">{p.pct}%</span></div>
+                  <div className="mb-1 flex justify-between text-xs text-app-ink-muted"><span>Exam readiness · {p.done} of {p.total} done</span><span className="font-semibold text-app-ink">{p.pct}%</span></div>
                   <Bar pct={p.pct} />
+                  {left !== null && left > 0 && p.total - p.done > 0 && (
+                    <p className="mt-1 text-[11px] text-app-ink-muted">About {Math.max(1, Math.ceil((p.total - p.done) / left))} item{Math.ceil((p.total - p.done) / left) > 1 ? "s" : ""} a day to finish on time</p>
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-[11px] text-app-ink-muted">
+                  <div><div className="mb-0.5 flex justify-between"><span>Note topics</span><span>{tp.done}/{tp.total}</span></div><Bar pct={tp.pct} className="h-1" /></div>
+                  <div><div className="mb-0.5 flex justify-between"><span>To-do</span><span>{dp.done}/{dp.total}</span></div><Bar pct={dp.pct} className="h-1" /></div>
+                </div>
+                <div className="space-y-1.5 border-t border-app-border pt-3">
+                  <p className="text-xs font-semibold text-app-ink">To-do for this exam</p>
+                  <form onSubmit={(e) => { e.preventDefault(); const t = todoText[ex.id] ?? ""; if (t.trim()) addTodo(ex.id, t); setTodoText((m) => ({ ...m, [ex.id]: "" })); }} className="flex gap-1.5">
+                    <input value={todoText[ex.id] ?? ""} onChange={(e) => setTodoText((m) => ({ ...m, [ex.id]: e.target.value }))} placeholder="e.g. Solve 2022 paper, revise formulas"
+                      className="min-w-0 flex-1 rounded-control border border-app-border bg-app-surface px-2.5 py-1.5 text-sm outline-none focus:border-app-accent" />
+                    <button type="submit" aria-label="Add to-do" className="rounded-control bg-app-accent px-2 text-white"><Plus className="h-4 w-4" /></button>
+                  </form>
+                  <ul className="space-y-0.5">
+                    {(ex.todos ?? []).map((t) => (
+                      <li key={t.id} className="group/row flex items-center gap-2 rounded px-1 py-1 hover:bg-app-surface-muted">
+                        <input type="checkbox" checked={t.done} onChange={() => toggleTodo(ex.id, t.id)} className="h-4 w-4 accent-[var(--accent)]" />
+                        <span className={"flex-1 text-sm " + (t.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{t.text}</span>
+                        <button onClick={() => removeTodo(ex.id, t.id)} aria-label="Remove to-do" className="opacity-0 group-hover/row:opacity-100"><Trash2 className="h-3.5 w-3.5 text-app-ink-muted" /></button>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
                 <ul className="space-y-1.5">
                   {exNotes.map((n) => {

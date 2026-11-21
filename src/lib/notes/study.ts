@@ -19,6 +19,7 @@ export interface Exam {
   name: string;
   date: string; // yyyy-mm-dd
   noteIds: string[];
+  todos?: StudyItem[];
 }
 export interface Progress {
   done: number;
@@ -153,9 +154,32 @@ export function useExams() {
       writeKey(EXAMS_KEY, cur.some((e) => e.id === full.id) ? cur.map((e) => (e.id === full.id ? full : e)) : [...cur, full]);
     },
     remove: (id: string) => writeKey(EXAMS_KEY, readKey(EXAMS_KEY, EMPTY_EXAMS).filter((e) => e.id !== id)),
+    addTodo: (examId: string, text: string) =>
+      writeKey(
+        EXAMS_KEY,
+        readKey(EXAMS_KEY, EMPTY_EXAMS).map((e) => (e.id === examId ? { ...e, todos: mergeItems(e.todos ?? [], [text], false) } : e))
+      ),
+    toggleTodo: (examId: string, id: string) =>
+      writeKey(
+        EXAMS_KEY,
+        readKey(EXAMS_KEY, EMPTY_EXAMS).map((e) =>
+          e.id === examId ? { ...e, todos: (e.todos ?? []).map((t) => (t.id === id ? { ...t, done: !t.done } : t)) } : e
+        )
+      ),
+    removeTodo: (examId: string, id: string) =>
+      writeKey(
+        EXAMS_KEY,
+        readKey(EXAMS_KEY, EMPTY_EXAMS).map((e) => (e.id === examId ? { ...e, todos: (e.todos ?? []).filter((t) => t.id !== id) } : e))
+      ),
   };
 }
 
-export function examProgress(exam: Exam, topics: Record<string, StudyItem[]>): Progress {
+/** Note topics only. */
+export function examTopicProgress(exam: Exam, topics: Record<string, StudyItem[]>): Progress {
   return sumProgress(exam.noteIds.map((id) => progressOf(topics[id])));
+}
+
+/** Note topics + the exam's own to-do list, combined. */
+export function examProgress(exam: Exam, topics: Record<string, StudyItem[]>): Progress {
+  return sumProgress([examTopicProgress(exam, topics), progressOf(exam.todos)]);
 }
