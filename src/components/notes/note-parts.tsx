@@ -123,7 +123,7 @@ export function FileChip({ file, compact }: { file: VaultFileRef; compact?: bool
   );
 }
 
-export function NoteCard({ note, onOpen, onEdit }: { note: VaultNote; onOpen: () => void; onEdit?: () => void }) {
+export function NoteCard({ note, onOpen, onEdit, progress }: { note: VaultNote; onOpen: () => void; onEdit?: () => void; progress?: { done: number; total: number; pct: number } }) {
   const cover = noteCover(note);
   const [coverOk, setCoverOk] = React.useState(true);
   return (
@@ -192,6 +192,12 @@ export function NoteCard({ note, onOpen, onEdit }: { note: VaultNote; onOpen: ()
           {note.links.slice(0, 3).map((l) => (
             <LinkChip key={l.id} link={l} />
           ))}
+        </div>
+      )}
+      {progress && progress.total > 0 && (
+        <div className="space-y-1">
+          <div className="flex justify-between text-[11px] text-app-ink-muted"><span>{progress.done}/{progress.total} topics</span><span>{progress.pct}%</span></div>
+          <div className="h-1 overflow-hidden rounded-full bg-app-surface-muted"><div className="h-full rounded-full bg-app-accent" style={{ width: `${progress.pct}%` }} /></div>
         </div>
       )}
       <p className="mt-auto text-[11px] text-app-ink-muted">

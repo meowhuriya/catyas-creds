@@ -14,6 +14,8 @@ import {
 } from "@/lib/notes/curriculum";
 import { VAULT_SECTIONS, VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
+import { Bar } from "@/components/notes/exam-panel";
+import { daysLeft, examProgress, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
 import { Butterfly, Diamond } from "@/components/brand/butterfly";
 import { SubjectArt } from "@/components/brand/subject-art";
 
@@ -31,6 +33,13 @@ export default function NotesVaultPage() {
   const { notes, ready, syncState, syncError, signedIn } = useVault();
   const [view, setView] = React.useState<{ year: 1 | 2 | 3 | 4; sem: 1 | 2 }>({ year: 1, sem: 1 });
   const [query, setQuery] = React.useState("");
+  const { topics } = useNoteTopics();
+  const { exams } = useExams();
+  const overall = sumProgress(notes.map((n) => progressOf(topics[n.id])));
+  const upcoming = exams
+    .filter((e) => (daysLeft(e.date) ?? 1) >= 0)
+    .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"))
+    .slice(0, 4);
 
   React.useEffect(() => {
     setView(loadView());
@@ -140,6 +149,31 @@ export default function NotesVaultPage() {
               : "Saved on this device only. Sign in to sync."}
         </p>
       </div>
+
+      {!q && (overall.total > 0 || upcoming.length > 0) && (
+        <section className="vc-tile grid gap-5 p-5 lg:grid-cols-[1fr_1.4fr]" aria-label="Study progress">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-app-ink">Overall progress</p>
+            <p className="font-display text-4xl text-app-ink">{overall.pct}%</p>
+            <Bar pct={overall.pct} />
+            <p className="text-xs text-app-ink-muted">{overall.done} of {overall.total} topics done across all your notes</p>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-app-ink">Upcoming exams</p>
+            {upcoming.length === 0 && <p className="text-xs text-app-ink-muted">Open a subject and add an exam to track it here.</p>}
+            {upcoming.map((e) => {
+              const p = examProgress(e, topics);
+              const left = daysLeft(e.date);
+              return (
+                <Link key={e.id} href={`/notes/${encodeURIComponent(e.subjectId)}`} className="block space-y-1 rounded-control p-1.5 hover:bg-app-surface-muted">
+                  <div className="flex justify-between text-xs"><span className="truncate font-medium text-app-ink">{getSubject(e.subjectId)?.title} · {e.name}</span><span className="shrink-0 text-app-ink-muted">{left === 0 ? "today" : left !== null ? `${left}d` : ""} · {p.pct}%</span></div>
+                  <Bar pct={p.pct} className="h-1" />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {q ? (
         <section aria-live="polite" className="space-y-2">
