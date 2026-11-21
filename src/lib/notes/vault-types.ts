@@ -109,3 +109,29 @@ export function toEmbedUrl(rawUrl: string): string | null {
   if (yt && /youtube\.com$|youtu\.be$/.test(host)) return `https://www.youtube.com/embed/${yt[1]}`;
   return null;
 }
+
+export function driveFileId(rawUrl: string): string | null {
+  try {
+    const u = new URL(rawUrl);
+    const host = u.hostname.replace(/^www\./, "");
+    if (host !== "drive.google.com" && host !== "docs.google.com") return null;
+    if (/\/folders\//.test(u.pathname)) return null;
+    return u.pathname.match(/\/d\/([\w-]+)/)?.[1] ?? u.searchParams.get("id");
+  } catch {
+    return null;
+  }
+}
+
+/** First-page thumbnail Drive generates for a shared file (null for folders/other links). */
+export function driveThumb(rawUrl: string, width = 640): string | null {
+  const id = driveFileId(rawUrl);
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w${width}` : null;
+}
+
+export function noteCover(note: Pick<VaultNote, "links">): string | null {
+  for (const l of note.links) {
+    const t = l.kind === "video" ? youTubeThumb(l.url) : driveThumb(l.url);
+    if (t) return t;
+  }
+  return null;
+}

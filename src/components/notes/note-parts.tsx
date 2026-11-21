@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Download, ExternalLink, Eye, FileText, Link2, Loader2, Paperclip, Pin, Presentation, Play } from "lucide-react";
+import { Download, ExternalLink, Eye, Pencil, FileText, Link2, Loader2, Paperclip, Pin, Presentation, Play } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { downloadVaultFile, getUploadProgress, subscribeUploads } from "@/lib/notes/vault-files";
 import { useMediaUrl } from "@/lib/notes/use-vault";
-import { VaultFileRef, VaultLink, VaultNote, formatBytes, toEmbedUrl, youTubeThumb } from "@/lib/notes/vault-types";
+import { VaultFileRef, VaultLink, VaultNote, formatBytes, noteCover, toEmbedUrl, youTubeThumb } from "@/lib/notes/vault-types";
 import { useToast } from "@/components/ui/toast";
 import { LinkViewer } from "@/components/notes/link-viewer";
 import { cn } from "@/lib/utils";
@@ -123,7 +123,9 @@ export function FileChip({ file, compact }: { file: VaultFileRef; compact?: bool
   );
 }
 
-export function NoteCard({ note, onOpen }: { note: VaultNote; onOpen: () => void }) {
+export function NoteCard({ note, onOpen, onEdit }: { note: VaultNote; onOpen: () => void; onEdit?: () => void }) {
+  const cover = noteCover(note);
+  const [coverOk, setCoverOk] = React.useState(true);
   return (
     <article
       role="button"
@@ -135,8 +137,32 @@ export function NoteCard({ note, onOpen }: { note: VaultNote; onOpen: () => void
           onOpen();
         }
       }}
-      className="group vc-tile vc-notch flex cursor-pointer flex-col gap-3 p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent"
+      className="group vc-tile vc-notch relative flex cursor-pointer flex-col gap-3 overflow-hidden p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent"
     >
+      {cover && coverOk && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={cover}
+          alt=""
+          loading="lazy"
+          referrerPolicy="no-referrer"
+          onError={() => setCoverOk(false)}
+          className="-mx-5 -mt-5 mb-1 h-40 w-[calc(100%+2.5rem)] max-w-none border-b border-app-border bg-app-surface-muted object-cover object-top"
+        />
+      )}
+      {onEdit && (
+        <button
+          type="button"
+          aria-label="Edit note"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+          }}
+          className="absolute right-3 top-3 z-10 rounded-full border border-app-border bg-app-surface/90 p-1.5 text-app-ink-muted opacity-0 shadow-sm transition-opacity hover:text-app-ink group-hover:opacity-100 focus-visible:opacity-100"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+      )}
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-display text-xl leading-snug text-app-ink line-clamp-2">{note.title}</h3>
         {note.pinned && <Pin className="h-4 w-4 shrink-0 fill-[var(--color-eyebrow)] text-[var(--color-eyebrow)]" aria-label="Pinned" />}

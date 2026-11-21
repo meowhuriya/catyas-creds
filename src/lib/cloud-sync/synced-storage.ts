@@ -35,6 +35,7 @@ export const SYNCED_KEYS = [
   "vc_accent",
   "valeria_sound_enabled",
   "valeria_sound_volume",
+  "vc_study_v1",
 ] as const;
 
 export const CLOUD_SYNC_EVENT = "cloud-sync:update";

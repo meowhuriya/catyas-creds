@@ -6,6 +6,10 @@ import { useParams } from "next/navigation";
 import { ArrowLeft, Cloud, CloudOff, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NoteCard } from "@/components/notes/note-parts";
+import { NoteReader } from "@/components/notes/note-reader";
+import { PracticeDialog } from "@/components/notes/practice-dialog";
+import { StudyPanel } from "@/components/notes/study-panel";
+import { useStudy } from "@/lib/notes/study";
 import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { useVault } from "@/lib/notes/use-vault";
 import { YEAR_LABELS, getSubject, subjectColor } from "@/lib/notes/curriculum";
@@ -22,11 +26,15 @@ export default function SubjectNotesPage() {
   const [section, setSection] = React.useState<VaultSection>("exam");
   const [editing, setEditing] = React.useState<VaultNote | null>(null);
   const [editorOpen, setEditorOpen] = React.useState(false);
+  const [readingId, setReadingId] = React.useState<string | null>(null);
+  const [practice, setPractice] = React.useState<{ noteId?: string } | null>(null);
+  const study = useStudy(subjectId);
 
   const mine = vault.notes.filter((n) => n.courseId === subjectId);
   const visible = mine
     .filter((n) => n.section === section)
     .sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt));
+  const reading = mine.find((n) => n.id === readingId) ?? null;
   const active = VAULT_SECTIONS.find((s) => s.key === section)!;
 
   if (!subject) {
@@ -70,6 +78,8 @@ export default function SubjectNotesPage() {
           </Button>
         </div>
       </header>
+
+      <StudyPanel subjectId={subjectId} study={study} onPractice={() => setPractice({})} />
 
       <div className="flex gap-6 overflow-x-auto border-b border-[rgba(60,40,110,0.08)]" role="tablist" aria-label="Sections">
         {VAULT_SECTIONS.map((s) => {
@@ -124,7 +134,8 @@ export default function SubjectNotesPage() {
             <NoteCard
               key={n.id}
               note={n}
-              onOpen={() => {
+              onOpen={() => setReadingId(n.id)}
+              onEdit={() => {
                 setEditing(n);
                 setEditorOpen(true);
               }}
@@ -141,6 +152,31 @@ export default function SubjectNotesPage() {
             ? "Synced with your Google account"
             : "Saved on this device only. Sign in to sync."}
       </p>
+
+      {reading && (
+        <NoteReader
+          note={reading}
+          onClose={() => setReadingId(null)}
+          onEdit={() => {
+            setEditing(reading);
+            setReadingId(null);
+            setEditorOpen(true);
+          }}
+          onPractice={() => {
+            setPractice({ noteId: reading.id });
+            setReadingId(null);
+          }}
+        />
+      )}
+      {practice && (
+        <PracticeDialog
+          subjectTitle={subject.title}
+          notes={mine}
+          startNoteId={practice.noteId}
+          onClose={() => setPractice(null)}
+          onAddWeak={(topics) => study.addItems(topics.map((t) => `Revise: ${t}`), true)}
+        />
+      )}
 
       <NoteEditorDialog
         open={editorOpen}
