@@ -97,7 +97,7 @@ export function WeeklyTimetableView({
       <div className="academic-card p-5 sm:p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)]/80">
           <div>
-            <span className="eyebrow-label text-[#8A1627] block mb-1">
+            <span className="eyebrow-label text-[#A82E46] block mb-1">
               WEEKLY CLASS TIMETABLE
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -116,7 +116,7 @@ export function WeeklyTimetableView({
               className="text-xs h-8 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#14161F] dark:text-[#F6EBD3]"
               title="Populate with standard Year 1 schedule"
             >
-              <RotateCcw className="h-3.5 w-3.5 text-[#8A1627]" />
+              <RotateCcw className="h-3.5 w-3.5 text-[#A82E46]" />
               <span>Standard Schedule</span>
             </Button>
 
@@ -125,7 +125,7 @@ export function WeeklyTimetableView({
                 variant="outline"
                 size="sm"
                 onClick={handleClearAll}
-                className="text-xs h-8 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#C62F3C] hover:bg-[#C62F3C]/10"
+                className="text-xs h-8 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#D9485F] hover:bg-[#D9485F]/10"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>Clear</span>
@@ -135,7 +135,7 @@ export function WeeklyTimetableView({
             <Button
               size="sm"
               onClick={() => handleOpenAdd(1)}
-              className="text-xs h-8 gap-1.5 bg-[#A51C30] hover:bg-[#8A1627] text-white"
+              className="text-xs h-8 gap-1.5 bg-[#C93A55] hover:bg-[#A82E46] text-white"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>Add Class Slot</span>
@@ -146,7 +146,7 @@ export function WeeklyTimetableView({
         {/* Timetable Summary Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
           <div className="p-3 rounded-[12px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-            <span className="eyebrow-label text-[#8A1627] text-[10px] block mb-0.5">
+            <span className="eyebrow-label text-[#A82E46] text-[10px] block mb-0.5">
               TOTAL CLASS PERIODS
             </span>
             <span className="font-serif text-2xl font-bold text-[#14161F] dark:text-[#F6EBD3] tabular-nums">
@@ -158,7 +158,7 @@ export function WeeklyTimetableView({
           </div>
 
           <div className="p-3 rounded-[12px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-            <span className="eyebrow-label text-[#8A1627] text-[10px] block mb-0.5">
+            <span className="eyebrow-label text-[#A82E46] text-[10px] block mb-0.5">
               ACTIVE COURSES
             </span>
             <span className="font-serif text-2xl font-bold text-[#14161F] dark:text-[#F6EBD3] tabular-nums">
@@ -170,7 +170,7 @@ export function WeeklyTimetableView({
           </div>
 
           <div className="p-3 rounded-[12px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-            <span className="eyebrow-label text-[#8A1627] text-[10px] block mb-0.5">
+            <span className="eyebrow-label text-[#A82E46] text-[10px] block mb-0.5">
               LAB SESSIONS
             </span>
             <span className="font-serif text-2xl font-bold text-[#1C5C62] dark:text-[#52ADB5] tabular-nums">
@@ -182,7 +182,7 @@ export function WeeklyTimetableView({
           </div>
 
           <div className="p-3 rounded-[12px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-            <span className="eyebrow-label text-[#8A1627] text-[10px] block mb-0.5">
+            <span className="eyebrow-label text-[#A82E46] text-[10px] block mb-0.5">
               DAILY AVERAGE
             </span>
             <span className="font-serif text-2xl font-bold text-[#3E5C3C] dark:text-[#78A875] tabular-nums">
@@ -206,7 +206,7 @@ export function WeeklyTimetableView({
               key={day.id}
               className={`rounded-[14px] border overflow-hidden flex flex-col transition-all shadow-sm ${
                 isToday
-                  ? "bg-[#FFFFFF] dark:bg-[#1A1214] border-[#A51C30]/50 ring-1 ring-[#A51C30]/20"
+                  ? "bg-[#FFFFFF] dark:bg-[#1A1214] border-[#C93A55]/50 ring-1 ring-[#C93A55]/20"
                   : "bg-[#FFFFFF] dark:bg-[#1A1214] border-[#E4D9C0] dark:border-[#3D2D31]"
               }`}
             >
@@ -214,7 +214,7 @@ export function WeeklyTimetableView({
               <div
                 className={`p-3.5 border-b flex items-center justify-between ${
                   isToday
-                    ? "bg-[#A51C30]/10 border-[#A51C30]/30"
+                    ? "bg-[#C93A55]/10 border-[#C93A55]/30"
                     : "bg-[#FBF6EC] dark:bg-[#221A1C] border-[#E4D9C0] dark:border-[#3D2D31]"
                 }`}
               >
@@ -224,7 +224,7 @@ export function WeeklyTimetableView({
                       {day.name}
                     </span>
                     {isToday && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#A51C30] animate-pulse" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#C93A55] animate-pulse" />
                     )}
                   </div>
                   <span className="text-[10px] font-sans font-semibold text-[#4B5160] dark:text-[#D1C7B7]">
@@ -235,7 +235,7 @@ export function WeeklyTimetableView({
                 <button
                   type="button"
                   onClick={() => handleOpenAdd(day.id)}
-                  className="p-1 rounded-[6px] hover:bg-black/5 dark:hover:bg-white/5 text-[#8A1627] transition-colors cursor-pointer"
+                  className="p-1 rounded-[6px] hover:bg-black/5 dark:hover:bg-white/5 text-[#A82E46] transition-colors cursor-pointer"
                   title={`Add class slot on ${day.name}`}
                 >
                   <Plus className="h-3.5 w-3.5" />
@@ -256,7 +256,7 @@ export function WeeklyTimetableView({
                       <div
                         key={slot.id}
                         onClick={() => handleOpenEdit(slot)}
-                        className={`p-3 rounded-[10px] border transition-all cursor-pointer text-left hover:shadow-md hover:border-[#A51C30]/40 ${
+                        className={`p-3 rounded-[10px] border transition-all cursor-pointer text-left hover:shadow-md hover:border-[#C93A55]/40 ${
                           slot.isCurrent
                             ? "bg-[#5E7B5B]/10 border-[#5E7B5B]/40 ring-1 ring-[#5E7B5B]/30"
                             : "bg-[#FBF6EC] dark:bg-[#221A1C] border-[#E4D9C0] dark:border-[#3D2D31]"
@@ -290,7 +290,7 @@ export function WeeklyTimetableView({
                         {/* Course Code & Title */}
                         {c && (
                           <div className="mb-1.5">
-                            <span className="font-sans text-[11px] font-bold uppercase tracking-wider text-[#A51C30] block">
+                            <span className="font-sans text-[11px] font-bold uppercase tracking-wider text-[#C93A55] block">
                               {c.code}
                             </span>
                             <h4 className="font-serif text-xs font-bold text-[#14161F] dark:text-[#F6EBD3] leading-snug line-clamp-2">
@@ -301,7 +301,7 @@ export function WeeklyTimetableView({
 
                         {/* Room Location */}
                         <div className="flex items-center gap-1 text-[10px] font-sans font-medium text-[#4B5160] dark:text-[#D1C7B7] mt-1 pt-1 border-t border-[#E4D9C0]/50 dark:border-[#3D2D31]/50">
-                          <MapPin className="h-2.5 w-2.5 text-[#8A1627] shrink-0" />
+                          <MapPin className="h-2.5 w-2.5 text-[#A82E46] shrink-0" />
                           <span className="truncate">{slot.room || "Room 101"}</span>
                         </div>
                       </div>
@@ -329,9 +329,9 @@ export function WeeklyTimetableView({
                 onClick={() => setMobileDay(d.id)}
                 className={`flex-1 min-w-[56px] py-1.5 px-2 rounded-[8px] text-xs font-sans font-semibold transition-all text-center cursor-pointer ${
                   isSelected
-                    ? "bg-[#A51C30] text-white shadow-xs font-bold"
+                    ? "bg-[#C93A55] text-white shadow-xs font-bold"
                     : isToday
-                    ? "bg-white dark:bg-[#1A1214] text-[#A51C30] border border-[#A51C30]/30"
+                    ? "bg-white dark:bg-[#1A1214] text-[#C93A55] border border-[#C93A55]/30"
                     : "text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F]"
                 }`}
               >
@@ -357,7 +357,7 @@ export function WeeklyTimetableView({
             <Button
               size="sm"
               onClick={() => handleOpenAdd(mobileDay)}
-              className="text-xs h-7 gap-1 bg-[#A51C30] hover:bg-[#8A1627] text-white"
+              className="text-xs h-7 gap-1 bg-[#C93A55] hover:bg-[#A82E46] text-white"
             >
               <Plus className="h-3 w-3" />
               <span>Add</span>
@@ -381,7 +381,7 @@ export function WeeklyTimetableView({
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-sans text-xs font-bold text-[#A51C30]">
+                        <span className="font-sans text-xs font-bold text-[#C93A55]">
                           {c?.code || "COURSE"}
                         </span>
                         <span className="text-[10px] uppercase font-bold px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 text-[#4B5160] dark:text-[#D1C7B7]">
@@ -405,7 +405,7 @@ export function WeeklyTimetableView({
                         </span>
                         <span>•</span>
                         <span className="flex items-center gap-1 truncate">
-                          <MapPin className="h-3 w-3 text-[#8A1627]" />
+                          <MapPin className="h-3 w-3 text-[#A82E46]" />
                           <span>{slot.room || "Room 101"}</span>
                         </span>
                       </div>

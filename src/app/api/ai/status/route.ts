@@ -7,6 +7,8 @@ export async function GET(req: Request) {
   return NextResponse.json({
     configured: isConfigured,
     model: GEMINI_MODEL,
-    message: "Gemini API is ready",
+    message: isConfigured
+      ? "Gemini API is ready"
+      : "Set GEMINI_API_KEY in .env.local to enable AI features",
   });
 }

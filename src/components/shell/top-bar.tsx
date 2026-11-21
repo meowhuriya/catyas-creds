@@ -20,7 +20,7 @@ import {
 import { useDataStore } from "@/lib/repository";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { SoundControlPopover } from "./sound-control-popover";
-import { ThemeSwitcher } from "./theme-switcher";
+import { AppearanceControl } from "./appearance-control";
 import { useSound } from "@/lib/sound-engine";
 import { Button } from "@/components/ui/button";
 import {
@@ -134,42 +134,37 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
 
   return (
     <>
-      <header className="h-14 w-full bg-app-surface border border-app-border rounded-[18px] shadow-sm px-4 md:px-5 flex items-center justify-between gap-3 min-w-0">
+      <header className="vc-topbar h-14 w-full px-3 md:px-4 flex items-center justify-between gap-3 min-w-0 [&_nav]:font-sans [&_nav]:uppercase [&_nav]:tracking-[0.14em] [&_nav]:text-[11px]">
         {/* Left: Breadcrumbs */}
         <div className="flex items-center gap-2.5 shrink-0 min-w-0">
           <Breadcrumbs items={breadcrumbItems} />
         </div>
 
-        {/* Centre: Command / Search Trigger */}
-        <div className="flex-1 max-w-xs md:max-w-sm mx-2 hidden md:block min-w-0">
+        <div className="flex-1" />
+
+        {/* Right Controls */}
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={onOpenCommand}
-            className="flex h-8.5 w-full items-center justify-between rounded-control border border-app-border bg-app-surface-muted/60 px-3 text-xs text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink transition-colors min-w-0"
+            aria-label="Search (Command K)"
+            title="Search  ⌘K"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink"
           >
-            <div className="flex items-center gap-2 min-w-0 truncate">
-              <Search className="h-3.5 w-3.5 shrink-0" />
-              <span className="truncate whitespace-nowrap text-xs">Search courses, lessons...</span>
-            </div>
-            <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded border border-app-border bg-app-surface px-1.5 py-0.5 font-sans font-semibold text-[10px] text-app-ink-muted shrink-0 ml-2">
-              <span className="text-[9px]">⌘</span>K
-            </kbd>
+            <Search className="h-[18px] w-[18px]" />
           </button>
-        </div>
 
-        {/* Right Controls */}
-        <div className="flex items-center gap-2">
           {/* Term Switcher Popover */}
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                className="text-xs h-8 gap-1.5 font-medium px-2.5"
+                className="text-xs h-9 gap-1.5 font-medium px-2.5 rounded-xl"
               >
                 <Calendar className="h-3.5 w-3.5 text-app-accent" />
                 <span className="font-sans font-semibold text-xs whitespace-nowrap">
-                  {currentTerm?.name?.includes("2") ? "Sem 2 · 2025-26" : "Sem 1 · 2025-26"}
+                  {currentTerm?.name?.includes("2") ? "Sem 2" : "Sem 1"}
                 </span>
                 <ChevronDown className="h-3 w-3 text-app-ink-muted" />
               </Button>
@@ -200,31 +195,26 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
             </PopoverContent>
           </Popover>
 
+          <AppearanceControl />
+
           {/* Sound & Focus Ambience Popover */}
           <SoundControlPopover />
-
-          {/* 1-Click Multi-Theme Engine Switcher */}
-          <ThemeSwitcher />
 
           {/* Account Menu */}
           <Popover>
             <PopoverTrigger asChild>
-              <button className="flex h-8 items-center gap-2 rounded-control border border-app-border bg-app-surface px-2 text-xs text-app-ink hover:bg-app-surface-muted transition-colors">
+              <button className="ml-1 flex h-9 items-center rounded-full p-0.5 hover:ring-2 hover:ring-app-accent/30" aria-label="Account menu">
                 {photoURL ? (
                   <img
                     src={photoURL}
                     alt={displayName}
-                    className="h-5 w-5 rounded-full object-cover"
+                    className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#A51C30] dark:bg-[#8A1627] text-[11px] font-bold text-white">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#C93A55] text-sm font-bold text-white">
                     {initial}
                   </div>
                 )}
-                <span className="hidden md:inline font-medium">
-                  {displayName}
-                </span>
-                <ChevronDown className="h-3 w-3 text-app-ink-muted" />
               </button>
             </PopoverTrigger>
             <PopoverContent align="end" className="w-64 p-2">

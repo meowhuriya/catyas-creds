@@ -66,7 +66,7 @@ export default function MasteryTopicPage() {
   if (!course || !topic) {
     return (
       <div className="p-8 text-center space-y-4">
-        <h2 className="text-xl font-serif font-bold text-[#8A1627]">Topic Not Found</h2>
+        <h2 className="text-xl font-serif font-bold text-[#A82E46]">Topic Not Found</h2>
         <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB]">
           The requested syllabus topic could not be resolved.
         </p>
@@ -84,15 +84,15 @@ export default function MasteryTopicPage() {
     <div className="max-w-4xl mx-auto space-y-5 py-2">
       {/* Breadcrumb Navigation (Solid cream surface pill) */}
       <div className="px-4 py-2 rounded-[12px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-xs w-fit flex items-center gap-2 text-xs text-[#4B5160] dark:text-[#CFC8BB] flex-wrap">
-        <Link href="/courses" className="hover:text-[#8A1627] hover:underline font-medium">
+        <Link href="/courses" className="hover:text-[#A82E46] hover:underline font-medium">
           Courses
         </Link>
         <ChevronRight className="h-3 w-3" />
-        <Link href={`/courses/${course.id}`} className="hover:text-[#8A1627] hover:underline font-medium">
+        <Link href={`/courses/${course.id}`} className="hover:text-[#A82E46] hover:underline font-medium">
           {course.code}
         </Link>
         <ChevronRight className="h-3 w-3" />
-        <span className="font-semibold text-[#8A1627] dark:text-[#F07B88]">
+        <span className="font-semibold text-[#A82E46] dark:text-[#F48FA0]">
           Mastery Check
         </span>
       </div>

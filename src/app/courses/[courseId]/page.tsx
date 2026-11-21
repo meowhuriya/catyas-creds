@@ -604,14 +604,14 @@ export default function CourseDetailPage() {
               onClick={() => setActiveTab("attendance")}
               className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] border text-[11px] font-sans font-semibold transition-colors cursor-pointer ${
                 attStats.isBelowLimit
-                  ? "bg-[#C62F3C]/10 text-[#C62F3C] border-[#C62F3C]/30 hover:bg-[#C62F3C]/20"
+                  ? "bg-[#D9485F]/10 text-[#D9485F] border-[#D9485F]/30 hover:bg-[#D9485F]/20"
                   : "bg-[var(--color-surface-muted)] text-[var(--color-ink)] border-[var(--color-border)] hover:bg-[var(--color-surface)]"
               }`}
               title="Click to view and manage attendance records"
             >
               {attStats.isBelowLimit ? (
                 <>
-                  <AlertTriangle className="h-3 w-3 text-[#C62F3C]" />
+                  <AlertTriangle className="h-3 w-3 text-[#D9485F]" />
                   <span>{attStats.currentPercentage}% Att. (Below {attStats.minimumPercentage}% limit)</span>
                 </>
               ) : (
@@ -632,7 +632,7 @@ export default function CourseDetailPage() {
               className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] border text-[11px] font-sans font-semibold transition-colors cursor-pointer bg-[var(--color-surface-muted)] text-[var(--color-ink)] border-[var(--color-border)] hover:bg-[var(--color-surface)]"
               title="Click to view and manage exam preparation targets"
             >
-              <Calendar className="h-3 w-3 text-[#A51C30]" />
+              <Calendar className="h-3 w-3 text-[#C93A55]" />
               <span>
                 {courseExamDate
                   ? `Exam: ${courseExamDate.date} (${courseExamDate.examTitle})`
@@ -719,7 +719,7 @@ export default function CourseDetailPage() {
       <div className="rounded-[16px] border border-app-border bg-app-surface p-4 sm:p-5 shadow-sm space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Brain className="h-4 w-4 text-[#A51C30]" />
+            <Brain className="h-4 w-4 text-[#C93A55]" />
             <h3 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3]">
               Exam Readiness Forecast & Recall Style
             </h3>
@@ -803,14 +803,14 @@ export default function CourseDetailPage() {
           <TabsTrigger value="exam-prep" className="gap-1.5">
             <span>Exam Prep</span>
             {courseExamDate && (
-              <span className="h-1.5 w-1.5 rounded-full bg-[#A51C30]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#C93A55]" />
             )}
           </TabsTrigger>
           <TabsTrigger value="classwork">Classwork & Modules</TabsTrigger>
           <TabsTrigger value="attendance" className="gap-1.5">
             <span>Attendance</span>
             {attStats.isBelowLimit && (
-              <span className="h-2 w-2 rounded-full bg-[#C62F3C] animate-pulse" />
+              <span className="h-2 w-2 rounded-full bg-[#D9485F] animate-pulse" />
             )}
           </TabsTrigger>
           <TabsTrigger value="grades">Gradebook</TabsTrigger>
@@ -835,7 +835,7 @@ export default function CourseDetailPage() {
                 <div className="academic-card p-5">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <span className="eyebrow-label text-[#8A1627] block mb-1">
+                      <span className="eyebrow-label text-[#A82E46] block mb-1">
                         {course.code} · UNIT {activeUnit.unitNumber || 1}
                       </span>
                       <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -851,7 +851,7 @@ export default function CourseDetailPage() {
                         className="btn-secondary text-xs py-1.5 px-3 inline-flex items-center gap-1.5 shrink-0"
                         title={`Search YouTube for ${course.title} ${cleanSyllabusTitle(activeUnit.title)}`}
                       >
-                        <Search className="h-3.5 w-3.5 text-[#8A1627]" />
+                        <Search className="h-3.5 w-3.5 text-[#A82E46]" />
                         <span>Find videos</span>
                       </a>
 
@@ -867,7 +867,7 @@ export default function CourseDetailPage() {
                         }
                         size={36}
                         strokeWidth={3.5}
-                        color="#A51C30"
+                        color="#C93A55"
                         showText={false}
                       />
                       <span className="text-sm font-semibold text-[#14161F] dark:text-[#F6EBD3] tabular-nums">
@@ -879,7 +879,7 @@ export default function CourseDetailPage() {
                   {/* Thin full-width progress bar */}
                   <div className="h-1 w-full bg-[#E5D5C5]/50 rounded-full overflow-hidden mt-4">
                     <div
-                      className="h-full bg-[#A51C30] transition-all"
+                      className="h-full bg-[#C93A55] transition-all"
                       style={{
                         width: `${
                           activeUnitTopics.length > 0

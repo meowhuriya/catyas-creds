@@ -11,9 +11,11 @@ import { CelebrationOverlay } from "@/components/ui/CelebrationOverlay";
 import { useToast } from "@/components/ui/toast";
 import { useDataStore } from "@/lib/repository";
 import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@/lib/appearance";
+import { onCloudSyncUpdate } from "@/lib/cloud-sync/synced-storage";
 import { validateSeedTotals } from "@/lib/syllabus/seed-loader";
 import { SoundEngine } from "@/lib/sound-engine";
 import { Loader2, Info } from "lucide-react";
+import { TiltFx } from "@/components/fx/tilt-fx";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -31,6 +33,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => {
       detachSound();
     };
+  }, []);
+
+  React.useEffect(() => {
+    // Re-apply appearance when another signed-in device changes it
+    return onCloudSyncUpdate("valerias_appearance_settings_v2", () => {
+      const synced = loadSavedAppearance();
+      getCustomWallpaper().then((img) => applyAppearanceToDOM(synced, img));
+    });
   }, []);
 
   React.useEffect(() => {
@@ -83,7 +93,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   // Login page has its own standalone full-screen layout
   if (pathname === "/login") {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+      </>
+    );
   }
 
   // Public verification route bypasses auth checks and app shell
@@ -96,7 +110,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 select-none">
         <div className="p-8 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] text-center space-y-3 shadow-xl">
-          <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#A51C30]" />
+          <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#C93A55]" />
           <p className="text-xs font-medium text-app-ink">Checking session...</p>
         </div>
       </div>
@@ -108,7 +122,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 select-none">
         <div className="p-8 rounded-[18px] bg-app-surface border border-app-border text-center space-y-3 shadow-xl">
-          <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#A51C30]" />
+          <Loader2 className="h-6 w-6 animate-spin mx-auto text-[#C93A55]" />
           <p className="text-xs font-medium text-app-ink">Redirecting to sign in...</p>
         </div>
       </div>
@@ -140,7 +154,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <main
           id="main-content"
-          className="flex-1 px-4 pt-6 md:px-8 max-w-content w-full mx-auto pb-24 md:pb-12 space-y-4"
+          className="flex-1 px-4 pt-4 md:px-10 max-w-[1280px] w-full mx-auto pb-24 md:pb-12 space-y-4"
         >
           {/* Demo Mode Banner when Firebase is not configured */}
           {isDemo && (
@@ -155,37 +169,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
           )}
 
-          {children}
+          <div key={pathname} className="fade-up space-y-4">
+            {children}
+          </div>
 
-          {/* Academic Portal Footer (Solid panel) */}
-          <footer className="mt-12 rounded-[18px] bg-app-surface border border-app-border p-4 text-xs text-app-ink-muted flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm no-print">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-semibold text-app-ink">Valeria's Creds</span>
-              <span>·</span>
-              <span>Self-awarded credits. Not accredited by any institution.</span>
-            </div>
-            <div className="flex items-center gap-4 text-app-ink-muted">
-              <a
-                href="https://www.youtube.com/t/terms"
-                target="_blank"
-                rel="noreferrer"
-                className="hover:underline hover:text-app-ink transition-colors font-medium"
-              >
-                YouTube Terms of Service
-              </a>
-              <span>·</span>
-              <a
-                href="https://policies.google.com/privacy"
-                target="_blank"
-                rel="noreferrer"
-                className="hover:underline hover:text-app-ink transition-colors font-medium"
-              >
-                Google Privacy Policy
-              </a>
-            </div>
+          <footer className="mt-16 flex flex-col sm:flex-row items-center justify-between gap-2 px-1 text-[11px] text-app-ink-muted no-print">
+            <span className="font-sans uppercase tracking-[0.14em]">Valeria&apos;s Creds</span>
+            <span className="flex items-center gap-3">
+              <a href="https://www.youtube.com/t/terms" target="_blank" rel="noreferrer" className="hover:text-app-ink">YouTube Terms</a>
+              <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="hover:text-app-ink">Google Privacy</a>
+            </span>
           </footer>
         </main>
       </div>
+
+      <TiltFx />
 
       {/* Mobile Bottom Tab Bar */}
       <MobileTabBar />

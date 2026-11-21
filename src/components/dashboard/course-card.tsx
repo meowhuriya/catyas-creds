@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { Course, LessonProgress, Assessment, Module, Topic, CourseAttendance, ExamDate } from "@/types/schemas";
-import { AlgorithmicCover } from "@/components/dashboard/algorithmic-cover";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { SubjectArt } from "@/components/brand/subject-art";
+import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { ArrowRight, BookOpen, AlertTriangle, Calendar } from "lucide-react";
 import { cleanSyllabusTitle } from "@/lib/utils";
 import { calculateAttendanceStats } from "@/lib/attendance/attendance-engine";
@@ -62,15 +63,13 @@ export function CourseCard({
     : "Unit 1: Foundations & Core Concepts";
 
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden academic-card academic-card-hover select-none">
-      {/* Top Algorithmic Cover Art (96px height) */}
-      <Link href={`/courses/${course.id}`} className="block focus:outline-none">
-        <AlgorithmicCover
-          courseCode={course.code}
-          courseTitle={cleanSyllabusTitle(course.title)}
-          department={course.department}
-          colorTag={course.colorTag}
-          height={96}
+    <div className="group vc-tile vc-notch relative flex flex-col justify-between overflow-hidden select-none">
+      <Link href={`/courses/${course.id}`} className="block focus:outline-none" aria-label={course.title}>
+        <SubjectArt
+          code={course.code}
+          title={course.title}
+          hue={TOKENS.colors.courseTags[course.colorTag as CourseTagKey]?.hex || TOKENS.colors.courseTags.slate.hex}
+          label={course.department}
         />
       </Link>
 
@@ -79,14 +78,14 @@ export function CourseCard({
         <div>
           {/* Header row: Course Code & Credits Chip & Attendance Badge (No monospace font) */}
           <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="font-sans text-xs font-bold uppercase tracking-wider text-[var(--color-accent)]">
+            <span className="font-sans text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--color-ink-muted)]">
               {course.code}
             </span>
             <div className="flex items-center gap-1.5">
               {daysUntilExam !== null && daysUntilExam >= 0 && (
                 <span
                   title={`${examDate?.examTitle || "Exam"} in ${daysUntilExam} days (${examDate?.date})`}
-                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#A51C30]/10 border border-[#A51C30]/30 text-[11px] font-sans font-semibold text-[#A51C30]"
+                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#C93A55]/10 border border-[#C93A55]/30 text-[11px] font-sans font-semibold text-[#C93A55]"
                 >
                   <Calendar className="h-2.5 w-2.5" />
                   <span>{daysUntilExam === 0 ? "Exam Today" : `Exam: ${daysUntilExam}d`}</span>
@@ -96,7 +95,7 @@ export function CourseCard({
                 attStats.isBelowLimit ? (
                   <span
                     title={`Attendance is ${attStats.currentPercentage}% - below required ${attStats.minimumPercentage}%`}
-                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#C62F3C]/10 border border-[#C62F3C]/30 text-[11px] font-sans font-semibold text-[#C62F3C]"
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#D9485F]/10 border border-[#D9485F]/30 text-[11px] font-sans font-semibold text-[#D9485F]"
                   >
                     <AlertTriangle className="h-2.5 w-2.5" />
                     <span>{attStats.currentPercentage}% Att.</span>
@@ -110,14 +109,14 @@ export function CourseCard({
                   </span>
                 )
               )}
-              <span className="inline-flex items-center px-2 py-0.5 rounded-[4px] bg-[var(--color-surface-muted)] border border-[var(--color-border)] text-xs font-sans font-semibold text-[var(--color-ink)] tabular-nums">
+              <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-sans uppercase tracking-[0.14em] font-semibold text-[var(--color-ink-muted)] tabular-nums">
                 {course.credits} Credits
               </span>
             </div>
           </div>
 
           {/* Course Title (Fraunces, max 2 lines) */}
-          <h3 className="font-heading text-lg font-bold leading-snug text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors line-clamp-2">
+          <h3 className="font-display text-[17px] font-semibold leading-snug tracking-[-0.01em] text-[var(--color-ink)] line-clamp-2">
             <Link href={`/courses/${course.id}`} className="focus:outline-none">
               {cleanSyllabusTitle(course.title)}
             </Link>
@@ -132,7 +131,7 @@ export function CourseCard({
         </div>
 
         {/* Progress Section & Next Unit Pointer */}
-        <div className="mt-4 pt-3 border-t border-[var(--color-border)]/70 space-y-2.5">
+        <div className="mt-5 space-y-2.5">
           <div className="flex items-center justify-between text-xs">
             <span className="text-xs font-medium text-[var(--color-ink-muted)]">
               Curricular Mastery
@@ -158,7 +157,7 @@ export function CourseCard({
             </div>
             <Link
               href={`/courses/${course.id}`}
-              className="inline-flex items-center gap-0.5 font-semibold text-[var(--color-accent)] hover:underline shrink-0 text-xs"
+              className="inline-flex items-center gap-1 font-sans uppercase tracking-[0.14em] font-semibold text-[var(--color-eyebrow)] hover:text-[var(--color-ink)] shrink-0 text-[11px]"
             >
               <span>View</span>
               <ArrowRight className="h-3 w-3" />

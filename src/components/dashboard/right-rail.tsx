@@ -143,7 +143,7 @@ export function RightRail({
       <div className="academic-card p-4">
         <div className="flex items-center justify-between pb-2.5 border-b border-[var(--color-border)]/70 mb-3">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-[#C62F3C]" />
+            <Calendar className="h-4 w-4 text-[#D9485F]" />
             <h3 className="font-serif text-sm font-bold text-[var(--color-ink)]">
               Upcoming Deadlines
             </h3>
@@ -176,7 +176,7 @@ export function RightRail({
                     {item.title}
                   </p>
                 </div>
-                <span className="text-xs font-semibold text-[#C62F3C] tabular-nums shrink-0">
+                <span className="text-xs font-semibold text-[#D9485F] tabular-nums shrink-0">
                   {item.dueDate}
                 </span>
               </div>

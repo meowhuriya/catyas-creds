@@ -52,11 +52,11 @@ export function SoundControlPopover() {
           }
           className={cn(
             "relative flex h-8 w-8 items-center justify-center rounded-control border border-app-border bg-app-surface text-app-ink-muted hover:bg-app-surface-muted hover:text-app-ink transition-colors",
-            brownNoiseActive && "text-[#8A1627] dark:text-[#F07B88] border-[#8A1627]/40 ring-1 ring-[#8A1627]/20"
+            brownNoiseActive && "text-[#A82E46] dark:text-[#F48FA0] border-[#A82E46]/40 ring-1 ring-[#A82E46]/20"
           )}
         >
           {brownNoiseActive ? (
-            <Headphones className="h-4 w-4 animate-pulse text-[#8A1627] dark:text-[#F07B88]" />
+            <Headphones className="h-4 w-4 animate-pulse text-[#A82E46] dark:text-[#F48FA0]" />
           ) : soundEnabled ? (
             <Volume2 className="h-4 w-4" />
           ) : (
@@ -65,7 +65,7 @@ export function SoundControlPopover() {
 
           {/* Indicator Dot */}
           {brownNoiseActive && (
-            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#8A1627] animate-ping" />
+            <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-[#A82E46] animate-ping" />
           )}
           <span className="sr-only">Sound &amp; Focus Controls</span>
         </button>
@@ -78,7 +78,7 @@ export function SoundControlPopover() {
         {/* Header */}
         <div className="flex items-center justify-between pb-2 border-b border-[#E4D9C0] dark:border-[#3D2D31]">
           <div className="flex items-center gap-1.5">
-            <Volume2 className="h-4 w-4 text-[#8A1627] dark:text-[#F07B88]" />
+            <Volume2 className="h-4 w-4 text-[#A82E46] dark:text-[#F48FA0]" />
             <span className="font-serif font-bold text-sm text-[#14161F] dark:text-[#F6EBD3]">
               Audio &amp; Focus
             </span>
@@ -105,7 +105,7 @@ export function SoundControlPopover() {
             }}
             className={cn(
               "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-              soundEnabled ? "bg-[#8A1627]" : "bg-gray-300 dark:bg-gray-700"
+              soundEnabled ? "bg-[#A82E46]" : "bg-gray-300 dark:bg-gray-700"
             )}
           >
             <span
@@ -131,7 +131,7 @@ export function SoundControlPopover() {
               step="0.05"
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="w-full h-1.5 bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-lg appearance-none cursor-pointer accent-[#8A1627]"
+              className="w-full h-1.5 bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-lg appearance-none cursor-pointer accent-[#A82E46]"
             />
           </div>
         )}
@@ -140,7 +140,7 @@ export function SoundControlPopover() {
         <div className="p-3 rounded-[12px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white/60 dark:bg-black/30 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <Waves className={cn("h-4 w-4", brownNoiseActive ? "text-[#8A1627] dark:text-[#F07B88] animate-bounce" : "text-gray-400")} />
+              <Waves className={cn("h-4 w-4", brownNoiseActive ? "text-[#A82E46] dark:text-[#F48FA0] animate-bounce" : "text-gray-400")} />
               <div>
                 <div className="font-semibold text-xs text-[#14161F] dark:text-[#F6EBD3]">
                   Focus Brown Noise
@@ -157,7 +157,7 @@ export function SoundControlPopover() {
               }}
               className={cn(
                 "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                brownNoiseActive ? "bg-[#8A1627]" : "bg-gray-300 dark:bg-gray-700"
+                brownNoiseActive ? "bg-[#A82E46]" : "bg-gray-300 dark:bg-gray-700"
               )}
             >
               <span
@@ -169,7 +169,7 @@ export function SoundControlPopover() {
             </button>
           </div>
           {brownNoiseActive && (
-            <div className="flex items-center justify-between text-[10px] text-[#8A1627] dark:text-[#F07B88] font-medium pt-1">
+            <div className="flex items-center justify-between text-[10px] text-[#A82E46] dark:text-[#F48FA0] font-medium pt-1">
               <span>● Ambient session active</span>
               <span className="font-mono">400Hz Low-pass</span>
             </div>
@@ -178,25 +178,25 @@ export function SoundControlPopover() {
 
         {/* 4. Tone Previews */}
         <div className="space-y-1.5 pt-1 border-t border-[#E4D9C0] dark:border-[#3D2D31]">
-          <div className="text-[10px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-[#A82E46] dark:text-[#F48FA0]">
             Tone Previews
           </div>
           <div className="grid grid-cols-3 gap-1.5">
             <button
               onClick={() => playClick()}
-              className="py-1 px-1.5 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-[10px] hover:border-[#8A1627] text-center"
+              className="py-1 px-1.5 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-[10px] hover:border-[#A82E46] text-center"
             >
               Click (12ms)
             </button>
             <button
               onClick={() => playCorrect(3)}
-              className="py-1 px-1.5 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-[10px] hover:border-[#8A1627] text-center"
+              className="py-1 px-1.5 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-[10px] hover:border-[#A82E46] text-center"
             >
               Marimba Triad
             </button>
             <button
               onClick={() => playMasteryFanfare()}
-              className="py-1 px-1.5 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-[10px] hover:border-[#8A1627] text-center"
+              className="py-1 px-1.5 rounded-[6px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-[10px] hover:border-[#A82E46] text-center"
             >
               Fanfare
             </button>

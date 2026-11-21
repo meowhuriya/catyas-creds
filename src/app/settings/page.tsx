@@ -34,6 +34,7 @@ import {
   Type,
   Sliders,
   Sparkles,
+  Heart,
   Volume2,
   VolumeX,
   Headphones,
@@ -42,6 +43,7 @@ import {
   Grid,
 } from "lucide-react";
 import { useTheme, AppTheme } from "@/lib/theme/theme-context";
+import { AppearancePanel } from "@/components/shell/appearance-control";
 import { useSound } from "@/lib/sound-engine";
 import {
   AppearanceSettings,
@@ -355,8 +357,8 @@ export default function SettingsPage() {
       )}
 
       {errorMessage && (
-        <div className="flex items-center gap-2 rounded-[10px] border border-[#C62F3C]/30 bg-[#C62F3C]/10 p-3.5 text-sm text-[#8A1627] dark:text-[#F07B88]">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-[#C62F3C]" />
+        <div className="flex items-center gap-2 rounded-[10px] border border-[#D9485F]/30 bg-[#D9485F]/10 p-3.5 text-sm text-[#A82E46] dark:text-[#F48FA0]">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-[#D9485F]" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -365,12 +367,12 @@ export default function SettingsPage() {
       <div className="academic-card p-5 space-y-6 text-sm">
         <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
           <div className="flex items-center gap-2">
-            <Palette className="h-4 w-4 text-[#A51C30]" />
+            <Palette className="h-4 w-4 text-[#C93A55]" />
             <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
               Appearance & Background Theme
             </h2>
           </div>
-          <span className="eyebrow-label text-[#8A1627]">
+          <span className="eyebrow-label text-[#A82E46]">
             Full Gingham
           </span>
         </div>
@@ -393,7 +395,7 @@ export default function SettingsPage() {
                   onClick={() => updateAppearance({ bgType: opt.id as BackgroundType })}
                   className={`flex flex-col items-start p-3.5 rounded-[10px] border text-left transition-all ${
                     appearance.bgType === opt.id
-                      ? "border-[#A51C30] bg-[#A51C30]/5 ring-1 ring-[#A51C30]"
+                      ? "border-[#C93A55] bg-[#C93A55]/5 ring-1 ring-[#C93A55]"
                       : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] hover:bg-[#FAF7F2]"
                   }`}
                 >
@@ -431,7 +433,7 @@ export default function SettingsPage() {
                       onClick={() => updateAppearance({ checkSize: sz.id as CheckSize })}
                       className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
                         (appearance.checkSize || "medium") === sz.id
-                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                          ? "border-[#C93A55] bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] font-semibold"
                           : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                       }`}
                     >
@@ -461,7 +463,7 @@ export default function SettingsPage() {
                       onClick={() => updateAppearance({ patternStrength: st.id as PatternStrength })}
                       className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
                         appearance.patternStrength === st.id
-                          ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                          ? "border-[#C93A55] bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] font-semibold"
                           : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                       }`}
                     >
@@ -518,7 +520,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
                     <span className="font-medium text-[#14161F] dark:text-[#F6EBD3]">Dark Dim Overlay</span>
-                    <span className="font-semibold text-[#8A1627] dark:text-[#F07B88] tabular-nums">{appearance.customDim}%</span>
+                    <span className="font-semibold text-[#A82E46] dark:text-[#F48FA0] tabular-nums">{appearance.customDim}%</span>
                   </div>
                   <input
                     type="range"
@@ -526,7 +528,7 @@ export default function SettingsPage() {
                     max={80}
                     value={appearance.customDim}
                     onChange={(e) => updateAppearance({ customDim: Number(e.target.value) })}
-                    className="w-full accent-[#A51C30]"
+                    className="w-full accent-[#C93A55]"
                   />
                   <p className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7]">Darkens the background so page text and cards stay WCAG AA legible.</p>
                 </div>
@@ -534,7 +536,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs">
                     <span className="font-medium text-[#14161F] dark:text-[#F6EBD3]">Background Blur</span>
-                    <span className="font-semibold text-[#8A1627] dark:text-[#F07B88] tabular-nums">{appearance.customBlur}px</span>
+                    <span className="font-semibold text-[#A82E46] dark:text-[#F48FA0] tabular-nums">{appearance.customBlur}px</span>
                   </div>
                   <input
                     type="range"
@@ -542,7 +544,7 @@ export default function SettingsPage() {
                     max={20}
                     value={appearance.customBlur}
                     onChange={(e) => updateAppearance({ customBlur: Number(e.target.value) })}
-                    className="w-full accent-[#A51C30]"
+                    className="w-full accent-[#C93A55]"
                   />
                   <p className="text-[11px] text-[#4B5160] dark:text-[#D1C7B7]">Softens sharp wallpaper details behind content gaps.</p>
                 </div>
@@ -557,8 +559,8 @@ export default function SettingsPage() {
             </label>
             <div className="flex flex-wrap gap-2.5">
               {[
-                { id: "crimson", label: "Crimson", color: "#A51C30" },
-                { id: "tomato", label: "Tomato", color: "#C62F3C" },
+                { id: "crimson", label: "Strawberry", color: "#C93A55" },
+                { id: "tomato", label: "Tomato", color: "#D9485F" },
                 { id: "mustard", label: "Mustard", color: "#D9A441" },
                 { id: "sage", label: "Sage", color: "#5E7B5B" },
                 { id: "plum", label: "Plum", color: "#7A3F6E" },
@@ -596,7 +598,7 @@ export default function SettingsPage() {
                   onClick={() => updateAppearance({ textSize: ts.id as TextSize })}
                   className={`py-2 px-3 rounded-[8px] border text-center transition-all ${
                     appearance.textSize === ts.id
-                      ? "border-[#A51C30] bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                      ? "border-[#C93A55] bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] font-semibold"
                       : "border-[#E5D5C5] dark:border-[#3D2D31] bg-white dark:bg-[#1E1416] text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                   }`}
                 >
@@ -612,12 +614,12 @@ export default function SettingsPage() {
       <div className="academic-card p-5 space-y-6 text-sm">
         <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
           <div className="flex items-center gap-2">
-            <Volume2 className="h-4 w-4 text-[#8A1627] dark:text-[#F07B88]" />
+            <Volume2 className="h-4 w-4 text-[#A82E46] dark:text-[#F48FA0]" />
             <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
               Procedural Sound &amp; Acoustic Engine
             </h2>
           </div>
-          <span className="eyebrow-label text-[#8A1627] dark:text-[#F07B88]">
+          <span className="eyebrow-label text-[#A82E46] dark:text-[#F48FA0]">
             Web Audio Synthesizer
           </span>
         </div>
@@ -640,7 +642,7 @@ export default function SettingsPage() {
                 sound.toggleSound();
               }}
               className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                sound.soundEnabled ? "bg-[#8A1627]" : "bg-gray-300 dark:bg-gray-700"
+                sound.soundEnabled ? "bg-[#A82E46]" : "bg-gray-300 dark:bg-gray-700"
               }`}
             >
               <span
@@ -656,7 +658,7 @@ export default function SettingsPage() {
             <div className="space-y-2 pt-2 border-t border-[#E5D5C5]/70">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3]">Master Volume</span>
-                <span className="font-mono font-bold text-[#8A1627] dark:text-[#F07B88]">
+                <span className="font-mono font-bold text-[#A82E46] dark:text-[#F48FA0]">
                   {Math.round(sound.volume * 100)}%
                 </span>
               </div>
@@ -667,7 +669,7 @@ export default function SettingsPage() {
                 step="0.05"
                 value={sound.volume}
                 onChange={(e) => sound.setVolume(parseFloat(e.target.value))}
-                className="w-full h-2 bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-lg appearance-none cursor-pointer accent-[#8A1627]"
+                className="w-full h-2 bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-lg appearance-none cursor-pointer accent-[#A82E46]"
               />
             </div>
           )}
@@ -676,7 +678,7 @@ export default function SettingsPage() {
           <div className="p-4 rounded-[12px] border border-[#E5D5C5] dark:border-[#3D2D31] bg-white/60 dark:bg-black/20 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Waves className={`h-5 w-5 ${sound.brownNoiseActive ? "text-[#8A1627] dark:text-[#F07B88] animate-pulse" : "text-gray-400"}`} />
+                <Waves className={`h-5 w-5 ${sound.brownNoiseActive ? "text-[#A82E46] dark:text-[#F48FA0] animate-pulse" : "text-gray-400"}`} />
                 <div>
                   <div className="font-semibold text-sm text-[#14161F] dark:text-[#F6EBD3]">
                     Focus Brown Noise Generator
@@ -693,7 +695,7 @@ export default function SettingsPage() {
                   sound.playToggle(next);
                 }}
                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  sound.brownNoiseActive ? "bg-[#8A1627]" : "bg-gray-300 dark:bg-gray-700"
+                  sound.brownNoiseActive ? "bg-[#A82E46]" : "bg-gray-300 dark:bg-gray-700"
                 }`}
               >
                 <span
@@ -704,7 +706,7 @@ export default function SettingsPage() {
               </button>
             </div>
             {sound.brownNoiseActive && (
-              <div className="text-xs text-[#8A1627] dark:text-[#F07B88] font-medium flex items-center justify-between pt-1">
+              <div className="text-xs text-[#A82E46] dark:text-[#F48FA0] font-medium flex items-center justify-between pt-1">
                 <span>● Ambient Brown Noise Session Active</span>
                 <span className="font-mono">Web Audio BiquadFilter (380Hz)</span>
               </div>
@@ -749,7 +751,7 @@ export default function SettingsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => sound.playMasteryFanfare()}
-                className="text-xs h-8 text-[#8A1627] dark:text-[#F07B88] font-semibold"
+                className="text-xs h-8 text-[#A82E46] dark:text-[#F48FA0] font-semibold"
               >
                 Mastery Fanfare
               </Button>
@@ -762,12 +764,12 @@ export default function SettingsPage() {
       <div className="academic-card p-5 space-y-5 text-sm">
         <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
           <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-[#A51C30]" />
+            <BookOpen className="h-4 w-4 text-[#C93A55]" />
             <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
               Curriculum & Syllabus Restore
             </h2>
           </div>
-          <span className="eyebrow-label text-[#8A1627]">
+          <span className="eyebrow-label text-[#A82E46]">
             651 Topics Canonical
           </span>
         </div>
@@ -881,7 +883,7 @@ export default function SettingsPage() {
                 setSavedMessage("Sample data cleared. Returned to clean, real-data state.");
                 setTimeout(() => setSavedMessage(null), 3500);
               }}
-              className="btn-secondary text-xs py-1.5 px-3 border-[#C62F3C] text-[#C62F3C] hover:bg-[#C62F3C]/5"
+              className="btn-secondary text-xs py-1.5 px-3 border-[#D9485F] text-[#D9485F] hover:bg-[#D9485F]/5"
             >
               Clear sample data
             </button>
@@ -905,7 +907,7 @@ export default function SettingsPage() {
       {/* 4. Academic Grading & Credit Preferences */}
       <form onSubmit={handleSaveAcademicPreferences} className="academic-card p-5 space-y-5 text-sm">
         <div className="flex items-center gap-2 border-b border-[#E5D5C5] pb-3">
-          <Settings className="h-4 w-4 text-[#A51C30]" />
+          <Settings className="h-4 w-4 text-[#C93A55]" />
           <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
             Academic Grading & Credit Parameters
           </h2>
@@ -921,7 +923,7 @@ export default function SettingsPage() {
               <label
                 className={`flex items-start gap-3 p-3 rounded-[10px] border cursor-pointer transition-colors ${
                   scale === "10_point"
-                    ? "border-[#A51C30] bg-[#A51C30]/5 ring-1 ring-[#A51C30]"
+                    ? "border-[#C93A55] bg-[#C93A55]/5 ring-1 ring-[#C93A55]"
                     : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] hover:bg-[#FAF7F2]"
                 }`}
               >
@@ -931,7 +933,7 @@ export default function SettingsPage() {
                   value="10_point"
                   checked={scale === "10_point"}
                   onChange={() => setScale("10_point")}
-                  className="accent-[#A51C30] mt-0.5"
+                  className="accent-[#C93A55] mt-0.5"
                 />
                 <div className="space-y-0.5">
                   <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block text-sm">
@@ -946,7 +948,7 @@ export default function SettingsPage() {
               <label
                 className={`flex items-start gap-3 p-3 rounded-[10px] border cursor-pointer transition-colors ${
                   scale === "4_point"
-                    ? "border-[#A51C30] bg-[#A51C30]/5 ring-1 ring-[#A51C30]"
+                    ? "border-[#C93A55] bg-[#C93A55]/5 ring-1 ring-[#C93A55]"
                     : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] hover:bg-[#FAF7F2]"
                 }`}
               >
@@ -956,7 +958,7 @@ export default function SettingsPage() {
                   value="4_point"
                   checked={scale === "4_point"}
                   onChange={() => setScale("4_point")}
-                  className="accent-[#A51C30] mt-0.5"
+                  className="accent-[#C93A55] mt-0.5"
                 />
                 <div className="space-y-0.5">
                   <span className="font-semibold text-[#14161F] dark:text-[#F6EBD3] block text-sm">
@@ -993,69 +995,8 @@ export default function SettingsPage() {
 
           {/* Multi-Theme Engine Selection */}
           <div className="space-y-2 pt-2">
-            <div className="flex items-center justify-between">
-              <label className="font-semibold text-[#14161F] dark:text-[#F8FAFC] block text-sm">
-                Portal Theme Engine
-              </label>
-              <span className="text-[11px] text-[var(--color-ink-muted)]">
-                Switches theme and canvas texture instantly
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <button
-                type="button"
-                onClick={() => setAppTheme("obsidian")}
-                className={`flex flex-col items-start gap-1 p-3 rounded-[10px] border text-left transition-all ${
-                  appTheme === "obsidian"
-                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 ring-1 ring-[var(--color-accent)] font-semibold"
-                    : "border-app-border bg-app-surface hover:border-[var(--color-accent)]/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 font-bold text-xs">
-                  <Sparkles className="h-3.5 w-3.5 text-indigo-400" />
-                  <span>Obsidian (Default)</span>
-                </div>
-                <p className="text-[10px] text-[var(--color-ink-muted)]">
-                  Ultra-Modern Dark matte carbon with translucent glass and crisp contrast.
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setAppTheme("harvard")}
-                className={`flex flex-col items-start gap-1 p-3 rounded-[10px] border text-left transition-all ${
-                  appTheme === "harvard"
-                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 ring-1 ring-[var(--color-accent)] font-semibold"
-                    : "border-app-border bg-app-surface hover:border-[var(--color-accent)]/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 font-bold text-xs">
-                  <GraduationCap className="h-3.5 w-3.5 text-[#A51C30]" />
-                  <span>Harvard Portal</span>
-                </div>
-                <p className="text-[10px] text-[var(--color-ink-muted)]">
-                  Canvas LMS aesthetic with official crimson bar, deep charcoal nav, and alabaster desk.
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setAppTheme("heritage")}
-                className={`flex flex-col items-start gap-1 p-3 rounded-[10px] border text-left transition-all ${
-                  appTheme === "heritage"
-                    ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10 ring-1 ring-[var(--color-accent)] font-semibold"
-                    : "border-app-border bg-app-surface hover:border-[var(--color-accent)]/40"
-                }`}
-              >
-                <div className="flex items-center gap-2 font-bold text-xs">
-                  <Grid className="h-3.5 w-3.5 text-[#8A1627]" />
-                  <span>Heritage Gingham</span>
-                </div>
-                <p className="text-[10px] text-[var(--color-ink-muted)]">
-                  Classic Valeria burgundy & cream checkered canvas with wax seal accents.
-                </p>
-              </button>
-            </div>
+            <label className="block text-sm font-semibold text-[var(--color-ink)]">Appearance</label>
+            <AppearancePanel className="max-w-sm" />
           </div>
 
           {/* Smart Recall Engine Spacing Intervals */}
@@ -1105,7 +1046,7 @@ export default function SettingsPage() {
       <div className="academic-card p-5 space-y-4 text-sm">
         <div className="flex items-center justify-between border-b border-[#E5D5C5] pb-3">
           <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-[#A51C30]" />
+            <Calendar className="h-4 w-4 text-[#C93A55]" />
             <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
               Academic Term Manager
             </h2>
@@ -1127,7 +1068,7 @@ export default function SettingsPage() {
               key={t.id}
               className={`flex items-center justify-between p-3.5 rounded-[10px] border transition-colors ${
                 t.isCurrent
-                  ? "border-[#A51C30]/40 bg-[#A51C30]/5 ring-1 ring-[#A51C30]/30"
+                  ? "border-[#C93A55]/40 bg-[#C93A55]/5 ring-1 ring-[#C93A55]/30"
                   : "border-[#E5D5C5] bg-white dark:bg-[#1E1416] hover:bg-[#FAF7F2]"
               }`}
             >
@@ -1137,7 +1078,7 @@ export default function SettingsPage() {
                     {t.name}
                   </span>
                   {t.isCurrent && (
-                    <span className="rounded bg-[#A51C30] text-white text-[10px] uppercase font-bold px-2 py-0.5">
+                    <span className="rounded bg-[#C93A55] text-white text-[10px] uppercase font-bold px-2 py-0.5">
                       Current Active Term
                     </span>
                   )}
@@ -1166,7 +1107,7 @@ export default function SettingsPage() {
       {/* 6. Data Backup, Restore & Reset */}
       <div className="academic-card p-5 space-y-5 text-sm">
         <div className="flex items-center gap-2 border-b border-[#E5D5C5] pb-3">
-          <Database className="h-4 w-4 text-[#A51C30]" />
+          <Database className="h-4 w-4 text-[#C93A55]" />
           <h2 className="font-serif text-base font-bold text-[#14161F] dark:text-[#F6EBD3]">
             Data Backup, Migration & Account Reset
           </h2>
@@ -1240,7 +1181,7 @@ export default function SettingsPage() {
               setConfirmInput("");
               setResetDialogOpen(true);
             }}
-            className="btn-secondary text-xs py-1.5 px-3 border-[#C62F3C] text-[#C62F3C] hover:bg-[#C62F3C]/10 inline-flex items-center gap-1"
+            className="btn-secondary text-xs py-1.5 px-3 border-[#D9485F] text-[#D9485F] hover:bg-[#D9485F]/10 inline-flex items-center gap-1"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Reset Account</span>
@@ -1252,7 +1193,7 @@ export default function SettingsPage() {
       <Dialog open={restoreCourseConfirmOpen} onOpenChange={setRestoreCourseConfirmOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <div className="flex items-center gap-2 text-[#A51C30]">
+            <div className="flex items-center gap-2 text-[#C93A55]">
               <RotateCcw className="h-5 w-5" />
               <DialogTitle>Restore Course Syllabus?</DialogTitle>
             </div>
@@ -1260,7 +1201,7 @@ export default function SettingsPage() {
               <span className="block font-medium text-[#14161F] dark:text-[#F6EBD3]">
                 Are you sure you want to restore the original syllabus for this course?
               </span>
-              <span className="block p-2.5 rounded-lg bg-[#FAF4E8] dark:bg-[#1C1618] border border-[#E5D5C5] text-[#8A1627] dark:text-[#F5B4BC]">
+              <span className="block p-2.5 rounded-lg bg-[#FAF4E8] dark:bg-[#1C1618] border border-[#E5D5C5] text-[#A82E46] dark:text-[#F5B4BC]">
                 <strong>What will be reset:</strong> Topic names and order; the progress of reset topics. Your lecture videos and lesson notes will not be deleted.
               </span>
             </DialogDescription>
@@ -1288,7 +1229,7 @@ export default function SettingsPage() {
       <Dialog open={restoreAllConfirmOpen} onOpenChange={setRestoreAllConfirmOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <div className="flex items-center gap-2 text-[#A51C30]">
+            <div className="flex items-center gap-2 text-[#C93A55]">
               <RotateCcw className="h-5 w-5" />
               <DialogTitle>Restore All 19 Courses?</DialogTitle>
             </div>
@@ -1296,7 +1237,7 @@ export default function SettingsPage() {
               <span className="block font-medium text-[#14161F] dark:text-[#F6EBD3]">
                 This will recalibrate all 19 courses across Semesters 1 and 2 to the canonical 651 syllabus topics (Sem 1: 325 topics, Sem 2: 326 topics).
               </span>
-              <span className="block p-2.5 rounded-lg bg-[#FAF4E8] dark:bg-[#1C1618] border border-[#E5D5C5] text-[#8A1627] dark:text-[#F5B4BC]">
+              <span className="block p-2.5 rounded-lg bg-[#FAF4E8] dark:bg-[#1C1618] border border-[#E5D5C5] text-[#A82E46] dark:text-[#F5B4BC]">
                 <strong>What will be reset:</strong> Topic names and order; the progress of reset topics. Your lecture videos and lesson notes will not be deleted.
               </span>
             </DialogDescription>
@@ -1331,7 +1272,7 @@ export default function SettingsPage() {
       <Dialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <div className="flex items-center gap-2 text-[#C62F3C]">
+            <div className="flex items-center gap-2 text-[#D9485F]">
               <AlertTriangle className="h-5 w-5" />
               <DialogTitle>Reset Entire Account</DialogTitle>
             </div>
@@ -1342,7 +1283,7 @@ export default function SettingsPage() {
 
           <div className="space-y-3 py-2 text-xs">
             <p className="text-[#14161F] font-medium">
-              To confirm account erasure, type <strong className="font-semibold text-[#C62F3C]">CONFIRM RESET</strong> below:
+              To confirm account erasure, type <strong className="font-semibold text-[#D9485F]">CONFIRM RESET</strong> below:
             </p>
             <Input
               value={confirmInput}
@@ -1363,7 +1304,7 @@ export default function SettingsPage() {
             </button>
             <button
               type="button"
-              className="btn-primary text-xs py-1.5 px-3 bg-[#C62F3C] hover:bg-[#8A1627]"
+              className="btn-primary text-xs py-1.5 px-3 bg-[#D9485F] hover:bg-[#A82E46]"
               disabled={confirmInput.trim() !== "CONFIRM RESET" || resetting}
               onClick={handleConfirmReset}
             >

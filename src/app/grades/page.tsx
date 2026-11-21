@@ -236,7 +236,7 @@ export default function GradesPage() {
               onClick={() => setScale("10_point")}
               className={`rounded px-2.5 py-1 font-medium transition-colors ${
                 scale === "10_point"
-                  ? "bg-[#A51C30] text-white font-semibold"
+                  ? "bg-[#C93A55] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -247,7 +247,7 @@ export default function GradesPage() {
               onClick={() => setScale("4_point")}
               className={`rounded px-2.5 py-1 font-medium transition-colors ${
                 scale === "4_point"
-                  ? "bg-[#A51C30] text-white font-semibold"
+                  ? "bg-[#C93A55] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >

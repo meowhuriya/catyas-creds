@@ -60,7 +60,7 @@ export function WeakestTopics({
     <div className={`academic-card p-5 ${className}`}>
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-[var(--color-border)]/70">
         <div className="flex items-center gap-2">
-          <AlertCircle className="h-4 w-4 text-[#C62F3C]" />
+          <AlertCircle className="h-4 w-4 text-[#D9485F]" />
           <h3 className="font-serif text-base font-bold text-[var(--color-ink)]">
             Weakest Topics (Priority Focus)
           </h3>
@@ -113,7 +113,7 @@ export function WeakestTopics({
                 <Button
                   size="sm"
                   onClick={() => onStartQuickCheck?.(item)}
-                  className="text-xs h-7 gap-1 shadow-xs bg-[#A51C30] hover:bg-[#881324] text-white"
+                  className="text-xs h-7 gap-1 shadow-xs bg-[#C93A55] hover:bg-[#A82E46] text-white"
                   title="Take 3-5 question Quick Check"
                 >
                   <Award className="h-3 w-3" />

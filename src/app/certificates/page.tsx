@@ -26,6 +26,7 @@ import {
   Check,
 } from "lucide-react";
 import { useToast } from "@/components/ui/toast";
+import { onCloudSyncUpdate } from "@/lib/cloud-sync/synced-storage";
 import { cn } from "@/lib/utils";
 
 export type ActivityCategory =
@@ -86,7 +87,7 @@ function generateSvgCertificateDataUrl(
     
     <!-- Ornamental Borders -->
     <rect x="24" y="24" width="752" height="512" fill="none" stroke="#D4AF37" stroke-width="3" rx="8" />
-    <rect x="34" y="34" width="732" height="492" fill="none" stroke="#8A1627" stroke-width="1.5" stroke-dasharray="6,4" rx="6" />
+    <rect x="34" y="34" width="732" height="492" fill="none" stroke="#A82E46" stroke-width="1.5" stroke-dasharray="6,4" rx="6" />
     
     <!-- Corner Ornaments -->
     <circle cx="34" cy="34" r="6" fill="#D4AF37" />
@@ -95,25 +96,25 @@ function generateSvgCertificateDataUrl(
     <circle cx="766" cy="526" r="6" fill="#D4AF37" />
     
     <!-- Header -->
-    <text x="400" y="85" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#8A1627" letter-spacing="4">OFFICIAL ACADEMIC CREDENTIAL &amp; HONORS</text>
+    <text x="400" y="85" text-anchor="middle" font-family="Georgia, serif" font-size="14" font-weight="bold" fill="#A82E46" letter-spacing="4">OFFICIAL ACADEMIC CREDENTIAL &amp; HONORS</text>
     <text x="400" y="130" text-anchor="middle" font-family="Georgia, serif" font-size="28" font-weight="bold" fill="#14161F">Certificate of Achievement</text>
     <line x1="280" y1="145" x2="520" y2="145" stroke="#D4AF37" stroke-width="2" />
     
     <!-- Recipient -->
     <text x="400" y="185" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#6B7280" letter-spacing="2">THIS CERTIFICATE IS PROUDLY CONFERRED UPON</text>
-    <text x="400" y="225" text-anchor="middle" font-family="Georgia, serif" font-size="26" font-style="italic" font-weight="bold" fill="#8A1627">${recipient}</text>
+    <text x="400" y="225" text-anchor="middle" font-family="Georgia, serif" font-size="26" font-style="italic" font-weight="bold" fill="#A82E46">${recipient}</text>
     
     <!-- Event & Award Details -->
     <text x="400" y="265" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#4B5563">for exceptional excellence and outstanding standing in</text>
     <text x="400" y="300" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="bold" fill="#14161F">${title}</text>
-    <text x="400" y="335" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#A51C30">${award}</text>
+    <text x="400" y="335" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#C93A55">${award}</text>
     
     <!-- Issuer & Date Info -->
     <text x="400" y="375" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#6B7280">Conferred by ${issuer} • Date: ${date}</text>
     
     <!-- Gold Seal Medallion -->
     <g transform="translate(400, 445)">
-      <circle r="36" fill="url(#goldGrad)" stroke="#8A1627" stroke-width="2" />
+      <circle r="36" fill="url(#goldGrad)" stroke="#A82E46" stroke-width="2" />
       <circle r="30" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4,2" />
       <text y="4" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="bold" fill="#FFFFFF" letter-spacing="1">VERIFIED</text>
       <text y="16" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#FFFFFF">HONOR</text>
@@ -257,9 +258,10 @@ export default function CertificatesPage() {
   const [formSkills, setFormSkills] = React.useState("");
   const [uploadedCertificateDataUrl, setUploadedCertificateDataUrl] = React.useState<string>("");
 
-  // Load activities from localStorage
+  // Load activities from localStorage (and refresh when another device syncs)
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window === "undefined") return;
+    const load = () => {
       try {
         const saved = localStorage.getItem("valeria_activities_feed");
         if (saved) {
@@ -271,7 +273,9 @@ export default function CertificatesPage() {
       } catch (err) {
         console.warn("Error reading activities from localStorage:", err);
       }
-    }
+    };
+    load();
+    return onCloudSyncUpdate("valeria_activities_feed", load);
   }, []);
 
   // Save activities to localStorage
@@ -442,7 +446,7 @@ export default function CertificatesPage() {
 
           <button
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[10px] bg-[var(--color-accent)] hover:bg-[#8A1627] text-white text-xs font-bold shadow-md transition-all shrink-0"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-[10px] bg-[var(--color-accent)] hover:bg-[#A82E46] text-white text-xs font-bold shadow-md transition-all shrink-0"
           >
             <Plus className="h-4 w-4" />
             <span>Add Activity &amp; Certificate</span>
@@ -778,7 +782,7 @@ export default function CertificatesPage() {
 
                 <button
                   onClick={() => setSelectedActivityForLightbox(null)}
-                  className="px-4 py-2 rounded-[8px] bg-[var(--color-accent)] hover:bg-[#8A1627] text-white text-xs font-bold"
+                  className="px-4 py-2 rounded-[8px] bg-[var(--color-accent)] hover:bg-[#A82E46] text-white text-xs font-bold"
                 >
                   Close
                 </button>
@@ -956,7 +960,7 @@ export default function CertificatesPage() {
                   type="file"
                   accept="image/*,application/pdf"
                   onChange={handleFileUpload}
-                  className="text-xs text-[var(--color-ink-muted)] file:mr-2 file:py-1.5 file:px-3 file:rounded-[6px] file:border-0 file:text-xs file:font-semibold file:bg-[var(--color-accent)] file:text-white hover:file:bg-[#8A1627] cursor-pointer"
+                  className="text-xs text-[var(--color-ink-muted)] file:mr-2 file:py-1.5 file:px-3 file:rounded-[6px] file:border-0 file:text-xs file:font-semibold file:bg-[var(--color-accent)] file:text-white hover:file:bg-[#A82E46] cursor-pointer"
                 />
                 <div className="flex items-center justify-between pt-1">
                   <span className="text-[11px] text-[var(--color-ink-muted)]">
@@ -990,7 +994,7 @@ export default function CertificatesPage() {
               </button>
               <button
                 onClick={handleSaveActivity}
-                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#8A1627]"
+                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#A82E46]"
               >
                 Save Activity &amp; Certificate
               </button>

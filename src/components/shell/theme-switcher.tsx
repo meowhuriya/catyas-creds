@@ -2,13 +2,15 @@
 
 import * as React from "react";
 import { useTheme, AppTheme } from "@/lib/theme/theme-context";
-import { Sparkles, GraduationCap, Grid } from "lucide-react";
+import { Sparkles, GraduationCap, Grid, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ThemeSwitcher({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
 
   const themes: Array<{ id: AppTheme; label: string; icon: React.ElementType }> = [
+    { id: "clove", label: "Clove", icon: Heart },
+    { id: "strawberry", label: "Strawberry", icon: Heart },
     { id: "obsidian", label: "Obsidian", icon: Sparkles },
     { id: "harvard", label: "Harvard", icon: GraduationCap },
     { id: "heritage", label: "Heritage", icon: Grid },

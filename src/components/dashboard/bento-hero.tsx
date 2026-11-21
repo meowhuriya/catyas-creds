@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Play, Sparkles, Flame, Clock, ArrowRight, Award } from "lucide-react";
-import { ProgressRing } from "@/components/ui/progress-ring";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Flame, Play } from "lucide-react";
+
+import { GlassFlower } from "@/components/brand/glass-flower";
 import { Lesson, LessonProgress, Course, Term } from "@/types/schemas";
 
 interface BentoHeroProps {
@@ -21,6 +21,13 @@ interface BentoHeroProps {
   } | null;
 }
 
+function greetingFor(h: number) {
+  if (h < 5) return "Good night";
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export function BentoHero({
   studentName = "",
   currentTerm,
@@ -31,125 +38,83 @@ export function BentoHero({
   continueLesson,
 }: BentoHeroProps) {
   const firstName = studentName ? studentName.split(" ")[0] : "";
+  const pct = Math.round(overallProgressPercent);
+  const [greeting, setGreeting] = React.useState("Welcome back");
+  React.useEffect(() => setGreeting(greetingFor(new Date().getHours())), []);
+  const resuming =
+    continueLesson?.lesson && continueLesson.progress && continueLesson.progress.watchedSeconds > 0
+      ? continueLesson
+      : null;
 
   return (
-    <div className="relative overflow-hidden rounded-[18px] border-2 border-[#F6EBD3] shadow-card select-none">
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#380C13] to-[#631724] text-white p-6 md:p-8">
-        {/* Background Architectural Grid Pattern */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-[0.06]"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern id="hero-grid" width="32" height="32" patternUnits="userSpaceOnUse">
-              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#D9A441" strokeWidth="0.8" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#hero-grid)" />
-        </svg>
+    <section className="pro-hero relative isolate overflow-hidden rounded-3xl px-7 py-10 md:px-12 md:py-12 select-none">
+      <div aria-hidden className="pointer-events-none absolute -right-24 -top-28 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(closest-side,var(--orb-a),transparent)] blur-2xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 -z-10 h-[360px] w-[360px] rounded-full bg-[radial-gradient(closest-side,var(--orb-b),transparent)] blur-2xl" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          {/* Left: Academic Greeting & Term Stats */}
-          <div className="space-y-3 max-w-xl">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/15 backdrop-blur-md">
-                <Sparkles className="h-3.5 w-3.5 text-[#D9A441]" />
-                <span>{currentTerm ? currentTerm.name : "Semester 1 (AY 2025-2026)"}</span>
-              </span>
+      <div className="grid items-center gap-10 md:grid-cols-[1fr_auto]">
+        <div className="max-w-xl">
+          <p className="text-[13px] font-medium text-[var(--color-ink-muted)]">
+            {currentTerm ? currentTerm.name : "Semester 1 (AY 2025-2026)"}
+          </p>
+          <h1 className="mt-3 font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.025em] text-[var(--color-ink)] md:text-[44px]">
+            {greeting}
+            {firstName && (
+              <>
+                ,{" "}
+                <span className="pro-name-gradient">{firstName}</span>
+              </>
+            )}
+          </h1>
+          <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[var(--color-ink-muted)]">
+            {coursesCount} courses and {totalCredits} credits this term. Pick up right where you left off.
+          </p>
 
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#D9A441]/20 text-[#F5C26B] border border-[#D9A441]/30">
-                <Flame className="h-3.5 w-3.5 text-[#D9A441]" />
-                <span>{streakDays} Day Study Streak</span>
-              </span>
-            </div>
-
-            <h1 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-              Welcome back{firstName ? `, ${firstName}` : ""}.
-            </h1>
-
-            <p className="text-sm md:text-base text-white/90 font-medium">
-              {coursesCount} courses · {totalCredits} credits this term.
-            </p>
+          <div className="mt-6 flex flex-wrap items-center gap-2.5">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--hair)] bg-[var(--wash)] px-3 py-1 text-[12px] font-medium text-[var(--color-ink-muted)]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-accent)]" /> {pct}% term mastery
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--hair)] bg-[var(--wash)] px-3 py-1 text-[12px] font-medium text-[var(--color-ink-muted)]">
+              <Flame className="h-3.5 w-3.5 text-[#E879F9]" /> {streakDays}-day streak
+            </span>
           </div>
 
-          {/* Right: Semester Progress Ring & Continue Learning Quick Card */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
-            {/* Progress Ring Card */}
-            <div className="flex items-center gap-4 p-4 rounded-[12px] bg-black/25 border border-white/10 backdrop-blur-md shrink-0">
-              <div className="relative">
-                <ProgressRing
-                  percentage={overallProgressPercent}
-                  size={68}
-                  strokeWidth={6}
-                  color="#D9A441"
-                  showText={false}
-                />
-                <span className="absolute inset-0 flex items-center justify-center font-sans text-xs font-bold text-[#D9A441] tabular-nums">
-                  {Math.round(overallProgressPercent)}%
-                </span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xs uppercase tracking-wider font-semibold text-white/70">
-                  Term Completion
-                </span>
-                <span className="font-heading text-base font-bold text-white">
-                  Semester Progress
-                </span>
-                <span className="text-xs text-[#F5C26B] font-medium">
-                  Target: 100% Mastery
-                </span>
-              </div>
-            </div>
-
-            {/* Continue Learning or Add First Lecture Strip */}
-            {continueLesson && continueLesson.lesson && continueLesson.progress && continueLesson.progress.watchedSeconds > 0 ? (
-              <div className="flex items-center gap-3.5 p-3 rounded-[12px] bg-black/25 border border-white/10 backdrop-blur-md max-w-sm">
-                <div className="relative h-14 w-24 shrink-0 overflow-hidden rounded-[8px] bg-black/40 border border-white/15">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={continueLesson.lesson.thumbnailUrl}
-                    alt={continueLesson.lesson.title}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <Play className="h-4 w-4 fill-white text-white drop-shadow" />
-                  </div>
-                </div>
-
-                <div className="flex flex-col min-w-0 pr-1">
-                  <span className="text-xs uppercase tracking-wider font-semibold text-[#D9A441] truncate">
-                    {continueLesson.course?.code || "Course"} • Resume
-                  </span>
-                  <span className="text-xs font-medium text-white line-clamp-1">
-                    {continueLesson.lesson.title}
-                  </span>
-                  <Link
-                    href={`/courses/${continueLesson.lesson.courseId}/player/${continueLesson.lesson.id}`}
-                    className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-white hover:text-[#D9A441] transition-colors"
-                  >
-                    <span>Continue watching</span>
-                    <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center justify-between gap-4 p-4 rounded-[12px] bg-black/25 border border-white/10 backdrop-blur-md min-w-[240px]">
-                <div className="flex flex-col pr-1">
-                  <span className="text-xs font-semibold text-white">Add your first lecture</span>
-                  <span className="text-[11px] text-white/70">Curate YouTube lectures</span>
-                </div>
-                <Link
-                  href="/courses"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-xs font-semibold bg-[#A51C30] hover:bg-[#881324] text-white transition-colors shrink-0 shadow-sm"
-                >
-                  <span>Add lecture</span>
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-            )}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              href={resuming ? `/courses/${resuming.lesson.courseId}/player/${resuming.lesson.id}` : "/courses"}
+              className="pro-btn-solid inline-flex h-11 items-center gap-2 rounded-full px-5 text-[14px] font-semibold transition"
+            >
+              {resuming ? (
+                <>
+                  <Play className="h-4 w-4 fill-current" /> Resume {resuming.course?.code ?? "lecture"}
+                </>
+              ) : (
+                <>
+                  Add your first lecture <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </Link>
+            <Link
+              href="/notes"
+              className="inline-flex h-11 items-center gap-2 rounded-full border border-[var(--hair)] px-5 text-[14px] font-medium text-[var(--color-ink)] transition hover:border-[var(--hair-strong)] hover:bg-[var(--wash)]"
+            >
+              Open Notes Vault <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
+
+        <div className="relative mx-auto hidden md:block">
+          <div aria-hidden className="absolute inset-10 rounded-full blur-2xl" style={{ background: "radial-gradient(closest-side, rgb(var(--accent-rgb) / 0.3), transparent)" }} />
+          <GlassFlower size={290} className="gf-tint relative" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/butterfly-real-512.png"
+            alt=""
+            aria-hidden
+            draggable={false}
+            className="pro-butterfly absolute -right-6 -top-4 h-[120px] w-[120px] select-none drop-shadow-[0_12px_18px_rgba(20,17,31,0.18)]"
+          />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

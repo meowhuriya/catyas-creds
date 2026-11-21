@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "@/styles/globals.css";
 import { DataStoreProvider } from "@/lib/repository";
 import { ToastProvider } from "@/components/ui/toast";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { AppShell } from "@/components/shell/app-shell";
 
-const fraunces = Fraunces({
+// Headings: Inter Tight (crisp, modern). Body: Inter.
+const display = Inter_Tight({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const body = Inter({
   subsets: ["latin"],
-  variable: "--font-plus-jakarta-sans",
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -23,9 +25,11 @@ export const metadata: Metadata = {
   description:
     "A university-grade learning portal where students organize YouTube lectures into credit-bearing coursework, complete rigorous assessments, and earn verifiable credentials.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.ico",
-    apple: "/cat-icon-192.png",
+    icon: [
+      { url: "/brand/butterfly-real-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/brand/butterfly-real-64.png", sizes: "64x64", type: "image/png" },
+    ],
+    apple: "/brand/butterfly-real-180.png",
   },
 };
 
@@ -37,8 +41,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="obsidian"
-      className={`${fraunces.variable} ${plusJakartaSans.variable} dark antialiased`}
+      data-theme="pearl"
+      className={`${display.variable} ${body.variable} antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -46,27 +50,19 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
+                var d = document.documentElement;
                 try {
-                  var t = localStorage.getItem("app_theme") || "obsidian";
-                  document.documentElement.setAttribute("data-theme", t);
-                  if (t === "obsidian") {
-                    document.documentElement.classList.add("dark");
-                  } else {
-                    document.documentElement.classList.remove("dark");
-                  }
+                  var m = localStorage.getItem("vc_mode") === "dark" ? "dark" : "light";
+                  d.setAttribute("data-theme", m === "dark" ? "clove" : "pearl");
+                  if (m === "dark") d.classList.add("dark"); else d.classList.remove("dark");
+                  var v = JSON.parse(localStorage.getItem("vc_accent_vars") || "null");
+                  if (v) for (var k in v) d.style.setProperty(k, v[k]);
                 } catch (e) {
-                  document.documentElement.setAttribute("data-theme", "obsidian");
-                  document.documentElement.classList.add("dark");
+                  d.setAttribute("data-theme", "pearl");
                 }
               })();
             `,
           }}
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&display=swap"
-          rel="stylesheet"
         />
       </head>
       <body className="min-h-screen text-[var(--color-ink)] font-sans">

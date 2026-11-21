@@ -202,7 +202,7 @@ export default function LeaderboardPage() {
       <div className="p-5 md:p-6 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#8A1627]/10 text-[#8A1627] dark:text-[#F07B88] border border-[#8A1627]/20 uppercase tracking-widest">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#A82E46]/10 text-[#A82E46] dark:text-[#F48FA0] border border-[#A82E46]/20 uppercase tracking-widest">
               Academic Honor Roll
             </span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#D9A441]/15 text-[#8A5A12] dark:text-[#D9A441] border border-[#D9A441]/30">
@@ -230,7 +230,7 @@ export default function LeaderboardPage() {
           {/* Privacy Switch */}
           <button
             onClick={handleTogglePrivacy}
-            className="h-9 px-3 rounded-[8px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black/30 text-xs flex items-center gap-1.5 hover:border-[#8A1627] transition-colors shadow-xs"
+            className="h-9 px-3 rounded-[8px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black/30 text-xs flex items-center gap-1.5 hover:border-[#A82E46] transition-colors shadow-xs"
             title="Toggle leaderboard visibility"
           >
             {myProfile?.showOnLeaderboard ? (
@@ -240,7 +240,7 @@ export default function LeaderboardPage() {
               </>
             ) : (
               <>
-                <EyeOff className="h-3.5 w-3.5 text-[#8A1627]" />
+                <EyeOff className="h-3.5 w-3.5 text-[#A82E46]" />
                 <span className="text-[11px] font-medium text-[#14161F] dark:text-[#F6EBD3]">Hidden</span>
               </>
             )}
@@ -256,7 +256,7 @@ export default function LeaderboardPage() {
             onClick={() => setActiveTab("ALL")}
             className={`px-4 py-1.5 text-xs font-semibold rounded-[7px] transition-all flex items-center gap-1.5 ${
               activeTab === "ALL"
-                ? "bg-white dark:bg-[#1E1618] text-[#8A1627] dark:text-[#F07B88] shadow-xs"
+                ? "bg-white dark:bg-[#1E1618] text-[#A82E46] dark:text-[#F48FA0] shadow-xs"
                 : "text-[#4B5160] dark:text-[#CFC8BB] hover:text-[#14161F]"
             }`}
           >
@@ -268,7 +268,7 @@ export default function LeaderboardPage() {
             onClick={() => setActiveTab("SQUAD")}
             className={`px-4 py-1.5 text-xs font-semibold rounded-[7px] transition-all flex items-center gap-1.5 ${
               activeTab === "SQUAD"
-                ? "bg-white dark:bg-[#1E1618] text-[#8A1627] dark:text-[#F07B88] shadow-xs"
+                ? "bg-white dark:bg-[#1E1618] text-[#A82E46] dark:text-[#F48FA0] shadow-xs"
                 : "text-[#4B5160] dark:text-[#CFC8BB] hover:text-[#14161F]"
             }`}
           >
@@ -296,7 +296,7 @@ export default function LeaderboardPage() {
               onChange={(e) => setSquadCodeInput(e.target.value.toUpperCase())}
               placeholder="Join Code (e.g. CYBER9)"
               maxLength={8}
-              className="h-9 w-36 px-2.5 rounded-[8px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-xs font-mono uppercase focus:outline-none focus:border-[#8A1627]"
+              className="h-9 w-36 px-2.5 rounded-[8px] border border-[#E4D9C0] dark:border-[#3D2D31] bg-white dark:bg-black text-xs font-mono uppercase focus:outline-none focus:border-[#A82E46]"
             />
             <Button type="submit" size="sm" className="btn-secondary h-9 text-xs px-3">
               Join
@@ -358,7 +358,7 @@ export default function LeaderboardPage() {
               Invite Your Study Squad
             </h3>
             <p className="text-xs text-[#4B5160] dark:text-[#CFC8BB] max-w-xs leading-relaxed">
-              You are currently leading your squad. Share invite code <span className="font-mono font-bold text-[#8A1627] dark:text-[#F07B88]">{myProfile?.squadCode || "CYBER9"}</span> with classmates to compete on this leaderboard!
+              You are currently leading your squad. Share invite code <span className="font-mono font-bold text-[#A82E46] dark:text-[#F48FA0]">{myProfile?.squadCode || "CYBER9"}</span> with classmates to compete on this leaderboard!
             </p>
             <Button
               onClick={handleCopySquadCode}
@@ -422,7 +422,7 @@ export default function LeaderboardPage() {
               )}
             </div>
             <div className="font-serif font-bold text-base mt-2 truncate">{topThree[1].displayName}</div>
-            <div className="text-xl font-serif font-black text-[#8A1627] dark:text-[#F07B88] mt-0.5">
+            <div className="text-xl font-serif font-black text-[#A82E46] dark:text-[#F48FA0] mt-0.5">
               {topThree[1].xp.toLocaleString()} XP
             </div>
             <div className="flex justify-center gap-1.5 mt-2.5 min-h-[24px]">
@@ -460,7 +460,7 @@ export default function LeaderboardPage() {
                 )}
               </div>
               <div className="font-serif font-bold text-base mt-2 truncate">{topThree[1].displayName}</div>
-              <div className="text-xl font-serif font-black text-[#8A1627] dark:text-[#F07B88] mt-0.5">
+              <div className="text-xl font-serif font-black text-[#A82E46] dark:text-[#F48FA0] mt-0.5">
                 {topThree[1].xp.toLocaleString()} XP
               </div>
               <div className="flex justify-center gap-1.5 mt-2.5 min-h-[24px]">
@@ -531,7 +531,7 @@ export default function LeaderboardPage() {
                 )}
               </div>
               <div className="font-serif font-bold text-base mt-2 truncate">{topThree[2].displayName}</div>
-              <div className="text-xl font-serif font-black text-[#8A1627] dark:text-[#F07B88] mt-0.5">
+              <div className="text-xl font-serif font-black text-[#A82E46] dark:text-[#F48FA0] mt-0.5">
                 {topThree[2].xp.toLocaleString()} XP
               </div>
               <div className="flex justify-center gap-1.5 mt-2.5 min-h-[24px]">
@@ -598,7 +598,7 @@ export default function LeaderboardPage() {
                       key={prof.uid}
                       className={`transition-colors ${
                         isMe
-                          ? "bg-[#8A1627]/10 font-bold text-[#8A1627] dark:text-[#F07B88]"
+                          ? "bg-[#A82E46]/10 font-bold text-[#A82E46] dark:text-[#F48FA0]"
                           : "hover:bg-black/5 dark:hover:bg-white/5"
                       }`}
                     >
@@ -654,7 +654,7 @@ export default function LeaderboardPage() {
         {/* Header Panel */}
         <div className="p-4 sm:p-5 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#A82E46] dark:text-[#F48FA0]">
               Milestone Collection
             </span>
             <h2 className="text-xl font-serif font-bold text-[#14161F] dark:text-[#F6EBD3] mt-0.5">
@@ -664,7 +664,7 @@ export default function LeaderboardPage() {
               Collect, mint, and showcase your earned academic achievements.
             </p>
           </div>
-          <div className="px-3 py-1.5 rounded-[10px] bg-white dark:bg-black/40 border border-[#E4D9C0] dark:border-[#3D2D31] text-xs font-semibold text-[#8A1627] dark:text-[#F07B88] self-start sm:self-center">
+          <div className="px-3 py-1.5 rounded-[10px] bg-white dark:bg-black/40 border border-[#E4D9C0] dark:border-[#3D2D31] text-xs font-semibold text-[#A82E46] dark:text-[#F48FA0] self-start sm:self-center">
             Equipped ({myProfile?.equippedBadges?.length || 0}/3)
           </div>
         </div>
@@ -704,7 +704,7 @@ export default function LeaderboardPage() {
       {/* =============================================================== */}
       {badgeStudioOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg academic-card p-6 rounded-[18px] border-2 border-[#8A1627] shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="w-full max-w-lg academic-card p-6 rounded-[18px] border-2 border-[#A82E46] shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-[#E4D9C0] dark:border-[#3D2D31]">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-[#D9A441]" />
@@ -712,7 +712,7 @@ export default function LeaderboardPage() {
               </div>
               <button
                 onClick={() => setBadgeStudioOpen(false)}
-                className="text-xs text-[#4B5160] hover:text-[#8A1627]"
+                className="text-xs text-[#4B5160] hover:text-[#A82E46]"
               >
                 Cancel
               </button>
@@ -724,7 +724,7 @@ export default function LeaderboardPage() {
                 <label className="font-semibold block mb-1.5">Custom Artwork (PNG, SVG, WebP)</label>
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-[#CFC8BB] dark:border-[#4B3639] hover:border-[#8A1627] rounded-[12px] p-4 text-center cursor-pointer bg-white/40 dark:bg-black/10"
+                  className="border-2 border-dashed border-[#CFC8BB] dark:border-[#4B3639] hover:border-[#A82E46] rounded-[12px] p-4 text-center cursor-pointer bg-white/40 dark:bg-black/10"
                 >
                   <input
                     ref={fileInputRef}
@@ -746,7 +746,7 @@ export default function LeaderboardPage() {
                     </div>
                   ) : (
                     <div className="space-y-1">
-                      <Upload className="h-6 w-6 mx-auto text-[#8A1627]" />
+                      <Upload className="h-6 w-6 mx-auto text-[#A82E46]" />
                       <div className="font-semibold text-[11px]">Click to upload badge artwork</div>
                       <div className="text-[10px] text-[#4B5160]">Auto-centered & cropped to 120x120</div>
                     </div>
@@ -763,7 +763,7 @@ export default function LeaderboardPage() {
                   placeholder="e.g. Graph Theory Architect"
                   value={badgeTitle}
                   onChange={(e) => setBadgeTitle(e.target.value)}
-                  className="w-full h-9 px-3 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#8A1627] focus:outline-none"
+                  className="w-full h-9 px-3 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#A82E46] focus:outline-none"
                 />
               </div>
 
@@ -776,7 +776,7 @@ export default function LeaderboardPage() {
                   placeholder="e.g. Awarded for mastering 5 recursive or graph algorithms with full marks."
                   value={badgeLore}
                   onChange={(e) => setBadgeLore(e.target.value)}
-                  className="w-full p-2.5 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#8A1627] focus:outline-none leading-relaxed"
+                  className="w-full p-2.5 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#A82E46] focus:outline-none leading-relaxed"
                 />
               </div>
 
@@ -787,7 +787,7 @@ export default function LeaderboardPage() {
                   <select
                     value={badgeCriteria}
                     onChange={(e) => setBadgeCriteria(e.target.value as BadgeCriteriaType)}
-                    className="w-full h-9 px-2.5 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#8A1627] focus:outline-none"
+                    className="w-full h-9 px-2.5 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#A82E46] focus:outline-none"
                   >
                     <option value="TOPICS_MASTERED">Topics Mastered</option>
                     <option value="STREAK_DAYS">Study Streak Days</option>
@@ -804,7 +804,7 @@ export default function LeaderboardPage() {
                     max={100}
                     value={badgeThreshold}
                     onChange={(e) => setBadgeThreshold(Number(e.target.value))}
-                    className="w-full h-9 px-3 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#8A1627] focus:outline-none"
+                    className="w-full h-9 px-3 rounded-[8px] border border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs focus:border-[#A82E46] focus:outline-none"
                   />
                 </div>
               </div>

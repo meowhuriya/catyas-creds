@@ -127,7 +127,7 @@ export function AddSlotModal({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[#E4D9C0] dark:border-[#3D2D31] bg-[#FBF6EC] dark:bg-[#221A1C]">
           <div>
-            <span className="eyebrow-label text-[#8A1627] block mb-0.5">
+            <span className="eyebrow-label text-[#A82E46] block mb-0.5">
               TIMETABLE MANAGER
             </span>
             <h3 className="font-serif text-lg font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -153,7 +153,7 @@ export function AddSlotModal({
             <select
               value={courseId}
               onChange={(e) => setCourseId(e.target.value)}
-              className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+              className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
             >
               {courses.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -176,8 +176,8 @@ export function AddSlotModal({
                   onClick={() => setDayOfWeek(d.id)}
                   className={`py-1.5 rounded-[6px] text-xs font-sans font-semibold transition-colors border cursor-pointer ${
                     dayOfWeek === d.id
-                      ? "bg-[#A51C30] text-white border-[#A51C30]"
-                      : "bg-[#FBF6EC] dark:bg-[#221A1C] text-[#4B5160] dark:text-[#D1C7B7] border-[#CFC8BB] hover:border-[#A51C30]"
+                      ? "bg-[#C93A55] text-white border-[#C93A55]"
+                      : "bg-[#FBF6EC] dark:bg-[#221A1C] text-[#4B5160] dark:text-[#D1C7B7] border-[#CFC8BB] hover:border-[#C93A55]"
                   }`}
                 >
                   {d.shortName}
@@ -196,7 +196,7 @@ export function AddSlotModal({
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                 required
               />
             </div>
@@ -208,7 +208,7 @@ export function AddSlotModal({
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                 required
               />
             </div>
@@ -225,7 +225,7 @@ export function AddSlotModal({
                 value={room}
                 onChange={(e) => setRoom(e.target.value)}
                 placeholder="e.g. Room 301, Lab A"
-                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
               />
             </div>
             <div>
@@ -235,7 +235,7 @@ export function AddSlotModal({
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as any)}
-                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
               >
                 <option value="lecture">Lecture</option>
                 <option value="lab">Lab / Practical</option>
@@ -254,7 +254,7 @@ export function AddSlotModal({
                 size="sm"
                 onClick={handleDelete}
                 disabled={saving}
-                className="text-xs text-[#C62F3C] border-[#C62F3C]/30 hover:bg-[#C62F3C]/10 gap-1"
+                className="text-xs text-[#D9485F] border-[#D9485F]/30 hover:bg-[#D9485F]/10 gap-1"
               >
                 <Trash2 className="h-3.5 w-3.5" />
                 <span>Delete</span>
@@ -278,7 +278,7 @@ export function AddSlotModal({
                 type="submit"
                 size="sm"
                 disabled={saving}
-                className="text-xs bg-[#A51C30] hover:bg-[#8A1627] text-white"
+                className="text-xs bg-[#C93A55] hover:bg-[#A82E46] text-white"
               >
                 {saving ? "Saving..." : initialSlot ? "Save Changes" : "Add to Timetable"}
               </Button>

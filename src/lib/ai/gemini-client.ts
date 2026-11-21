@@ -1,31 +1,27 @@
 import { GoogleGenAI } from "@google/genai";
 
-export const DEFAULT_GEMINI_KEY = Buffer.from(
-  "QVEuQWI4Uk42TENOVWtjd3FTdFlsRkFmc1RsdGZ5b2NkcThWM21HUFdZZEhXVUlnVFhrN0E=",
-  "base64"
-).toString("utf-8");
 export const GEMINI_MODEL = "gemini-2.5-flash";
 export const GEMINI_FALLBACK_MODEL = "gemini-3.8-flash";
 
+/**
+ * Resolves the Gemini API key. Order: per-request `x-gemini-key` header, then the
+ * server-only GEMINI_API_KEY env var. Returns "" when no key is configured.
+ * Never hardcode a key here, and never use a NEXT_PUBLIC_ variable (it ships to browsers).
+ */
 export function resolveGeminiApiKey(
   req?: { headers?: { get: (name: string) => string | null } } | null
 ): string {
-  return (
-    req?.headers?.get("x-gemini-key") ||
-    process.env.GEMINI_API_KEY ||
-    process.env.NEXT_PUBLIC_GEMINI_API_KEY ||
-    DEFAULT_GEMINI_KEY
-  );
+  return req?.headers?.get("x-gemini-key") || process.env.GEMINI_API_KEY || "";
 }
 
 export function getGeminiClient(
   req?: { headers?: { get: (name: string) => string | null } } | null
-): { client: GoogleGenAI; error: null } {
+): { client: GoogleGenAI | null; error: string | null } {
   const apiKey = resolveGeminiApiKey(req);
-  return {
-    client: new GoogleGenAI({ apiKey }),
-    error: null,
-  };
+  if (!apiKey) {
+    return { client: null, error: "GEMINI_API_KEY is not configured" };
+  }
+  return { client: new GoogleGenAI({ apiKey }), error: null };
 }
 
 export interface GeminiCallParams {
@@ -46,6 +42,9 @@ export async function callGeminiFlashWithThinking({
   images = [],
 }: GeminiCallParams): Promise<string> {
   const resolvedKey = apiKey || resolveGeminiApiKey();
+  if (!resolvedKey) {
+    throw new Error("GEMINI_API_KEY is not configured");
+  }
 
   // Try gemini-2.5-flash with high thinking budget, then gemini-3.8-flash if 404
   const modelsToTry = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL];

@@ -424,7 +424,7 @@ export default function TodayPage() {
                 <h3 className="font-serif text-base font-bold text-[var(--color-ink)]">
                   Smart Recall Queue
                 </h3>
-                <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] dark:bg-[#A51C30]/20">
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] dark:bg-[#C93A55]/20">
                   1 · 3 · 7 · 14
                 </span>
               </div>
@@ -472,7 +472,7 @@ export default function TodayPage() {
                           <span className="text-[10px] font-sans font-bold px-1.5 py-0.2 rounded bg-[var(--color-surface-muted)] text-[var(--color-ink-muted)] border border-[var(--color-border)]">
                             {t.courseCode || "COURSE"}
                           </span>
-                          <span className="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] dark:bg-[#A51C30]/20">
+                          <span className="text-[10px] px-1.5 py-0.2 rounded font-semibold bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] dark:bg-[#C93A55]/20">
                             {t.isLightReview
                               ? "Pre-exam Light Review"
                               : t.isPreExamRefresh

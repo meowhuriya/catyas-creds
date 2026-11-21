@@ -171,14 +171,14 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Cat Sticker Logo */}
+        {/* Butterfly Logo */}
         <div className="flex justify-center">
           <LogoMark size={76} />
         </div>
 
         {/* Brand Headings */}
         <div className="space-y-1.5">
-          <span className="eyebrow-label text-[#8A1627] dark:text-[#F07B88] block">
+          <span className="eyebrow-label text-[#A82E46] dark:text-[#F48FA0] block">
             Academic Portal & Degree Tracker
           </span>
           <h1 className="font-heading text-3xl sm:text-4xl font-bold tracking-tight text-[#14161F] dark:text-[#F6EBD3]">
@@ -201,7 +201,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={handleGoogleSignIn}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[#A51C30] hover:bg-[#8A1627] text-white text-xs font-semibold transition-colors shadow-sm"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] bg-[#C93A55] hover:bg-[#A82E46] text-white text-xs font-semibold transition-colors shadow-sm"
                 >
                   <RefreshCw className="h-3.5 w-3.5" />
                   <span>Try again</span>
@@ -217,7 +217,7 @@ export default function LoginPage() {
             type="button"
             disabled={loading}
             onClick={handleGoogleSignIn}
-            className="w-full py-2.5 px-4 rounded-[8px] btn-primary flex items-center justify-center gap-2.5 text-sm font-semibold shadow-sm disabled:opacity-60 transition-opacity"
+            className="w-full py-3 px-4 rounded-full vc-btn-primary text-white flex items-center justify-center gap-2.5 text-sm font-semibold shadow-sm disabled:opacity-60 transition-opacity"
           >
             {loading ? (
               <>

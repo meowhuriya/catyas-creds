@@ -16,6 +16,7 @@ import {
 } from "firebase/auth";
 import { UserProfile, Term, Course } from "@/types/schemas";
 import { SEED_TERMS, SEED_COURSES } from "@/lib/demo/seed-data";
+import { startCloudSync, stopCloudSync } from "@/lib/cloud-sync/synced-storage";
 
 interface DataStoreContextValue {
   dataStore: DataStore;
@@ -95,6 +96,22 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, [isRealMode]);
 
+  // Mirror localStorage-backed features (research, certificates, lessons cache,
+  // appearance/theme/sound) to the signed-in Google account across devices.
+  useEffect(() => {
+    if (!isRealMode || !firebaseUser) return;
+    let stop: (() => void) | null = null;
+    let cancelled = false;
+    startCloudSync(firebaseUser.uid).then((fn) => {
+      if (cancelled) fn();
+      else stop = fn;
+    });
+    return () => {
+      cancelled = true;
+      stop?.();
+    };
+  }, [isRealMode, firebaseUser]);
+
   const refreshData = useCallback(async () => {
     if (isRealMode && !firebaseUser) {
       setCurrentUser(null);
@@ -143,6 +160,7 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    stopCloudSync();
     if (isRealMode && auth) {
       await fbSignOut(auth);
     }

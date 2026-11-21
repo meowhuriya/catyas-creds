@@ -139,7 +139,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
       {/* Header Row: Title, Eyebrow, Edit Mode Toggle, Warning Chip if below limit */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)]/80">
         <div>
-          <span className="eyebrow-label text-[#8A1627] block mb-1">
+          <span className="eyebrow-label text-[#A82E46] block mb-1">
             {course.code} · ATTENDANCE TRACKER
           </span>
           <h2 className="font-serif text-2xl font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -155,7 +155,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
           {stats.isBelowLimit && (
             <span
               data-testid="attendance-warning-chip"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#C62F3C]/10 text-[#C62F3C] border border-[#C62F3C]/30 shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#D9485F]/10 text-[#D9485F] border border-[#D9485F]/30 shadow-sm"
             >
               <AlertTriangle className="h-3.5 w-3.5" />
               <span>Below {stats.minimumPercentage}% Limit</span>
@@ -175,7 +175,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
             onClick={() => setIsEditing(!isEditing)}
             className="text-xs gap-1.5 h-8 bg-white dark:bg-[#221A1C] border-[#CFC8BB] text-[#14161F] dark:text-[#F6EBD3]"
           >
-            <Sliders className="h-3.5 w-3.5 text-[#8A1627]" />
+            <Sliders className="h-3.5 w-3.5 text-[#A82E46]" />
             <span>{isEditing ? "Close Editor" : "Edit Counts"}</span>
           </Button>
         </div>
@@ -203,7 +203,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
                 min="0"
                 value={editHeld}
                 onChange={(e) => setEditHeld(Math.max(0, parseInt(e.target.value) || 0))}
-                className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-sm font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-sm font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
               />
             </div>
 
@@ -217,7 +217,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
                 max={editHeld}
                 value={editAttended}
                 onChange={(e) => setEditAttended(Math.max(0, parseInt(e.target.value) || 0))}
-                className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-sm font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-sm font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
               />
             </div>
 
@@ -233,7 +233,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
                 onChange={(e) =>
                   setEditMinPercent(Math.min(100, Math.max(1, parseInt(e.target.value) || 75)))
                 }
-                className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-sm font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-sm font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
               />
             </div>
           </div>
@@ -243,7 +243,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
               variant="outline"
               size="sm"
               onClick={handleResetAttendance}
-              className="text-xs text-[#C62F3C] border-[#C62F3C]/30 hover:bg-[#C62F3C]/10 gap-1.5"
+              className="text-xs text-[#D9485F] border-[#D9485F]/30 hover:bg-[#D9485F]/10 gap-1.5"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Reset to 0</span>
@@ -261,7 +261,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
               <Button
                 size="sm"
                 onClick={handleSaveEdit}
-                className="text-xs bg-[#A51C30] hover:bg-[#8A1627] text-white"
+                className="text-xs bg-[#C93A55] hover:bg-[#A82E46] text-white"
               >
                 Save Changes
               </Button>
@@ -274,13 +274,13 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Metric 1: Current Rate */}
         <div className="p-4 rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-          <span className="eyebrow-label text-[#8A1627] block mb-1">
+          <span className="eyebrow-label text-[#A82E46] block mb-1">
             ATTENDANCE RATE
           </span>
           <div className="flex items-baseline gap-1.5">
             <span
               className={`font-serif text-3xl font-bold tabular-nums ${
-                stats.isBelowLimit ? "text-[#C62F3C]" : "text-[#14161F] dark:text-[#F6EBD3]"
+                stats.isBelowLimit ? "text-[#D9485F]" : "text-[#14161F] dark:text-[#F6EBD3]"
               }`}
             >
               {stats.classesHeld > 0 ? `${stats.currentPercentage}%` : "100%"}
@@ -293,7 +293,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
 
         {/* Metric 2: Classes Attended */}
         <div className="p-4 rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-          <span className="eyebrow-label text-[#8A1627] block mb-1">
+          <span className="eyebrow-label text-[#A82E46] block mb-1">
             CLASSES ATTENDED
           </span>
           <div className="flex items-baseline gap-1.5">
@@ -313,11 +313,11 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
         <div
           className={`col-span-2 p-4 rounded-[14px] border ${
             stats.isBelowLimit
-              ? "bg-[#C62F3C]/5 border-[#C62F3C]/30"
+              ? "bg-[#D9485F]/5 border-[#D9485F]/30"
               : "bg-[#FBF6EC] dark:bg-[#221A1C] border-[#E4D9C0] dark:border-[#3D2D31]"
           }`}
         >
-          <span className="eyebrow-label text-[#8A1627] block mb-1">
+          <span className="eyebrow-label text-[#A82E46] block mb-1">
             {stats.isBelowLimit ? "RECOVERY ACTION REQUIRED" : "SAFE ABSENCE ALLOWANCE"}
           </span>
 
@@ -333,10 +333,10 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
               </div>
             ) : (
               <div>
-                <p className="font-serif text-xl sm:text-2xl font-bold text-[#C62F3C]">
+                <p className="font-serif text-xl sm:text-2xl font-bold text-[#D9485F]">
                   {stats.statusSentence}
                 </p>
-                <p className="text-xs text-[#C62F3C]/80 mt-0.5">
+                <p className="text-xs text-[#D9485F]/80 mt-0.5">
                   Consecutive lectures needed to restore compliant status above {stats.minimumPercentage}%
                 </p>
               </div>
@@ -351,14 +351,14 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
           <span className="flex items-center gap-1.5">
             <span
               className={`h-2.5 w-2.5 rounded-full ${
-                stats.isBelowLimit ? "bg-[#C62F3C]" : "bg-[#5E7B5B]"
+                stats.isBelowLimit ? "bg-[#D9485F]" : "bg-[#5E7B5B]"
               }`}
             />
             <span>
               {stats.classesAttended} of {stats.classesHeld} Sessions Attended
             </span>
           </span>
-          <span className="text-[#8A1627] font-sans">
+          <span className="text-[#A82E46] font-sans">
             Required: {stats.minimumPercentage}%
           </span>
         </div>
@@ -367,7 +367,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
           {/* Active progress */}
           <div
             className={`h-full transition-all duration-300 ${
-              stats.isBelowLimit ? "bg-[#C62F3C]" : "bg-[#5E7B5B]"
+              stats.isBelowLimit ? "bg-[#D9485F]" : "bg-[#5E7B5B]"
             }`}
             style={{
               width: `${stats.classesHeld > 0 ? Math.min(100, stats.currentPercentage) : 100}%`,
@@ -380,8 +380,8 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
             className="absolute top-0 -translate-x-1/2 flex flex-col items-center"
             style={{ left: `${stats.minimumPercentage}%` }}
           >
-            <div className="w-0.5 h-2 bg-[#8A1627]" />
-            <span className="text-[10px] font-bold text-[#8A1627] tracking-tight">
+            <div className="w-0.5 h-2 bg-[#A82E46]" />
+            <span className="text-[10px] font-bold text-[#A82E46] tracking-tight">
               {stats.minimumPercentage}% Limit
             </span>
           </div>
@@ -413,7 +413,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
             variant="outline"
             size="sm"
             onClick={handleMarkAbsent}
-            className="text-xs bg-white dark:bg-[#221A1C] border-[#CFC8BB] text-[#C62F3C] hover:bg-[#C62F3C]/10 gap-1.5 h-9 px-3.5 shadow-sm"
+            className="text-xs bg-white dark:bg-[#221A1C] border-[#CFC8BB] text-[#D9485F] hover:bg-[#D9485F]/10 gap-1.5 h-9 px-3.5 shadow-sm"
           >
             <XCircle className="h-4 w-4" />
             <span>Mark Absent</span>
@@ -434,7 +434,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
                 className="flex items-center justify-between px-3.5 py-2 text-xs"
               >
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-3.5 w-3.5 text-[#8A1627]" />
+                  <Calendar className="h-3.5 w-3.5 text-[#A82E46]" />
                   <span className="font-medium text-[#14161F] dark:text-[#F6EBD3]">
                     {log.date}
                   </span>
@@ -452,7 +452,7 @@ export function AttendanceTracker({ course, onAttendanceChange }: AttendanceTrac
                       <span>Present</span>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 font-semibold text-[#C62F3C]">
+                    <span className="inline-flex items-center gap-1 font-semibold text-[#D9485F]">
                       <XCircle className="h-3 w-3" />
                       <span>Absent</span>
                     </span>

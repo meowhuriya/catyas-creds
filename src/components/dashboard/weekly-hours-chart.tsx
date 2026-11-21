@@ -111,7 +111,7 @@ export function WeeklyHoursChart({
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
-                  fill={entry.hours >= entry.target ? "#5E7B5B" : "#C62F3C"}
+                  fill={entry.hours >= entry.target ? "#5E7B5B" : "#D9485F"}
                 />
               ))}
             </Bar>
@@ -125,7 +125,7 @@ export function WeeklyHoursChart({
           Target met (≥ 3h)
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#C62F3C]" />
+          <span className="h-2 w-2 rounded-full bg-[#D9485F]" />
           Under target
         </span>
       </div>

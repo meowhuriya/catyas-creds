@@ -49,7 +49,7 @@ export function ProgressRing({
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          stroke={color || "#A51C30"}
+          stroke={color || "#C93A55"}
           fill="transparent"
           r={radius}
           cx={size / 2}

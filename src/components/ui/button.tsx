@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-[#A51C30] hover:bg-[#881324] text-white shadow-sm active:scale-[0.99]",
+          "vc-btn-primary rounded-full text-white active:scale-[0.99]",
         secondary:
           "bg-app-surface-muted text-app-ink hover:bg-app-border border border-app-border",
         outline:
@@ -24,7 +24,7 @@ const buttonVariants = cva(
       size: {
         sm: "h-8 px-3 text-xs rounded-control gap-1.5",
         md: "h-9 px-4 text-sm rounded-control gap-2",
-        lg: "h-11 px-6 text-base rounded-control gap-2.5",
+        lg: "h-11 px-6 text-sm uppercase tracking-[0.12em] font-display font-semibold rounded-control gap-2.5",
         icon: "h-9 w-9 p-0 rounded-control",
         iconSm: "h-7 w-7 p-0 rounded-control",
       },

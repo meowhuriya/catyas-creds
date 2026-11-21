@@ -539,7 +539,7 @@ export default function VideoPlayerPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-[14px] bg-white dark:bg-[#1A1214] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm mb-3 shrink-0">
           {/* Left: Course Code, Title, Focus Indicator */}
           <div className="flex items-center gap-2.5 min-w-0">
-            <span className="font-sans text-xs font-bold uppercase tracking-wider text-[#8A1627] px-2 py-0.5 rounded-[6px] bg-[#8A1627]/10 border border-[#8A1627]/20 shrink-0">
+            <span className="font-sans text-xs font-bold uppercase tracking-wider text-[#A82E46] px-2 py-0.5 rounded-[6px] bg-[#A82E46]/10 border border-[#A82E46]/20 shrink-0">
               {course?.code}
             </span>
             <h2 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3] truncate max-w-xs sm:max-w-sm">
@@ -565,7 +565,7 @@ export default function VideoPlayerPage() {
               className="text-xs h-8 gap-1.5 bg-[#FBF6EC] dark:bg-[#221A1C] border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3]"
               title="Save current playback position as a timestamp"
             >
-              <BookmarkPlus className="h-3.5 w-3.5 text-[#8A1627]" />
+              <BookmarkPlus className="h-3.5 w-3.5 text-[#A82E46]" />
               <span className="hidden sm:inline">Timestamp</span>
             </Button>
 
@@ -594,7 +594,7 @@ export default function VideoPlayerPage() {
             <Button
               size="sm"
               onClick={() => setIsFocusMode(false)}
-              className="text-xs h-8 gap-1.5 bg-[#A51C30] hover:bg-[#8A1627] text-white shadow-sm"
+              className="text-xs h-8 gap-1.5 bg-[#C93A55] hover:bg-[#A82E46] text-white shadow-sm"
               title="Exit Focus Mode (shortcut: 'f' or Esc)"
             >
               <Minimize2 className="h-3.5 w-3.5" />
@@ -626,10 +626,10 @@ export default function VideoPlayerPage() {
               variant="outline"
               size="sm"
               onClick={() => setIsFocusMode(true)}
-              className="text-xs h-7 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#8A1627] hover:bg-[#8A1627]/10"
+              className="text-xs h-7 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#A82E46] hover:bg-[#A82E46]/10"
               title="Toggle distraction-free Focus Mode (shortcut: 'f')"
             >
-              <Sparkles className="h-3.5 w-3.5 text-[#8A1627]" />
+              <Sparkles className="h-3.5 w-3.5 text-[#A82E46]" />
               <span>Focus Mode (f)</span>
             </Button>
 
@@ -662,11 +662,11 @@ export default function VideoPlayerPage() {
               size="sm"
               onClick={handleDeleteCurrentLesson}
               disabled={isDeleting}
-              className="text-xs h-7 px-2 text-[#4B5160] hover:text-[#C62F3C] hover:bg-[#C62F3C]/10 border-[#CFC8BB]"
+              className="text-xs h-7 px-2 text-[#4B5160] hover:text-[#D9485F] hover:bg-[#D9485F]/10 border-[#CFC8BB]"
               title={`Delete lecture "${lesson.title}"`}
             >
               {isDeleting ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C62F3C]" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#D9485F]" />
               ) : (
                 <Trash2 className="h-3.5 w-3.5" />
               )}
@@ -804,11 +804,11 @@ export default function VideoPlayerPage() {
                     size="sm"
                     onClick={handleDeleteCurrentLesson}
                     disabled={isDeleting}
-                    className="text-xs h-7 px-2 text-[#4B5160] hover:text-[#C62F3C] hover:bg-[#C62F3C]/10 transition-colors"
+                    className="text-xs h-7 px-2 text-[#4B5160] hover:text-[#D9485F] hover:bg-[#D9485F]/10 transition-colors"
                     title={`Delete lecture "${lesson.title}"`}
                   >
                     {isDeleting ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C62F3C]" />
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-[#D9485F]" />
                     ) : (
                       <Trash2 className="h-3.5 w-3.5" />
                     )}
@@ -980,7 +980,7 @@ export default function VideoPlayerPage() {
                   placeholder="Capture formulas, key theorems, and reflections here... Autosaves automatically. (Press 'n' to focus)."
                   value={noteText}
                   onChange={(e) => setNoteText(e.target.value)}
-                  className="w-full flex-1 p-3.5 text-xs text-[var(--color-ink)] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[#A51C30] resize-none leading-relaxed font-sans placeholder:text-[#4B5160]/40"
+                  className="w-full flex-1 p-3.5 text-xs text-[var(--color-ink)] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] rounded-[8px] focus:outline-none focus:ring-1 focus:ring-[#C93A55] resize-none leading-relaxed font-sans placeholder:text-[#4B5160]/40"
                 />
               </div>
 

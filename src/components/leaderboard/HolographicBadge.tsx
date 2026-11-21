@@ -119,8 +119,8 @@ export function HolographicBadge({
               }}
               className={`text-[10px] font-bold px-2 py-1 rounded-[6px] transition-colors shadow-xs ${
                 isEquipped
-                  ? "bg-[#8A1627] text-white"
-                  : "bg-[#E4D9C0]/60 dark:bg-[#3D2D31] hover:bg-[#8A1627] hover:text-white"
+                  ? "bg-[#A82E46] text-white"
+                  : "bg-[#E4D9C0]/60 dark:bg-[#3D2D31] hover:bg-[#A82E46] hover:text-white"
               }`}
             >
               {isEquipped ? "Equipped" : "Equip"}
@@ -152,7 +152,7 @@ export function HolographicBadge({
           </div>
           <div className="h-1.5 w-full bg-[#E4D9C0] dark:bg-[#3D2D31] rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#8A1627] rounded-full transition-all duration-300"
+              className="h-full bg-[#A82E46] rounded-full transition-all duration-300"
               style={{
                 width: `${Math.min(100, (currentVal / badge.thresholdValue) * 100)}%`,
               }}

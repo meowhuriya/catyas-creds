@@ -1,62 +1,98 @@
 "use client";
 
 import * as React from "react";
+import { onCloudSyncUpdate } from "@/lib/cloud-sync/synced-storage";
+import { ACCENT_KEY, DEFAULT_ACCENT, MODE_KEY, ThemeMode, applyAppearance, isHex } from "./accent";
 
-export type AppTheme = "obsidian" | "harvard" | "heritage";
+// Kept for older imports. "pearl" = light, "clove" = dark; the rest map to dark.
+export type AppTheme = "pearl" | "clove" | "strawberry" | "obsidian" | "harvard" | "heritage";
 
 interface ThemeContextType {
   theme: AppTheme;
   setTheme: (theme: AppTheme) => void;
   cycleTheme: () => void;
+  mode: ThemeMode;
+  setMode: (mode: ThemeMode) => void;
+  toggleMode: () => void;
+  accent: string;
+  setAccent: (hex: string) => void;
 }
 
 const ThemeContext = React.createContext<ThemeContextType>({
-  theme: "obsidian",
+  theme: "pearl",
   setTheme: () => {},
   cycleTheme: () => {},
+  mode: "light",
+  setMode: () => {},
+  toggleMode: () => {},
+  accent: DEFAULT_ACCENT,
+  setAccent: () => {},
 });
 
+function readSaved(): { mode: ThemeMode; accent: string } {
+  try {
+    const m = localStorage.getItem(MODE_KEY);
+    const a = localStorage.getItem(ACCENT_KEY);
+    return { mode: m === "dark" ? "dark" : "light", accent: isHex(a) ? a : DEFAULT_ACCENT };
+  } catch {
+    return { mode: "light", accent: DEFAULT_ACCENT };
+  }
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = React.useState<AppTheme>("obsidian");
-  const [mounted, setMounted] = React.useState(false);
+  const [mode, setModeState] = React.useState<ThemeMode>("light");
+  const [accent, setAccentState] = React.useState<string>(DEFAULT_ACCENT);
 
   React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem("app_theme") as AppTheme | null;
-      const initialTheme: AppTheme =
-        saved === "obsidian" || saved === "harvard" || saved === "heritage"
-          ? saved
-          : "obsidian";
-      setThemeState(initialTheme);
-      applyThemeToDOM(initialTheme);
-    } catch {
-      applyThemeToDOM("obsidian");
-    }
-    setMounted(true);
+    const saved = readSaved();
+    setModeState(saved.mode);
+    setAccentState(saved.accent);
+    applyAppearance(saved.mode, saved.accent);
+    const resync = () => {
+      const s = readSaved();
+      setModeState(s.mode);
+      setAccentState(s.accent);
+      applyAppearance(s.mode, s.accent);
+    };
+    const off1 = onCloudSyncUpdate(MODE_KEY, resync);
+    const off2 = onCloudSyncUpdate(ACCENT_KEY, resync);
+    return () => {
+      off1?.();
+      off2?.();
+    };
   }, []);
 
-  const setTheme = React.useCallback((newTheme: AppTheme) => {
-    setThemeState(newTheme);
-    try {
-      localStorage.setItem("app_theme", newTheme);
-    } catch {}
-    applyThemeToDOM(newTheme);
-  }, []);
-
-  const cycleTheme = React.useCallback(() => {
-    setThemeState((prev) => {
-      const next: AppTheme =
-        prev === "obsidian" ? "harvard" : prev === "harvard" ? "heritage" : "obsidian";
+  const setMode = React.useCallback(
+    (m: ThemeMode) => {
+      setModeState(m);
       try {
-        localStorage.setItem("app_theme", next);
+        localStorage.setItem(MODE_KEY, m);
       } catch {}
-      applyThemeToDOM(next);
-      return next;
-    });
-  }, []);
+      applyAppearance(m, accent);
+    },
+    [accent]
+  );
+
+  const setAccent = React.useCallback(
+    (hex: string) => {
+      if (!isHex(hex)) return;
+      setAccentState(hex);
+      try {
+        localStorage.setItem(ACCENT_KEY, hex);
+      } catch {}
+      applyAppearance(mode, hex);
+    },
+    [mode]
+  );
+
+  const toggleMode = React.useCallback(() => setMode(mode === "dark" ? "light" : "dark"), [mode, setMode]);
+  const theme: AppTheme = mode === "dark" ? "clove" : "pearl";
+  const setTheme = React.useCallback((t: AppTheme) => setMode(t === "pearl" ? "light" : "dark"), [setMode]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, cycleTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, cycleTheme: toggleMode, mode, setMode, toggleMode, accent, setAccent }}
+    >
       {children}
     </ThemeContext.Provider>
   );
@@ -66,14 +102,7 @@ export function useTheme() {
   return React.useContext(ThemeContext);
 }
 
+/** Compatibility helper for older callers. */
 export function applyThemeToDOM(theme: AppTheme) {
-  if (typeof document === "undefined") return;
-  const root = document.documentElement;
-  root.setAttribute("data-theme", theme);
-
-  if (theme === "obsidian") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
-  }
+  applyAppearance(theme === "pearl" ? "light" : "dark", readSaved().accent);
 }

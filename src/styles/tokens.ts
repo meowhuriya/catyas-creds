@@ -17,18 +17,18 @@ export const TOKENS = {
       borderSecondary: "#CFC8BB", // 1px secondary button border
       ink: "#14161F", // Deep ink
       inkMuted: "#4B5160", // Secondary text
-      eyebrow: "#8A1627", // 12px bold uppercase eyebrow labels
-      accent: "#A51C30", // Solid crimson (buttons & branding)
-      accentHover: "#881324",
-      tomato: "#C62F3C", // Gingham stripe red
+      eyebrow: "#A82E46", // 12px bold uppercase eyebrow labels
+      accent: "#C93A55", // Solid crimson (buttons & branding)
+      accentHover: "#A82E46",
+      tomato: "#D9485F", // Gingham stripe red
       mustard: "#D9A441", // Achievements, streaks, rings (replaces old gold)
       sage: "#5E7B5B", // Success & completed topics
       teal: "#2F7F86", // Links & interactive badges
-      burgundy: "#380C13", // Hero banner deep tone
+      burgundy: "#4A1F2B", // Hero banner deep tone
       gold: "#D9A441", // Alias for achievements
       success: "#5E7B5B",
       warning: "#D9A441",
-      danger: "#C62F3C",
+      danger: "#D9485F",
       info: "#2F7F86",
     },
     dark: {
@@ -39,7 +39,7 @@ export const TOKENS = {
       borderSecondary: "#524045",
       ink: "#F6EBD3",
       inkMuted: "#A89B9E",
-      eyebrow: "#F07B88",
+      eyebrow: "#F48FA0",
       accent: "#E25F70",
       accentHover: "#EE7584",
       tomato: "#E84D58",
@@ -54,12 +54,12 @@ export const TOKENS = {
       info: "#449EA6",
     },
     hero: {
-      gradient: "linear-gradient(135deg, #380C13, #631724)",
+      gradient: "linear-gradient(135deg, #4A1F2B, #631724)",
       goldHairline: "1px solid rgba(217, 164, 65, 0.45)",
     },
     gingham: {
       cream: "#F6EBD3",
-      red: "#C62F3C",
+      red: "#D9485F",
       softAlpha: 0.12,
       mediumAlpha: 0.20,
       boldAlpha: 0.30,
@@ -81,7 +81,7 @@ export const TOKENS = {
   typography: {
     fonts: {
       serif: "var(--font-fraunces), Georgia, serif",
-      sans: "var(--font-plus-jakarta-sans), system-ui, sans-serif",
+      sans: "var(--font-body), system-ui, sans-serif",
     },
     scales: {
       eyebrow: "12px", // 12px bold uppercase tracking-wider

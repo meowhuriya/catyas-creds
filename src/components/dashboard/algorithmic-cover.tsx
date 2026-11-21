@@ -72,14 +72,14 @@ export function AlgorithmicCover({
   const patternType = hash % 4; // 0: concentric arcs, 1: dot grid, 2: diagonal lines, 3: contour waves
 
   // Base background is a deep, rich dark tone derived from the course color
-  const darkBase = "#12141A";
+  const lighter = `color-mix(in srgb, ${tagColor} 62%, #ffffff)`;
 
   return (
     <div
-      className={`relative w-full overflow-hidden select-none flex items-center justify-between ${className}`}
+      className={`course-cover relative w-full overflow-hidden select-none flex items-center justify-between ${className}`}
       style={{
         height: `${height}px`,
-        backgroundColor: darkBase,
+        backgroundImage: `linear-gradient(135deg, ${tagColor} 0%, ${lighter} 100%)`,
       }}
     >
       {/* Background SVG Pattern */}
@@ -90,18 +90,18 @@ export function AlgorithmicCover({
       >
         <defs>
           <linearGradient id={`grad-${courseCode}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={tagColor} stopOpacity="0.45" />
-            <stop offset="100%" stopColor={tagColor} stopOpacity="0.08" />
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.08" />
           </linearGradient>
 
           {/* Dot Grid Pattern */}
           <pattern id={`dots-${courseCode}`} x1="0" y1="0" width="16" height="16" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1.5" fill={tagColor} fillOpacity="0.25" />
+            <circle cx="2" cy="2" r="1.5" fill="#FFFFFF" fillOpacity="0.25" />
           </pattern>
 
           {/* Diagonal Stripes Pattern */}
           <pattern id={`stripes-${courseCode}`} width="20" height="20" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="0" x2="0" y2="20" stroke={tagColor} strokeWidth="1.5" strokeOpacity="0.2" />
+            <line x1="0" y1="0" x2="0" y2="20" stroke="#FFFFFF" strokeWidth="1.5" strokeOpacity="0.2" />
           </pattern>
         </defs>
 
@@ -111,7 +111,7 @@ export function AlgorithmicCover({
         {/* Generative Geometric Details */}
         {patternType === 0 && (
           // Concentric Arcs
-          <g stroke={tagColor} strokeWidth="1.2" fill="none" opacity="0.35">
+          <g stroke="#FFFFFF" strokeWidth="1.2" fill="none" opacity="0.35">
             <circle cx="90%" cy="50%" r="30" />
             <circle cx="90%" cy="50%" r="55" />
             <circle cx="90%" cy="50%" r="80" />
@@ -132,7 +132,7 @@ export function AlgorithmicCover({
 
         {patternType === 3 && (
           // Contour Topographic Waves
-          <g stroke={tagColor} strokeWidth="1.2" fill="none" opacity="0.3">
+          <g stroke="#FFFFFF" strokeWidth="1.2" fill="none" opacity="0.3">
             <path d="M-20,20 Q60,70 140,20 T300,40 T460,20 T620,50" />
             <path d="M-20,40 Q60,90 140,40 T300,60 T460,40 T620,70" />
             <path d="M-20,60 Q60,110 140,60 T300,80 T460,60 T620,90" />
@@ -143,17 +143,11 @@ export function AlgorithmicCover({
 
       {/* Large Serif Course Code Watermark */}
       <span
-        className="absolute left-4 top-1/2 -translate-y-1/2 font-serif font-black tracking-tighter pointer-events-none select-none text-white/[0.07]"
+        className="absolute left-4 top-1/2 -translate-y-1/2 font-serif font-black tracking-tighter pointer-events-none select-none text-white/[0.16]"
         style={{ fontSize: height > 120 ? "72px" : "44px" }}
       >
         {courseCode}
       </span>
-
-      {/* Left Accent Color Indicator */}
-      <div
-        className="absolute left-0 top-0 bottom-0 w-1"
-        style={{ backgroundColor: tagColor }}
-      />
 
       {/* Course Meta Label Overlay */}
       <div className="relative z-10 px-4 flex flex-col justify-center">

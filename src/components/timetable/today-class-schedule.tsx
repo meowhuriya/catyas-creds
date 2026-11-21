@@ -92,7 +92,7 @@ export function TodayClassSchedule({
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Link
             href="/planner?view=timetable"
-            className="text-[11px] font-semibold text-[#8A1627] dark:text-[#F07B88] hover:underline inline-flex items-center gap-1"
+            className="text-[11px] font-semibold text-[#A82E46] dark:text-[#F48FA0] hover:underline inline-flex items-center gap-1"
           >
             <span>Full Timetable</span>
             <ChevronRight className="h-3 w-3" />
@@ -113,9 +113,9 @@ export function TodayClassSchedule({
               onClick={() => setSelectedDay(d.id)}
               className={`flex-1 py-1 px-1.5 rounded-[6px] text-xs font-sans font-semibold transition-colors text-center cursor-pointer ${
                 isSelected
-                  ? "bg-[#A51C30] text-white shadow-xs font-bold"
+                  ? "bg-[#C93A55] text-white shadow-xs font-bold"
                   : isToday
-                  ? "bg-white dark:bg-[#1A1214] text-[#A51C30] border border-[#A51C30]/40"
+                  ? "bg-white dark:bg-[#1A1214] text-[#C93A55] border border-[#C93A55]/40"
                   : "text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F]"
               }`}
             >
@@ -153,7 +153,7 @@ export function TodayClassSchedule({
                   <div className="min-w-0 flex-1">
                     {/* Header info */}
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-sans text-xs font-bold text-[#A51C30] dark:text-[#F07B88]">
+                      <span className="font-sans text-xs font-bold text-[#C93A55] dark:text-[#F48FA0]">
                         {c?.code || "COURSE"}
                       </span>
                       <span
@@ -187,7 +187,7 @@ export function TodayClassSchedule({
                       </span>
                       <span>•</span>
                       <span className="flex items-center gap-1 truncate">
-                        <MapPin className="h-3 w-3 text-[#8A1627] shrink-0" />
+                        <MapPin className="h-3 w-3 text-[#A82E46] shrink-0" />
                         <span>{slot.room || "Room 101"}</span>
                       </span>
                     </div>
@@ -210,7 +210,7 @@ export function TodayClassSchedule({
                     {c && (
                       <Link
                         href={`/courses/${c.id}`}
-                        className="px-2.5 py-1 rounded-[6px] bg-[#A51C30] text-white text-[11px] font-sans font-semibold hover:bg-[#8A1627] transition-colors inline-flex items-center gap-1"
+                        className="px-2.5 py-1 rounded-[6px] bg-[#C93A55] text-white text-[11px] font-sans font-semibold hover:bg-[#A82E46] transition-colors inline-flex items-center gap-1"
                       >
                         <span>Course</span>
                         <ChevronRight className="h-3 w-3" />

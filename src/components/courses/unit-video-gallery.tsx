@@ -193,7 +193,7 @@ export function UnitVideoGallery({
           <h3 className="font-serif text-lg font-bold text-[#14161F] dark:text-[#F6EBD3]">
             Lectures
           </h3>
-          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#F6EBD3] text-[#8A1627] border border-[#E5D5C5] tabular-nums">
+          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#F6EBD3] text-[#A82E46] border border-[#E5D5C5] tabular-nums">
             {unitVideos.length}
           </span>
         </div>
@@ -360,7 +360,7 @@ export function UnitVideoGallery({
                   {percent > 0 && (
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40">
                       <div
-                        className="h-full bg-[#A51C30] transition-all"
+                        className="h-full bg-[#C93A55] transition-all"
                         style={{ width: `${percent}%` }}
                       />
                     </div>
@@ -374,7 +374,7 @@ export function UnitVideoGallery({
                       {video.channelTitle}
                     </span>
 
-                    <h4 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3] line-clamp-2 mt-0.5 group-hover:text-[#A51C30] transition-colors">
+                    <h4 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3] line-clamp-2 mt-0.5 group-hover:text-[#C93A55] transition-colors">
                       <Link href={`/courses/${course.id}/player/${video.id}`}>
                         {video.title}
                       </Link>
@@ -386,7 +386,7 @@ export function UnitVideoGallery({
                         linkedTopics.map((top) => (
                           <span
                             key={top.id}
-                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#A51C30]/10 text-[#A51C30] text-xs font-medium border border-[#A51C30]/20 truncate max-w-[140px]"
+                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] bg-[#C93A55]/10 text-[#C93A55] text-xs font-medium border border-[#C93A55]/20 truncate max-w-[140px]"
                             title={top.title}
                           >
                             <Tag className="h-3 w-3 shrink-0" />
@@ -415,7 +415,7 @@ export function UnitVideoGallery({
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/courses/${course.id}/player/${video.id}`}
-                        className="font-semibold text-[#A51C30] hover:underline flex items-center gap-1"
+                        className="font-semibold text-[#C93A55] hover:underline flex items-center gap-1"
                       >
                         <span>Open Player</span>
                         <span>→</span>
@@ -462,11 +462,11 @@ export function UnitVideoGallery({
                         type="button"
                         onClick={() => handleDeleteVideo(video)}
                         disabled={deletingId === video.id}
-                        className="p-1 rounded text-[#4B5160] hover:text-[#C62F3C] hover:bg-[#C62F3C]/10 transition-colors ml-1"
+                        className="p-1 rounded text-[#4B5160] hover:text-[#D9485F] hover:bg-[#D9485F]/10 transition-colors ml-1"
                         title={`Delete lecture "${video.title}"`}
                       >
                         {deletingId === video.id ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#C62F3C]" />
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-[#D9485F]" />
                         ) : (
                           <Trash2 className="h-3.5 w-3.5" />
                         )}

@@ -16,6 +16,7 @@ import {
   X,
   FlaskConical,
   ClipboardCheck,
+  NotebookPen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,11 +27,12 @@ export function MobileTabBar() {
   const mainTabs = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Today", href: "/today", icon: Clock },
+    { label: "Notes", href: "/notes", icon: NotebookPen },
     { label: "Courses", href: "/courses", icon: BookOpen },
-    { label: "Planner", href: "/planner", icon: Calendar },
   ];
 
   const moreItems = [
+    { label: "Planner", href: "/planner", icon: Calendar },
     { label: "College Works", href: "/college-works", icon: ClipboardCheck },
     { label: "Research & Lab (NotebookLM)", href: "/research", icon: FlaskConical },
     { label: "Certificates & Comps", href: "/certificates", icon: Award },
@@ -69,7 +71,7 @@ export function MobileTabBar() {
                     className={cn(
                       "flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
                       isActive
-                        ? "bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                        ? "bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] font-semibold"
                         : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
                     )}
                   >
@@ -97,7 +99,7 @@ export function MobileTabBar() {
               className={cn(
                 "flex flex-col items-center justify-center gap-1 rounded-[6px] py-1 px-3 text-[11px] font-medium transition-colors",
                 isActive
-                  ? "text-[#A51C30] dark:text-[#F07B88] font-semibold"
+                  ? "text-[#C93A55] dark:text-[#F48FA0] font-semibold"
                   : "text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
               )}
             >
@@ -112,7 +114,7 @@ export function MobileTabBar() {
           onClick={() => setMoreOpen(!moreOpen)}
           className={cn(
             "flex flex-col items-center justify-center gap-1 rounded-[6px] py-1 px-3 text-[11px] font-medium transition-colors text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F] dark:hover:text-[#F6EBD3]",
-            moreOpen && "text-[#A51C30] dark:text-[#F07B88] font-semibold"
+            moreOpen && "text-[#C93A55] dark:text-[#F48FA0] font-semibold"
           )}
         >
           <Menu className="h-5 w-5" />

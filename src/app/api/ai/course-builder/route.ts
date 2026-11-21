@@ -38,7 +38,7 @@ Return a single JSON object with:
 - level: number (e.g. 100, 200, 300, 400)
 - credits: number (typical semester credits, e.g. 3 or 4)
 - description: string (concise 1-2 sentence academic overview)
-- color: string (hex code such as "#A51C30", "#3A0F1B", "#1E3A8A", "#047857", etc.)
+- color: string (hex code such as "#C93A55", "#3A0F1B", "#1E3A8A", "#047857", etc.)
 - units: array of objects with unitNumber (1, 2, 3...), title (Unit name), and topics (array of objects with title and order).
 
 Raw Syllabus Text:
@@ -64,7 +64,7 @@ ${syllabusText.slice(0, 15000)}
         level: 100,
         credits: 4,
         description: `Comprehensive undergraduate course in ${titleCandidate}. Covers theoretical foundations, analysis, and implementation.`,
-        color: "#A51C30",
+        color: "#C93A55",
         units: [
           {
             unitNumber: 1,

@@ -13,12 +13,12 @@ export default function PrivacyPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/"
-            className="p-1.5 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] text-[#14161F] dark:text-[#F6EBD3] hover:text-[#A51C30] transition-colors"
+            className="p-1.5 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] text-[#14161F] dark:text-[#F6EBD3] hover:text-[#C93A55] transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
           <div>
-            <span className="eyebrow-label text-[#8A1627] block text-[10px]">
+            <span className="eyebrow-label text-[#A82E46] block text-[10px]">
               LEGAL & COMPLIANCE
             </span>
             <h1 className="font-serif text-xl sm:text-2xl font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
               href="https://www.youtube.com/t/terms"
               target="_blank"
               rel="noreferrer"
-              className="text-[#A51C30] dark:text-[#F07B88] hover:underline font-semibold"
+              className="text-[#C93A55] dark:text-[#F48FA0] hover:underline font-semibold"
             >
               YouTube Terms of Service
             </a>{" "}
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
               href="https://policies.google.com/privacy"
               target="_blank"
               rel="noreferrer"
-              className="text-[#A51C30] dark:text-[#F07B88] hover:underline font-semibold"
+              className="text-[#C93A55] dark:text-[#F48FA0] hover:underline font-semibold"
             >
               Google Privacy Policy
             </a>
@@ -95,7 +95,7 @@ export default function PrivacyPage() {
 
         <div className="pt-4 border-t border-[#E4D9C0] dark:border-[#3D2D31] flex items-center justify-between text-xs text-[#4B5160] dark:text-[#D1C7B7]">
           <span>Effective Date: November 2026</span>
-          <Link href="/" className="text-[#A51C30] dark:text-[#F07B88] font-semibold hover:underline">
+          <Link href="/" className="text-[#C93A55] dark:text-[#F48FA0] font-semibold hover:underline">
             Return to Dashboard →
           </Link>
         </div>

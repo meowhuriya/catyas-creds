@@ -234,8 +234,8 @@ export function TopicChecklist({
                     onClick={() => handleToggleStudied(topic)}
                     className={`mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all ${
                       topic.watchScore >= 40
-                        ? "bg-[#A51C30] border-[#A51C30] text-white shadow-xs"
-                        : "border-[#CFC8BB] hover:border-[#A51C30] bg-white dark:bg-[#1A1214]"
+                        ? "bg-[#C93A55] border-[#C93A55] text-white shadow-xs"
+                        : "border-[#CFC8BB] hover:border-[#C93A55] bg-white dark:bg-[#1A1214]"
                     }`}
                     title={
                       topic.watchScore >= 40
@@ -382,7 +382,7 @@ export function TopicChecklist({
                       <button
                         type="button"
                         onClick={() => onOpenTopicAi(topic)}
-                        className="p-1.5 rounded-[6px] text-[#A51C30] hover:bg-[#A51C30]/10 transition-colors"
+                        className="p-1.5 rounded-[6px] text-[#C93A55] hover:bg-[#C93A55]/10 transition-colors"
                         title="AI study assistant: Explain simply, test me, or flashcards"
                       >
                         <Sparkles className="h-4 w-4" />
@@ -399,7 +399,7 @@ export function TopicChecklist({
                           window.location.href = `/courses/${course.id}/mastery/${topic.id}`;
                         }
                       }}
-                      className="p-1.5 rounded-[6px] text-[#8A1627] dark:text-[#F07B88] hover:bg-[#8A1627]/10 transition-colors"
+                      className="p-1.5 rounded-[6px] text-[#A82E46] dark:text-[#F48FA0] hover:bg-[#A82E46]/10 transition-colors"
                       title="Khan-Style Note Audit & 5-Question Mastery Exercise Set"
                     >
                       <Target className="h-4 w-4" />

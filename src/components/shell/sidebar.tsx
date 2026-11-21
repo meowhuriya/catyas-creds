@@ -16,12 +16,11 @@ import {
   RotateCcw,
   ChevronLeft,
   ChevronRight,
-  Plus,
   FlaskConical,
   ClipboardCheck,
+  NotebookPen,
+  Medal,
 } from "lucide-react";
-import { useDataStore } from "@/lib/repository";
-import { TOKENS, CourseTagKey } from "@/styles/tokens";
 import { cn } from "@/lib/utils";
 import { LogoMark, Wordmark } from "@/components/brand/logo";
 
@@ -30,185 +29,128 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
+type NavItem = { label: string; href: string; icon: React.ElementType };
+type NavGroup = { title: string | null; items: NavItem[] };
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    title: null,
+    items: [
+      { label: "Dashboard", href: "/", icon: LayoutDashboard },
+      { label: "Today", href: "/today", icon: Clock },
+    ],
+  },
+  {
+    title: "Study",
+    items: [
+      { label: "Notes Vault", href: "/notes", icon: NotebookPen },
+      { label: "Courses", href: "/courses", icon: BookOpen },
+      { label: "Smart Recall", href: "/recall", icon: RotateCcw },
+      { label: "Planner", href: "/planner", icon: Calendar },
+    ],
+  },
+  {
+    title: "College",
+    items: [
+      { label: "College Works", href: "/college-works", icon: ClipboardCheck },
+      { label: "Grades", href: "/grades", icon: GraduationCap },
+      { label: "Transcript", href: "/transcript", icon: FileText },
+      { label: "Degree Progress", href: "/degree", icon: Award },
+    ],
+  },
+  {
+    title: "Grow",
+    items: [
+      { label: "Research & Lab", href: "/research", icon: FlaskConical },
+      { label: "Certificates", href: "/certificates", icon: Medal },
+      { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
+    ],
+  },
+];
+
+const SETTINGS: NavItem = { label: "Settings", href: "/settings", icon: Settings };
+
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
-  const { courses } = useDataStore();
 
-  const navItems = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard },
-    { label: "Today", href: "/today", icon: Clock },
-    { label: "Smart Recall", href: "/recall", icon: RotateCcw },
-    { label: "Courses", href: "/courses", icon: BookOpen },
-    { label: "College Works", href: "/college-works", icon: ClipboardCheck },
-    { label: "Research & Lab", href: "/research", icon: FlaskConical },
-    { label: "Certificates & Comps", href: "/certificates", icon: Award },
-    { label: "Planner", href: "/planner", icon: Calendar },
-    { label: "Grades", href: "/grades", icon: GraduationCap },
-    { label: "Transcript", href: "/transcript", icon: FileText },
-    { label: "Degree Progress", href: "/degree", icon: Award },
-    { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
-    { label: "Settings", href: "/settings", icon: Settings },
-  ];
-
-  const recentCourses = courses.slice(0, 5);
+  const renderItem = (item: NavItem) => {
+    const Icon = item.icon;
+    const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        data-active={isActive ? "true" : "false"}
+        title={collapsed ? item.label : undefined}
+        aria-current={isActive ? "page" : undefined}
+        className={cn(
+          "pro-nav group flex h-9 items-center gap-3 rounded-lg px-3 text-[13.5px] font-medium transition-colors",
+          isActive ? "is-active text-[var(--color-ink)]" : "text-[var(--color-ink-muted)] hover:bg-[var(--wash)] hover:text-[var(--color-ink)]",
+          collapsed && "justify-center px-0"
+        )}
+      >
+        <Icon className={cn("h-[17px] w-[17px] shrink-0", isActive ? "text-[var(--color-accent)]" : "text-[var(--color-ink-muted)] group-hover:text-[var(--color-ink)]")} strokeWidth={1.75} />
+        {!collapsed && <span className="truncate">{item.label}</span>}
+      </Link>
+    );
+  };
 
   return (
     <aside
       className={cn(
-        "relative hidden md:flex flex-col bg-app-surface border border-app-border rounded-[18px] shadow-sm transition-all duration-200 select-none shrink-0 h-[calc(100vh-32px)] sticky top-4 overflow-hidden",
-        collapsed ? "w-16" : "w-[264px]"
+        "relative hidden md:flex flex-col transition-[width] duration-200 select-none shrink-0 h-[calc(100vh-32px)] sticky top-4 overflow-hidden",
+        collapsed ? "w-[68px]" : "w-[232px]"
       )}
     >
-      {/* Brand Header */}
-      <div className="flex h-16 items-center justify-between border-b border-[var(--color-border)] px-4">
+      <div className={cn("flex h-16 items-center px-4", collapsed ? "justify-center" : "justify-between")}>
+        <Link href="/" className="flex items-center gap-2.5 focus:outline-none" title="Valeria's Creds">
+          <LogoMark size={collapsed ? 32 : 30} />
+          {!collapsed && <Wordmark size="sm" />}
+        </Link>
         {!collapsed && (
-          <Link href="/" className="flex items-center gap-2.5 focus:outline-none">
-            <LogoMark size={28} />
-            <Wordmark size="sm" />
-          </Link>
-        )}
-        {collapsed && (
-          <Link href="/" className="mx-auto focus:outline-none" title="Valeria's Creds">
-            <LogoMark size={30} />
-          </Link>
-        )}
-        <button
-          onClick={onToggle}
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={cn(
-            "rounded-[6px] p-1.5 text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)] transition-colors",
-            collapsed && "mx-auto mt-2"
-          )}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
+          <button
+            onClick={onToggle}
+            title="Collapse sidebar"
+            aria-label="Collapse sidebar"
+            className="rounded-lg p-1.5 text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)] hover:text-[var(--color-ink)]"
+          >
             <ChevronLeft className="h-4 w-4" />
-          )}
-        </button>
+          </button>
+        )}
       </div>
 
-      {/* Part 1: Main Navigation Items (Fixed Height) */}
-      <div className="shrink-0 px-2 py-3">
-        <nav className="space-y-1">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
+      <nav className="flex-1 min-h-0 overflow-y-auto px-3 pb-3 pt-3 space-y-6" aria-label="Main">
+        {NAV_GROUPS.map((group, i) => (
+          <div key={group.title ?? i} className="space-y-0.5">
+            {group.title &&
+              (collapsed ? (
+                <div className="mx-3 mb-2 border-t border-app-border/70" />
+              ) : (
+                <div className="flex items-center gap-2 px-3 pb-1.5">
+                  <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-muted)]/60">
+                    {group.title}
+                  </span>
+                  <span className="h-px flex-1 bg-gradient-to-r from-[rgba(60,40,110,0.16)] to-transparent" />
+                </div>
+              ))}
+            {group.items.map(renderItem)}
+          </div>
+        ))}
+      </nav>
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                data-active={isActive ? "true" : "false"}
-                className={cn(
-                  "group relative flex items-center gap-3 rounded-[6px] px-3 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] font-semibold"
-                    : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#14161F] dark:hover:text-[#F6EBD3]",
-                  collapsed && "justify-center px-0"
-                )}
-                title={collapsed ? item.label : undefined}
-              >
-                {/* 4px crimson active indicator */}
-                {isActive && (
-                  <span className="absolute left-0 top-1.5 bottom-1.5 w-1 rounded-r-full bg-[#A51C30]" />
-                )}
-                <Icon
-                  className={cn(
-                    "h-4 w-4 shrink-0 transition-colors",
-                    isActive ? "text-[#A51C30] dark:text-[#F07B88]" : "text-[#4B5160] dark:text-[#D1C7B7] group-hover:text-[#14161F]"
-                  )}
-                />
-                {!collapsed && <span>{item.label}</span>}
-              </Link>
-            );
-          })}
-        </nav>
+            <div className="shrink-0 p-3 space-y-1">
+        {renderItem(SETTINGS)}
+        {collapsed && (
+          <button
+            onClick={onToggle}
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
+            className="flex w-full justify-center rounded-lg p-2 text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-muted)]"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        )}
       </div>
-
-      {/* Part 2: Recent Courses (flex: 1, min-height: 0, scrolls inside itself, 5 items, one line each with ellipsis & tooltip) */}
-      {!collapsed && (
-        <div className="flex-1 min-h-0 overflow-y-auto px-2 py-3 border-t border-app-border">
-          <div className="flex items-center justify-between px-3 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
-              Recent Courses
-            </span>
-            <Link
-              href="/courses?action=new-course"
-              className="text-[#4B5160] hover:text-[#A51C30] transition-colors"
-              title="Create Course"
-            >
-              <Plus className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-          <ul className="space-y-1">
-            {recentCourses.map((c) => {
-              const isCourseActive = pathname.startsWith(`/courses/${c.id}`);
-              const tagColor =
-                TOKENS.colors.courseTags[c.colorTag as CourseTagKey]?.hex ||
-                TOKENS.colors.courseTags.slate.hex;
-
-              return (
-                <li key={c.id}>
-                  <Link
-                    href={`/courses/${c.id}`}
-                    title={c.title}
-                    data-course-active={isCourseActive ? "true" : "false"}
-                    className={cn(
-                      "group relative flex items-center gap-2 rounded-[6px] px-3 py-1.5 text-xs transition-colors",
-                      isCourseActive
-                        ? "bg-[#A51C30]/10 font-semibold text-[#A51C30] dark:text-[#F07B88]"
-                        : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-black/5 dark:hover:bg-white/5 hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
-                    )}
-                  >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full shrink-0"
-                      style={{ backgroundColor: tagColor }}
-                    />
-                    <span className="font-sans font-semibold tracking-wide uppercase text-[#14161F] dark:text-[#F6EBD3] shrink-0 text-[11px]">
-                      {c.code}
-                    </span>
-                    <span className="truncate flex-1 font-medium text-[12px]">
-                      {c.title}
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
-
-      {/* Part 3: Footer pinned at bottom with its own solid background (List never runs under footer) */}
-      {!collapsed && (
-        <div className="shrink-0 bg-app-surface border-t border-app-border p-3 space-y-1 text-xs">
-          <div className="text-[12px] font-semibold text-[#14161F] dark:text-[#F6EBD3]">
-            Valeria’s Creds v1.0
-          </div>
-          <div className="text-[12px] text-[#4B5160] dark:text-[#D1C7B7] flex items-center gap-1.5">
-            <a
-              href="https://www.youtube.com/t/terms"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:underline hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
-            >
-              YouTube Terms
-            </a>
-            <span>·</span>
-            <a
-              href="https://policies.google.com/privacy"
-              target="_blank"
-              rel="noreferrer"
-              className="hover:underline hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
-            >
-              Google Privacy
-            </a>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }

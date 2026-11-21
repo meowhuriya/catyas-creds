@@ -239,7 +239,7 @@ export default function RecallPage() {
       <div className="p-6 max-w-5xl mx-auto space-y-4">
         <SectionBar className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <RotateCcw className="h-5 w-5 text-[#A51C30]" />
+            <RotateCcw className="h-5 w-5 text-[#C93A55]" />
             <span className="font-serif font-bold text-lg text-[#14161F] dark:text-[#F6EBD3]">
               Smart Spaced Recall Engine
             </span>
@@ -263,11 +263,11 @@ export default function RecallPage() {
       <SectionBar className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <RotateCcw className="h-5 w-5 text-[#A51C30]" />
+            <RotateCcw className="h-5 w-5 text-[#C93A55]" />
             <h1 className="font-serif font-bold text-lg sm:text-xl text-[#14161F] dark:text-[#F6EBD3]">
               Smart Recall Engine
             </h1>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] dark:bg-[#A51C30]/20 font-sans font-bold uppercase">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] dark:bg-[#C93A55]/20 font-sans font-bold uppercase">
               1 · 3 · 7 · 14 Spacing
             </span>
           </div>
@@ -283,7 +283,7 @@ export default function RecallPage() {
             onClick={() => setActiveTab("queue")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-[8px] transition-colors ${
               activeTab === "queue"
-                ? "bg-[#A51C30] text-white shadow-xs"
+                ? "bg-[#C93A55] text-white shadow-xs"
                 : "text-[#4B5160] dark:text-[#CFC8BB] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
             }`}
           >
@@ -294,7 +294,7 @@ export default function RecallPage() {
             onClick={() => setActiveTab("history")}
             className={`px-3 py-1.5 text-xs font-semibold rounded-[8px] transition-colors ${
               activeTab === "history"
-                ? "bg-[#A51C30] text-white shadow-xs"
+                ? "bg-[#C93A55] text-white shadow-xs"
                 : "text-[#4B5160] dark:text-[#CFC8BB] hover:text-[#14161F] dark:hover:text-[#F6EBD3]"
             }`}
           >
@@ -433,7 +433,7 @@ export default function RecallPage() {
 
               <div className="h-2 w-full rounded-full bg-[#E5D5C5]/40 overflow-hidden">
                 <div
-                  className="h-full bg-[#A51C30] transition-all duration-300"
+                  className="h-full bg-[#C93A55] transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -449,7 +449,7 @@ export default function RecallPage() {
                     </span>
 
                     {/* Stage Badge */}
-                    <span className="px-2 py-0.5 rounded-[5px] text-xs font-bold bg-[#A51C30]/10 text-[#A51C30] dark:text-[#F07B88] dark:bg-[#A51C30]/20">
+                    <span className="px-2 py-0.5 rounded-[5px] text-xs font-bold bg-[#C93A55]/10 text-[#C93A55] dark:text-[#F48FA0] dark:bg-[#C93A55]/20">
                       {currentCandidate?.isLightReview
                         ? "Pre-exam Light Review (Weakest 10)"
                         : currentCandidate?.isPreExamRefresh
@@ -486,7 +486,7 @@ export default function RecallPage() {
 
                   {/* Recall Style Indicator */}
                   <div className="flex items-center gap-1.5 text-xs font-semibold text-[#4B5160] dark:text-[#CFC8BB]">
-                    {effectiveStyle === "problems" && <Calculator className="h-4 w-4 text-[#A51C30]" />}
+                    {effectiveStyle === "problems" && <Calculator className="h-4 w-4 text-[#C93A55]" />}
                     {effectiveStyle === "code" && <Code className="h-4 w-4 text-[#1C5C62] dark:text-[#52ADB5]" />}
                     {effectiveStyle === "vocabulary_and_usage" && <BookOpen className="h-4 w-4 text-[#7A4F0E] dark:text-[#E8BD65]" />}
                     {effectiveStyle === "questions" && <HelpCircle className="h-4 w-4 text-[#5E7B5B]" />}
@@ -513,7 +513,7 @@ export default function RecallPage() {
                     {practiceContent.style === "problems" && practiceContent.problems && (
                       <div className="space-y-4">
                         <div className="p-4 rounded-[12px] bg-[#FAF7F2] dark:bg-[#1A1214] border border-[#E4D9C0] dark:border-[#3D2D31] space-y-3">
-                          <span className="text-xs font-bold text-[#A51C30] dark:text-[#F07B88] uppercase tracking-wide">
+                          <span className="text-xs font-bold text-[#C93A55] dark:text-[#F48FA0] uppercase tracking-wide">
                             Practice Problems (Solve on scratchpad before revealing)
                           </span>
                           <div className="space-y-3">
@@ -551,7 +551,7 @@ export default function RecallPage() {
                             onChange={(e) => setScratchpadText(e.target.value)}
                             placeholder="Write your calculations, equations, or reasoning here..."
                             rows={3}
-                            className="w-full text-xs font-mono p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                            className="w-full text-xs font-mono p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                           />
                         </div>
 
@@ -614,7 +614,7 @@ export default function RecallPage() {
                             onChange={(e) => setScratchpadText(e.target.value)}
                             rows={6}
                             spellCheck={false}
-                            className="w-full text-xs font-mono p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                            className="w-full text-xs font-mono p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                           />
                         </div>
 
@@ -671,7 +671,7 @@ export default function RecallPage() {
                             onChange={(e) => setScratchpadText(e.target.value)}
                             placeholder="Draft your academic definition and an example sentence..."
                             rows={3}
-                            className="w-full text-xs p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                            className="w-full text-xs p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                           />
                         </div>
 
@@ -739,7 +739,7 @@ export default function RecallPage() {
                             onChange={(e) => setScratchpadText(e.target.value)}
                             placeholder="Jot down the governing principle, boundary conditions, and core mechanisms..."
                             rows={3}
-                            className="w-full text-xs p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                            className="w-full text-xs p-3 rounded-[10px] bg-white dark:bg-[#150F11] border border-[#E4D9C0] dark:border-[#3D2D31] text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                           />
                         </div>
 

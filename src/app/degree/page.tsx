@@ -307,7 +307,7 @@ export default function DegreePage() {
 
       {/* Advisory Guidance Notice */}
       {biggestDeficitDept && biggestDeficitDept.remaining > 0 && (
-        <SectionBar className="flex items-start gap-3 border-[#A51C30]/30 text-xs">
+        <SectionBar className="flex items-start gap-3 border-[#C93A55]/30 text-xs">
           <GraduationCap className="h-5 w-5 text-app-accent mt-0.5 shrink-0" />
           <div className="space-y-0.5">
             <span className="font-semibold text-app-ink block text-sm">
@@ -397,7 +397,7 @@ export default function DegreePage() {
               onClick={() => setAuditTab("completed")}
               className={`rounded px-3 py-1 font-medium transition-colors ${
                 auditTab === "completed"
-                  ? "bg-[#A51C30] text-white font-semibold"
+                  ? "bg-[#C93A55] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -408,7 +408,7 @@ export default function DegreePage() {
               onClick={() => setAuditTab("in_progress")}
               className={`rounded px-3 py-1 font-medium transition-colors ${
                 auditTab === "in_progress"
-                  ? "bg-[#A51C30] text-white font-semibold"
+                  ? "bg-[#C93A55] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >
@@ -419,7 +419,7 @@ export default function DegreePage() {
               onClick={() => setAuditTab("remaining")}
               className={`rounded px-3 py-1 font-medium transition-colors ${
                 auditTab === "remaining"
-                  ? "bg-[#A51C30] text-white font-semibold"
+                  ? "bg-[#C93A55] text-white font-semibold"
                   : "text-app-ink-muted hover:text-app-ink"
               }`}
             >

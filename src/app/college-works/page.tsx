@@ -605,7 +605,7 @@ export default function CollegeWorksPage() {
                     </div>
                   ) : (
                     <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#FFF1F2] text-[#9F1239] border border-[#FECDD3] dark:bg-[#2C1219] dark:text-[#FDA4AF] dark:border-[#5B2130] shadow-xs">
-                      <CloudOff className="h-3.5 w-3.5 shrink-0 text-[#BE123C] dark:text-[#FDA4AF]" />
+                      <CloudOff className="h-3.5 w-3.5 shrink-0 text-[#B93557] dark:text-[#FDA4AF]" />
                       <span className="truncate max-w-[230px] sm:max-w-none">
                         {syncError?.title || "Cloud Sync Offline"}:{" "}
                         <strong className="font-bold">{firebaseUser.email || "Google Account"}</strong>
@@ -668,7 +668,7 @@ export default function CollegeWorksPage() {
             </button>
             <button
               onClick={() => handleOpenNewModal("record")}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-[var(--color-accent)] hover:bg-[#8A1627] text-white text-xs font-bold shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] bg-[var(--color-accent)] hover:bg-[#A82E46] text-white text-xs font-bold shadow-sm transition-colors"
             >
               <FlaskConical className="h-3.5 w-3.5" />
               <span>+ New Lab Record</span>
@@ -1315,7 +1315,7 @@ export default function CollegeWorksPage() {
               <button
                 type="button"
                 onClick={handleSaveItem}
-                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#8A1627]"
+                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#A82E46]"
               >
                 {editingItem ? "Update College Work" : "Save College Work"}
               </button>

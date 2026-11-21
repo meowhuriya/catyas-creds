@@ -54,10 +54,10 @@ interface Particle {
 }
 
 const HERITAGE_PALETTE = [
-  "#8A1627", // Heritage Burgundy
+  "#A82E46", // Heritage Burgundy
   "#D4AF37", // Antique Gold
   "#FBF6EC", // Heritage Cream
-  "#A51C30", // Crimson
+  "#C93A55", // Crimson
   "#FFE082", // Bright Gold
 ];
 
@@ -195,7 +195,7 @@ export function CelebrationOverlay() {
             style={{ left: `${reward.x}px`, top: `${reward.y}px` }}
             className="absolute -translate-x-1/2 -translate-y-1/2 animate-float-reward select-none"
           >
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8A1627] text-[#D4AF37] border-2 border-[#D4AF37] shadow-xl text-xs font-serif font-black tracking-wider uppercase">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#A82E46] text-[#D4AF37] border-2 border-[#D4AF37] shadow-xl text-xs font-serif font-black tracking-wider uppercase">
               <Sparkles className="h-3.5 w-3.5 text-[#D4AF37]" />
               <span>{reward.text}</span>
             </div>
@@ -216,7 +216,7 @@ export function CelebrationOverlay() {
           <div className="relative z-10 max-w-sm w-full academic-card p-6 rounded-[24px] border-2 border-[#D4AF37] shadow-2xl text-center space-y-4 bg-[#FBF6EC] dark:bg-[#1E1618]">
             <button
               onClick={() => setCelebration(null)}
-              className="absolute top-3 right-3 p-1.5 text-[#4B5160] hover:text-[#8A1627] rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              className="absolute top-3 right-3 p-1.5 text-[#4B5160] hover:text-[#A82E46] rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
               title="Close celebration"
             >
               <X className="h-4 w-4" />
@@ -235,7 +235,7 @@ export function CelebrationOverlay() {
                   {/* Wax Seal Scalloped Disc SVG */}
                   <svg
                     viewBox="0 0 160 160"
-                    className="w-32 h-32 drop-shadow-xl fill-[#8A1627]"
+                    className="w-32 h-32 drop-shadow-xl fill-[#A82E46]"
                   >
                     {/* Melted Wax Scallop Edge */}
                     <path d="M80 0 C95 5, 105 15, 118 10 C131 5, 142 20, 150 32 C158 44, 160 58, 158 72 C156 86, 160 100, 150 112 C140 124, 130 135, 118 142 C106 149, 92 158, 78 158 C64 158, 52 150, 40 144 C28 138, 18 126, 10 114 C2 102, 0 88, 2 74 C4 60, 2 46, 12 34 C22 22, 34 10, 48 6 C62 2, 70 5, 80 0 Z" />
@@ -269,8 +269,8 @@ export function CelebrationOverlay() {
 
                   {/* Wax Ribbon Tails */}
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex gap-1 -z-10">
-                    <div className="w-4 h-8 bg-[#8A1627] transform -rotate-12 border-b-2 border-r border-[#D4AF37]/40 clip-ribbon" />
-                    <div className="w-4 h-8 bg-[#8A1627] transform rotate-12 border-b-2 border-l border-[#D4AF37]/40 clip-ribbon" />
+                    <div className="w-4 h-8 bg-[#A82E46] transform -rotate-12 border-b-2 border-r border-[#D4AF37]/40 clip-ribbon" />
+                    <div className="w-4 h-8 bg-[#A82E46] transform rotate-12 border-b-2 border-l border-[#D4AF37]/40 clip-ribbon" />
                   </div>
                 </div>
               </div>
@@ -293,7 +293,7 @@ export function CelebrationOverlay() {
 
             {/* Awarded XP Badge */}
             {celebration.xp ? (
-              <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#8A1627]/10 dark:bg-[#8A1627]/30 border border-[#8A1627]/30 text-[#8A1627] dark:text-[#F07B88] font-serif font-black text-sm">
+              <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#A82E46]/10 dark:bg-[#A82E46]/30 border border-[#A82E46]/30 text-[#A82E46] dark:text-[#F48FA0] font-serif font-black text-sm">
                 <Sparkles className="h-4 w-4 text-[#D4AF37]" />
                 <span>+{celebration.xp} Academic XP</span>
               </div>

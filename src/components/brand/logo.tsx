@@ -2,19 +2,9 @@ import React from "react";
 
 export function LogoMark({ size = 32, className = "" }: { size?: number; className?: string }) {
   return (
-    <div
-      style={{ width: size, height: size }}
-      className={`relative shrink-0 flex items-center justify-center ${className}`}
-      aria-label="Valeria's Creds Cat Sticker Logo"
-    >
+    <div style={{ width: size, height: size }} className={`vc-logo relative shrink-0 ${className}`} aria-label="Valeria's Creds">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/cat-sticker.png"
-        alt="Valeria's Creds Cat Sticker"
-        width={size}
-        height={size}
-        className="h-full w-full object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.16)] select-none hover:scale-110 transition-transform duration-200"
-      />
+      <img src="/brand/butterfly-real-180.png" alt="Valeria's Creds butterfly" width={size} height={size} className="h-full w-full select-none object-contain" draggable={false} />
     </div>
   );
 }
@@ -34,19 +24,19 @@ export function Wordmark({
   return (
     <div className={`flex flex-col leading-none ${className}`}>
       <span
-        className={`font-heading font-semibold tracking-tight text-[var(--color-ink)] ${
-          isSmall ? "text-base" : isLarge ? "text-2xl" : "text-lg"
+        className={`font-display font-semibold tracking-[-0.02em] text-[var(--color-ink)] ${
+          isSmall ? "text-[15px]" : isLarge ? "text-2xl" : "text-lg"
         }`}
       >
         Valeria's Creds
       </span>
       {showTagline && (
         <span
-          className={`font-sans tracking-[0.18em] uppercase font-bold text-[var(--color-eyebrow)] ${
-            isSmall ? "text-[10px] mt-0.5" : isLarge ? "text-xs mt-1" : "text-[11px] mt-0.5"
+          className={`font-sans font-medium text-[var(--ink-faint)] ${
+            isSmall ? "text-[11px] mt-0.5" : isLarge ? "text-[13px] mt-1" : "text-[12px] mt-0.5"
           }`}
         >
-          Learning Portal
+          Learning portal
         </span>
       )}
     </div>

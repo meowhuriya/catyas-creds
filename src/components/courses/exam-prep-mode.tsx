@@ -204,7 +204,7 @@ export function ExamPrepMode({
       <div className="academic-card p-5 sm:p-6 space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)]/80">
           <div>
-            <span className="eyebrow-label text-[#8A1627] block mb-1">
+            <span className="eyebrow-label text-[#A82E46] block mb-1">
               {course.code} · EXAM PREPARATION MODE
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -227,7 +227,7 @@ export function ExamPrepMode({
               className="text-xs h-8 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#14161F] dark:text-[#F6EBD3]"
               title="Add this exam date as a milestone to your Academic Planner"
             >
-              <CalendarPlus className="h-3.5 w-3.5 text-[#8A1627]" />
+              <CalendarPlus className="h-3.5 w-3.5 text-[#A82E46]" />
               <span>Add to Planner</span>
             </Button>
 
@@ -237,7 +237,7 @@ export function ExamPrepMode({
               onClick={() => setIsEditingExam(!isEditingExam)}
               className="text-xs h-8 gap-1.5 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#14161F] dark:text-[#F6EBD3]"
             >
-              <Sliders className="h-3.5 w-3.5 text-[#8A1627]" />
+              <Sliders className="h-3.5 w-3.5 text-[#A82E46]" />
               <span>{isEditingExam ? "Close Editor" : "Change Exam Date"}</span>
             </Button>
           </div>
@@ -265,7 +265,7 @@ export function ExamPrepMode({
                   value={examTitle}
                   onChange={(e) => setExamTitle(e.target.value)}
                   placeholder="e.g. End-Semester Final Examination"
-                  className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                  className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                 />
               </div>
 
@@ -277,7 +277,7 @@ export function ExamPrepMode({
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#A51C30]"
+                  className="w-full h-9 px-3 rounded-[8px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-xs font-sans text-[#14161F] dark:text-[#F6EBD3] focus:outline-none focus:ring-1 focus:ring-[#C93A55]"
                 />
               </div>
             </div>
@@ -298,7 +298,7 @@ export function ExamPrepMode({
                   key={p.days}
                   type="button"
                   onClick={() => handleApplyPreset(p.days)}
-                  className="px-2.5 py-1 rounded-[6px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-[11px] font-sans font-medium text-[#14161F] dark:text-[#F6EBD3] hover:border-[#A51C30] hover:text-[#A51C30] transition-colors"
+                  className="px-2.5 py-1 rounded-[6px] bg-white dark:bg-[#1A1214] border border-[#CFC8BB] dark:border-[#3D2D31] text-[11px] font-sans font-medium text-[#14161F] dark:text-[#F6EBD3] hover:border-[#C93A55] hover:text-[#C93A55] transition-colors"
                 >
                   {p.label}
                 </button>
@@ -317,7 +317,7 @@ export function ExamPrepMode({
               <Button
                 size="sm"
                 onClick={handleSaveExamDate}
-                className="text-xs bg-[#A51C30] hover:bg-[#8A1627] text-white"
+                className="text-xs bg-[#C93A55] hover:bg-[#A82E46] text-white"
               >
                 Save Exam Milestone
               </Button>
@@ -329,7 +329,7 @@ export function ExamPrepMode({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Card 1: Days Remaining */}
           <div className="p-4 rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-            <span className="eyebrow-label text-[#8A1627] block mb-1">
+            <span className="eyebrow-label text-[#A82E46] block mb-1">
               COUNTDOWN
             </span>
             <div className="flex items-baseline gap-1.5">
@@ -347,11 +347,11 @@ export function ExamPrepMode({
 
           {/* Card 2: Uncompleted Topics */}
           <div className="p-4 rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
-            <span className="eyebrow-label text-[#8A1627] block mb-1">
+            <span className="eyebrow-label text-[#A82E46] block mb-1">
               UNCOMPLETED TOPICS
             </span>
             <div className="flex items-baseline gap-1.5">
-              <span className="font-serif text-3xl font-bold text-[#C62F3C] tabular-nums">
+              <span className="font-serif text-3xl font-bold text-[#D9485F] tabular-nums">
                 {stats.uncompletedTopicsCount}
               </span>
               <span className="text-xs font-sans text-[#4B5160] dark:text-[#D1C7B7]">
@@ -366,7 +366,7 @@ export function ExamPrepMode({
           {/* Card 3: Daily Target (The Hero Metric) */}
           <div className="col-span-2 p-4 rounded-[14px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31]">
             <div className="flex items-center justify-between mb-1">
-              <span className="eyebrow-label text-[#8A1627] dark:text-[#F07B88]">
+              <span className="eyebrow-label text-[#A82E46] dark:text-[#F48FA0]">
                 DAILY PREP TARGET
               </span>
               <span
@@ -377,7 +377,7 @@ export function ExamPrepMode({
                     ? "bg-[#5E7B5B]/15 text-[#3E5C3C] dark:text-[#78A875]"
                     : stats.paceStatus === "moderate"
                     ? "bg-[#D9A441]/20 text-[#7A4F0E] dark:text-[#F0B533]"
-                    : "bg-[#C62F3C]/15 text-[#C62F3C] dark:text-[#F07B88]"
+                    : "bg-[#D9485F]/15 text-[#D9485F] dark:text-[#F48FA0]"
                 }`}
               >
                 {stats.paceStatus === "intensive" && <Flame className="h-3 w-3" />}
@@ -387,7 +387,7 @@ export function ExamPrepMode({
             </div>
 
             <div className="flex items-baseline gap-2">
-              <span className="font-serif text-3xl sm:text-4xl font-bold text-[#A51C30] tabular-nums">
+              <span className="font-serif text-3xl sm:text-4xl font-bold text-[#C93A55] tabular-nums">
                 {stats.dailyTarget}
               </span>
               <span className="text-sm font-sans font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -405,7 +405,7 @@ export function ExamPrepMode({
         <div className="space-y-1.5 pt-1">
           <div className="flex items-center justify-between text-xs font-semibold text-[#14161F] dark:text-[#F6EBD3]">
             <span>Curricular Exam Readiness</span>
-            <span className="tabular-nums font-sans text-[#8A1627]">
+            <span className="tabular-nums font-sans text-[#A82E46]">
               {percentReady}% Complete
             </span>
           </div>
@@ -432,7 +432,7 @@ export function ExamPrepMode({
               onClick={() => setFilterMode("uncompleted")}
               className={`px-3 py-1 rounded-[7px] text-xs font-sans font-semibold transition-colors ${
                 filterMode === "uncompleted"
-                  ? "bg-white dark:bg-[#1A1214] text-[#A51C30] shadow-sm font-bold"
+                  ? "bg-white dark:bg-[#1A1214] text-[#C93A55] shadow-sm font-bold"
                   : "text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F]"
               }`}
             >
@@ -443,7 +443,7 @@ export function ExamPrepMode({
               onClick={() => setFilterMode("all")}
               className={`px-3 py-1 rounded-[7px] text-xs font-sans font-semibold transition-colors ${
                 filterMode === "all"
-                  ? "bg-white dark:bg-[#1A1214] text-[#A51C30] shadow-sm font-bold"
+                  ? "bg-white dark:bg-[#1A1214] text-[#C93A55] shadow-sm font-bold"
                   : "text-[#4B5160] dark:text-[#D1C7B7] hover:text-[#14161F]"
               }`}
             >
@@ -469,7 +469,7 @@ export function ExamPrepMode({
                 {/* Unit Section Title */}
                 <div className="bg-[#FBF6EC] dark:bg-[#221A1C] px-4 py-2.5 border-b border-[#E4D9C0] dark:border-[#3D2D31] flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="eyebrow-label text-[#8A1627] text-[10px]">
+                    <span className="eyebrow-label text-[#A82E46] text-[10px]">
                       UNIT {unit.unitNumber || 1}
                     </span>
                     <h4 className="font-serif text-sm font-bold text-[#14161F] dark:text-[#F6EBD3]">
@@ -499,7 +499,7 @@ export function ExamPrepMode({
                             className={`h-[22px] w-[22px] rounded-[5px] border mt-0.5 shrink-0 flex items-center justify-center transition-colors cursor-pointer ${
                               isDone
                                 ? "bg-[#5E7B5B] border-[#5E7B5B] text-white"
-                                : "border-[#CFC8BB] bg-white hover:border-[#A51C30]"
+                                : "border-[#CFC8BB] bg-white hover:border-[#C93A55]"
                             }`}
                             title={isDone ? "Mark as uncompleted" : "Mark as mastered"}
                           >
@@ -549,7 +549,7 @@ export function ExamPrepMode({
                               variant="outline"
                               size="sm"
                               onClick={() => onOpenQuickCheck(t)}
-                              className="text-xs h-7 gap-1 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#8A1627] hover:bg-[#8A1627]/10"
+                              className="text-xs h-7 gap-1 bg-white dark:bg-[#1A1214] border-[#CFC8BB] text-[#A82E46] hover:bg-[#A82E46]/10"
                               title="Test mastery with a quick 3-question diagnostic"
                             >
                               <Sparkles className="h-3 w-3" />

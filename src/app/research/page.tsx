@@ -34,6 +34,7 @@ import {
   Share2,
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
+import { onCloudSyncUpdate } from "@/lib/cloud-sync/synced-storage";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
@@ -324,22 +325,27 @@ export default function ResearchLabPage() {
   const utteranceRef = React.useRef<SpeechSynthesisUtterance | null>(null);
   const isCancelledRef = React.useRef(false);
 
-  // Initialize projects from localStorage if present
+  // Initialize projects from localStorage if present (and refresh when another device syncs)
   React.useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window === "undefined") return;
+    const load = (isRemote: boolean) => {
       try {
         const saved = localStorage.getItem("valeria_research_projects");
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
             setProjects(parsed);
-            setSelectedProjectId(parsed[0].id);
+            setSelectedProjectId((prev) =>
+              isRemote && prev && parsed.some((p: { id: string }) => p.id === prev) ? prev : parsed[0].id
+            );
           }
         }
       } catch (err) {
         console.warn("Error reading research projects from localStorage", err);
       }
-    }
+    };
+    load(false);
+    return onCloudSyncUpdate("valeria_research_projects", () => load(true));
   }, []);
 
   // Save projects to localStorage on update
@@ -739,7 +745,7 @@ export default function ResearchLabPage() {
 
           <button
             onClick={() => setShowNewProjectModal(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] bg-[var(--color-accent)] hover:bg-[#8A1627] text-white text-xs font-semibold shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[8px] bg-[var(--color-accent)] hover:bg-[#A82E46] text-white text-xs font-semibold shadow-sm transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             <span>New Project</span>
@@ -769,7 +775,7 @@ export default function ResearchLabPage() {
                 </button>
                 <button
                   onClick={() => setShowAddSourceModal(true)}
-                  className="px-2 py-1 text-[11px] font-semibold rounded-[6px] bg-[var(--color-accent)] text-white hover:bg-[#8A1627] transition-colors"
+                  className="px-2 py-1 text-[11px] font-semibold rounded-[6px] bg-[var(--color-accent)] text-white hover:bg-[#A82E46] transition-colors"
                 >
                   + Add Source
                 </button>
@@ -1020,7 +1026,7 @@ export default function ResearchLabPage() {
                     {isPlayingAudio ? (
                       <button
                         onClick={stopAudio}
-                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-accent)] text-white text-xs font-bold shadow-md hover:bg-[#8A1627] transition-all"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-accent)] text-white text-xs font-bold shadow-md hover:bg-[#A82E46] transition-all"
                       >
                         <Pause className="h-4 w-4" />
                         <span>Pause Podcast</span>
@@ -1029,7 +1035,7 @@ export default function ResearchLabPage() {
                       <button
                         onClick={startAudio}
                         disabled={!currentProject.audioOverview?.dialogue?.length}
-                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-accent)] text-white text-xs font-bold shadow-md hover:bg-[#8A1627] transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--color-accent)] text-white text-xs font-bold shadow-md hover:bg-[#A82E46] transition-all disabled:opacity-50"
                       >
                         <Play className="h-4 w-4" />
                         <span>Play Podcast</span>
@@ -1106,7 +1112,7 @@ export default function ResearchLabPage() {
                           <div
                             className={cn(
                               "h-7 w-7 rounded-full flex items-center justify-center font-bold text-[10px] shrink-0 text-white shadow-sm",
-                              isAlex ? "bg-[#8A1627]" : "bg-[#1E293B]"
+                              isAlex ? "bg-[#A82E46]" : "bg-[#1E293B]"
                             )}
                           >
                             {line.speaker[0]}
@@ -1360,7 +1366,7 @@ export default function ResearchLabPage() {
                 <button
                   onClick={handleSendChat}
                   disabled={!chatInput.trim() || isSynthesizing}
-                  className="px-4 h-9 rounded-[8px] bg-[var(--color-accent)] hover:bg-[#8A1627] text-white text-xs font-semibold shadow-sm transition-colors disabled:opacity-50"
+                  className="px-4 h-9 rounded-[8px] bg-[var(--color-accent)] hover:bg-[#A82E46] text-white text-xs font-semibold shadow-sm transition-colors disabled:opacity-50"
                 >
                   Ask
                 </button>
@@ -1454,7 +1460,7 @@ export default function ResearchLabPage() {
               </button>
               <button
                 onClick={handleCreateProject}
-                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#8A1627]"
+                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#A82E46]"
               >
                 Create Project
               </button>
@@ -1547,7 +1553,7 @@ export default function ResearchLabPage() {
               </button>
               <button
                 onClick={handleAddSource}
-                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#8A1627]"
+                className="px-4 py-2 rounded-[8px] text-xs font-bold bg-[var(--color-accent)] text-white hover:bg-[#A82E46]"
               >
                 Add Source to Studio
               </button>

@@ -98,7 +98,7 @@ export function PlayerFocusTimer({
       className={`inline-flex items-center gap-3 px-3 py-1.5 rounded-[12px] bg-white dark:bg-[#1A1214] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm select-none ${className}`}
     >
       <div className="flex items-center gap-1.5">
-        <Clock className="h-4 w-4 text-[#8A1627]" />
+        <Clock className="h-4 w-4 text-[#A82E46]" />
         <span className="font-serif text-lg font-bold text-[#14161F] dark:text-[#F6EBD3] tabular-nums tracking-wide">
           {timeFormatted}
         </span>
@@ -112,7 +112,7 @@ export function PlayerFocusTimer({
           className={`h-7 w-7 rounded-full flex items-center justify-center transition-colors text-white ${
             isRunning
               ? "bg-[#D9A441] hover:bg-[#C29035]"
-              : "bg-[#A51C30] hover:bg-[#8A1627]"
+              : "bg-[#C93A55] hover:bg-[#A82E46]"
           }`}
           title={isRunning ? "Pause Timer" : "Start Focus Timer"}
         >
@@ -142,7 +142,7 @@ export function PlayerFocusTimer({
             onClick={() => handleSelectPreset(p)}
             className={`px-2 py-0.5 rounded-[6px] text-[11px] font-sans font-semibold transition-colors ${
               preset === p
-                ? "bg-[#8A1627] text-white"
+                ? "bg-[#A82E46] text-white"
                 : "text-[#4B5160] dark:text-[#D1C7B7] hover:bg-[#FBF6EC] dark:hover:bg-[#221A1C]"
             }`}
           >

@@ -207,7 +207,7 @@ export default function DashboardPage() {
   }, [activeTermCourses, activeTermMasteredCount, modules, topics]);
 
   return (
-    <div className="space-y-8 select-none">
+    <div className="space-y-12 select-none">
       {/* 1. Bento Hero Container */}
       <BentoHero
         studentName={currentUser?.displayName || firebaseUser?.displayName || ""}
@@ -222,7 +222,7 @@ export default function DashboardPage() {
       />
 
       {/* 2. Stat Cards Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-y-6 md:grid-cols-4 md:divide-x md:divide-[rgba(60,40,110,0.10)]">
         <Stat
           label="Current CGPA"
           value={cgpaValue}
@@ -254,12 +254,12 @@ export default function DashboardPage() {
         {/* Left 8 Columns: Courses */}
         <div className="lg:col-span-8 space-y-4">
           {/* Term Switcher & Header Controls (Solid cream panel) */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-[18px] bg-[#FBF6EC] dark:bg-[#221A1C] border border-[#E4D9C0] dark:border-[#3D2D31] shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 pb-2">
             <div className="flex items-center gap-2.5">
-              <h2 className="font-heading text-xl font-bold text-[var(--color-ink)]">
+              <h2 className="font-display text-3xl font-normal tracking-[-0.01em] text-[var(--color-ink)]">
                 Course Journey
               </h2>
-              <span className="rounded-full bg-[var(--color-surface)] px-2.5 py-0.5 font-sans text-xs font-semibold text-[var(--color-ink)] tabular-nums border border-[#E4D9C0] dark:border-[#3D2D31]">
+              <span className="vc-iri-text font-display text-3xl font-semibold tabular-nums">
                 {activeTermCourses.length}
               </span>
               {dataStore.isSampleDataActive() && (
@@ -274,14 +274,14 @@ export default function DashboardPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setWeeklyReviewOpen(true)}
-                className="gap-1.5 text-xs text-app-ink-muted hover:text-app-ink bg-white dark:bg-[#2B2124] border border-[#CFC8BB]"
+                className="gap-1.5 text-[11px] uppercase tracking-[0.14em] font-sans text-app-ink-muted hover:text-app-ink border-0 bg-transparent"
               >
                 <Printer className="h-3.5 w-3.5 text-app-accent" />
                 <span>Weekly Review</span>
               </Button>
 
               {/* Term Filter Tabs */}
-              <div className="flex items-center gap-1.5 p-1 rounded-[10px] bg-[var(--color-surface)] dark:bg-[#2B2124] border border-[#E4D9C0] dark:border-[#3D2D31] text-xs">
+              <div className="flex items-center gap-4 text-xs">
                 {terms.map((t) => (
                   <button
                     key={t.id}
@@ -290,9 +290,9 @@ export default function DashboardPage() {
                       await dataStore.setCurrentTerm(t.id);
                       await refreshData();
                     }}
-                    className={`px-3 py-1 rounded-[6px] font-sans font-semibold transition-all ${
+                    className={`relative pb-1.5 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors ${
                       selectedTermId === t.id
-                        ? "bg-[#A51C30] text-white shadow-sm"
+                        ? "text-[var(--color-ink)] after:absolute after:inset-x-0 after:-bottom-px after:h-[2px] after:bg-gradient-to-r after:from-[#CDBBFF] after:via-[#F2B4D8] after:to-[#A6E3E4]"
                         : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
                     }`}
                   >
@@ -362,7 +362,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 4. Academic Insights Row: Heatmap, Recharts Weekly Hours & Weakest Topics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4 border-t border-[var(--color-border)]/70">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-4">
         <StudyHeatmap sessions={studySessions} />
         <WeeklyHoursChart sessions={studySessions} lessons={lessons} />
         <WeakestTopics

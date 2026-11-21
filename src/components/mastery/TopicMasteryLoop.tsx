@@ -361,7 +361,7 @@ export function TopicMasteryLoop({
   return (
     <div className="relative rounded-[20px] bg-[#FBF6EC] dark:bg-[#1E1618] border-2 border-[#E4D9C0] dark:border-[#3D2D31] shadow-2xl overflow-hidden transition-all text-[#14161F] dark:text-[#F6EBD3]">
       {/* Header Bar */}
-      <div className="bg-[#8A1627] text-white px-5 py-4 flex items-center justify-between">
+      <div className="bg-[#A82E46] text-white px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <Award className="h-5 w-5 text-[#D9A441]" />
           <div>
@@ -400,7 +400,7 @@ export function TopicMasteryLoop({
         {stage === "UPLOAD_NOTES" && (
           <div className="space-y-6">
             <div className="space-y-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#A82E46] dark:text-[#F48FA0]">
                 Step 1 of 3: Note Audit
               </span>
               <h3 className="text-lg font-serif font-bold">
@@ -417,20 +417,20 @@ export function TopicMasteryLoop({
                 onClick={() => setUseExistingNote(!useExistingNote)}
                 className={`p-4 rounded-[12px] border-2 cursor-pointer transition-all flex items-start gap-3 ${
                   useExistingNote
-                    ? "border-[#8A1627] bg-[#8A1627]/5"
+                    ? "border-[#A82E46] bg-[#A82E46]/5"
                     : "border-[#E4D9C0] dark:border-[#3D2D31] bg-white/50 dark:bg-black/20"
                 }`}
               >
                 <div
                   className={`mt-0.5 h-5 w-5 rounded-[4px] border flex items-center justify-center ${
-                    useExistingNote ? "bg-[#8A1627] border-[#8A1627] text-white" : "border-[#CFC8BB]"
+                    useExistingNote ? "bg-[#A82E46] border-[#A82E46] text-white" : "border-[#CFC8BB]"
                   }`}
                 >
                   {useExistingNote && <Check className="h-3.5 w-3.5 stroke-[3]" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-xs flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5 text-[#8A1627]" />
+                    <FileText className="h-3.5 w-3.5 text-[#A82E46]" />
                     <span>Include In-App Markdown Note</span>
                   </div>
                   <p className="text-[11px] text-[#4B5160] dark:text-[#CFC8BB] line-clamp-2 mt-0.5">
@@ -447,7 +447,7 @@ export function TopicMasteryLoop({
               </label>
               <div
                 onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-[#CFC8BB] dark:border-[#4B3639] hover:border-[#8A1627] rounded-[14px] p-6 text-center cursor-pointer bg-white/40 dark:bg-black/10 transition-colors"
+                className="border-2 border-dashed border-[#CFC8BB] dark:border-[#4B3639] hover:border-[#A82E46] rounded-[14px] p-6 text-center cursor-pointer bg-white/40 dark:bg-black/10 transition-colors"
               >
                 <input
                   ref={fileInputRef}
@@ -457,7 +457,7 @@ export function TopicMasteryLoop({
                   onChange={handleImageUpload}
                   className="hidden"
                 />
-                <Camera className="h-8 w-8 mx-auto text-[#8A1627] mb-2" />
+                <Camera className="h-8 w-8 mx-auto text-[#A82E46] mb-2" />
                 <div className="text-xs font-semibold">
                   Click to snap or upload notebook photos
                 </div>
@@ -529,7 +529,7 @@ export function TopicMasteryLoop({
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#8A1627] dark:text-[#F07B88]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#A82E46] dark:text-[#F48FA0]">
                   Step 2 of 3: Syllabus Gap Report
                 </span>
                 <h3 className="text-lg font-serif font-bold">
@@ -538,7 +538,7 @@ export function TopicMasteryLoop({
               </div>
               {/* Score Meter */}
               <div className="text-right">
-                <div className="text-2xl font-serif font-black text-[#8A1627] dark:text-[#F07B88]">
+                <div className="text-2xl font-serif font-black text-[#A82E46] dark:text-[#F48FA0]">
                   {auditResult.completenessScore}%
                 </div>
                 <div className="text-[10px] font-semibold uppercase tracking-wider text-[#4B5160]">
@@ -549,7 +549,7 @@ export function TopicMasteryLoop({
 
             {/* Summary Feedback */}
             <div className="p-4 rounded-[12px] bg-white/70 dark:bg-black/30 border border-[#E4D9C0] dark:border-[#3D2D31] text-xs leading-relaxed">
-              <div className="font-semibold text-xs mb-1 text-[#8A1627] dark:text-[#F07B88] flex items-center gap-1.5">
+              <div className="font-semibold text-xs mb-1 text-[#A82E46] dark:text-[#F48FA0] flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>Examiner Synthesis</span>
               </div>
@@ -623,7 +623,7 @@ export function TopicMasteryLoop({
                         state?.isAnswered
                           ? state.isCorrect
                             ? "bg-emerald-600 ring-2 ring-emerald-500/30"
-                            : "bg-[#A51C30] ring-2 ring-[#A51C30]/30"
+                            : "bg-[#C93A55] ring-2 ring-[#C93A55]/30"
                           : isActive
                           ? "bg-[#D9A441] ring-4 ring-[#D9A441]/20 scale-125"
                           : "bg-[#CFC8BB] dark:bg-[#4B3639]"
@@ -634,7 +634,7 @@ export function TopicMasteryLoop({
                 })}
               </div>
 
-              <div className="text-xs font-semibold text-[#8A1627] dark:text-[#F07B88]">
+              <div className="text-xs font-semibold text-[#A82E46] dark:text-[#F48FA0]">
                 Question {currentQuestionIndex + 1} of {questions.length} · {currentQ.type.toUpperCase()}
               </div>
             </div>
@@ -645,7 +645,7 @@ export function TopicMasteryLoop({
                 {currentQ.type === "cloze" ? (
                   <span>
                     {(currentQ as MasteryClozeQuestion).prompt.split("{{blank}}")[0]}
-                    <span className="inline-block px-2.5 py-0.5 mx-1 rounded border-b-2 border-[#8A1627] bg-[#8A1627]/10 font-mono font-bold text-xs text-[#8A1627]">
+                    <span className="inline-block px-2.5 py-0.5 mx-1 rounded border-b-2 border-[#A82E46] bg-[#A82E46]/10 font-mono font-bold text-xs text-[#A82E46]">
                       {currentAnsState.userText || "____"}
                     </span>
                     {(currentQ as MasteryClozeQuestion).prompt.split("{{blank}}")[1]}
@@ -669,7 +669,7 @@ export function TopicMasteryLoop({
                     const isSelected = currentAnsState.userSelection === optIdx;
                     const isCorrectOpt = optIdx === (currentQ as MasteryMCQQuestion).correctIndex;
                     let cardClass =
-                      "border-[#E4D9C0] dark:border-[#3D2D31] bg-white/60 dark:bg-black/20 hover:border-[#8A1627]";
+                      "border-[#E4D9C0] dark:border-[#3D2D31] bg-white/60 dark:bg-black/20 hover:border-[#A82E46]";
 
                     if (currentAnsState.isAnswered) {
                       if (isCorrectOpt) {
@@ -678,7 +678,7 @@ export function TopicMasteryLoop({
                         cardClass = "border-red-600 bg-red-500/10 text-red-900 dark:text-red-200";
                       }
                     } else if (isSelected) {
-                      cardClass = "border-[#8A1627] bg-[#8A1627]/5";
+                      cardClass = "border-[#A82E46] bg-[#A82E46]/5";
                     }
 
                     return (
@@ -715,7 +715,7 @@ export function TopicMasteryLoop({
                           handleCheckCloze((e.target as HTMLInputElement).value);
                         }
                       }}
-                      className="flex-1 h-10 px-3.5 rounded-[8px] border-2 border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs font-mono focus:border-[#8A1627] focus:outline-none"
+                      className="flex-1 h-10 px-3.5 rounded-[8px] border-2 border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs font-mono focus:border-[#A82E46] focus:outline-none"
                     />
                     {!currentAnsState.isAnswered && (
                       <Button
@@ -735,7 +735,7 @@ export function TopicMasteryLoop({
                     <div>
                       <button
                         onClick={() => setActiveHintOpen(!activeHintOpen)}
-                        className="text-[11px] text-[#8A1627] dark:text-[#D9A441] hover:underline flex items-center gap-1 font-semibold"
+                        className="text-[11px] text-[#A82E46] dark:text-[#D9A441] hover:underline flex items-center gap-1 font-semibold"
                       >
                         <HelpCircle className="h-3.5 w-3.5" />
                         <span>{activeHintOpen ? "Hide Hint" : "Need a Hint?"}</span>
@@ -764,7 +764,7 @@ export function TopicMasteryLoop({
                     disabled={currentAnsState.isAnswered}
                     defaultValue={currentAnsState.userText || ""}
                     placeholder="Type your derivation steps, algorithm trace, or explanation here..."
-                    className="w-full p-3 rounded-[10px] border-2 border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs font-mono focus:border-[#8A1627] focus:outline-none leading-relaxed"
+                    className="w-full p-3 rounded-[10px] border-2 border-[#CFC8BB] dark:border-[#4B3639] bg-white dark:bg-black text-xs font-mono focus:border-[#A82E46] focus:outline-none leading-relaxed"
                   />
 
                   {/* Photo Answer Option */}
@@ -794,12 +794,12 @@ export function TopicMasteryLoop({
                       disabled={currentAnsState.isAnswered || synthesisGrading}
                       className="text-xs h-9 btn-secondary flex items-center gap-1.5"
                     >
-                      <Camera className="h-3.5 w-3.5 text-[#8A1627]" />
+                      <Camera className="h-3.5 w-3.5 text-[#A82E46]" />
                       <span>{synthesisImage ? "Change Solution Photo" : "Upload Notebook Photo"}</span>
                     </Button>
 
                     {synthesisImage && (
-                      <div className="h-9 w-9 rounded-[6px] overflow-hidden border border-[#8A1627]">
+                      <div className="h-9 w-9 rounded-[6px] overflow-hidden border border-[#A82E46]">
                         <img src={synthesisImage.preview} alt="notebook-sol" className="h-full w-full object-cover" />
                       </div>
                     )}
@@ -827,14 +827,14 @@ export function TopicMasteryLoop({
                   className={`p-4 rounded-[12px] border text-xs leading-relaxed ${
                     currentAnsState.isCorrect
                       ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-950 dark:text-emerald-100"
-                      : "bg-[#A51C30]/10 border-[#A51C30]/30 text-[#490B13] dark:text-[#FFD7DC]"
+                      : "bg-[#C93A55]/10 border-[#C93A55]/30 text-[#490B13] dark:text-[#FFD7DC]"
                   }`}
                 >
                   <div className="font-bold flex items-center gap-1.5 mb-1">
                     {currentAnsState.isCorrect ? (
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                     ) : (
-                      <AlertCircle className="h-4 w-4 text-[#A51C30]" />
+                      <AlertCircle className="h-4 w-4 text-[#C93A55]" />
                     )}
                     <span>
                       {currentAnsState.isCorrect
@@ -920,7 +920,7 @@ export function TopicMasteryLoop({
                 <span>Watch Credit:</span>
                 <span>{topic.watchScore || 0} / 40</span>
               </div>
-              <div className="flex items-center justify-between text-xs font-semibold text-[#8A1627] dark:text-[#F07B88]">
+              <div className="flex items-center justify-between text-xs font-semibold text-[#A82E46] dark:text-[#F48FA0]">
                 <span>Exercise Recall Points:</span>
                 <span>
                   +
