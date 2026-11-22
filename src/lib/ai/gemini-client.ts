@@ -93,10 +93,11 @@ export async function callGeminiFlashWithThinking({
 
       // Try 2: query parameter, then Bearer token, if the first was refused
       if (!res.ok && res.status !== 404) {
-        for (const attempt of [
+        const attempts: { url: string; headers: Record<string, string> }[] = [
           { url: `${base}?key=${resolvedKey}`, headers: { "Content-Type": "application/json" } },
           { url: base, headers: { "Content-Type": "application/json", Authorization: `Bearer ${resolvedKey}` } },
-        ]) {
+        ];
+        for (const attempt of attempts) {
           try {
             const r = await fetch(attempt.url, { method: "POST", headers: attempt.headers, body: JSON.stringify(requestBody) });
             if (r.ok) {
