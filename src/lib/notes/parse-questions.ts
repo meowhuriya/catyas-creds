@@ -170,7 +170,7 @@ function parseExperimentBank(text: string): ParsedItem[] {
   const push = (q: string) => {
     if (!cur) return;
     if (/^write the necessary/i.test(q) && cur.items.length) cur.items[cur.items.length - 1] += " " + q;
-    else if (q.length > 8 && q.split(/\s+/).length >= 2) cur.items.push(q);
+    else if (q.length > 8 && q.split(/\s+/).length >= 2 && !isCaps(q)) cur.items.push(q); // ALL-CAPS lines are leftover heading text
   };
   const flush = () => {
     const t = buf.replace(/\s+/g, " ").trim();

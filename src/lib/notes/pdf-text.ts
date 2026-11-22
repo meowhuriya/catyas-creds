@@ -26,28 +26,53 @@ function loadPdfJs(): Promise<any> {
   return loading;
 }
 
+interface TextItem {
+  str: string;
+  transform?: number[];
+  width?: number;
+  height?: number;
+}
+
+/**
+ * Puts a page's text pieces back in reading order by where they sit on the page (top to bottom,
+ * left to right), because scanned / OCR'd PDFs store them in a scrambled order.
+ */
+export function itemsToText(items: TextItem[]): string {
+  const pieces = items
+    .filter((it) => it.str && it.str.trim() && it.transform)
+    .map((it) => ({ s: it.str, x: it.transform![4], y: it.transform![5], w: it.width ?? it.str.length * 4, h: it.height || Math.abs(it.transform![3]) || 9 }))
+    .sort((a, b) => b.y - a.y);
+  const lines: { y: number; parts: typeof pieces }[] = [];
+  for (const p of pieces) {
+    const last = lines[lines.length - 1];
+    if (last && Math.abs(p.y - last.y) <= Math.max(2.5, p.h * 0.4)) last.parts.push(p);
+    else lines.push({ y: p.y, parts: [p] });
+  }
+  const out: string[] = [];
+  let prevY: number | null = null;
+  for (const ln of lines) {
+    ln.parts.sort((a, b) => a.x - b.x);
+    let t = "";
+    let endX = 0;
+    ln.parts.forEach((p, i) => {
+      if (i > 0 && p.x - endX > 1.2 && !t.endsWith(" ") && !p.s.startsWith(" ")) t += " ";
+      t += p.s;
+      endX = p.x + p.w;
+    });
+    if (prevY !== null && prevY - ln.y > 22) out.push(""); // a bigger gap = a paragraph break
+    out.push(t.replace(/\s+/g, " ").trim());
+    prevY = ln.y;
+  }
+  return out.join("\n");
+}
+
 export async function pdfToText(data: ArrayBuffer): Promise<string> {
   const lib = await loadPdfJs();
   const doc = await lib.getDocument({ data }).promise;
   const pages: string[] = [];
   for (let p = 1; p <= doc.numPages; p++) {
     const content = await (await doc.getPage(p)).getTextContent();
-    // Rebuild lines from text positions so numbered questions start on their own line.
-    let line = "";
-    let lastY: number | null = null;
-    const lines: string[] = [];
-    for (const it of content.items as any[]) {
-      const y = it.transform?.[5] as number;
-      if (lastY !== null && Math.abs(y - lastY) > 2) {
-        lines.push(line);
-        if (Math.abs(y - lastY) > 22) lines.push(""); // a bigger gap = a paragraph break
-        line = "";
-      }
-      line += it.str + (it.hasEOL ? "\n" : "");
-      lastY = y;
-    }
-    if (line) lines.push(line);
-    pages.push(lines.join("\n"));
+    pages.push(itemsToText(content.items as TextItem[]));
   }
   return pages.join("\n");
 }
