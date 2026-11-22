@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Target,
   LayoutDashboard,
   Clock,
   BookOpen,
@@ -28,6 +29,7 @@ export function MobileTabBar() {
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
     { label: "Today", href: "/today", icon: Clock },
     { label: "Notes", href: "/notes", icon: NotebookPen },
+    { label: "Exam Prep", href: "/prep", icon: Target },
     { label: "Courses", href: "/courses", icon: BookOpen },
   ];
 

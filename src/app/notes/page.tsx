@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, CloudOff, Cloud, Paperclip, Search } from "lucide-react";
+import { ChevronDown, CloudOff, Cloud, Paperclip, Search, Target } from "lucide-react";
 import { useVault } from "@/lib/notes/use-vault";
 import {
   SUBJECTS,
@@ -14,8 +14,7 @@ import {
 } from "@/lib/notes/curriculum";
 import { VAULT_SECTIONS, VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
-import { Bar, ExamCard, ExamForm } from "@/components/notes/exam-panel";
-import { daysLeft, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
+import { daysLeft, useExams } from "@/lib/notes/study";
 import { Butterfly, Diamond } from "@/components/brand/butterfly";
 import { SubjectArt } from "@/components/brand/subject-art";
 
@@ -33,10 +32,7 @@ export default function NotesVaultPage() {
   const { notes, ready, syncState, syncError, signedIn } = useVault();
   const [view, setView] = React.useState<{ year: 1 | 2 | 3 | 4; sem: 1 | 2 }>({ year: 1, sem: 1 });
   const [query, setQuery] = React.useState("");
-  const { topics } = useNoteTopics();
   const { exams } = useExams();
-  const overall = sumProgress(notes.map((n) => progressOf(topics[n.id])));
-  const [examForm, setExamForm] = React.useState<boolean>(false);
   const upcoming = exams
     .filter((e) => (daysLeft(e.date) ?? 1) >= 0)
     .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"));
@@ -151,27 +147,23 @@ export default function NotesVaultPage() {
       </div>
 
       {!q && (
-        <section className="space-y-3" aria-label="Study progress">
-          <div className="vc-tile flex flex-wrap items-center gap-5 p-5">
-            <div className="min-w-[200px] flex-1 space-y-2">
-              <p className="text-sm font-semibold text-app-ink">Overall progress</p>
-              <p className="font-display text-4xl text-app-ink">{overall.pct}%</p>
-              <Bar pct={overall.pct} />
-              <p className="text-xs text-app-ink-muted">{overall.done} of {overall.total} topics done across all your notes</p>
-            </div>
-            <button onClick={() => setExamForm(true)} disabled={notes.length === 0} className="rounded-control bg-app-accent px-4 py-2 text-sm font-semibold text-white disabled:opacity-40">+ Add exam</button>
-          </div>
-          {upcoming.length === 0 ? (
-            <p className="text-sm text-app-ink-muted">No exams yet. Add one, tag the notes and Q-banks you need to master, and get a day-by-day plan.</p>
+        <Link href={upcoming[0] ? `/prep/${encodeURIComponent(upcoming[0].id)}` : "/prep"} className="vc-tile flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3.5 transition-colors hover:border-app-accent">
+          <Target className="h-4 w-4 text-app-accent" />
+          {upcoming[0] ? (
+            <>
+              <span className="text-sm text-app-ink">
+                <b>{upcoming[0].name}</b> · {getSubject(upcoming[0].subjectId)?.title}
+              </span>
+              <span className="text-xs text-app-ink-muted">
+                {daysLeft(upcoming[0].date) === null ? "no date" : daysLeft(upcoming[0].date) === 0 ? "today" : `in ${daysLeft(upcoming[0].date)} days`}
+                {upcoming.length > 1 ? ` · +${upcoming.length - 1} more` : ""}
+              </span>
+            </>
           ) : (
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              {upcoming.map((e) => (
-                <ExamCard key={e.id} exam={e} allNotes={notes} showSubject />
-              ))}
-            </div>
+            <span className="text-sm text-app-ink">Preparing for an exam? Set it up in <b>Exam Prep</b> and get tested on your Q-banks.</span>
           )}
-          {examForm && <ExamForm notes={notes} onClose={() => setExamForm(false)} />}
-        </section>
+          <span className="ml-auto text-xs font-semibold text-[var(--color-accent)]">Open Exam Prep →</span>
+        </Link>
       )}
 
       {q ? (

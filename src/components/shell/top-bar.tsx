@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { getSubject } from "@/lib/notes/curriculum";
 import { SoundControlPopover } from "./sound-control-popover";
 import { AppearanceControl } from "./appearance-control";
 import { useSound } from "@/lib/sound-engine";
@@ -123,7 +124,13 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
     segments.forEach((seg, i) => {
       acc += `/${seg}`;
       const isLast = i === segments.length - 1;
-      const formatted = seg.charAt(0).toUpperCase() + seg.slice(1).replace("-", " ");
+      const prev = segments[i - 1];
+      const named: Record<string, string> = { prep: "Exam Prep", notes: "Notes Vault" };
+      const formatted =
+        named[seg] ??
+        (prev === "notes" ? getSubject(decodeURIComponent(seg))?.title : undefined) ??
+        (prev === "prep" ? "Exam plan" : undefined) ??
+        seg.charAt(0).toUpperCase() + seg.slice(1).replace("-", " ");
       items.push({
         label: formatted,
         href: isLast ? undefined : acc,

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ExternalLink, Maximize2, Minimize2, Pencil, Sparkles, X } from "lucide-react";
+import { ExternalLink, Maximize2, Minimize2, Pencil, Target, X } from "lucide-react";
 import { VaultNote, toEmbedUrl } from "@/lib/notes/vault-types";
 import { FileChip, MediaThumb } from "@/components/notes/note-parts";
 import { TopicChecklist } from "@/components/notes/topic-checklist";
@@ -78,7 +78,7 @@ export function NoteReader({
           <button onClick={() => setDetails((d) => !d)} className="rounded-control px-2 py-1 text-xs text-app-ink-muted hover:text-app-ink">
             {details ? "Hide topics" : `Topics ${prog.done}/${prog.total}`}
           </button>
-          <button onClick={onPractice} className="inline-flex items-center gap-1 rounded-control bg-[var(--accent-soft)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-accent)]"><Sparkles className="h-3.5 w-3.5" /> Practise</button>
+          <button onClick={onPractice} className="inline-flex items-center gap-1 rounded-control bg-[var(--accent-soft)] px-2.5 py-1.5 text-xs font-semibold text-[var(--color-accent)]"><Target className="h-3.5 w-3.5" /> {prog.total ? "Test me" : "Quiz me"}</button>
           {current && (<a href={current.url} target="_blank" rel="noreferrer" className={btn} aria-label="Open original" title="Open original"><ExternalLink className="h-4 w-4" /></a>)}
           <button onClick={onEdit} className={btn} aria-label="Edit note" title="Edit"><Pencil className="h-4 w-4" /></button>
           <button onClick={toggleFull} className={btn} aria-label="Fullscreen" title="Fullscreen">{full ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}</button>
@@ -91,7 +91,7 @@ export function NoteReader({
           )}
           {(details || !current) && (
             <aside className={cn("space-y-4 overflow-y-auto p-5", current ? "max-h-[40%] border-t border-app-border lg:max-h-none lg:w-80 lg:border-l lg:border-t-0" : "flex-1")}>
-              <TopicChecklist note={note} />
+              <TopicChecklist note={note} onDrill={onPractice} />
               {note.body && <p className="whitespace-pre-wrap text-sm leading-relaxed text-app-ink">{note.body}</p>}
               {note.mediaIds.length > 0 && (
                 <div className="grid grid-cols-2 gap-2">

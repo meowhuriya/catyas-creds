@@ -3,14 +3,14 @@
 import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Cloud, CloudOff, Plus } from "lucide-react";
+import { ArrowLeft, Cloud, CloudOff, Plus, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NoteCard } from "@/components/notes/note-parts";
 import { NoteReader } from "@/components/notes/note-reader";
 import { PracticeDialog } from "@/components/notes/practice-dialog";
-import { StudyPanel } from "@/components/notes/study-panel";
-import { useNoteTopics, useStudy } from "@/lib/notes/study";
-import { ExamPanel } from "@/components/notes/exam-panel";
+import { daysLeft, useExams, useNoteTopics } from "@/lib/notes/study";
+import { ExamForm } from "@/components/notes/exam-panel";
+import { Drill } from "@/components/prep/drill";
 import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { useVault } from "@/lib/notes/use-vault";
 import { YEAR_LABELS, getSubject, subjectColor } from "@/lib/notes/curriculum";
@@ -24,15 +24,29 @@ export default function SubjectNotesPage() {
   const subjectId = decodeURIComponent(params?.subjectId ?? "");
   const subject = getSubject(subjectId);
   const vault = useVault();
-  const [section, setSection] = React.useState<VaultSection>("exam");
+  const [section, setSection] = React.useState<VaultSection>("qbank");
+  const pickedSection = React.useRef(false);
   const [editing, setEditing] = React.useState<VaultNote | null>(null);
   const [editorOpen, setEditorOpen] = React.useState(false);
   const [readingId, setReadingId] = React.useState<string | null>(null);
   const [practice, setPractice] = React.useState<{ noteId?: string } | null>(null);
+  const [drillNote, setDrillNote] = React.useState<VaultNote | null>(null);
+  const [examForm, setExamForm] = React.useState(false);
   const noteTopics = useNoteTopics();
-  const study = useStudy(subjectId);
+  const { exams } = useExams();
 
   const mine = vault.notes.filter((n) => n.courseId === subjectId);
+  const subjectExams = exams
+    .filter((e) => e.subjectId === subjectId && (daysLeft(e.date) ?? 1) >= 0)
+    .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"));
+
+  // Land on the first section that has something in it.
+  React.useEffect(() => {
+    if (pickedSection.current || !vault.ready) return;
+    pickedSection.current = true;
+    const first = VAULT_SECTIONS.find((s) => mine.some((n) => n.section === s.key));
+    if (first) setSection(first.key);
+  }, [vault.ready, mine]);
   const visible = mine
     .filter((n) => n.section === section)
     .sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt));
@@ -81,9 +95,21 @@ export default function SubjectNotesPage() {
         </div>
       </header>
 
-      <StudyPanel noteIds={mine.map((n) => n.id)} study={study} onPractice={() => setPractice({})} />
-
-      <ExamPanel subjectId={subjectId} notes={mine} />
+      <div className="flex flex-wrap items-center gap-2">
+        <Target className="h-4 w-4 text-app-accent" />
+        <span className="text-sm font-semibold text-app-ink">Exams</span>
+        {subjectExams.map((e) => {
+          const d = daysLeft(e.date);
+          return (
+            <Link key={e.id} href={`/prep/${encodeURIComponent(e.id)}`} className="rounded-full border border-app-border bg-app-surface px-3 py-1 text-xs text-app-ink hover:border-app-accent">
+              {e.name} <span className="text-app-ink-muted">· {d === null ? "no date" : d === 0 ? "today" : `${d}d`}</span>
+            </Link>
+          );
+        })}
+        <button onClick={() => setExamForm(true)} disabled={mine.length === 0} className="rounded-full border border-dashed border-app-border px-3 py-1 text-xs text-app-ink-muted hover:border-app-accent hover:text-app-ink disabled:opacity-40">
+          + Add exam
+        </button>
+      </div>
 
       <div className="flex gap-6 overflow-x-auto border-b border-[rgba(60,40,110,0.08)]" role="tablist" aria-label="Sections">
         {VAULT_SECTIONS.map((s) => {
@@ -168,7 +194,8 @@ export default function SubjectNotesPage() {
             setEditorOpen(true);
           }}
           onPractice={() => {
-            setPractice({ noteId: reading.id });
+            if ((noteTopics.topics[reading.id] ?? []).length) setDrillNote(reading);
+            else setPractice({ noteId: reading.id });
             setReadingId(null);
           }}
         />
@@ -180,12 +207,15 @@ export default function SubjectNotesPage() {
           startNoteId={practice.noteId}
           onClose={() => setPractice(null)}
           onAddWeak={(items) =>
-            items.forEach(({ topic, noteId }) =>
-              noteId ? noteTopics.add(noteId, [`Revise: ${topic}`], true) : study.addItems([`Revise: ${topic}`], true)
-            )
+            items.forEach(({ topic, noteId }) => {
+              const target = noteId ?? practice.noteId ?? mine[0]?.id;
+              if (target) noteTopics.add(target, [`Revise: ${topic}`], true);
+            })
           }
         />
       )}
+      {drillNote && <Drill subjectTitle={subject.title} notes={[drillNote]} onClose={() => setDrillNote(null)} />}
+      {examForm && <ExamForm subjectId={subjectId} notes={mine} onClose={() => setExamForm(false)} />}
 
       <NoteEditorDialog
         open={editorOpen}

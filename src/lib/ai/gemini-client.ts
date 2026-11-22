@@ -64,7 +64,7 @@ export async function callGeminiFlashWithThinking({
       contentsParts.push({ text: prompt });
 
       const requestBody: any = {
-        contents: [{ parts: contentsParts }],
+        contents: [{ role: "user", parts: contentsParts }],
         generationConfig: {
           responseMimeType,
           thinkingConfig: { thinkingBudget: 8192 },
@@ -110,7 +110,20 @@ export async function callGeminiFlashWithThinking({
         } catch {}
       }
 
-      const data = await res.json();
+      let data = await res.json();
+
+      // Keys that start with "AQ." are often Vertex AI (express mode) keys: retry on the Vertex endpoint.
+      if (data.error && data.error.code !== 404) {
+        try {
+          const vRes = await fetch(
+            `https://aiplatform.googleapis.com/v1/publishers/google/models/${model}:generateContent?key=${resolvedKey}`,
+            { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(requestBody) }
+          );
+          const vData = await vRes.json();
+          if (!vData.error) data = vData;
+          else console.warn("[gemini] Vertex endpoint also failed:", vData.error?.message);
+        } catch {}
+      }
 
       if (data.error) {
         // If 404 model not found (e.g. gemini-2.5-flash deprecated for key), continue to fallback model

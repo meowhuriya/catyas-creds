@@ -1,6 +1,7 @@
-export type VaultSection = "exam" | "viva" | "assignment" | "submission" | "notes";
+export type VaultSection = "qbank" | "exam" | "viva" | "assignment" | "submission" | "notes";
 
 export const VAULT_SECTIONS: { key: VaultSection; label: string; short: string; hint: string }[] = [
+  { key: "qbank", label: "Question Banks", short: "Q-bank", hint: "Q-banks and previous papers: upload the file, import every question, then get tested on them" },
   { key: "exam", label: "Exam Important", short: "Exam", hint: "Important questions, formulas and teacher hints for exams" },
   { key: "viva", label: "Viva", short: "Viva", hint: "Viva questions, answers and lab points" },
   { key: "assignment", label: "Assignments", short: "Assignments", hint: "Assignment questions, submissions and deadlines" },

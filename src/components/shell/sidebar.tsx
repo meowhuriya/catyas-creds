@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Target,
   LayoutDashboard,
   Clock,
   BookOpen,
@@ -44,6 +45,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Study",
     items: [
       { label: "Notes Vault", href: "/notes", icon: NotebookPen },
+      { label: "Exam Prep", href: "/prep", icon: Target },
       { label: "Courses", href: "/courses", icon: BookOpen },
       { label: "Smart Recall", href: "/recall", icon: RotateCcw },
       { label: "Planner", href: "/planner", icon: Calendar },

@@ -37,7 +37,7 @@ export function ExamForm({ subjectId, notes, exam, onClose }: { subjectId?: stri
           if (!name.trim() || !subj) return;
           const id = save({ id: exam?.id, subjectId: subj, name: name.trim(), date, noteIds: picked, todos: exam?.todos, today: undefined });
           onClose();
-          if (!exam) router.push(`/notes/exam/${encodeURIComponent(id)}`);
+          if (!exam) router.push(`/prep/${encodeURIComponent(id)}`);
         }}
         className="w-full max-w-md space-y-4 rounded-2xl border border-app-border bg-app-surface p-5 shadow-2xl"
       >
@@ -87,7 +87,7 @@ export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; 
   const label =
     plan.phase === "nodate" ? "No date set" : plan.phase === "over" ? "Finished" : plan.phase === "examday" ? "Exam today" : `${plan.left} day${plan.left === 1 ? "" : "s"} left`;
   return (
-    <Link href={`/notes/exam/${encodeURIComponent(exam.id)}`} className="vc-tile group block space-y-3 p-4 transition-colors hover:border-app-accent">
+    <Link href={`/prep/${encodeURIComponent(exam.id)}`} className="vc-tile group block space-y-3 p-4 transition-colors hover:border-app-accent">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           {showSubject && <p className="truncate text-[11px] font-medium text-app-ink-muted">{getSubject(exam.subjectId)?.title}</p>}
@@ -104,10 +104,10 @@ export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; 
         {plan.todayEntries.length > 0 ? (
           <span className="font-semibold text-[var(--color-accent)]">Today: {plan.todayDone} of {plan.todayEntries.length} done</span>
         ) : plan.entries.length === 0 ? (
-          <span className="font-semibold text-[var(--color-accent)]">Add topics to get a daily plan</span>
+          <span className="font-semibold text-[var(--color-accent)]">Import questions to get a daily plan</span>
         ) : null}
         <span>{plan.notes.length} note{plan.notes.length === 1 ? "" : "s"}</span>
-        <span>{plan.remaining} left to master</span>
+        <span>{plan.topicProg.done}/{plan.topicProg.total} mastered</span>
         <span className="ml-auto inline-flex items-center gap-0.5 font-medium text-app-ink group-hover:text-[var(--color-accent)]">Open plan <ChevronRight className="h-3.5 w-3.5" /></span>
       </div>
     </Link>

@@ -8,8 +8,15 @@ export interface StudyItem {
   id: string;
   text: string;
   done: boolean;
-  weak?: boolean; // added from an AI practice miss
+  weak?: boolean; // scored low in a drill / added from a practice miss
+  chapter?: string; // unit / chapter heading from the Q-bank
+  marks?: number;
+  attempts?: number;
+  lastScore?: number; // 0-10 from the last graded attempt
+  lastAt?: string;
 }
+
+export type NewItem = string | { text: string; chapter?: string; marks?: number };
 export interface SubjectStudy {
   items: StudyItem[];
 }
@@ -94,13 +101,28 @@ function useStored<T>(key: string, fallback: T): T {
   return React.useSyncExternalStore(subscribe, () => readKey(key, fb), () => fb);
 }
 
-function mergeItems(existing: StudyItem[], texts: string[], weak: boolean): StudyItem[] {
+function mergeItems(existing: StudyItem[], texts: NewItem[], weak: boolean): StudyItem[] {
   const have = new Set(existing.map((i) => i.text.toLowerCase()));
-  const fresh = texts
-    .map((t) => t.trim())
-    .filter((t) => t && !have.has(t.toLowerCase()))
-    .map((text) => ({ id: newId("chk"), text, done: false, weak }));
+  const fresh: StudyItem[] = [];
+  for (const t of texts) {
+    const o = typeof t === "string" ? { text: t } : t;
+    const text = o.text.trim();
+    if (!text || have.has(text.toLowerCase())) continue;
+    have.add(text.toLowerCase());
+    fresh.push({ id: newId("chk"), text, done: false, weak: weak || undefined, chapter: o.chapter || undefined, marks: o.marks || undefined });
+  }
   return [...existing, ...fresh];
+}
+
+/** Mastered = scored 7+ ; weak = under 5. */
+export const MASTERED_SCORE = 7;
+export const WEAK_SCORE = 5;
+
+/** Smart order for drilling: weak first, then never tried, then shaky, then oldest mastered. */
+export function drillOrder<T extends StudyItem>(items: T[]): T[] {
+  const rank = (i: T) =>
+    i.weak && !i.done ? 0 : !i.attempts ? 1 : (i.lastScore ?? 0) < MASTERED_SCORE ? 2 : 3;
+  return [...items].sort((a, b) => rank(a) - rank(b) || (a.lastAt ?? "").localeCompare(b.lastAt ?? ""));
 }
 
 /* ---- general (per-subject) topics ---- */
@@ -116,7 +138,7 @@ export function useStudy(subjectId: string) {
   };
   return {
     data,
-    addItems: (texts: string[], weak = false) => update((s) => ({ ...s, items: mergeItems(s.items, texts, weak) })),
+    addItems: (texts: NewItem[], weak = false) => update((s) => ({ ...s, items: mergeItems(s.items, texts, weak) })),
     toggle: (id: string) => update((s) => ({ ...s, items: s.items.map((i) => (i.id === id ? { ...i, done: !i.done } : i)) })),
     remove: (id: string) => update((s) => ({ ...s, items: s.items.filter((i) => i.id !== id) })),
   };
@@ -135,7 +157,23 @@ export function useNoteTopics() {
   return {
     topics,
     progress: (noteId: string) => progressOf(topics[noteId]),
-    add: (noteId: string, texts: string[], weak = false) => update(noteId, (l) => mergeItems(l, texts, weak)),
+    add: (noteId: string, texts: NewItem[], weak = false) => update(noteId, (l) => mergeItems(l, texts, weak)),
+    record: (noteId: string, id: string, score: number) =>
+      update(noteId, (l) =>
+        l.map((i) =>
+          i.id === id
+            ? {
+                ...i,
+                attempts: (i.attempts ?? 0) + 1,
+                lastScore: score,
+                lastAt: new Date().toISOString(),
+                done: score >= MASTERED_SCORE ? true : i.done && score >= WEAK_SCORE,
+                weak: score < WEAK_SCORE,
+              }
+            : i
+        )
+      ),
+    clear: (noteId: string) => update(noteId, () => []),
     toggle: (noteId: string, id: string) => update(noteId, (l) => l.map((i) => (i.id === id ? { ...i, done: !i.done } : i))),
     remove: (noteId: string, id: string) => update(noteId, (l) => l.filter((i) => i.id !== id)),
   };
