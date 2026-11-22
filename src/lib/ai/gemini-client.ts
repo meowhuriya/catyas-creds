@@ -34,7 +34,7 @@ export interface GeminiCallParams {
   thinkingBudget?: number;
 }
 
-export async function callGeminiFlashWithThinking({
+async function callGeminiOnce({
   prompt,
   apiKey,
   responseMimeType = "application/json",
@@ -49,7 +49,8 @@ export async function callGeminiFlashWithThinking({
   }
 
   // Try gemini-2.5-flash with high thinking budget, then gemini-3.8-flash if 404
-  const modelsToTry = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL];
+  // When one model is overloaded, the next one usually isn't. Unknown/retired names are skipped (404).
+  const modelsToTry = [GEMINI_MODEL, "gemini-flash-latest", GEMINI_FALLBACK_MODEL, "gemini-flash-lite-latest"];
   let lastError: Error | null = null;
   let realError: Error | null = null; // first non-"model not found" failure: the one worth showing
 
@@ -185,4 +186,32 @@ export async function callGeminiFlashWithThinking({
   }
 
   throw realError || lastError || new Error("Gemini generation failed across all models");
+}
+
+
+function isBusy(err: unknown): boolean {
+  const m = err instanceof Error ? err.message : String(err);
+  return /high demand|overloaded|unavailable|try again later|resource.?exhausted|rate.?limit|quota|429|503/i.test(m);
+}
+
+/**
+ * Calls Gemini, trying several models, and if they're all busy ("high demand" / rate limit)
+ * waits a moment and tries again (up to 3 rounds) before giving up.
+ */
+export async function callGeminiFlashWithThinking(params: GeminiCallParams): Promise<string> {
+  const waits = [0, 2000, 5000];
+  let last: unknown;
+  for (const wait of waits) {
+    if (wait) await new Promise((r) => setTimeout(r, wait));
+    try {
+      return await callGeminiOnce(params);
+    } catch (err) {
+      last = err;
+      if (!isBusy(err)) throw err;
+    }
+  }
+  throw new Error(
+    "Gemini is very busy right now (Google's side, not your app). Wait a minute and try again. " +
+      (last instanceof Error ? `(${last.message.slice(0, 80)})` : "")
+  );
 }
