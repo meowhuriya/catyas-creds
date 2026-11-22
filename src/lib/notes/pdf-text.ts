@@ -40,6 +40,7 @@ export async function pdfToText(data: ArrayBuffer): Promise<string> {
       const y = it.transform?.[5] as number;
       if (lastY !== null && Math.abs(y - lastY) > 2) {
         lines.push(line);
+        if (Math.abs(y - lastY) > 22) lines.push(""); // a bigger gap = a paragraph break
         line = "";
       }
       line += it.str + (it.hasEOL ? "\n" : "");
