@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Target,
+  Timer,
   LayoutDashboard,
   Clock,
   BookOpen,
@@ -27,7 +28,7 @@ export function MobileTabBar() {
 
   const mainTabs = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard },
-    { label: "Today", href: "/today", icon: Clock },
+    { label: "Focus", href: "/focus", icon: Timer },
     { label: "Notes", href: "/notes", icon: NotebookPen },
     { label: "Exam Prep", href: "/prep", icon: Target },
     { label: "Courses", href: "/courses", icon: BookOpen },

@@ -1,5 +1,6 @@
 "use client";
 
+import { SubjectQuestionsStandalone } from "@/components/questions/subject-questions";
 import * as React from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -52,7 +53,6 @@ import { TopicAiChatModal } from "@/components/topics/topic-ai-chat-modal";
 import { MilestoneBanner } from "@/components/ui/milestone-banner";
 import { calculateUnitMastery, calculateCourseMastery } from "@/lib/mastery/mastery-engine";
 import { AttendanceTracker } from "@/components/courses/attendance-tracker";
-import { ExamPrepMode } from "@/components/courses/exam-prep-mode";
 import { calculateAttendanceStats, AttendanceStats } from "@/lib/attendance/attendance-engine";
 import {
   DndContext,
@@ -801,7 +801,7 @@ export default function CourseDetailPage() {
         <TabsList>
           <TabsTrigger value="units">Units & Topics</TabsTrigger>
           <TabsTrigger value="exam-prep" className="gap-1.5">
-            <span>Exam Prep</span>
+            <span>Questions</span>
             {courseExamDate && (
               <span className="h-1.5 w-1.5 rounded-full bg-[#C93A55]" />
             )}
@@ -1257,13 +1257,7 @@ export default function CourseDetailPage() {
 
         {/* Tab: Exam Prep Mode */}
         <TabsContent value="exam-prep" className="space-y-6 pt-2">
-          <ExamPrepMode
-            course={course}
-            modules={modules}
-            topics={topics}
-            onTopicUpdate={loadData}
-            onOpenQuickCheck={(top) => setQuickCheckTopic(top)}
-          />
+          <SubjectQuestionsStandalone subjectId={course.code} />
         </TabsContent>
 
         {/* Tab: Attendance Tracker */}

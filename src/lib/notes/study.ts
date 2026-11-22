@@ -58,7 +58,7 @@ export function daysLeft(d?: string): number | null {
 const listeners = new Set<() => void>();
 const memo = new Map<string, { raw: string | null; value: unknown }>();
 
-function readKey<T>(key: string, fallback: T): T {
+export function readKey<T>(key: string, fallback: T): T {
   let raw: string | null = null;
   try {
     raw = localStorage.getItem(key);
@@ -77,7 +77,7 @@ function readKey<T>(key: string, fallback: T): T {
   return value;
 }
 
-function writeKey(key: string, value: unknown) {
+export function writeKey(key: string, value: unknown) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -86,7 +86,7 @@ function writeKey(key: string, value: unknown) {
   listeners.forEach((l) => l());
 }
 
-function useStored<T>(key: string, fallback: T): T {
+export function useStored<T>(key: string, fallback: T): T {
   const subscribe = React.useCallback((cb: () => void) => {
     listeners.add(cb);
     window.addEventListener("storage", cb);

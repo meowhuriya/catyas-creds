@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, BookOpen, CalendarDays, CheckCircle2, ChevronDown, Pencil, Plus, Target, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpen, CalendarDays, ChevronDown, Pencil, Plus, Target, Timer, Trash2 } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Bar, ExamForm } from "@/components/notes/exam-panel";
 import { NoteReader } from "@/components/notes/note-reader";
@@ -27,6 +28,7 @@ export default function ExamPrepPage() {
   const subjectNotes = vault.notes.filter((n) => n.courseId === exam?.subjectId);
   const plan = useExamPlan(exam, vault.notes);
   const subject = exam ? getSubject(exam.subjectId) : undefined;
+  const toast = useToast();
 
   const [open, setOpen] = React.useState<string | null>(null);
   const [reading, setReading] = React.useState<string | null>(null);
@@ -59,15 +61,8 @@ export default function ExamPrepPage() {
           : "";
   const reader = reading ? vault.notes.find((n) => n.id === reading) : undefined;
   const totalItems = plan.entries.filter((e) => e.key.startsWith("t:")).length;
-  const todayQs = plan.todayEntries.filter((e) => e.key.startsWith("t:") && !e.done);
   const tried = plan.notes.flatMap((n) => plan.topics[n.id] ?? []).filter((i) => i.attempts).length;
   const weakCount = plan.notes.flatMap((n) => plan.topics[n.id] ?? []).filter((i) => i.weak && !i.done).length;
-
-  const only = (keys: string[]) =>
-    keys.filter((k) => k.startsWith("t:")).map((k) => {
-      const [, noteId, itemId] = k.split(":");
-      return { noteId, itemId };
-    });
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -125,51 +120,40 @@ export default function ExamPrepPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.15fr]">
         <div className="space-y-6">
-          {/* 2. Today */}
+          {/* 2. Today (lives in Focus, the one daily plan for every subject) */}
           <section className="vc-tile space-y-3 p-5">
             <div className="flex items-baseline justify-between gap-2">
               <h2 className="text-sm font-semibold text-app-ink">{todayTitle}</h2>
-              {plan.todayEntries.length > 0 && <span className="text-xs text-app-ink-muted">{plan.todayDone}/{plan.todayEntries.length} done</span>}
+              <Link href="/focus" className="text-xs font-medium text-[var(--color-accent)]">Open Focus →</Link>
             </div>
             {todayHint && <p className="text-xs text-app-ink-muted">{todayHint}</p>}
-            {plan.todayEntries.length === 0 ? (
-              <p className="text-sm text-app-ink-muted">
-                {totalItems === 0 ? "Your plan appears once your Q-banks have questions." : plan.remaining === 0 ? "Everything is mastered. Keep testing yourself to stay sharp." : "Nothing planned for today."}
-              </p>
-            ) : (
-              <>
-                {todayQs.length > 0 && (
-                  <Button className="w-full" onClick={() => setDrill({ notes: plan.notes, only: only(todayQs.map((e) => e.key)) })}>
-                    <Target className="h-4 w-4" /> Test me on today&apos;s {todayQs.length}
-                  </Button>
-                )}
-                <ul className="space-y-1">
-                  {plan.todayEntries.map((e) => {
-                    const item = e.noteId ? plan.topics[e.noteId]?.find((x) => `t:${e.noteId}:${x.id}` === e.key) : undefined;
-                    return (
-                      <li key={e.key} className="group/row flex items-start gap-2.5 rounded-control px-1.5 py-1.5 hover:bg-app-surface-muted">
-                        <input type="checkbox" checked={e.done} onChange={() => plan.toggle(e.key)} title="Mark as mastered" className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
-                        <span className="min-w-0 flex-1">
-                          <span className={cn("block text-sm leading-snug", e.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{e.text}</span>
-                          <span className="block text-[11px] text-app-ink-muted">{e.noteTitle ?? "To-do"}{item?.marks ? ` · ${item.marks}M` : ""}{e.weak ? " · weak" : ""}</span>
-                        </span>
-                        {item && <ScorePill item={item} />}
-                        {e.noteId && !e.done && (
-                          <button onClick={() => setDrill({ notes: plan.notes, only: only([e.key]) })} className="shrink-0 rounded-full border border-app-border px-2 py-0.5 text-[11px] font-medium text-app-ink-muted hover:border-app-accent hover:text-app-ink">
-                            Answer
-                          </button>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
+            {plan.todayTasks.length > 0 && (
+              <ul className="space-y-1.5">
+                {plan.todayTasks.map((t) => {
+                  const items = (t.refs ?? []).map((r) => plan.topics[r.noteId]?.find((x) => x.id === r.itemId)).filter(Boolean);
+                  const m = items.filter((x) => x!.done).length;
+                  return (
+                    <li key={t.id} className="flex items-center gap-2 rounded-control border border-app-border px-3 py-2">
+                      <span className={cn("min-w-0 flex-1 truncate text-sm", t.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{t.title}</span>
+                      <span className="shrink-0 text-xs text-app-ink-muted">{m}/{items.length}</span>
+                      {!t.done && (
+                        <button onClick={() => setDrill({ notes: plan.notes, only: (t.refs ?? []).filter((r) => !plan.topics[r.noteId]?.find((x) => x.id === r.itemId)?.done) })} className="shrink-0 rounded-full border border-app-border px-2 py-0.5 text-[11px] text-app-ink-muted hover:border-app-accent hover:text-app-ink">
+                          Test
+                        </button>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
             )}
-            {plan.todayEntries.length > 0 && plan.todayDone === plan.todayEntries.length && plan.remaining > 0 && (
-              <div className="flex items-center justify-between rounded-control bg-[var(--accent-soft)] px-3 py-2 text-sm">
-                <span className="flex items-center gap-1.5 text-app-ink"><CheckCircle2 className="h-4 w-4 text-app-success" /> Today done.</span>
-                <button onClick={plan.planMore} className="text-xs font-semibold text-[var(--color-accent)]">Get ahead: add more</button>
-              </div>
+            {plan.share.length > 0 ? (
+              <Button className="w-full" variant={plan.todayTasks.length ? "outline" : "primary"} onClick={() => { const n = plan.addShareToFocus(); if (n) toast.success("Added to Focus", `${n} question${n > 1 ? "s" : ""} for today.`); }}>
+                <Timer className="h-4 w-4" /> {plan.todayTasks.length ? `Add ${plan.share.length} more to today` : `Add today's ${plan.share.length} to Focus`}
+              </Button>
+            ) : (
+              <p className="text-sm text-app-ink-muted">
+                {totalItems === 0 ? "Import your Q-bank questions to get a daily share." : plan.remaining === 0 ? "Everything is mastered. Keep testing yourself to stay sharp." : "Today's share is already in Focus."}
+              </p>
             )}
           </section>
 

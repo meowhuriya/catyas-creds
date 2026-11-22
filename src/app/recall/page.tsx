@@ -334,7 +334,7 @@ export default function RecallPage() {
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                <Link href="/today">
+                <Link href="/focus">
                   <Button variant="outline" size="sm" className="btn-secondary text-xs">
                     View Today&apos;s Schedule
                   </Button>
@@ -408,7 +408,7 @@ export default function RecallPage() {
                   <History className="h-3.5 w-3.5" />
                   <span>View Review History</span>
                 </Button>
-                <Link href="/today">
+                <Link href="/focus">
                   <Button size="sm" className="btn-primary text-xs gap-1.5">
                     <span>Back to Today Dashboard</span>
                     <ArrowRight className="h-3.5 w-3.5" />

@@ -101,8 +101,10 @@ export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; 
       </div>
       <Bar pct={plan.overall.pct} />
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-app-ink-muted">
-        {plan.todayEntries.length > 0 ? (
-          <span className="font-semibold text-[var(--color-accent)]">Today: {plan.todayDone} of {plan.todayEntries.length} done</span>
+        {plan.todayTasks.length > 0 ? (
+          <span className="font-semibold text-[var(--color-accent)]">Today in Focus: {plan.todayTasks.filter((t) => t.done).length} of {plan.todayTasks.length} done</span>
+        ) : plan.share.length > 0 && plan.phase !== "over" ? (
+          <span className="font-semibold text-[var(--color-accent)]">{plan.share.length} for today</span>
         ) : plan.entries.length === 0 ? (
           <span className="font-semibold text-[var(--color-accent)]">Import questions to get a daily plan</span>
         ) : null}

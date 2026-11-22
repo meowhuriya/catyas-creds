@@ -4,7 +4,6 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, Flame, Play } from "lucide-react";
 
-import { FlyingButterflies } from "@/components/brand/flying-butterflies";
 import { Lesson, LessonProgress, Course, Term } from "@/types/schemas";
 
 interface BentoHeroProps {
@@ -114,7 +113,6 @@ export function BentoHero({
           />
         </div>
       </div>
-      <FlyingButterflies />
     </section>
   );
 }

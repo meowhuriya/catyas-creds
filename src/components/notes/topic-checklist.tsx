@@ -3,8 +3,7 @@
 import * as React from "react";
 import { ChevronDown, FileQuestion, Loader2, Plus, Sparkles, Target, Trash2 } from "lucide-react";
 import { Bar } from "@/components/notes/exam-panel";
-import { useDataStore } from "@/lib/repository";
-import { collectMaterial } from "@/lib/notes/material";
+import { hasImportSource, useImportQuestions } from "@/lib/notes/use-import";
 import { MASTERED_SCORE, StudyItem, useNoteTopics } from "@/lib/notes/study";
 import { VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
@@ -37,57 +36,16 @@ export function TopicChecklist({
   showHeader?: boolean;
   onDrill?: () => void;
 }) {
-  const { firebaseUser } = useDataStore();
   const nt = useNoteTopics();
   const items = nt.topics[note.id] ?? [];
   const prog = nt.progress(note.id);
   const [text, setText] = React.useState("");
-  const [busy, setBusy] = React.useState<"topics" | "questions" | null>(null);
-  const [msg, setMsg] = React.useState<string[]>([]);
   const [closed, setClosed] = React.useState<Set<string>>(new Set());
-  const hasSource = !!note.body.trim() || note.files.length > 0 || note.mediaIds.length > 0 || note.links.some((l) => l.kind === "drive");
-
-  const fill = async (kind: "topics" | "questions") => {
-    setBusy(kind);
-    setMsg([]);
-    try {
-      const m = await collectMaterial([note], firebaseUser?.uid ?? null);
-      const res = await fetch("/api/ai/practice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "extract", kind, subject: subjectTitle ?? "", text: m.text, links: m.links, images: m.images }),
-      });
-      const raw = await res.text();
-      let data: { error?: string; items?: { text: string }[] } = {};
-      try {
-        data = JSON.parse(raw);
-      } catch {
-        /* non-JSON reply from the server */
-      }
-      if (!res.ok || !data.items) {
-        throw new Error(
-          data.error ||
-            (res.status === 413 ? "That file is too big to send. Put it on Drive (Anyone with the link) and paste the link in the note."
-              : res.status === 504 || res.status === 408 ? "It took too long. Try a smaller part of the Q-bank (split by unit), or use a Drive link."
-              : res.status === 404 ? "The AI route wasn't found. Restart npm run dev or redeploy."
-              : `The server returned an error (${res.status}). Check /api/ai/status?check=1`)
-        );
-      }
-      const have = new Set(items.map((i) => i.text.toLowerCase()));
-      const fresh = data.items.filter((t) => !have.has(t.text.trim().toLowerCase()));
-      nt.add(note.id, data.items);
-      setMsg([
-        fresh.length
-          ? `Added ${fresh.length} ${kind === "questions" ? "questions" : "topics"}. Delete any that don't belong.`
-          : "Nothing new found. Your list already has these.",
-        ...m.warnings,
-      ]);
-    } catch (e) {
-      setMsg([e instanceof Error ? e.message : "Something went wrong"]);
-    } finally {
-      setBusy(null);
-    }
-  };
+  const importer = useImportQuestions(subjectTitle);
+  const busy = importer.busy?.noteId === note.id ? importer.busy.kind : null;
+  const msg = importer.msg?.noteId === note.id ? importer.msg.lines : [];
+  const hasSource = hasImportSource(note);
+  const fill = (kind: "topics" | "questions") => importer.run(note, kind);
 
   const pasteMany = (raw: string) => {
     const lines = raw.split(/\n+/).map((l) => l.replace(/^\s*(?:[-*•]|\d+[.)]|Q\d+[.):]?)\s*/i, "").trim()).filter(Boolean);

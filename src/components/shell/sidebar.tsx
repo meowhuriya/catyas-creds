@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Target,
+  Timer,
   LayoutDashboard,
   Clock,
   BookOpen,
@@ -38,7 +39,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: null,
     items: [
       { label: "Dashboard", href: "/", icon: LayoutDashboard },
-      { label: "Today", href: "/today", icon: Clock },
+      { label: "Focus", href: "/focus", icon: Timer },
     ],
   },
   {

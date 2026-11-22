@@ -104,7 +104,7 @@ export function RightRail({
             </h3>
           </div>
           <Link
-            href="/today"
+            href="/focus"
             className="text-xs font-semibold text-[var(--color-crimson)] hover:underline inline-flex items-center gap-0.5"
           >
             <span>Open Today</span>

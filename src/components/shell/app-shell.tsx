@@ -1,5 +1,7 @@
 "use client";
 
+import { FocusTimerProvider } from "@/lib/focus/timer";
+import { MiniTimer } from "@/components/focus/mini-timer";
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "./sidebar";
@@ -18,6 +20,14 @@ import { Loader2, Info } from "lucide-react";
 import { TiltFx } from "@/components/fx/tilt-fx";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <FocusTimerProvider>
+      <AppShellInner>{children}</AppShellInner>
+    </FocusTimerProvider>
+  );
+}
+
+function AppShellInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { isRealMode, isDemo, firebaseUser, authLoading } = useDataStore();
@@ -184,6 +194,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <TiltFx />
+      <MiniTimer />
 
       {/* Mobile Bottom Tab Bar */}
       <MobileTabBar />

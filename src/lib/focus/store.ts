@@ -1,0 +1,138 @@
+"use client";
+
+import { readKey, todayKey, useStored, writeKey } from "@/lib/notes/study";
+import { newId } from "@/lib/notes/vault-types";
+import { QRef } from "@/lib/notes/questions";
+
+export interface FocusTask {
+  id: string;
+  title: string;
+  kind: "custom" | "questions";
+  subjectId?: string;
+  chapter?: string;
+  refs?: QRef[];
+  done: boolean;
+  minutes: number; // focused minutes spent on it
+  pomos: number;
+  auto?: boolean; // created by the planner
+  why?: string; // planner's reason
+  createdAt: string;
+}
+
+export interface FocusDay {
+  tasks: FocusTask[];
+  minutes: number;
+  pomos: number;
+  bySubject?: Record<string, number>;
+}
+
+export interface FocusSettings {
+  focusMin: number;
+  shortMin: number;
+  longMin: number;
+  longEvery: number;
+  goalMin: number; // daily study goal
+  autoBreak: boolean;
+}
+
+export const DEFAULT_SETTINGS: FocusSettings = { focusMin: 25, shortMin: 5, longMin: 15, longEvery: 4, goalMin: 180, autoBreak: true };
+
+const DAYS_KEY = "vc_focus_days_v1";
+const SETTINGS_KEY = "vc_focus_settings_v1";
+const EMPTY_DAYS: Record<string, FocusDay> = {};
+const EMPTY_DAY: FocusDay = { tasks: [], minutes: 0, pomos: 0 };
+
+function prune(days: Record<string, FocusDay>): Record<string, FocusDay> {
+  const keys = Object.keys(days).sort();
+  if (keys.length <= 120) return days;
+  const out: Record<string, FocusDay> = {};
+  for (const k of keys.slice(-120)) out[k] = days[k];
+  return out;
+}
+
+function updateDay(date: string, fn: (d: FocusDay) => FocusDay) {
+  const all = readKey(DAYS_KEY, EMPTY_DAYS);
+  writeKey(DAYS_KEY, prune({ ...all, [date]: fn(all[date] ?? EMPTY_DAY) }));
+}
+
+export function useFocusDays() {
+  return useStored(DAYS_KEY, EMPTY_DAYS);
+}
+
+export function useFocusSettings(): [FocusSettings, (patch: Partial<FocusSettings>) => void] {
+  const s = useStored(SETTINGS_KEY, DEFAULT_SETTINGS);
+  const merged = { ...DEFAULT_SETTINGS, ...s };
+  return [merged, (patch) => writeKey(SETTINGS_KEY, { ...merged, ...patch })];
+}
+
+export function readSettings(): FocusSettings {
+  return { ...DEFAULT_SETTINGS, ...readKey(SETTINGS_KEY, DEFAULT_SETTINGS) };
+}
+
+export function dateKey(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+export function useFocusDay(date: string = todayKey()) {
+  const days = useFocusDays();
+  const day = days[date] ?? EMPTY_DAY;
+  return {
+    day,
+    addTask: (t: Omit<FocusTask, "id" | "done" | "minutes" | "pomos" | "createdAt"> & Partial<FocusTask>) => {
+      const task: FocusTask = { done: false, minutes: 0, pomos: 0, createdAt: new Date().toISOString(), ...t, id: t.id ?? newId("task") };
+      updateDay(date, (d) => ({ ...d, tasks: [...d.tasks, task] }));
+      return task.id;
+    },
+    updateTask: (id: string, patch: Partial<FocusTask>) =>
+      updateDay(date, (d) => ({ ...d, tasks: d.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) })),
+    removeTask: (id: string) => updateDay(date, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.id !== id) })),
+    moveTask: (id: string, dir: -1 | 1) =>
+      updateDay(date, (d) => {
+        const i = d.tasks.findIndex((t) => t.id === id);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= d.tasks.length) return d;
+        const tasks = [...d.tasks];
+        [tasks[i], tasks[j]] = [tasks[j], tasks[i]];
+        return { ...d, tasks };
+      }),
+    /** Replace planner-made tasks that haven't been started; keeps yours and anything you've worked on. */
+    replaceAuto: (fresh: FocusTask[]) =>
+      updateDay(date, (d) => ({ ...d, tasks: [...d.tasks.filter((t) => !t.auto || t.done || t.minutes > 0), ...fresh] })),
+  };
+}
+
+/** Adds focused minutes to a day (and to a task / subject when given). */
+export function logFocus(minutes: number, opts: { taskId?: string; subjectId?: string; pomo?: boolean; date?: string } = {}) {
+  if (minutes <= 0) return;
+  const date = opts.date ?? todayKey();
+  updateDay(date, (d) => ({
+    ...d,
+    minutes: d.minutes + minutes,
+    pomos: d.pomos + (opts.pomo ? 1 : 0),
+    bySubject: opts.subjectId ? { ...(d.bySubject ?? {}), [opts.subjectId]: (d.bySubject?.[opts.subjectId] ?? 0) + minutes } : d.bySubject,
+    tasks: opts.taskId
+      ? d.tasks.map((t) => (t.id === opts.taskId ? { ...t, minutes: t.minutes + minutes, pomos: t.pomos + (opts.pomo ? 1 : 0) } : t))
+      : d.tasks,
+  }));
+}
+
+export function findTask(taskId: string | undefined, date: string = todayKey()): FocusTask | undefined {
+  if (!taskId) return undefined;
+  return readKey(DAYS_KEY, EMPTY_DAYS)[date]?.tasks.find((t) => t.id === taskId);
+}
+
+export function makeTask(t: Omit<FocusTask, "id" | "done" | "minutes" | "pomos" | "createdAt"> & Partial<FocusTask>): FocusTask {
+  return { done: false, minutes: 0, pomos: 0, createdAt: new Date().toISOString(), ...t, id: t.id ?? newId("task") };
+}
+
+/** Consecutive days (ending today or yesterday) with at least one focused minute. */
+export function streak(days: Record<string, FocusDay>): number {
+  let n = 0;
+  const d = new Date();
+  if (!(days[dateKey(d)]?.minutes > 0)) d.setDate(d.getDate() - 1);
+  while (days[dateKey(d)]?.minutes > 0) {
+    n++;
+    d.setDate(d.getDate() - 1);
+  }
+  return n;
+}
