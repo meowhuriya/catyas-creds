@@ -71,6 +71,71 @@ function parseMarkedBank(text: string): ParsedItem[] {
   return out;
 }
 
+const ROMAN: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8 };
+const titleCase = (t: string) =>
+  t.toLowerCase().replace(/(^|[\s(-])([a-z]+)/g, (_, a, w) => (a && /^(and|its|of|the|to|in|on|for)$/.test(w) ? a + w : a + w[0].toUpperCase() + w.slice(1)));
+
+/**
+ * "UNIT – I: TITLE", then "Short Answer Questions" / "Long Answer Questions" tables with an
+ * S.No. column. The number cell can sit before, between or beside the question's lines, so each
+ * question is cut at the first line that ends a sentence after its number.
+ */
+function parseTableBank(text: string): ParsedItem[] {
+  const out: ParsedItem[] = [];
+  let chapter = "";
+  let inSection = false;
+  let toks: { m: boolean; t: string }[] = [];
+  const flush = () => {
+    if (inSection && toks.some((x) => x.m)) {
+      const lines: string[] = [];
+      const markerAt: number[] = []; // index in `lines` where each number appears (lines before it)
+      for (const x of toks) {
+        if (x.m) markerAt.push(lines.length);
+        if (x.t) {
+          lines.push(x.t);
+          if (x.m) markerAt[markerAt.length - 1] = lines.length - 1; // inline: the number sits on this line
+        }
+      }
+      let start = 0;
+      for (let k = 0; k < markerAt.length && start < lines.length; k++) {
+        let end = Math.max(markerAt[k], start);
+        // a number between two lines belongs to the question that continues after it
+        while (end < lines.length - 1 && !/[.?]\s*$/.test(lines[end])) end++;
+        if (end === markerAt[k] - 1) end = markerAt[k];
+        const t = lines.slice(start, end + 1).join(" ").replace(/\s+/g, " ").trim();
+        if (t.length > 8) out.push({ text: t, chapter: chapter || undefined });
+        start = end + 1;
+      }
+    }
+    toks = [];
+  };
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) continue;
+    const u = line.match(/^UNIT\s*[–—\-:]?\s*([IVX]+|\d+)\s*[–—\-:.]\s*(.+)$/i);
+    if (u) {
+      flush();
+      inSection = false;
+      const n = ROMAN[u[1].toUpperCase()] ?? Number(u[1]);
+      chapter = `Unit ${n}: ${titleCase(u[2].trim())}`;
+      continue;
+    }
+    if (/^(short|long) answer questions?\b/i.test(line) || /^(part|section)\s*-?\s*[a-c]\b/i.test(line)) {
+      flush();
+      inSection = true;
+      continue;
+    }
+    if (/^s\.?\s*no\.?$/i.test(line)) continue;
+    if (!inSection) continue;
+    const m = line.match(/^(\d{1,2})(?:\s+|(?=[A-Z]))(\S.*)$/);
+    if (/^\d{1,2}$/.test(line)) toks.push({ m: true, t: "" });
+    else if (m) toks.push({ m: true, t: m[2] });
+    else toks.push({ m: false, t: line });
+  }
+  flush();
+  return out;
+}
+
 /**
  * Pulls numbered questions out of plain text without any AI: instant and free.
  * Returns [] when the text doesn't look like a numbered list.
@@ -78,6 +143,8 @@ function parseMarkedBank(text: string): ParsedItem[] {
 export function parseQuestions(text: string): ParsedItem[] {
   const marked = parseMarkedBank(text);
   if (marked.length >= 3) return marked;
+  const table = parseTableBank(text);
+  if (table.length >= 3) return table;
   const lines = text.split(/\r?\n/);
   const out: ParsedItem[] = [];
   let chapter = "";
