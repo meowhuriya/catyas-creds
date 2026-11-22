@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, FileQuestion, Loader2, Plus, Target, Timer, Sparkles } from "lucide-react";
+import { ChevronDown, FileQuestion, Loader2, Plus, Target, Timer, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
@@ -130,6 +130,9 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                         {busy ? "Reading…" : "Re-read file"}
                       </button>
                     )}
+                    {count > 0 && (
+                      <button onClick={() => { if (window.confirm(`Delete all ${count} questions in "${n.title}"? This can't be undone.`)) nt.clear(n.id); }} className="shrink-0 text-[11px] text-red-600 hover:underline">Delete all</button>
+                    )}
                   </div>
                   {busy && <p className="mt-1 text-[11px] text-app-ink-muted">{importer.progress || "Reading the Q-bank…"}</p>}
                   {msg?.map((m, i) => (<p key={i} className="mt-1 text-[11px] text-app-ink-muted">{m}</p>))}
@@ -177,6 +180,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                         <Target className="h-4 w-4" /> Test me on this chapter
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => toFocus(g.entries, name, g.chapter || undefined)}><Timer className="h-4 w-4" /> Focus on it today</Button>
+                      <Button size="sm" variant="ghost" onClick={() => { if (window.confirm(`Delete all ${g.entries.length} questions in "${name}"? This can't be undone.`)) { const by = new Map<string, string[]>(); g.entries.forEach((e) => by.set(e.noteId, [...(by.get(e.noteId) ?? []), e.itemId])); by.forEach((ids, nid) => nt.removeMany(nid, ids)); } }}><Trash2 className="h-4 w-4" /> Delete chapter</Button>
                     </div>
                     <ul className="space-y-0.5">
                       {g.entries.map((e) => (

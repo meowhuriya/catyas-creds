@@ -176,6 +176,7 @@ export function useNoteTopics() {
     clear: (noteId: string) => update(noteId, () => []),
     toggle: (noteId: string, id: string) => update(noteId, (l) => l.map((i) => (i.id === id ? { ...i, done: !i.done } : i))),
     remove: (noteId: string, id: string) => update(noteId, (l) => l.filter((i) => i.id !== id)),
+    removeMany: (noteId: string, ids: string[]) => update(noteId, (l) => l.filter((i) => !ids.includes(i.id))),
   };
 }
 

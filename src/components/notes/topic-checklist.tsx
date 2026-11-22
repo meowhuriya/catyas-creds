@@ -40,6 +40,8 @@ export function TopicChecklist({
   const items = nt.topics[note.id] ?? [];
   const prog = nt.progress(note.id);
   const [text, setText] = React.useState("");
+  const [selecting, setSelecting] = React.useState(false);
+  const [picked, setPicked] = React.useState<Set<string>>(new Set());
   const [closed, setClosed] = React.useState<Set<string>>(new Set());
   const importer = useImportQuestions(subjectTitle);
   const busy = importer.busy?.noteId === note.id ? importer.busy.kind : null;
@@ -102,6 +104,24 @@ export function TopicChecklist({
         <p key={i} className="text-[11px] text-app-ink-muted">{m}</p>
       ))}
 
+      {items.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 text-[11px]">
+          {!selecting ? (
+            <button type="button" onClick={() => setSelecting(true)} className="inline-flex items-center gap-1 text-app-ink-muted hover:text-app-ink">
+              <Trash2 className="h-3 w-3" /> Select to delete
+            </button>
+          ) : (
+            <>
+              <button type="button" onClick={() => setPicked(new Set(items.map((i) => i.id)))} className="font-medium text-app-ink">Select all ({items.length})</button>
+              <button type="button" disabled={!picked.size} onClick={() => { if (window.confirm(`Delete ${picked.size} question${picked.size === 1 ? "" : "s"}? This can't be undone.`)) { nt.removeMany(note.id, [...picked]); setPicked(new Set()); setSelecting(false); } }} className="rounded-full bg-red-600 px-2.5 py-1 font-semibold text-white disabled:opacity-40">
+                Delete {picked.size || ""}
+              </button>
+              <button type="button" onClick={() => { setSelecting(false); setPicked(new Set()); }} className="text-app-ink-muted hover:text-app-ink">Cancel</button>
+            </>
+          )}
+        </div>
+      )}
+
       {groups.map((g) => {
         const isClosed = closed.has(g.chapter);
         const done = g.items.filter((i) => i.done).length;
@@ -116,13 +136,16 @@ export function TopicChecklist({
                 <ChevronDown className={cn("h-3 w-3 transition-transform", isClosed && "-rotate-90")} />
                 <span className="flex-1 truncate">{g.chapter || "Other"}</span>
                 <span className="font-normal normal-case">{done}/{g.items.length}</span>
+                {selecting && (
+                  <span role="button" onClick={(e) => { e.stopPropagation(); setPicked((p) => { const n = new Set(p); const all = g.items.every((i) => n.has(i.id)); g.items.forEach((i) => (all ? n.delete(i.id) : n.add(i.id))); return n; }); }} className="ml-2 rounded-full border border-app-border px-2 py-0.5 normal-case text-app-ink">Pick chapter</span>
+                )}
               </button>
             )}
             {!isClosed && (
               <ul className="space-y-0.5">
                 {g.items.map((it) => (
                   <li key={it.id} className="group/row flex items-start gap-2 rounded px-1 py-1 hover:bg-app-surface-muted">
-                    <input type="checkbox" checked={it.done} onChange={() => nt.toggle(note.id, it.id)} title="Mark as mastered" className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
+                    <input type="checkbox" checked={selecting ? picked.has(it.id) : it.done} onChange={() => (selecting ? setPicked((p) => { const n = new Set(p); if (n.has(it.id)) n.delete(it.id); else n.add(it.id); return n; }) : nt.toggle(note.id, it.id))} title={selecting ? "Select to delete" : "Mark as mastered"} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
                     <span className={cn("flex-1 text-sm leading-snug", it.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{it.text}</span>
                     {!!it.marks && <span className="shrink-0 rounded-full border border-app-border px-1.5 text-[10px] text-app-ink-muted">{it.marks}M</span>}
                     <ScorePill item={it} />
