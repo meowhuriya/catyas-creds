@@ -62,7 +62,7 @@ function parseMarkedBank(text: string): ParsedItem[] {
     const h2 = line.match(/^(SAQ|LAQ|Short Answer|Long Answer)\s*(?:Question)?\s*(\d{1,3})\s*[·•.\-:|]?\s*(.*)$/i);
     if (h2 && chapter && !(cur && cur.open && cur.text)) {
       flush();
-      cur = { text: "", title: (h2[3] || "").trim(), marks: 0, chapter, open: true };
+      cur = { text: "", title: (h2[3] || "").trim(), marks: /^(laq|long)/i.test(h2[1]) ? LONG_MARKS : 0, chapter, open: true };
       continue;
     }
     if (cur && cur.open) cur.text += (cur.text ? " " : "") + line;
@@ -71,6 +71,8 @@ function parseMarkedBank(text: string): ParsedItem[] {
   return out;
 }
 
+/** A long answer / essay question is worth 5 marks. */
+const LONG_MARKS = 5;
 const ROMAN: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8 };
 const titleCase = (t: string) =>
   t.toLowerCase().replace(/(^|[\s(-])([a-z]+)/g, (_, a, w) => (a && /^(and|its|of|the|to|in|on|for)$/.test(w) ? a + w : a + w[0].toUpperCase() + w.slice(1)));
@@ -84,6 +86,7 @@ function parseTableBank(text: string): ParsedItem[] {
   const out: ParsedItem[] = [];
   let chapter = "";
   let inSection = false;
+  let secMarks: number | undefined;
   let toks: { m: boolean; t: string }[] = [];
   const flush = () => {
     if (inSection && toks.some((x) => x.m)) {
@@ -103,7 +106,7 @@ function parseTableBank(text: string): ParsedItem[] {
         while (end < lines.length - 1 && !/[.?]\s*$/.test(lines[end])) end++;
         if (end === markerAt[k] - 1) end = markerAt[k];
         const t = lines.slice(start, end + 1).join(" ").replace(/\s+/g, " ").trim();
-        if (t.length > 8) out.push({ text: t, chapter: chapter || undefined });
+        if (t.length > 8) out.push({ text: t, chapter: chapter || undefined, marks: secMarks });
         start = end + 1;
       }
     }
@@ -123,6 +126,7 @@ function parseTableBank(text: string): ParsedItem[] {
     if (/^(short|long) answer questions?\b/i.test(line) || /^(part|section)\s*-?\s*[a-c]\b/i.test(line)) {
       flush();
       inSection = true;
+      secMarks = /^long/i.test(line) ? LONG_MARKS : undefined;
       continue;
     }
     if (/^s\.?\s*no\.?$/i.test(line)) continue;
@@ -162,7 +166,7 @@ function parseOutline(text: string): ParsedItem[] {
       continue;
     }
     if (/^(essay|long|short|descriptive)\b.*questions?\b/i.test(line) && line.length < 60) {
-      marks = undefined;
+      marks = /short/i.test(line) ? undefined : LONG_MARKS;
       sections++;
       continue;
     }
@@ -213,7 +217,7 @@ export function parseQuestions(text: string): ParsedItem[] {
     }
     if (/^(essay|long|descriptive)\b.*questions?/i.test(line) && line.length < 60) {
       flush();
-      sectionMarks = undefined;
+      sectionMarks = LONG_MARKS;
       continue;
     }
     const h = line.match(HEADING);

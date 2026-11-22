@@ -63,8 +63,12 @@ export function groupByChapter(entries: QEntry[]): { chapter: string; entries: Q
     if (!g) groups.push((g = { chapter: e.chapter, entries: [] }));
     g.entries.push(e);
   }
-  // Keep "no chapter" last.
-  return groups.sort((a, b) => Number(a.chapter === "") - Number(b.chapter === ""));
+  // Units in order (Unit 1, Unit 2, ...), other chapters in first-seen order, "no chapter" last.
+  const unitNo = (c: string) => Number(c.match(/^unit\s*(\d+)/i)?.[1] ?? 1e6);
+  return groups
+    .map((g, i) => ({ g, i }))
+    .sort((a, b) => Number(a.g.chapter === "") - Number(b.g.chapter === "") || unitNo(a.g.chapter) - unitNo(b.g.chapter) || a.i - b.i)
+    .map((x) => x.g);
 }
 
 /** Rough minutes a question takes to answer from memory, by marks. */
