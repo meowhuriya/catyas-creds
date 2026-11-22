@@ -97,7 +97,7 @@ export function TopicChecklist({
           </button>
         )
       )}
-      {busy && <p className="text-[11px] text-app-ink-muted">Reading your material. Big Q-banks can take up to a minute…</p>}
+      {busy && <p className="text-[11px] text-app-ink-muted">{importer.progress || "Reading your material…"}</p>}
       {msg.map((m, i) => (
         <p key={i} className="text-[11px] text-app-ink-muted">{m}</p>
       ))}

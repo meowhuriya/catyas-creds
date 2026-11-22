@@ -131,7 +131,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                       </button>
                     )}
                   </div>
-                  {busy && <p className="mt-1 text-[11px] text-app-ink-muted">Reading the Q-bank. Big files take up to a minute…</p>}
+                  {busy && <p className="mt-1 text-[11px] text-app-ink-muted">{importer.progress || "Reading the Q-bank…"}</p>}
                   {msg?.map((m, i) => (<p key={i} className="mt-1 text-[11px] text-app-ink-muted">{m}</p>))}
                 </div>
               );
