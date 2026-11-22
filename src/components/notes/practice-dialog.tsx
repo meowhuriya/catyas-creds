@@ -3,8 +3,8 @@
 import * as React from "react";
 import { CheckCircle2, Loader2, Sparkles, X, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { idbGet } from "@/lib/notes/vault-db";
-import { VaultMedia, VaultNote, driveFileId } from "@/lib/notes/vault-types";
+import { collectMaterial } from "@/lib/notes/material";
+import { VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
 
 interface Q {
@@ -14,6 +14,7 @@ interface Q {
   answer: string;
   explanation?: string;
   topic?: string;
+  note?: string;
 }
 interface Check {
   score: number;
@@ -34,7 +35,7 @@ export function PracticeDialog({
   notes: VaultNote[];
   startNoteId?: string;
   onClose: () => void;
-  onAddWeak: (topics: string[]) => void;
+  onAddWeak: (items: { topic: string; noteId?: string }[]) => void;
 }) {
   const [scope, setScope] = React.useState<string>(startNoteId ?? "all");
   const [count, setCount] = React.useState(5);
@@ -49,7 +50,7 @@ export function PracticeDialog({
   const [check, setCheck] = React.useState<Check | null>(null);
   const [checking, setChecking] = React.useState(false);
   const [revealed, setRevealed] = React.useState(false);
-  const [results, setResults] = React.useState<{ ok: boolean; topic: string }[]>([]);
+  const [results, setResults] = React.useState<{ ok: boolean; topic: string; noteId?: string }[]>([]);
   const [added, setAdded] = React.useState(false);
 
   React.useEffect(() => {
@@ -62,17 +63,7 @@ export function PracticeDialog({
     setPhase("loading");
     setError("");
     const chosen = scope === "all" ? notes : notes.filter((n) => n.id === scope);
-    const text = chosen.map((n) => `# ${n.title}\n${n.body}`).join("\n\n");
-    const driveIds = chosen.flatMap((n) => n.links.map((l) => driveFileId(l.url)).filter(Boolean) as string[]);
-    const images: { mimeType: string; data: string }[] = [];
-    for (const n of chosen) {
-      for (const id of n.mediaIds) {
-        if (images.length >= 4) break;
-        const m = await idbGet<VaultMedia>("media", id).catch(() => undefined);
-        const parts = m?.dataUrl?.match(/^data:(.+?);base64,(.+)$/);
-        if (parts) images.push({ mimeType: parts[1], data: parts[2] });
-      }
-    }
+    const material = await collectMaterial(chosen);
     try {
       const res = await fetch("/api/ai/practice", {
         method: "POST",
@@ -81,9 +72,7 @@ export function PracticeDialog({
           mode: "generate",
           subject: subjectTitle,
           noteTitle: chosen.length === 1 ? chosen[0].title : "Mixed notes",
-          text,
-          driveIds,
-          images,
+          ...material,
           count,
           kind,
         }),
@@ -108,7 +97,13 @@ export function PracticeDialog({
   const q = qs[i];
   const answered = q?.type === "mcq" ? picked !== null : check !== null || revealed;
 
-  const record = (ok: boolean) => setResults((r) => [...r.slice(0, i), { ok, topic: q.topic || subjectTitle }]);
+  const noteIdFor = (title?: string) => {
+    const pool = scope === "all" ? notes : notes.filter((n) => n.id === scope);
+    if (pool.length === 1) return pool[0].id;
+    const t = (title ?? "").trim().toLowerCase();
+    return pool.find((n) => n.title.trim().toLowerCase() === t)?.id;
+  };
+  const record = (ok: boolean) => setResults((r) => [...r.slice(0, i), { ok, topic: q.topic || subjectTitle, noteId: noteIdFor(q.note) }]);
 
   const pickOption = (opt: string) => {
     if (picked !== null) return;
@@ -147,7 +142,8 @@ export function PracticeDialog({
   };
 
   const correct = results.filter((r) => r.ok).length;
-  const weak = Array.from(new Set(results.filter((r) => !r.ok).map((r) => r.topic)));
+  const weakItems = results.filter((r) => !r.ok).filter((r, idx, arr) => arr.findIndex((x) => x.topic === r.topic && x.noteId === r.noteId) === idx);
+  const weak = weakItems.map((r) => r.topic);
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/50 p-3 backdrop-blur-sm sm:p-6" onClick={(e) => { e.stopPropagation(); onClose(); }}>
@@ -258,8 +254,8 @@ export function PracticeDialog({
               {weak.length > 0 && (
                 <div className="space-y-2 rounded-control border border-app-border bg-app-surface-muted p-3 text-left text-sm">
                   <p className="font-semibold text-app-ink">Revise these</p>
-                  <ul className="list-disc pl-5 text-app-ink-muted">{weak.map((w) => (<li key={w}>{w}</li>))}</ul>
-                  <Button size="sm" disabled={added} onClick={() => { onAddWeak(weak); setAdded(true); }}>{added ? "Added to checklist" : "Add to my checklist"}</Button>
+                  <ul className="list-disc pl-5 text-app-ink-muted">{weak.map((w, k) => (<li key={k}>{w}</li>))}</ul>
+                  <Button size="sm" disabled={added} onClick={() => { onAddWeak(weakItems.map((r) => ({ topic: r.topic, noteId: r.noteId }))); setAdded(true); }}>{added ? "Added to the notes' checklists" : "Add as weak spots to my checklist"}</Button>
                 </div>
               )}
               <div className="flex gap-2">

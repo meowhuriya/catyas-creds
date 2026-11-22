@@ -28,7 +28,7 @@ export default function SubjectNotesPage() {
   const [editing, setEditing] = React.useState<VaultNote | null>(null);
   const [editorOpen, setEditorOpen] = React.useState(false);
   const [readingId, setReadingId] = React.useState<string | null>(null);
-  const [practice, setPractice] = React.useState<{ noteId?: string; notes?: VaultNote[] } | null>(null);
+  const [practice, setPractice] = React.useState<{ noteId?: string } | null>(null);
   const noteTopics = useNoteTopics();
   const study = useStudy(subjectId);
 
@@ -83,12 +83,7 @@ export default function SubjectNotesPage() {
 
       <StudyPanel noteIds={mine.map((n) => n.id)} study={study} onPractice={() => setPractice({})} />
 
-      <ExamPanel
-        subjectId={subjectId}
-        notes={mine}
-        onOpenNote={(id) => setReadingId(id)}
-        onPractice={(ns) => setPractice({ notes: ns })}
-      />
+      <ExamPanel subjectId={subjectId} notes={mine} />
 
       <div className="flex gap-6 overflow-x-auto border-b border-[rgba(60,40,110,0.08)]" role="tablist" aria-label="Sections">
         {VAULT_SECTIONS.map((s) => {
@@ -181,13 +176,13 @@ export default function SubjectNotesPage() {
       {practice && (
         <PracticeDialog
           subjectTitle={subject.title}
-          notes={practice.notes ?? mine}
+          notes={mine}
           startNoteId={practice.noteId}
           onClose={() => setPractice(null)}
-          onAddWeak={(topics) =>
-            practice.noteId
-              ? noteTopics.add(practice.noteId, topics.map((t) => `Revise: ${t}`), true)
-              : study.addItems(topics.map((t) => `Revise: ${t}`), true)
+          onAddWeak={(items) =>
+            items.forEach(({ topic, noteId }) =>
+              noteId ? noteTopics.add(noteId, [`Revise: ${topic}`], true) : study.addItems([`Revise: ${topic}`], true)
+            )
           }
         />
       )}

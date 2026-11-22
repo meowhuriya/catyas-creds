@@ -20,6 +20,7 @@ export interface Exam {
   date: string; // yyyy-mm-dd
   noteIds: string[];
   todos?: StudyItem[];
+  today?: { date: string; keys: string[] };
 }
 export interface Progress {
   done: number;
@@ -152,8 +153,11 @@ export function useExams() {
       const cur = readKey(EXAMS_KEY, EMPTY_EXAMS);
       const full: Exam = { ...exam, id: exam.id ?? newId("exam") };
       writeKey(EXAMS_KEY, cur.some((e) => e.id === full.id) ? cur.map((e) => (e.id === full.id ? full : e)) : [...cur, full]);
+      return full.id;
     },
     remove: (id: string) => writeKey(EXAMS_KEY, readKey(EXAMS_KEY, EMPTY_EXAMS).filter((e) => e.id !== id)),
+    setToday: (examId: string, today: { date: string; keys: string[] }) =>
+      writeKey(EXAMS_KEY, readKey(EXAMS_KEY, EMPTY_EXAMS).map((e) => (e.id === examId ? { ...e, today } : e))),
     addTodo: (examId: string, text: string) =>
       writeKey(
         EXAMS_KEY,
@@ -182,4 +186,56 @@ export function examTopicProgress(exam: Exam, topics: Record<string, StudyItem[]
 /** Note topics + the exam's own to-do list, combined. */
 export function examProgress(exam: Exam, topics: Record<string, StudyItem[]>): Progress {
   return sumProgress([examTopicProgress(exam, topics), progressOf(exam.todos)]);
+}
+
+/* ---- daily plan: spread what's left over the days before the exam ---- */
+export const REVISION_DAYS = 2;
+
+export function todayKey(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+export interface PlanEntry {
+  key: string; // "t:<noteId>:<itemId>" or "d:<todoId>"
+  text: string;
+  done: boolean;
+  weak?: boolean;
+  noteId?: string;
+  noteTitle?: string;
+}
+
+/** Every checklist item for this exam, weak ones first, in note order. */
+export function examEntries(exam: Exam, notes: { id: string; title: string }[], topics: Record<string, StudyItem[]>): PlanEntry[] {
+  const out: PlanEntry[] = [];
+  for (const id of exam.noteIds) {
+    const n = notes.find((x) => x.id === id);
+    if (!n) continue;
+    for (const it of topics[id] ?? []) out.push({ key: `t:${id}:${it.id}`, text: it.text, done: it.done, weak: it.weak, noteId: id, noteTitle: n.title });
+  }
+  for (const t of exam.todos ?? []) out.push({ key: `d:${t.id}`, text: t.text, done: t.done });
+  return out;
+}
+
+export type PlanPhase = "nodate" | "study" | "revision" | "examday" | "over";
+
+export function planPhase(exam: Exam): { phase: PlanPhase; left: number | null; studyDaysLeft: number } {
+  const left = daysLeft(exam.date);
+  if (left === null) return { phase: "nodate", left, studyDaysLeft: 7 };
+  if (left < 0) return { phase: "over", left, studyDaysLeft: 0 };
+  if (left === 0) return { phase: "examday", left, studyDaysLeft: 0 };
+  if (left <= REVISION_DAYS) return { phase: "revision", left, studyDaysLeft: 0 };
+  return { phase: "study", left, studyDaysLeft: left - REVISION_DAYS };
+}
+
+/** Pick today's items: weak spots first, then the next ones in order, sized so you finish before revision days. */
+export function buildToday(exam: Exam, entries: PlanEntry[]): string[] {
+  const { phase, studyDaysLeft } = planPhase(exam);
+  const open = entries.filter((e) => !e.done);
+  const ordered = [...open.filter((e) => e.weak), ...open.filter((e) => !e.weak)];
+  if (phase === "over") return [];
+  if (phase === "examday") return ordered.filter((e) => e.weak).slice(0, 10).map((e) => e.key);
+  if (phase === "revision") return ordered.slice(0, 12).map((e) => e.key);
+  const perDay = Math.max(1, Math.ceil(open.length / studyDaysLeft));
+  return ordered.slice(0, perDay).map((e) => e.key);
 }

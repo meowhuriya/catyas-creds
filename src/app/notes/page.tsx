@@ -14,8 +14,8 @@ import {
 } from "@/lib/notes/curriculum";
 import { VAULT_SECTIONS, VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
-import { Bar, ExamForm } from "@/components/notes/exam-panel";
-import { daysLeft, examProgress, examTopicProgress, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
+import { Bar, ExamCard, ExamForm } from "@/components/notes/exam-panel";
+import { daysLeft, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
 import { Butterfly, Diamond } from "@/components/brand/butterfly";
 import { SubjectArt } from "@/components/brand/subject-art";
 
@@ -162,46 +162,12 @@ export default function NotesVaultPage() {
             <button onClick={() => setExamForm(true)} disabled={notes.length === 0} className="rounded-control bg-app-accent px-4 py-2 text-sm font-semibold text-white disabled:opacity-40">+ Add exam</button>
           </div>
           {upcoming.length === 0 ? (
-            <p className="text-sm text-app-ink-muted">No exams yet. Add one, tag the notes you need to study, and track it here.</p>
+            <p className="text-sm text-app-ink-muted">No exams yet. Add one, tag the notes and Q-banks you need to master, and get a day-by-day plan.</p>
           ) : (
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              {upcoming.map((e) => {
-                const exNotes = e.noteIds.map((id) => notes.find((n) => n.id === id)).filter(Boolean) as VaultNote[];
-                const scoped = { ...e, noteIds: exNotes.map((n) => n.id) };
-                const p = examProgress(scoped, topics);
-                const tp = examTopicProgress(scoped, topics);
-                const dp = progressOf(e.todos);
-                const left = daysLeft(e.date);
-                return (
-                  <article key={e.id} className="vc-tile space-y-3 p-4">
-                    <Link href={`/notes/${encodeURIComponent(e.subjectId)}`} className="block">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <p className="truncate font-display text-lg text-app-ink">{getSubject(e.subjectId)?.title} · {e.name}</p>
-                          <p className="text-xs text-app-ink-muted">{left === null ? "No date" : left === 0 ? "Today" : `${left} day${left === 1 ? "" : "s"} left`}{e.date && ` · ${new Date(e.date + "T00:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" })}`}</p>
-                        </div>
-                        <span className="font-display text-2xl text-app-ink">{p.pct}%</span>
-                      </div>
-                      <Bar pct={p.pct} className="mt-2" />
-                      <p className="mt-1 text-[11px] text-app-ink-muted">Topics {tp.done}/{tp.total} · To-do {dp.done}/{dp.total}</p>
-                    </Link>
-                    <ul className="space-y-1.5 border-t border-app-border pt-2">
-                      {exNotes.map((n) => {
-                        const np = progressOf(topics[n.id]);
-                        return (
-                          <li key={n.id}>
-                            <Link href={`/notes/${encodeURIComponent(n.courseId)}`} className="block">
-                              <div className="flex justify-between text-xs"><span className="truncate text-app-ink">{n.title}</span><span className="shrink-0 text-app-ink-muted">{np.total ? `${np.done}/${np.total}` : "no topics yet"}</span></div>
-                              <Bar pct={np.pct} className="mt-0.5 h-1" />
-                            </Link>
-                          </li>
-                        );
-                      })}
-                      {exNotes.length === 0 && <li className="text-xs text-app-ink-muted">No notes tagged yet. Open the subject and edit this exam.</li>}
-                    </ul>
-                  </article>
-                );
-              })}
+              {upcoming.map((e) => (
+                <ExamCard key={e.id} exam={e} allNotes={notes} showSubject />
+              ))}
             </div>
           )}
           {examForm && <ExamForm notes={notes} onClose={() => setExamForm(false)} />}
