@@ -73,7 +73,19 @@ function parseMarkedBank(text: string): ParsedItem[] {
 
 /** A long answer / essay question is worth 5 marks. */
 const LONG_MARKS = 5;
-const ROMAN: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8 };
+const ROMAN: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10 };
+/** "Unit 2", "Unit-II: Title", "Experiment 3", "Exp. No. 4 - Title" -> a chapter label (or null). */
+export function chapterOf(line: string): string | null {
+  if (line.length > 90) return null;
+  const m = line.match(/^(unit|experiment|expt|exp|lab)\.?\s*(?:no\.?|number|#)?\s*[-–:.]?\s*([ivx]+|\d+)\b\s*[-–:.]?\s*(.*)$/i);
+  if (!m) return null;
+  const n = ROMAN[m[2].toUpperCase()] ?? Number(m[2]);
+  if (!n) return null;
+  const word = /^unit/i.test(m[1]) ? "Unit" : "Experiment";
+  const title = m[3].trim();
+  return `${word} ${n}${title ? ": " + title : ""}`.slice(0, 90);
+}
+
 const titleCase = (t: string) =>
   t.toLowerCase().replace(/(^|[\s(-])([a-z]+)/g, (_, a, w) => (a && /^(and|its|of|the|to|in|on|for)$/.test(w) ? a + w : a + w[0].toUpperCase() + w.slice(1)));
 
@@ -115,12 +127,11 @@ function parseTableBank(text: string): ParsedItem[] {
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) continue;
-    const u = line.match(/^UNIT\s*[–—\-:]?\s*([IVX]+|\d+)\s*[–—\-:.]\s*(.+)$/i);
+    const u = chapterOf(line);
     if (u) {
       flush();
       inSection = false;
-      const n = ROMAN[u[1].toUpperCase()] ?? Number(u[1]);
-      chapter = `Unit ${n}: ${titleCase(u[2].trim())}`;
+      chapter = /^unit/i.test(u) ? u.replace(/^(Unit \d+: )(.*)$/, (_, a, b) => a + titleCase(b)) : u;
       continue;
     }
     if (/^(short|long) answer questions?\b/i.test(line) || /^(part|section)\s*-?\s*[a-c]\b/i.test(line)) {
@@ -153,10 +164,10 @@ function parseOutline(text: string): ParsedItem[] {
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) continue;
-    const um = line.match(/^unit\s*[-–:.]?\s*([ivx]+|\d+)\s*[-–:.]?\s*(.*)$/i);
-    if (um && line.length < 80) {
+    const oc = chapterOf(line);
+    if (oc) {
       units++;
-      chapter = `Unit ${ROMAN[um[1].toUpperCase()] ?? um[1]}${um[2] ? ": " + um[2] : ""}`;
+      chapter = oc;
       continue;
     }
     const sm = line.match(/^(\d{1,2})\s*[- ]?marks?\b.*$/i);
@@ -174,7 +185,7 @@ function parseOutline(text: string): ParsedItem[] {
     const t = line.replace(/^\s*(?:q(?:uestion)?\.?\s*)?\d{1,3}\s*[.)\]:-]\s*/i, "").trim();
     if (t.length > 8) out.push({ text: t, chapter, marks });
   }
-  return units >= 1 && sections >= 1 ? out : [];
+  return units >= 2 || (units >= 1 && sections >= 1) ? out : [];
 }
 
 /**
@@ -220,11 +231,16 @@ export function parseQuestions(text: string): ParsedItem[] {
       sectionMarks = LONG_MARKS;
       continue;
     }
+    const ch = NUMBERED.test(line) ? null : chapterOf(line);
+    if (ch) {
+      flush();
+      chapter = ch;
+      continue;
+    }
     const h = line.match(HEADING);
     if (h && line.length < 90 && !NUMBERED.test(line)) {
       flush();
-      const um = line.match(/^unit\s*[-–:.]?\s*([ivx]+|\d+)\s*[-–:.]?\s*(.*)$/i);
-      chapter = um ? `Unit ${ROMAN[um[1].toUpperCase()] ?? um[1]}${um[2] ? ": " + um[2] : ""}`.slice(0, 80) : line.slice(0, 80);
+      chapter = line.slice(0, 80);
       continue;
     }
     const n = line.match(NUMBERED);
