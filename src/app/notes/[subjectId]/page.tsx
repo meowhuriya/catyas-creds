@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { NoteCard } from "@/components/notes/note-parts";
 import { NoteReader } from "@/components/notes/note-reader";
 import { PracticeDialog } from "@/components/notes/practice-dialog";
-import { daysLeft, useExams, useNoteTopics } from "@/lib/notes/study";
+import { daysLeft, examSubjects, useExams, useNoteTopics } from "@/lib/notes/study";
 import { ExamForm } from "@/components/notes/exam-panel";
 import { Drill } from "@/components/prep/drill";
 import { SubjectQuestions } from "@/components/questions/subject-questions";
@@ -39,7 +39,7 @@ export default function SubjectNotesPage() {
 
   const mine = vault.notes.filter((n) => n.courseId === subjectId);
   const subjectExams = exams
-    .filter((e) => e.subjectId === subjectId && (daysLeft(e.date) ?? 1) >= 0)
+    .filter((e) => examSubjects(e).includes(subjectId) && (daysLeft(e.date) ?? 1) >= 0)
     .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"));
 
   const questionCount = mine.reduce((n, note) => n + (noteTopics.topics[note.id]?.length ?? 0), 0);
@@ -243,7 +243,7 @@ export default function SubjectNotesPage() {
         />
       )}
       {drillNote && <Drill subjectTitle={subject.title} notes={[drillNote]} onClose={() => setDrillNote(null)} />}
-      {examForm && <ExamForm subjectId={subjectId} notes={mine} onClose={() => setExamForm(false)} />}
+      {examForm && <ExamForm subjectId={subjectId} notes={vault.notes} onClose={() => setExamForm(false)} />}
 
       <NoteEditorDialog
         open={editorOpen}

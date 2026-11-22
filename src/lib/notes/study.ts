@@ -26,6 +26,10 @@ export interface Exam {
   name: string;
   date: string; // yyyy-mm-dd
   noteIds: string[];
+  /** Every course this exam covers (subjectId stays the first one). */
+  subjectIds?: string[];
+  /** Per note: the chapters / experiments that are in this exam. Missing or empty = all of them. */
+  scope?: Record<string, string[]>;
   todos?: StudyItem[];
   today?: { date: string; keys: string[] };
 }
@@ -217,9 +221,23 @@ export function useExams() {
   };
 }
 
+export const examSubjects = (e: Exam): string[] => (e.subjectIds?.length ? e.subjectIds : [e.subjectId]);
+
+/** The note topics with only the exam's chosen chapters / experiments left in. */
+export function scopedTopics(exam: Exam, topics: Record<string, StudyItem[]>): Record<string, StudyItem[]> {
+  if (!exam.scope) return topics;
+  const out = { ...topics };
+  for (const id of exam.noteIds) {
+    const sc = exam.scope[id];
+    if (sc?.length) out[id] = (topics[id] ?? []).filter((i) => sc.includes(i.chapter || ""));
+  }
+  return out;
+}
+
 /** Note topics only. */
 export function examTopicProgress(exam: Exam, topics: Record<string, StudyItem[]>): Progress {
-  return sumProgress(exam.noteIds.map((id) => progressOf(topics[id])));
+  const t = scopedTopics(exam, topics);
+  return sumProgress(exam.noteIds.map((id) => progressOf(t[id])));
 }
 
 /** Note topics + the exam's own to-do list, combined. */
@@ -247,6 +265,7 @@ export interface PlanEntry {
 /** Every checklist item for this exam, weak ones first, in note order. */
 export function examEntries(exam: Exam, notes: { id: string; title: string }[], topics: Record<string, StudyItem[]>): PlanEntry[] {
   const out: PlanEntry[] = [];
+  topics = scopedTopics(exam, topics);
   for (const id of exam.noteIds) {
     const n = notes.find((x) => x.id === id);
     if (!n) continue;

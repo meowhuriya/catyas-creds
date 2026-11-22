@@ -12,7 +12,7 @@ import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { TopicChecklist, ScorePill } from "@/components/notes/topic-checklist";
 import { Drill } from "@/components/prep/drill";
 import { getSubject } from "@/lib/notes/curriculum";
-import { REVISION_DAYS, progressOf, useExams } from "@/lib/notes/study";
+import { REVISION_DAYS, examSubjects, progressOf, useExams } from "@/lib/notes/study";
 import { useExamPlan } from "@/lib/notes/use-exam-plan";
 import { useVault } from "@/lib/notes/use-vault";
 import { VaultNote } from "@/lib/notes/vault-types";
@@ -25,9 +25,8 @@ export default function ExamPrepPage() {
   const vault = useVault();
   const exams = useExams();
   const exam = exams.exams.find((e) => e.id === examId);
-  const subjectNotes = vault.notes.filter((n) => n.courseId === exam?.subjectId);
   const plan = useExamPlan(exam, vault.notes);
-  const subject = exam ? getSubject(exam.subjectId) : undefined;
+  const subject = exam ? { title: examSubjects(exam).map((id) => getSubject(id)?.title ?? id).join(" · ") } : undefined;
   const toast = useToast();
 
   const [open, setOpen] = React.useState<string | null>(null);
@@ -78,7 +77,7 @@ export default function ExamPrepPage() {
             <span className="mt-1 text-[10px] font-semibold uppercase tracking-wider">{plan.phase === "over" ? "done" : "days left"}</span>
           </div>
           <div className="min-w-0 flex-1 space-y-1">
-            <p className="text-xs font-medium text-app-ink-muted">{subject?.code} · {subject?.title}</p>
+            <p className="text-xs font-medium text-app-ink-muted">{subject?.title}</p>
             <h1 className="font-display text-3xl leading-tight text-app-ink">{exam.name}</h1>
             <p className="flex items-center gap-1.5 text-xs text-app-ink-muted"><CalendarDays className="h-3.5 w-3.5" /> {dateLabel}</p>
           </div>
@@ -207,7 +206,7 @@ export default function ExamPrepPage() {
                 {isOpen && (
                   <div className="space-y-3 border-t border-app-border p-4">
                     <button onClick={() => setReading(n.id)} className="inline-flex items-center gap-1.5 text-xs font-medium text-app-ink-muted hover:text-app-ink"><BookOpen className="h-3.5 w-3.5" /> Open the file / note</button>
-                    <TopicChecklist note={n} subjectTitle={subject?.title} showHeader={false} onDrill={() => setDrill({ notes: [n] })} />
+                    <TopicChecklist note={n} subjectTitle={subject?.title} only={exam.scope?.[n.id]} showHeader={false} onDrill={() => setDrill({ notes: [n], only: exam.scope?.[n.id]?.length ? (plan.topics[n.id] ?? []).map((i) => ({ noteId: n.id, itemId: i.id })) : undefined })} />
                   </div>
                 )}
               </article>
@@ -237,7 +236,7 @@ export default function ExamPrepPage() {
         />
       )}
       {drill && <Drill subjectTitle={subject?.title ?? exam.name} notes={drill.notes} only={drill.only} onClose={() => setDrill(null)} />}
-      {editExam && <ExamForm subjectId={exam.subjectId} notes={subjectNotes} exam={exam} onClose={() => setEditExam(false)} />}
+      {editExam && <ExamForm notes={vault.notes} exam={exam} onClose={() => setEditExam(false)} />}
       <NoteEditorDialog
         open={!!editingNote}
         onOpenChange={(o) => !o && setEditingNote(null)}

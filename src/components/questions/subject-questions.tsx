@@ -13,7 +13,7 @@ import { Drill } from "@/components/prep/drill";
 import { useFocusDay } from "@/lib/focus/store";
 import { getSubject } from "@/lib/notes/curriculum";
 import { QEntry, groupByChapter, qStats, questionEntries, smartOpen } from "@/lib/notes/questions";
-import { daysLeft, useExams, useNoteTopics } from "@/lib/notes/study";
+import { daysLeft, examSubjects, useExams, useNoteTopics } from "@/lib/notes/study";
 import { hasImportSource, useImportQuestions } from "@/lib/notes/use-import";
 import { useVault } from "@/lib/notes/use-vault";
 import { VaultNote } from "@/lib/notes/vault-types";
@@ -40,7 +40,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
   const stats = qStats(entries);
   const chapters = groupByChapter(entries);
   const nextExam = exams
-    .filter((e) => e.subjectId === subjectId && (daysLeft(e.date) ?? 1) >= 0)
+    .filter((e) => examSubjects(e).includes(subjectId) && (daysLeft(e.date) ?? 1) >= 0)
     .sort((a, b) => (a.date || "9").localeCompare(b.date || "9"))[0];
 
   const [open, setOpen] = React.useState<string | null>(null);

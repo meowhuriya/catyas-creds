@@ -30,15 +30,19 @@ export function TopicChecklist({
   subjectTitle,
   showHeader = true,
   onDrill,
+  only,
 }: {
   note: VaultNote;
   subjectTitle?: string;
   showHeader?: boolean;
   onDrill?: () => void;
+  /** Only show these chapters / experiments (an exam's scope). */
+  only?: string[];
 }) {
   const nt = useNoteTopics();
-  const items = nt.topics[note.id] ?? [];
-  const prog = nt.progress(note.id);
+  const all = nt.topics[note.id] ?? [];
+  const items = only?.length ? all.filter((i) => only.includes(i.chapter || "")) : all;
+  const prog = only?.length ? { done: items.filter((i) => i.done).length, total: items.length, pct: items.length ? Math.round((items.filter((i) => i.done).length / items.length) * 100) : 0 } : nt.progress(note.id);
   const [text, setText] = React.useState("");
   const [selecting, setSelecting] = React.useState(false);
   const [picked, setPicked] = React.useState<Set<string>>(new Set());

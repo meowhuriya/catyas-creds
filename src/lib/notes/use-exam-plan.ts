@@ -1,15 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { Exam, REVISION_DAYS, examEntries, planPhase, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
+import { Exam, REVISION_DAYS, examEntries, planPhase, progressOf, scopedTopics, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
 import { questionEntries, refKey, smartOpen } from "@/lib/notes/questions";
 import { useFocusDay } from "@/lib/focus/store";
 import { VaultNote } from "@/lib/notes/vault-types";
 
 /** Progress for one exam, plus its share of today's Focus list (the single daily plan for the whole app). */
 export function useExamPlan(exam: Exam | undefined, allNotes: VaultNote[]) {
-  const { topics, toggle: toggleTopic } = useNoteTopics();
+  const { topics: allTopics, toggle: toggleTopic } = useNoteTopics();
   const exams = useExams();
+  const topics = React.useMemo(() => (exam ? scopedTopics(exam, allTopics) : allTopics), [exam, allTopics]);
   const focus = useFocusDay();
   const notes = React.useMemo(
     () => (exam ? (exam.noteIds.map((id) => allNotes.find((n) => n.id === id)).filter(Boolean) as VaultNote[]) : []),
