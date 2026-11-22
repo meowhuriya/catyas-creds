@@ -119,7 +119,7 @@ ${noteText ? `Material:\n"""\n${noteText}\n"""` : "Use the attached material."}
 
 ${ask}
 Return JSON only: {"items": [{"text": "...", "chapter": "...", "marks": 0}]}`;
-      const text = await callGeminiFlashWithThinking({ prompt, apiKey, responseMimeType: "application/json", images });
+      const text = await callGeminiFlashWithThinking({ prompt, apiKey, responseMimeType: "application/json", images, thinkingBudget: 0 });
       const parsed = parseJson(text);
       const items = (Array.isArray(parsed?.items) ? parsed.items : [])
         .map((x: any) => (typeof x === "string" ? { text: x } : x))

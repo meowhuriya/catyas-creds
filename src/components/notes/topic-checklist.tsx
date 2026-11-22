@@ -57,10 +57,24 @@ export function TopicChecklist({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mode: "extract", kind, subject: subjectTitle ?? "", text: m.text, links: m.links, images: m.images }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Couldn't read this note");
+      const raw = await res.text();
+      let data: { error?: string; items?: { text: string }[] } = {};
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        /* non-JSON reply from the server */
+      }
+      if (!res.ok || !data.items) {
+        throw new Error(
+          data.error ||
+            (res.status === 413 ? "That file is too big to send. Put it on Drive (Anyone with the link) and paste the link in the note."
+              : res.status === 504 || res.status === 408 ? "It took too long. Try a smaller part of the Q-bank (split by unit), or use a Drive link."
+              : res.status === 404 ? "The AI route wasn't found. Restart npm run dev or redeploy."
+              : `The server returned an error (${res.status}). Check /api/ai/status?check=1`)
+        );
+      }
       const have = new Set(items.map((i) => i.text.toLowerCase()));
-      const fresh = (data.items as { text: string }[]).filter((t) => !have.has(t.text.trim().toLowerCase()));
+      const fresh = data.items.filter((t) => !have.has(t.text.trim().toLowerCase()));
       nt.add(note.id, data.items);
       setMsg([
         fresh.length

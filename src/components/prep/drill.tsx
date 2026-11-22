@@ -40,7 +40,7 @@ function isLong(c: Card) {
 async function post(body: object) {
   const res = await fetch("/api/ai/practice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "Something went wrong");
+  if (!res.ok) throw new Error(data.error || (res.status === 504 ? "That took too long. Try again." : `Server error (${res.status}). Check /api/ai/status?check=1`));
   return data;
 }
 

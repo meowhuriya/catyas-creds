@@ -31,6 +31,7 @@ export interface GeminiCallParams {
   responseSchema?: any;
   systemInstruction?: string;
   images?: Array<{ mimeType: string; data: string }>;
+  thinkingBudget?: number;
 }
 
 export async function callGeminiFlashWithThinking({
@@ -40,6 +41,7 @@ export async function callGeminiFlashWithThinking({
   responseSchema,
   systemInstruction,
   images = [],
+  thinkingBudget = 8192,
 }: GeminiCallParams): Promise<string> {
   const resolvedKey = apiKey || resolveGeminiApiKey();
   if (!resolvedKey) {
@@ -67,7 +69,7 @@ export async function callGeminiFlashWithThinking({
         contents: [{ role: "user", parts: contentsParts }],
         generationConfig: {
           responseMimeType,
-          thinkingConfig: { thinkingBudget: 8192 },
+          thinkingConfig: { thinkingBudget },
         },
       };
 
