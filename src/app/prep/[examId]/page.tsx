@@ -112,7 +112,7 @@ export default function ExamPrepPage() {
         <div className="rounded-2xl border border-dashed border-app-border p-5 text-sm text-app-ink">
           <p className="font-semibold">One step left: import your questions</p>
           <p className="mt-1 text-app-ink-muted">
-            Open a Q-bank below and press <b>Import every question</b>. AI reads the file (PDF, Word, PowerPoint, photos or a Drive link) and lists every question by unit and marks.
+            Open a Q-bank below and press <b>Get questions</b>. The questions are read from the file and listed by unit and marks.
             Then you get a daily plan and can start testing yourself.
           </p>
         </div>

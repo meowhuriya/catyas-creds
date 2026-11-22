@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, FileQuestion, Loader2, Plus, Target, Timer } from "lucide-react";
+import { ChevronDown, FileQuestion, Loader2, Plus, Target, Timer, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
@@ -120,7 +120,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                       <span className="shrink-0 text-xs text-app-ink-muted">{count} questions</span>
                     ) : hasImportSource(n) ? (
                       <button disabled={!!importer.busy} onClick={() => importer.run(n, "questions")} className="inline-flex shrink-0 items-center gap-1 rounded-full bg-app-accent px-2.5 py-1 text-[11px] font-semibold text-white disabled:opacity-50">
-                        {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : null} {busy ? "Importing…" : "Import questions"}
+                        {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : null} {busy ? "Reading…" : "Get questions"}
                       </button>
                     ) : (
                       <button onClick={() => setEditor({ note: n })} className="shrink-0 text-[11px] font-medium text-[var(--color-accent)]">Add the file</button>
@@ -133,11 +133,16 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                   </div>
                   {busy && <p className="mt-1 text-[11px] text-app-ink-muted">{importer.progress || "Reading the Q-bank…"}</p>}
                   {msg?.map((m, i) => (<p key={i} className="mt-1 text-[11px] text-app-ink-muted">{m}</p>))}
+                  {msg && count === 0 && !busy && (
+                    <button disabled={!!importer.busy} onClick={() => importer.run(n, "questions", { ai: true })} className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-app-accent hover:underline">
+                      <Sparkles className="h-3 w-3" /> Use AI instead (for scans and photos)
+                    </button>
+                  )}
                 </div>
               );
             })}
             <button onClick={() => setEditor({ note: null })} className="flex items-center justify-center gap-1.5 rounded-control border border-dashed border-app-border px-3 py-2 text-xs text-app-ink-muted hover:border-app-accent hover:text-app-ink">
-              <Plus className="h-3.5 w-3.5" /> Add a Q-bank (PDF, Word, PPT, photos or Drive link)
+              <Plus className="h-3.5 w-3.5" /> Add a Q-bank (PDF, Word, PPT or Drive link): questions are read automatically
             </button>
           </div>
         </div>
@@ -207,7 +212,12 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
         courseId={subjectId}
         defaultSection="qbank"
         note={editor?.note ?? null}
-        onSave={vault.saveNote}
+        onSave={async (input) => {
+          const saved = await vault.saveNote(input);
+          // Adding a Q-bank reads its questions straight away, no extra button.
+          if (saved.section === "qbank" && hasImportSource(saved) && !(nt.topics[saved.id] ?? []).length) importer.run(saved, "questions");
+          return saved;
+        }}
         onDelete={vault.removeNote}
         onAddImage={vault.addImage}
         onAddFile={vault.addFile}

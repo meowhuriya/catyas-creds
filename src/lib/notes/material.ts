@@ -2,6 +2,7 @@
 
 import { idbGet } from "@/lib/notes/vault-db";
 import { loadFileBlob } from "@/lib/notes/vault-files";
+import { pdfToText } from "@/lib/notes/pdf-text";
 import { officeToText } from "@/lib/notes/office-text";
 import { VaultMedia, VaultNote } from "@/lib/notes/vault-types";
 
@@ -42,6 +43,17 @@ export async function collectMaterial(notes: VaultNote[], uid: string | null = n
           const t = await officeToText(blob, f.name);
           if (t) textParts.push(`## File: ${f.name}\n${t}`);
         } else if (lower.endsWith(".pdf")) {
+          try {
+            const blob0 = await loadFileBlob(uid, f);
+            const t = await pdfToText(await blob0.arrayBuffer());
+            if (t.replace(/\s/g, "").length > 200) {
+              textParts.push(`## File: ${f.name}\n${t}`);
+              continue;
+            }
+            warnings.push(`${f.name} looks scanned (no text inside), so it needs AI to read.`);
+          } catch {
+            /* fall through to AI */
+          }
           if (inlineBytes + f.size > INLINE_PDF_BYTES) {
             warnings.push(`${f.name} is too big to send from here (over 3 MB). Put it on Drive, share as "Anyone with the link", and paste the link in the note.`);
             continue;
@@ -67,6 +79,20 @@ export async function collectMaterial(notes: VaultNote[], uid: string | null = n
       if (parts) images.push({ mimeType: parts[1], data: parts[2] });
     }
   }
-  const links = notes.flatMap((n) => n.links.filter((l) => l.kind === "drive").map((l) => l.url));
-  return { text: textParts.join("\n\n").slice(0, 60000), links, images, warnings };
+  const links: string[] = [];
+  for (const l of notes.flatMap((n) => n.links.filter((x) => x.kind === "drive").map((x) => x.url))) {
+    try {
+      const res = await fetch(`/api/drive-file?url=${encodeURIComponent(l)}`);
+      if (!res.ok) throw new Error("fetch");
+      const t = await pdfToText(await res.arrayBuffer());
+      if (t.replace(/\s/g, "").length > 200) {
+        textParts.push(`## Drive link\n${t}`);
+        continue;
+      }
+    } catch {
+      /* AI can still try this link */
+    }
+    links.push(l);
+  }
+  return { text: textParts.join("\n\n").slice(0, 400000), links, images, warnings };
 }

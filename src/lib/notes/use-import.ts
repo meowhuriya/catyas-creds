@@ -44,7 +44,7 @@ export function useImportQuestions(subjectTitle?: string) {
     return data.items;
   };
 
-  const run = async (note: VaultNote, kind: "topics" | "questions") => {
+  const run = async (note: VaultNote, kind: "topics" | "questions", opts: { ai?: boolean } = {}) => {
     setBusy({ noteId: note.id, kind });
     setMsg(null);
     setProgress("Reading your files");
@@ -58,11 +58,15 @@ export function useImportQuestions(subjectTitle?: string) {
       const local = kind === "questions" ? parseQuestions(m.text) : [];
       if (local.length) {
         all.push(...local);
-      } else if (m.text.trim().length > 40) {
-        for (const c of chunkText(m.text)) jobs.push({ label: "text", go: () => callAi(kind, { text: c }) });
+      } else if (opts.ai) {
+        if (m.text.trim().length > 40) for (const c of chunkText(m.text)) jobs.push({ label: "text", go: () => callAi(kind, { text: c }) });
+        for (const img of m.images) jobs.push({ label: "file", go: () => callAi(kind, { images: [img] }) });
+        for (const l of m.links) jobs.push({ label: "Drive link", go: () => callAi(kind, { links: [l] }) });
+      } else if (kind === "questions") {
+        // No numbering found: take every line that ends with a question mark.
+        const qs = m.text.split(/\n+/).map((l) => l.trim()).filter((l) => l.length > 12 && /\?\s*$/.test(l));
+        if (qs.length >= 3) all.push(...qs.map((text) => ({ text })));
       }
-      for (const img of m.images) jobs.push({ label: "file", go: () => callAi(kind, { images: [img] }) });
-      for (const l of m.links) jobs.push({ label: "Drive link", go: () => callAi(kind, { links: [l] }) });
 
       let done = 0;
       const total = jobs.length;
@@ -92,7 +96,16 @@ export function useImportQuestions(subjectTitle?: string) {
         seen.add(k);
         return true;
       });
-      if (!items.length) throw new Error(problems[0] || "I couldn't find any questions in this. Check the file has text, or add a photo.");
+      if (!items.length) {
+        throw new Error(
+          problems[0] ||
+            (opts.ai
+              ? "AI couldn't find any questions in this."
+              : m.images.length || m.links.length
+                ? "This file is a scan or photos, so there's no text to read. Press 'Use AI' to read it."
+                : "I couldn't spot numbered questions (1. 2. 3.) in this file. Press 'Use AI' to try anyway.")
+        );
+      }
 
       const have = new Set((nt.topics[note.id] ?? []).map((i) => i.text.toLowerCase()));
       const fresh = items.filter((t) => !have.has(t.text.trim().toLowerCase()));
@@ -101,7 +114,7 @@ export function useImportQuestions(subjectTitle?: string) {
         noteId: note.id,
         lines: [
           fresh.length
-            ? `Added ${fresh.length} ${kind === "questions" ? "questions" : "topics"}${local.length ? " (read straight from the file, no AI needed)" : ""}. Delete any that don't belong.`
+            ? `Added ${fresh.length} ${kind === "questions" ? "questions" : "topics"}${local.length ? " (read straight from the file, no AI)" : ""}. Delete any that don't belong.`
             : "Nothing new found. Your list already has these.",
           ...(problems.length ? [`${problems.length} part(s) failed (${problems[0]}). Press Import again to fill the gaps.`] : []),
           ...m.warnings,

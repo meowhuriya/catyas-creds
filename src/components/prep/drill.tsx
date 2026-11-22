@@ -213,7 +213,7 @@ export function Drill({
               <Button onClick={begin} disabled={phase === "loading" || filtered.length === 0} className="w-full" size="lg">
                 {phase === "loading" ? <><Loader2 className="h-4 w-4 animate-spin" /> Preparing questions…</> : <><Target className="h-4 w-4" /> Start ({Math.min(count, filtered.length)} of {filtered.length})</>}
               </Button>
-              {all.length === 0 && <p className="text-center text-xs text-app-ink-muted">No questions yet. Open a Q-bank note and press <b>Import every question</b>.</p>}
+              {all.length === 0 && <p className="text-center text-xs text-app-ink-muted">No questions yet. Open a Q-bank note and press <b>Get questions</b>.</p>}
             </div>
           )}
 

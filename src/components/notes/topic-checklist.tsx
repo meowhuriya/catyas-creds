@@ -45,7 +45,7 @@ export function TopicChecklist({
   const busy = importer.busy?.noteId === note.id ? importer.busy.kind : null;
   const msg = importer.msg?.noteId === note.id ? importer.msg.lines : [];
   const hasSource = hasImportSource(note);
-  const fill = (kind: "topics" | "questions") => importer.run(note, kind);
+  const fill = (kind: "topics" | "questions", ai = false) => importer.run(note, kind, { ai });
 
   const pasteMany = (raw: string) => {
     const lines = raw.split(/\n+/).map((l) => l.replace(/^\s*(?:[-*•]|\d+[.)]|Q\d+[.):]?)\s*/i, "").trim()).filter(Boolean);
@@ -78,15 +78,15 @@ export function TopicChecklist({
         <div className="space-y-2 rounded-control border border-dashed border-app-border p-3">
           <p className="text-xs text-app-ink-muted">
             {hasSource
-              ? "Let AI read this note's files, photos, Drive links and text and build the list for you."
+              ? "Read the questions straight from this note's file (no AI), or paste them below."
               : "Add your Q-bank file, photos or a Drive link to this note first (pencil icon), or type topics below."}
           </p>
           <div className="flex flex-wrap gap-2">
             <button type="button" disabled={!!busy || !hasSource} onClick={() => fill("questions")} className="inline-flex items-center gap-1.5 rounded-control bg-app-accent px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-40">
-              {busy === "questions" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileQuestion className="h-3.5 w-3.5" />} Import every question (Q-bank)
+              {busy === "questions" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileQuestion className="h-3.5 w-3.5" />} Get questions from file
             </button>
-            <button type="button" disabled={!!busy || !hasSource} onClick={() => fill("topics")} className="inline-flex items-center gap-1.5 rounded-control border border-app-border px-3 py-1.5 text-xs font-medium text-app-ink disabled:opacity-40">
-              {busy === "topics" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Pull topics (notes)
+            <button type="button" disabled={!!busy || !hasSource} onClick={() => fill("topics", true)} className="inline-flex items-center gap-1.5 rounded-control border border-app-border px-3 py-1.5 text-xs font-medium text-app-ink disabled:opacity-40">
+              {busy === "topics" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />} Pull topics with AI
             </button>
           </div>
         </div>
@@ -166,7 +166,7 @@ export function TopicChecklist({
       {items.length > 0 && hasSource && (
         <div className="flex flex-wrap gap-3 text-[11px]">
           <button type="button" disabled={!!busy} onClick={() => fill("questions")} className="text-app-ink-muted hover:text-app-ink">Re-import questions</button>
-          <button type="button" disabled={!!busy} onClick={() => fill("topics")} className="text-app-ink-muted hover:text-app-ink">Pull more topics</button>
+          <button type="button" disabled={!!busy} onClick={() => fill("topics", true)} className="text-app-ink-muted hover:text-app-ink">Pull more topics</button>
         </div>
       )}
     </div>
