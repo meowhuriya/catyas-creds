@@ -38,7 +38,7 @@ export async function collectMaterial(notes: VaultNote[], uid: string | null = n
     for (const f of n.files) {
       try {
         const lower = f.name.toLowerCase();
-        if (/\.(docx|pptx|txt|md|csv)$/.test(lower)) {
+        if (/\.(docx|doc|pptx|txt|md|csv)$/.test(lower)) {
           const blob = await loadFileBlob(uid, f);
           const t = await officeToText(blob, f.name);
           if (t) textParts.push(`## File: ${f.name}\n${t}`);
@@ -65,8 +65,8 @@ export async function collectMaterial(notes: VaultNote[], uid: string | null = n
           const blob = await loadFileBlob(uid, f);
           images.push({ mimeType: f.mime || "image/jpeg", data: toBase64(await blob.arrayBuffer()) });
           inlineBytes += f.size;
-        } else if (/\.(doc|ppt)$/.test(lower)) {
-          warnings.push(`${f.name} is an old Office format. Save it as .docx/.pptx or PDF so AI can read it.`);
+        } else if (/\.ppt$/.test(lower)) {
+          warnings.push(`${f.name} is an old PowerPoint format. Save it as .pptx or PDF so it can be read.`);
         }
       } catch (e) {
         warnings.push(`Couldn't open ${f.name}: ${e instanceof Error ? e.message : "unknown error"}`);

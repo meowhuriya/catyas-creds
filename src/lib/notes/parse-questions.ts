@@ -137,6 +137,43 @@ function parseTableBank(text: string): ParsedItem[] {
 }
 
 /**
+ * Plain outline: "Unit-1" headings, "2 marks questions" / "Essay type questions" section lines,
+ * then one question per line (Word's automatic list numbers are not part of the text).
+ */
+function parseOutline(text: string): ParsedItem[] {
+  const out: ParsedItem[] = [];
+  let chapter = "";
+  let marks: number | undefined;
+  let sections = 0;
+  let units = 0;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) continue;
+    const um = line.match(/^unit\s*[-–:.]?\s*([ivx]+|\d+)\s*[-–:.]?\s*(.*)$/i);
+    if (um && line.length < 80) {
+      units++;
+      chapter = `Unit ${ROMAN[um[1].toUpperCase()] ?? um[1]}${um[2] ? ": " + um[2] : ""}`;
+      continue;
+    }
+    const sm = line.match(/^(\d{1,2})\s*[- ]?marks?\b.*$/i);
+    if (sm && line.length < 60) {
+      marks = Number(sm[1]);
+      sections++;
+      continue;
+    }
+    if (/^(essay|long|short|descriptive)\b.*questions?\b/i.test(line) && line.length < 60) {
+      marks = undefined;
+      sections++;
+      continue;
+    }
+    if (!chapter || line.length < 12) continue;
+    const t = line.replace(/^\s*(?:q(?:uestion)?\.?\s*)?\d{1,3}\s*[.)\]:-]\s*/i, "").trim();
+    if (t.length > 8) out.push({ text: t, chapter, marks });
+  }
+  return units >= 1 && sections >= 1 ? out : [];
+}
+
+/**
  * Pulls numbered questions out of plain text without any AI: instant and free.
  * Returns [] when the text doesn't look like a numbered list.
  */
@@ -145,14 +182,17 @@ export function parseQuestions(text: string): ParsedItem[] {
   if (marked.length >= 3) return marked;
   const table = parseTableBank(text);
   if (table.length >= 3) return table;
+  const outline = parseOutline(text);
+  if (outline.length >= 3) return outline;
   const lines = text.split(/\r?\n/);
   const out: ParsedItem[] = [];
   let chapter = "";
+  let sectionMarks: number | undefined;
   let cur: ParsedItem | null = null;
   const flush = () => {
     if (cur) {
       cur.text = cur.text.replace(/\s+/g, " ").trim();
-      cur.marks = cur.marks ?? marksIn(cur.text);
+      cur.marks = cur.marks ?? marksIn(cur.text) ?? sectionMarks;
       if (cur.text.length > 8) out.push(cur);
     }
     cur = null;
@@ -165,10 +205,22 @@ export function parseQuestions(text: string): ParsedItem[] {
       chapter = line.replace(/^#+\s*/, "").slice(0, 80);
       continue;
     }
+    const sm = line.match(/^(\d{1,2})\s*[- ]?marks?\b.*$/i);
+    if (sm && line.length < 60) {
+      flush();
+      sectionMarks = Number(sm[1]);
+      continue;
+    }
+    if (/^(essay|long|descriptive)\b.*questions?/i.test(line) && line.length < 60) {
+      flush();
+      sectionMarks = undefined;
+      continue;
+    }
     const h = line.match(HEADING);
     if (h && line.length < 90 && !NUMBERED.test(line)) {
       flush();
-      chapter = line.slice(0, 80);
+      const um = line.match(/^unit\s*[-–:.]?\s*([ivx]+|\d+)\s*[-–:.]?\s*(.*)$/i);
+      chapter = um ? `Unit ${ROMAN[um[1].toUpperCase()] ?? um[1]}${um[2] ? ": " + um[2] : ""}`.slice(0, 80) : line.slice(0, 80);
       continue;
     }
     const n = line.match(NUMBERED);

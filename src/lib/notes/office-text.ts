@@ -60,6 +60,8 @@ function xmlToText(xml: string, paraTag: string, textTag: string): string {
     .join("\n");
 }
 
+import { legacyDocToText } from "@/lib/notes/doc-text";
+
 export async function officeToText(blob: Blob, name: string): Promise<string | null> {
   const lower = name.toLowerCase();
   const buf = await blob.arrayBuffer();
@@ -75,6 +77,7 @@ export async function officeToText(blob: Blob, name: string): Promise<string | n
     );
     return slides.map(([, xml], i) => `--- Slide ${i + 1} ---\n${xmlToText(xml, "a:p", "a:t")}`).join("\n");
   }
+  if (lower.endsWith(".doc")) return legacyDocToText(buf);
   if (lower.endsWith(".txt") || lower.endsWith(".md") || lower.endsWith(".csv")) return await blob.text();
   return null;
 }
