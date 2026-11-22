@@ -1,24 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Inter_Tight } from "next/font/google";
 import "@/styles/globals.css";
 import { DataStoreProvider } from "@/lib/repository";
 import { ToastProvider } from "@/components/ui/toast";
 import { ThemeProvider } from "@/lib/theme/theme-context";
 import { AppShell } from "@/components/shell/app-shell";
-
-// Headings: Inter Tight (crisp, modern). Body: Inter.
-const display = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const body = Inter({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Valeria's Creds — Academic Learning Portal",
@@ -42,10 +27,17 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="pearl"
-      className={`${display.variable} ${body.variable} antialiased`}
+      className="antialiased"
       suppressHydrationWarning
     >
       <head>
+        {/* Fonts load in the browser (not at build time), so a Google Fonts hiccup can never break a deploy. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
