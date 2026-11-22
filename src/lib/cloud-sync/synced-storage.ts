@@ -40,6 +40,7 @@ export const SYNCED_KEYS = [
   "vc_exams_v1",
   "vc_focus_days_v1",
   "vc_focus_settings_v1",
+  "vc_assignments_v1",
 ] as const;
 
 export const CLOUD_SYNC_EVENT = "cloud-sync:update";

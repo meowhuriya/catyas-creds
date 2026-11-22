@@ -11,6 +11,8 @@ import { PracticeDialog } from "@/components/notes/practice-dialog";
 import { daysLeft, examSubjects, useExams, useNoteTopics } from "@/lib/notes/study";
 import { ExamForm } from "@/components/notes/exam-panel";
 import { Drill } from "@/components/prep/drill";
+import { AssignmentList } from "@/components/assignments/assignment-list";
+import { useAssignments } from "@/lib/assignments/store";
 import { SubjectQuestions } from "@/components/questions/subject-questions";
 import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { useVault } from "@/lib/notes/use-vault";
@@ -20,21 +22,26 @@ import { cn } from "@/lib/utils";
 import { Butterfly } from "@/components/brand/butterfly";
 import { SubjectArt } from "@/components/brand/subject-art";
 
+/** Everything except Q-banks (Questions tab) and class notes (their own tab). */
+const FILE_SECTIONS = VAULT_SECTIONS.filter((s) => s.key !== "qbank" && s.key !== "notes");
+
 export default function SubjectNotesPage() {
   const params = useParams<{ subjectId: string }>();
   const subjectId = decodeURIComponent(params?.subjectId ?? "");
   const subject = getSubject(subjectId);
   const vault = useVault();
-  const [section, setSection] = React.useState<VaultSection>("qbank");
+  const [section, setSection] = React.useState<VaultSection>("exam");
   const pickedSection = React.useRef(false);
   const [editing, setEditing] = React.useState<VaultNote | null>(null);
   const [editorOpen, setEditorOpen] = React.useState(false);
+  const [editorSection, setEditorSection] = React.useState<VaultSection>("notes");
   const [readingId, setReadingId] = React.useState<string | null>(null);
   const [practice, setPractice] = React.useState<{ noteId?: string } | null>(null);
-  const [view, setView] = React.useState<"questions" | "files">("questions");
+  const [view, setView] = React.useState<"questions" | "notes" | "assignments" | "files">("questions");
   const [drillNote, setDrillNote] = React.useState<VaultNote | null>(null);
   const [examForm, setExamForm] = React.useState(false);
   const noteTopics = useNoteTopics();
+  const asg = useAssignments();
   const { exams } = useExams();
 
   const mine = vault.notes.filter((n) => n.courseId === subjectId);
@@ -48,15 +55,18 @@ export default function SubjectNotesPage() {
   React.useEffect(() => {
     if (pickedSection.current || !vault.ready) return;
     pickedSection.current = true;
-    const first = VAULT_SECTIONS.find((s) => mine.some((n) => n.section === s.key));
+    const first = FILE_SECTIONS.find((s) => mine.some((n) => n.section === s.key));
     if (first) setSection(first.key);
-    if (questionCount === 0 && mine.length > 0) setView("files");
+    if (questionCount === 0 && mine.length > 0) setView(mine.some((n) => n.section === "notes") ? "notes" : "files");
   }, [vault.ready, mine]);
   const visible = mine
     .filter((n) => n.section === section)
     .sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt));
   const reading = mine.find((n) => n.id === readingId) ?? null;
   const active = VAULT_SECTIONS.find((s) => s.key === section)!;
+  const classNotes = mine.filter((n) => n.section === "notes").sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.updatedAt.localeCompare(a.updatedAt));
+  const subjectAssignments = asg.assignments.filter((a) => a.subjectId === subjectId);
+  const openAssignments = subjectAssignments.filter((a) => a.status !== "submitted").length;
 
   if (!subject) {
     return (
@@ -70,8 +80,9 @@ export default function SubjectNotesPage() {
   }
 
   const color = subjectColor(subject);
-  const openNew = () => {
+  const openNew = (sec?: VaultSection) => {
     setEditing(null);
+    setEditorSection(sec ?? section);
     setEditorOpen(true);
   };
 
@@ -94,9 +105,15 @@ export default function SubjectNotesPage() {
               {subject.credits} credit{subject.credits > 1 ? "s" : ""} · {mine.length} note{mine.length === 1 ? "" : "s"}
             </p>
           </div>
-          <Button onClick={openNew} size="lg" className="shrink-0">
-            <Plus className="h-4 w-4" /> Add to {active.short}
-          </Button>
+          {(view === "notes" || view === "files") && (
+            <Button
+              onClick={() => openNew(view === "notes" ? "notes" : undefined)}
+              size="lg"
+              className="shrink-0"
+            >
+              <Plus className="h-4 w-4" /> {view === "notes" ? "Add class notes" : `Add to ${active.short}`}
+            </Button>
+          )}
         </div>
       </header>
 
@@ -117,27 +134,48 @@ export default function SubjectNotesPage() {
       </div>
 
       <div className="flex gap-1 rounded-control border border-app-border bg-app-surface p-1" role="tablist" aria-label="View">
-        {([["questions", "Questions"], ["files", "Files & notes"]] as const).map(([v, label]) => (
+        {([["questions", "Questions"], ["notes", "Class notes"], ["assignments", "Assignments"], ["files", "More files"]] as const).map(([v, label]) => (
           <button
             key={v}
             role="tab"
             aria-selected={view === v}
             onClick={() => setView(v)}
-            className={cn("flex-1 rounded-md px-4 py-2 text-sm font-medium transition-colors", view === v ? "bg-app-accent text-white" : "text-app-ink-muted hover:text-app-ink")}
+            className={cn("flex-1 rounded-md px-2 py-2 text-xs font-medium transition-colors sm:px-4 sm:text-sm", view === v ? "bg-app-accent text-white" : "text-app-ink-muted hover:text-app-ink")}
           >
             {label}
             {v === "questions" && questionCount > 0 && <span className="ml-1.5 opacity-70">{questionCount}</span>}
-            {v === "files" && <span className="ml-1.5 opacity-70">{mine.length}</span>}
+            {v === "notes" && classNotes.length > 0 && <span className="ml-1.5 opacity-70">{classNotes.length}</span>}
+            {v === "assignments" && openAssignments > 0 && <span className="ml-1.5 opacity-70">{openAssignments}</span>}
+            {v === "files" && <span className="ml-1.5 opacity-70">{mine.filter((n) => n.section !== "qbank" && n.section !== "notes").length}</span>}
           </button>
         ))}
       </div>
 
       {view === "questions" ? (
         <SubjectQuestions subjectId={subjectId} vault={vault} />
+      ) : view === "assignments" ? (
+        <AssignmentList vault={vault} subjectId={subjectId} />
+      ) : view === "notes" ? (
+        !vault.ready ? (
+          <div className="h-36 animate-pulse rounded-card bg-app-surface-muted" />
+        ) : classNotes.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 px-6 py-16 text-center">
+            <Butterfly size={56} className="opacity-90" />
+            <p className="font-display text-2xl font-normal tracking-[-0.01em] text-app-ink">No class notes yet</p>
+            <p className="max-w-sm text-sm text-app-ink-muted">Upload what your teacher shares (PPTs, PDFs, handouts, photos of the board) or paste a Drive link. Open any of them here while you study.</p>
+            <Button onClick={() => openNew("notes")}><Plus className="h-4 w-4" /> Add class notes</Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {classNotes.map((n) => (
+              <NoteCard key={n.id} note={n} progress={noteTopics.progress(n.id)} onOpen={() => setReadingId(n.id)} onEdit={() => { setEditing(n); setEditorOpen(true); }} />
+            ))}
+          </div>
+        )
       ) : (
         <>
         <div className="flex gap-6 overflow-x-auto border-b border-[rgba(60,40,110,0.08)]" role="tablist" aria-label="Sections">
-          {VAULT_SECTIONS.map((s) => {
+          {FILE_SECTIONS.map((s) => {
             const count = mine.filter((n) => n.section === s.key).length;
             return (
               <button
@@ -179,7 +217,7 @@ export default function SubjectNotesPage() {
             <Butterfly size={56} className="opacity-90" />
             <p className="font-display text-2xl font-normal tracking-[-0.01em] text-app-ink">Nothing in {active.label} yet</p>
             <p className="max-w-sm text-sm text-app-ink-muted">{active.hint}.</p>
-            <Button onClick={openNew}>
+            <Button onClick={() => openNew()}>
               <Plus className="h-4 w-4" /> Add the first one
             </Button>
           </div>
@@ -249,7 +287,7 @@ export default function SubjectNotesPage() {
         open={editorOpen}
         onOpenChange={setEditorOpen}
         courseId={subjectId}
-        defaultSection={section}
+        defaultSection={editorSection}
         note={editing}
         onSave={vault.saveNote}
         onDelete={vault.removeNote}

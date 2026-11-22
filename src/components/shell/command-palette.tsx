@@ -93,11 +93,18 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 <span>Courses</span>
               </Command.Item>
               <Command.Item
+                onSelect={() => runCommand(() => router.push("/assignments"))}
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
+              >
+                <ClipboardCheck className="h-4 w-4 text-app-ink-muted" />
+                <span>Assignments</span>
+              </Command.Item>
+              <Command.Item
                 onSelect={() => runCommand(() => router.push("/college-works"))}
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <ClipboardCheck className="h-4 w-4 text-app-ink-muted" />
-                <span>College Works (Assignments & Lab Records)</span>
+                <span>College Works (old records tracker)</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/research"))}

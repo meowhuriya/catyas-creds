@@ -20,6 +20,7 @@ import {
   ChevronRight,
   FlaskConical,
   ClipboardCheck,
+  ClipboardList,
   NotebookPen,
   Medal,
 } from "lucide-react";
@@ -47,6 +48,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Notes Vault", href: "/notes", icon: NotebookPen },
       { label: "Exam Prep", href: "/prep", icon: Target },
+      { label: "Assignments", href: "/assignments", icon: ClipboardList },
       { label: "Courses", href: "/courses", icon: BookOpen },
       { label: "Smart Recall", href: "/recall", icon: RotateCcw },
       { label: "Planner", href: "/planner", icon: Calendar },

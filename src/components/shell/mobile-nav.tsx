@@ -35,6 +35,7 @@ export function MobileTabBar() {
   ];
 
   const moreItems = [
+    { label: "Assignments", href: "/assignments", icon: ClipboardCheck },
     { label: "Planner", href: "/planner", icon: Calendar },
     { label: "College Works", href: "/college-works", icon: ClipboardCheck },
     { label: "Research & Lab (NotebookLM)", href: "/research", icon: FlaskConical },
