@@ -83,34 +83,28 @@ export async function callGeminiFlashWithThinking({
         };
       }
 
-      // Try 1: standard query parameter ?key=
-      let res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${resolvedKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      // Try 1: x-goog-api-key header (Google's recommended way; works for AIza and newer AQ. keys)
+      const base = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+      let res = await fetch(base, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": resolvedKey },
+        body: JSON.stringify(requestBody),
+      });
 
-      // If 401 or bearer key starting with AQ., try Authorization: Bearer
-      if (res.status === 401 || (resolvedKey.startsWith("AQ.") && !res.ok)) {
-        try {
-          const bearerRes = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${resolvedKey}`,
-              },
-              body: JSON.stringify(requestBody),
+      // Try 2: query parameter, then Bearer token, if the first was refused
+      if (!res.ok && res.status !== 404) {
+        for (const attempt of [
+          { url: `${base}?key=${resolvedKey}`, headers: { "Content-Type": "application/json" } },
+          { url: base, headers: { "Content-Type": "application/json", Authorization: `Bearer ${resolvedKey}` } },
+        ]) {
+          try {
+            const r = await fetch(attempt.url, { method: "POST", headers: attempt.headers, body: JSON.stringify(requestBody) });
+            if (r.ok) {
+              res = r;
+              break;
             }
-          );
-          if (bearerRes.ok) {
-            res = bearerRes;
-          }
-        } catch {}
+          } catch {}
+        }
       }
 
       let data = await res.json();

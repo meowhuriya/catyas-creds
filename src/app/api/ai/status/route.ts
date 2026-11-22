@@ -27,7 +27,7 @@ export async function GET(req: Request) {
     message: !isConfigured
       ? "GEMINI_API_KEY is missing on this server. Locally: put it in .env.local and restart npm run dev. On Vercel: Project Settings > Environment Variables > add GEMINI_API_KEY, then Redeploy."
       : working === false
-        ? "The key is set but Google rejected it. Make a new key in Google AI Studio (it starts with AIza) and replace it."
+        ? "The key is set but Google rejected it. Create a fresh key in Google AI Studio, put it in GEMINI_API_KEY, and redeploy. See the detail line for Google's exact reason."
         : "Gemini API is ready",
   });
 }
