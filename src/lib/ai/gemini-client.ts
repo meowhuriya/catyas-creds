@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
-export const GEMINI_MODEL = "gemini-2.5-flash";
-export const GEMINI_FALLBACK_MODEL = "gemini-2.0-flash";
+export const GEMINI_MODEL = "gemini-3.8-flash";
+export const GEMINI_FALLBACK_MODEL = "gemini-2.5-flash";
 
 /**
  * Resolves the Gemini API key. Order: per-request `x-gemini-key` header, then the
@@ -121,6 +121,18 @@ export async function callGeminiFlashWithThinking({
           if (!vData.error) data = vData;
           else console.warn("[gemini] Vertex endpoint also failed:", vData.error?.message);
         } catch {}
+      }
+
+      // Some models reject thinkingConfig: retry once without it.
+      if (data.error && /think/i.test(String(data.error.message)) && requestBody.generationConfig.thinkingConfig) {
+        delete requestBody.generationConfig.thinkingConfig;
+        const again = await fetch(base, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": resolvedKey },
+          body: JSON.stringify(requestBody),
+        });
+        const againData = await again.json();
+        if (!againData.error) data = againData;
       }
 
       if (data.error) {
