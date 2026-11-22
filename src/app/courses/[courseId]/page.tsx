@@ -667,12 +667,12 @@ export default function CourseDetailPage() {
           </Button>
 
           <Link
-            href="/college-works"
+            href="/assignments"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-semibold text-[var(--color-ink)] bg-[var(--color-surface-muted)] hover:bg-[var(--color-border)] border border-[var(--color-border)] transition-colors h-8"
-            title="View college assignments and practical lab records"
+            title="Assignments and lab records"
           >
             <ClipboardCheck className="h-3.5 w-3.5 text-[var(--color-accent)]" />
-            <span>College Works</span>
+            <span>Assignments</span>
           </Link>
 
           <Button

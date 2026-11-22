@@ -135,3 +135,23 @@ export function useImportQuestions(subjectTitle?: string) {
 export function hasImportSource(note: VaultNote) {
   return !!note.body.trim() || note.files.length > 0 || note.mediaIds.length > 0 || note.links.some((l) => l.kind === "drive");
 }
+
+/** Reads the questions out of a note's files, locally and without AI. Returns them without storing anything. */
+export async function extractQuestionTexts(note: VaultNote, uid: string | null): Promise<{ items: string[]; hint?: string }> {
+  const m = await collectMaterial([note], uid);
+  let items = parseQuestions(m.text).map((q) => q.text);
+  if (!items.length) {
+    const lines = m.text.split(/\n+/).map((l) => l.trim()).filter((l) => l.length > 12);
+    const asked = lines.filter((l) => /\?\s*$/.test(l) || /^(q\s*\d+|\d+)[.)]\s/i.test(l)).map((l) => l.replace(/^(q\s*\d+|\d+)[.)]\s*/i, ""));
+    if (asked.length >= 2) items = asked;
+  }
+  const seen = new Set<string>();
+  items = items.filter((t) => {
+    const k = t.toLowerCase();
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+  const hint = items.length ? undefined : m.images.length || m.links.length ? "That file is a scan or photos, so I can't read the questions. Type or paste them below." : "I couldn't spot questions in that file. Type or paste them below.";
+  return { items, hint };
+}

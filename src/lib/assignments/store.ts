@@ -3,10 +3,10 @@
 import { StudyItem, daysLeft, readKey, useStored, writeKey } from "@/lib/notes/study";
 import { newId } from "@/lib/notes/vault-types";
 
-export type AssignmentKind = "slides" | "written" | "other";
+export type AssignmentKind = "slides" | "written" | "lab" | "other";
 export type AssignmentStatus = "todo" | "doing" | "submitted";
 
-export const KIND_LABEL: Record<AssignmentKind, string> = { slides: "PPT / slides", written: "Written work", other: "Other" };
+export const KIND_LABEL: Record<AssignmentKind, string> = { slides: "PPT / slides", written: "Written work", lab: "Lab record", other: "Other" };
 export const STATUS_LABEL: Record<AssignmentStatus, string> = { todo: "Not started", doing: "In progress", submitted: "Submitted" };
 
 export interface AssignmentLink {

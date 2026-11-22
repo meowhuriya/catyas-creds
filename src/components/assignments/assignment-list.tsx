@@ -19,6 +19,8 @@ import { useToast } from "@/components/ui/toast";
 import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { NoteReader } from "@/components/notes/note-reader";
 import { Bar } from "@/components/notes/exam-panel";
+import { useDataStore } from "@/lib/repository";
+import { extractQuestionTexts } from "@/lib/notes/use-import";
 import { useVault } from "@/lib/notes/use-vault";
 import { SUBJECTS, getSubject, subjectsFor } from "@/lib/notes/curriculum";
 import { VaultNote, VaultSection } from "@/lib/notes/vault-types";
@@ -163,11 +165,60 @@ function AssignmentCard({
   const [url, setUrl] = React.useState("");
   const [label, setLabel] = React.useState("");
   const [confirmDel, setConfirmDel] = React.useState(false);
+  const [upBusy, setUpBusy] = React.useState<"" | "briefNoteId" | "workNoteId">("");
+  const { firebaseUser } = useDataStore();
   const p = partsProgress(a);
   const d = daysLeft(a.due);
   const subject = getSubject(a.subjectId);
   const brief = a.briefNoteId ? vault.notes.find((n) => n.id === a.briefNoteId) : undefined;
   const work = a.workNoteId ? vault.notes.find((n) => n.id === a.workNoteId) : undefined;
+
+  /** Upload files straight onto the assignment. The teacher's brief is read for questions automatically. */
+  const upload = async (slot: "briefNoteId" | "workNoteId", files: FileList | null) => {
+    if (!files?.length) return;
+    setUpBusy(slot);
+    try {
+      const refs = [];
+      for (const f of Array.from(files)) refs.push(await vault.addFile(f));
+      const existing = a[slot] ? vault.notes.find((n) => n.id === a[slot]) : undefined;
+      const saved = await vault.saveNote({
+        id: existing?.id,
+        courseId: a.subjectId,
+        section: (slot === "briefNoteId" ? "assignment" : "submission") as VaultSection,
+        title: existing?.title ?? `${a.title}${slot === "workNoteId" ? " (my work)" : " (brief)"}`,
+        body: existing?.body ?? "",
+        links: existing?.links ?? [],
+        mediaIds: existing?.mediaIds ?? [],
+        files: [...(existing?.files ?? []), ...refs],
+        pinned: existing?.pinned ?? false,
+      });
+      store.patch(a.id, { [slot]: saved.id });
+      if (slot === "briefNoteId" && a.parts.length === 0) {
+        const r = await extractQuestionTexts(saved, firebaseUser?.uid ?? null);
+        if (r.items.length) {
+          store.addParts(a.id, r.items);
+          toast.success("Questions added", `${r.items.length} found in the file. Tick them off as you finish.`);
+        } else if (r.hint) toast.info("Saved", r.hint);
+      } else toast.success("Uploaded", `${refs.length} file${refs.length === 1 ? "" : "s"} added.`);
+    } catch (e) {
+      toast.error("Upload failed", e instanceof Error ? e.message : "Try again");
+    } finally {
+      setUpBusy("");
+    }
+  };
+  const readBrief = async () => {
+    if (!brief) return;
+    setUpBusy("briefNoteId");
+    try {
+      const r = await extractQuestionTexts(brief, firebaseUser?.uid ?? null);
+      if (r.items.length) {
+        store.addParts(a.id, r.items);
+        toast.success("Questions added", `${r.items.length} found.`);
+      } else toast.info("Nothing found", r.hint ?? "");
+    } finally {
+      setUpBusy("");
+    }
+  };
   const late = a.status !== "submitted" && d !== null && d < 0;
 
   return (
@@ -219,10 +270,11 @@ function AssignmentCard({
               {brief ? (
                 <div className="flex items-center gap-2 text-sm">
                   <button onClick={() => onOpenNote(brief)} className="inline-flex min-w-0 items-center gap-1.5 font-medium text-app-ink hover:underline"><FileText className="h-4 w-4 shrink-0" /><span className="truncate">{brief.title}</span></button>
-                  <button onClick={() => onAttach("briefNoteId")} className="ml-auto shrink-0 text-[11px] text-app-ink-muted hover:text-app-ink">Change</button>
+                  <button onClick={() => void readBrief()} className="ml-auto shrink-0 text-[11px] text-[var(--color-accent)]">{upBusy === "briefNoteId" ? "Reading…" : "Read questions"}</button>
+                  <button onClick={() => onAttach("briefNoteId")} className="shrink-0 text-[11px] text-app-ink-muted hover:text-app-ink">Edit</button>
                 </div>
               ) : (
-                <button onClick={() => onAttach("briefNoteId")} className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent)]"><Paperclip className="h-3.5 w-3.5" /> Add the PPT / PDF / photo</button>
+                <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[var(--color-accent)]"><Paperclip className="h-3.5 w-3.5" /> {upBusy === "briefNoteId" ? "Reading…" : "Upload the teacher's file (questions are read automatically)"}<input type="file" multiple className="hidden" onChange={(e) => { void upload("briefNoteId", e.target.files); e.target.value = ""; }} /></label>
               )}
             </div>
             <div className="rounded-control border border-app-border p-2.5">
@@ -230,10 +282,11 @@ function AssignmentCard({
               {work ? (
                 <div className="flex items-center gap-2 text-sm">
                   <button onClick={() => onOpenNote(work)} className="inline-flex min-w-0 items-center gap-1.5 font-medium text-app-ink hover:underline"><FileText className="h-4 w-4 shrink-0" /><span className="truncate">{work.title}</span></button>
-                  <button onClick={() => onAttach("workNoteId")} className="ml-auto shrink-0 text-[11px] text-app-ink-muted hover:text-app-ink">Change</button>
+                  <label className="ml-auto shrink-0 cursor-pointer text-[11px] text-[var(--color-accent)]">{upBusy === "workNoteId" ? "Uploading…" : "Add more"}<input type="file" multiple className="hidden" onChange={(e) => { void upload("workNoteId", e.target.files); e.target.value = ""; }} /></label>
+                  <button onClick={() => onAttach("workNoteId")} className="shrink-0 text-[11px] text-app-ink-muted hover:text-app-ink">Edit</button>
                 </div>
               ) : (
-                <button onClick={() => onAttach("workNoteId")} className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--color-accent)]"><Paperclip className="h-3.5 w-3.5" /> Add my slides / photos of my answers</button>
+                <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-[var(--color-accent)]"><Paperclip className="h-3.5 w-3.5" /> {upBusy === "workNoteId" ? "Uploading…" : "Upload my work (slides, PDF, photos)"}<input type="file" multiple className="hidden" onChange={(e) => { void upload("workNoteId", e.target.files); e.target.value = ""; }} /></label>
               )}
             </div>
           </div>

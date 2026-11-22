@@ -57,7 +57,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: "College",
     items: [
-      { label: "College Works", href: "/college-works", icon: ClipboardCheck },
       { label: "Grades", href: "/grades", icon: GraduationCap },
       { label: "Transcript", href: "/transcript", icon: FileText },
       { label: "Degree Progress", href: "/degree", icon: Award },
