@@ -2846,3 +2846,32 @@ html.dark[data-theme="clove"][data-accent] {
   --focus-ring: 0 0 0 2px #050507, 0 0 0 4px var(--accent);
 }
 html[data-theme="pearl"] { --orb-b: rgb(var(--accent-rgb) / 0.10); }
+
+/* ---- Flying butterflies (dashboard hero) ---- */
+.vc-fly { animation: vcFlyA 20s ease-in-out infinite; will-change: transform; }
+.vc-fly-a { animation-name: vcFlyA; }
+.vc-fly-b { animation-name: vcFlyB; }
+.vc-fly-c { animation-name: vcFlyC; }
+@keyframes vcFlyA {
+  0%   { transform: translate(0, 0) rotate(8deg); }
+  25%  { transform: translate(-90px, -30px) rotate(-14deg); }
+  50%  { transform: translate(-30px, 55px) rotate(10deg); }
+  75%  { transform: translate(70px, 20px) rotate(-8deg); }
+  100% { transform: translate(0, 0) rotate(8deg); }
+}
+@keyframes vcFlyB {
+  0%   { transform: translate(0, 0) rotate(-10deg); }
+  30%  { transform: translate(80px, -50px) rotate(12deg); }
+  60%  { transform: translate(-40px, -70px) rotate(-6deg); }
+  100% { transform: translate(0, 0) rotate(-10deg); }
+}
+@keyframes vcFlyC {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  20%  { transform: translate(-60px, 40px) rotate(-18deg); }
+  50%  { transform: translate(40px, 80px) rotate(14deg); }
+  80%  { transform: translate(90px, -30px) rotate(-10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+.vc-flap { animation: vcFlap 0.6s ease-in-out infinite alternate; transform-origin: 50% 60%; }
+@keyframes vcFlap { from { transform: scaleX(1); } to { transform: scaleX(0.55); } }
+@media (prefers-reduced-motion: reduce) { .vc-fly, .vc-flap { animation: none !important; } }

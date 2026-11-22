@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, Flame, Play } from "lucide-react";
 
-import { GlassFlower } from "@/components/brand/glass-flower";
+import { FlyingButterflies } from "@/components/brand/flying-butterflies";
 import { Lesson, LessonProgress, Course, Term } from "@/types/schemas";
 
 interface BentoHeroProps {
@@ -102,19 +102,19 @@ export function BentoHero({
           </div>
         </div>
 
-        <div className="relative mx-auto hidden md:block">
+        <div className="relative mx-auto hidden h-[290px] w-[290px] items-center justify-center md:flex">
           <div aria-hidden className="absolute inset-10 rounded-full blur-2xl" style={{ background: "radial-gradient(closest-side, rgb(var(--accent-rgb) / 0.3), transparent)" }} />
-          <GlassFlower size={290} className="gf-tint relative" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/butterfly-real-512.png"
             alt=""
             aria-hidden
             draggable={false}
-            className="pro-butterfly absolute -right-6 -top-4 h-[120px] w-[120px] select-none drop-shadow-[0_12px_18px_rgba(20,17,31,0.18)]"
+            className="pro-butterfly relative mx-auto h-[250px] w-[250px] select-none drop-shadow-[0_16px_24px_rgba(20,17,31,0.22)]"
           />
         </div>
       </div>
+      <FlyingButterflies />
     </section>
   );
 }
