@@ -3,6 +3,8 @@
 import * as React from "react";
 import { useDataStore } from "@/lib/repository";
 import { getSubject } from "@/lib/notes/curriculum";
+import { pickSpecies, plantFlower } from "@/lib/focus/garden";
+import type { Species } from "@/lib/focus/flowers";
 import { findTask, logFocus, readSettings } from "@/lib/focus/store";
 
 export type Phase = "focus" | "short" | "long";
@@ -17,6 +19,7 @@ interface TimerState {
   focusedMs: number; // focused time already counted in this phase before a pause
   taskId?: string;
   cycle: number; // focus sessions finished in the current set
+  species?: Species; // the flower growing in this focus session
 }
 
 interface TimerApi extends TimerState {
@@ -44,6 +47,13 @@ function load(): TimerState {
     if (v && v.phase) return v;
   } catch {}
   return { phase: "focus", status: "idle", remainingMs: durMs("focus"), focusedMs: 0, cycle: 0 };
+}
+
+/** Leaving a focus session early after a few minutes leaves a wilted flower. */
+function wiltIfEarly(s: TimerState) {
+  if (s.phase !== "focus") return;
+  const ms = s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0);
+  if (ms >= 3 * 60_000) plantFlower({ kind: s.species ?? pickSpecies(), minutes: Math.round(ms / 60_000), wilted: true, title: findTask(s.taskId)?.title });
 }
 
 function chime() {
@@ -128,15 +138,17 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
     (s: TimerState): TimerState => {
       const settings = readSettings();
       if (s.phase === "focus") {
-        record(s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0), s.taskId, true);
+        const fms = s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0);
+        record(fms, s.taskId, true);
+        plantFlower({ kind: s.species ?? pickSpecies(), minutes: Math.max(1, Math.round(fms / 60_000)), title: findTask(s.taskId)?.title });
         const cycle = s.cycle + 1;
         const next: Phase = cycle % settings.longEvery === 0 ? "long" : "short";
         chime();
         notify("Focus session done", next === "long" ? "Take a long break." : "Take a short break.");
         const total = durMs(next);
         return settings.autoBreak
-          ? { ...s, phase: next, status: "running", endsAt: Date.now() + total, remainingMs: total, startedAt: undefined, focusedMs: 0, cycle }
-          : { ...s, phase: next, status: "idle", endsAt: undefined, remainingMs: total, startedAt: undefined, focusedMs: 0, cycle };
+          ? { ...s, phase: next, status: "running", endsAt: Date.now() + total, remainingMs: total, startedAt: undefined, focusedMs: 0, cycle, species: undefined }
+          : { ...s, phase: next, status: "idle", endsAt: undefined, remainingMs: total, startedAt: undefined, focusedMs: 0, cycle, species: undefined };
       }
       chime();
       notify("Break over", "Ready for the next focus session?");
@@ -163,7 +175,7 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
       const s = stRef.current;
       if (s.status === "running") return;
       const rem = s.status === "idle" ? durMs(s.phase) : s.remainingMs;
-      apply({ ...s, status: "running", endsAt: Date.now() + rem, remainingMs: rem, startedAt: s.phase === "focus" ? Date.now() : undefined });
+      apply({ ...s, status: "running", endsAt: Date.now() + rem, remainingMs: rem, startedAt: s.phase === "focus" ? Date.now() : undefined, species: s.phase === "focus" ? s.species ?? pickSpecies() : s.species });
       setNow(Date.now());
     },
     pause: () => {
@@ -174,22 +186,24 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
     reset: () => {
       const s = stRef.current;
       if (s.phase === "focus") record(s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0), s.taskId, false);
-      apply({ ...s, status: "idle", endsAt: undefined, remainingMs: durMs(s.phase), startedAt: undefined, focusedMs: 0 });
+      wiltIfEarly(s);
+      apply({ ...s, status: "idle", endsAt: undefined, remainingMs: durMs(s.phase), startedAt: undefined, focusedMs: 0, species: undefined });
     },
     skip: () => {
       const s = stRef.current;
       if (s.phase === "focus") {
         record(s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0), s.taskId, false);
+        wiltIfEarly(s);
         const next: Phase = (s.cycle + 1) % readSettings().longEvery === 0 ? "long" : "short";
-        apply({ ...s, phase: next, status: "idle", endsAt: undefined, remainingMs: durMs(next), startedAt: undefined, focusedMs: 0 });
+        apply({ ...s, phase: next, status: "idle", endsAt: undefined, remainingMs: durMs(next), startedAt: undefined, focusedMs: 0, species: undefined });
       } else {
         apply({ ...s, phase: "focus", status: "idle", endsAt: undefined, remainingMs: durMs("focus"), startedAt: undefined, focusedMs: 0 });
       }
     },
     setPhase: (p) => {
       const s = stRef.current;
-      if (s.phase === "focus" && s.status !== "idle") record(s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0), s.taskId, false);
-      apply({ ...s, phase: p, status: "idle", endsAt: undefined, remainingMs: durMs(p), startedAt: undefined, focusedMs: 0 });
+      if (s.phase === "focus" && s.status !== "idle") { record(s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0), s.taskId, false); wiltIfEarly(s); }
+      apply({ ...s, phase: p, status: "idle", endsAt: undefined, remainingMs: durMs(p), startedAt: undefined, focusedMs: 0, species: undefined });
     },
     setTask: (id) => {
       const s = stRef.current;

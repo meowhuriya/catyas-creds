@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ScorePill } from "@/components/notes/topic-checklist";
 import { FocusTask, useFocusSettings } from "@/lib/focus/store";
 import { Phase, fmt, useFocusTimer } from "@/lib/focus/timer";
+import { Flower } from "@/components/focus/flower";
 import { QEntry } from "@/lib/notes/questions";
 import { useNoteTopics } from "@/lib/notes/study";
 import { cn } from "@/lib/utils";
@@ -74,7 +75,8 @@ export function TimerCard({
             strokeDasharray={C} strokeDashoffset={C * (1 - pct)} style={{ transition: "stroke-dashoffset 0.5s linear" }} />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-display text-[64px] font-semibold leading-none tracking-tight text-app-ink tabular-nums">{fmt(t.leftMs)}</span>
+          {!isBreak && <Flower species={t.species ?? "orchid"} progress={t.status === "idle" ? 0 : pct} size={112} className="-mt-4 mb-1" />}
+          <span className={cn("font-display font-semibold leading-none tracking-tight text-app-ink tabular-nums", isBreak ? "text-[64px]" : "text-[44px]")}>{fmt(t.leftMs)}</span>
           <span className="mt-2 text-xs font-medium uppercase tracking-[0.16em] text-app-ink-muted">
             {t.status === "paused" ? "Paused" : isBreak ? (t.phase === "long" ? "Long break" : "Short break") : "Focus"}
           </span>
