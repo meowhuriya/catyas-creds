@@ -152,6 +152,84 @@ function parseTableBank(text: string): ParsedItem[] {
 }
 
 /**
+ * Lab / viva banks: "EXPERIMENT 3: TITLE" headings (often OCR-garbled, with wrapped titles) and
+ * questions that wrap over several lines. A question ends at its "?", or at the next number.
+ */
+function parseExperimentBank(text: string): ParsedItem[] {
+  const HEAD = /^\W*[A-Za-z]{0,2}\s*(?:EXPERIMENT|XPERIMENT|PERIMENT|PERIMTENT|EXPT\.?|EXP\.?)\s*[-–:.#]*\s*(?:NO\.?)?\s*([IVXLivxl]+|\d+)\b\s*[-–:.]*\s*(.*)$/i;
+  const NOISE = /^(a\s*manual of engineering chemistry|\d+\s*\|\s*pa\s*ge|viva\W*voce\b.*|\W*)$/i;
+  const isCaps = (t: string) => {
+    const letters = t.replace(/[^A-Za-z]/g, "");
+    return letters.length > 2 && letters.replace(/[^A-Z]/g, "").length / letters.length > 0.7 && !/\?/.test(t);
+  };
+  type Sec = { printed: number; title: string; items: string[] };
+  const secs: Sec[] = [];
+  let cur: Sec | null = null;
+  let buf = "";
+  let titleMode = false;
+  const push = (q: string) => {
+    if (!cur) return;
+    if (/^write the necessary/i.test(q) && cur.items.length) cur.items[cur.items.length - 1] += " " + q;
+    else if (q.length > 8 && q.split(/\s+/).length >= 2) cur.items.push(q);
+  };
+  const flush = () => {
+    const t = buf.replace(/\s+/g, " ").trim();
+    buf = "";
+    // two questions on one line ("What is conductance? What are its units?") are split
+    for (const part of t.split(/(?<=\?)\s+(?=[A-Z])/)) push(part);
+  };
+  /** Finish every question in the buffer that already ends with "?"; keep an unfinished tail. */
+  const drain = () => {
+    const t = buf.replace(/\s+/g, " ").trim();
+    const parts = t.split(/(?<=\?)\s+(?=[A-Z])/);
+    const tail = parts[parts.length - 1];
+    const done = /\?\s*$/.test(tail) || /^write the necessary/i.test(tail) ? parts : parts.slice(0, -1);
+    for (const part of done) push(part);
+    buf = done.length === parts.length ? "" : tail;
+  };
+  for (const raw of text.split(/\r?\n/)) {
+    const t = raw.trim();
+    if (!t || NOISE.test(t)) continue;
+    const h = t.match(HEAD);
+    if (h) {
+      flush();
+      const tok = h[1].toUpperCase().replace(/L/g, "I");
+      const printed = /^\d+$/.test(tok) ? Number(tok) : (ROMAN[tok] ?? NaN);
+      cur = { printed, title: h[2].trim(), items: [] };
+      secs.push(cur);
+      titleMode = true;
+      continue;
+    }
+    if (!cur) continue;
+    const num = t.match(/^([\d$]{1,2})\s*[.)]?\s*(?=[A-Z]|$)(.*)$/);
+    const isNum = !!num && (num[2].length === 0 || /\s/.test(t.charAt(num[1].length)) || /^[\d$]{1,2}[.)]/.test(t));
+    if (titleMode) {
+      if (!isNum && isCaps(t)) {
+        cur.title += " " + t;
+        continue;
+      }
+      titleMode = false;
+    }
+    if (isNum && num) {
+      flush();
+      buf = num[2].trim();
+    } else buf = buf ? buf + " " + t : t;
+    drain();
+  }
+  flush();
+  const withItems = secs.filter((x) => x.items.length);
+  const increasing = withItems.every((x, i) => Number.isFinite(x.printed) && (i === 0 || x.printed > withItems[i - 1].printed));
+  const out: ParsedItem[] = [];
+  withItems.forEach((x, i) => {
+    const n = increasing ? x.printed : i + 1;
+    const title = titleCase(x.title.replace(/[#$]/g, "").replace(/\s+/g, " ").trim()).slice(0, 80);
+    const chapter = `Experiment ${n}${title ? ": " + title : ""}`;
+    for (const it of x.items) out.push({ text: it, chapter });
+  });
+  return withItems.length >= 2 && out.length >= 3 ? out : [];
+}
+
+/**
  * Plain outline: "Unit-1" headings, "2 marks questions" / "Essay type questions" section lines,
  * then one question per line (Word's automatic list numbers are not part of the text).
  */
@@ -197,6 +275,8 @@ export function parseQuestions(text: string): ParsedItem[] {
   if (marked.length >= 3) return marked;
   const table = parseTableBank(text);
   if (table.length >= 3) return table;
+  const lab = parseExperimentBank(text);
+  if (lab.length >= 3) return lab;
   const outline = parseOutline(text);
   if (outline.length >= 3) return outline;
   const lines = text.split(/\r?\n/);
