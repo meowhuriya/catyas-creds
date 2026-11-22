@@ -220,7 +220,11 @@ Write in simple English. Return JSON only:
     const msg = err instanceof Error ? err.message : "";
     const keyProblem = /api key|permission|unauth|invalid|403|401/i.test(msg);
     return NextResponse.json(
-      { error: keyProblem ? `Google rejected the Gemini key: ${msg.slice(0, 160)}` : "Gemini couldn't do that right now. Try again in a moment." },
+      {
+        error: keyProblem
+          ? `Google rejected the Gemini key: ${msg.slice(0, 200)}`
+          : `Gemini couldn't do that: ${msg.slice(0, 200) || "unknown error"}. Open /api/ai/status?check=1 to test the key.`,
+      },
       { status: 502 }
     );
   }

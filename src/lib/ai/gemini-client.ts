@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const GEMINI_MODEL = "gemini-2.5-flash";
-export const GEMINI_FALLBACK_MODEL = "gemini-3.8-flash";
+export const GEMINI_FALLBACK_MODEL = "gemini-2.0-flash";
 
 /**
  * Resolves the Gemini API key. Order: per-request `x-gemini-key` header, then the
@@ -51,6 +51,7 @@ export async function callGeminiFlashWithThinking({
   // Try gemini-2.5-flash with high thinking budget, then gemini-3.8-flash if 404
   const modelsToTry = [GEMINI_MODEL, GEMINI_FALLBACK_MODEL];
   let lastError: Error | null = null;
+  let realError: Error | null = null; // first non-"model not found" failure: the one worth showing
 
   for (const model of modelsToTry) {
     try {
@@ -145,6 +146,7 @@ export async function callGeminiFlashWithThinking({
       if (err?.message?.includes("not found") || err?.message?.includes("404")) {
         continue;
       }
+      if (!realError) realError = err;
     }
   }
 
@@ -175,5 +177,5 @@ export async function callGeminiFlashWithThinking({
     } catch {}
   }
 
-  throw lastError || new Error("Gemini generation failed across all models");
+  throw realError || lastError || new Error("Gemini generation failed across all models");
 }
