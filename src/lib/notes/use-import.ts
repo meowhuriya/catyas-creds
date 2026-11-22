@@ -44,7 +44,7 @@ export function useImportQuestions(subjectTitle?: string) {
     return data.items;
   };
 
-  const run = async (note: VaultNote, kind: "topics" | "questions", opts: { ai?: boolean } = {}) => {
+  const run = async (note: VaultNote, kind: "topics" | "questions", opts: { ai?: boolean; replace?: boolean } = {}) => {
     setBusy({ noteId: note.id, kind });
     setMsg(null);
     setProgress("Reading your files");
@@ -107,8 +107,9 @@ export function useImportQuestions(subjectTitle?: string) {
         );
       }
 
-      const have = new Set((nt.topics[note.id] ?? []).map((i) => i.text.toLowerCase()));
+      const have = new Set((opts.replace ? [] : nt.topics[note.id] ?? []).map((i) => i.text.toLowerCase()));
       const fresh = items.filter((t) => !have.has(t.text.trim().toLowerCase()));
+      if (opts.replace) nt.clear(note.id);
       nt.add(note.id, items);
       setMsg({
         noteId: note.id,

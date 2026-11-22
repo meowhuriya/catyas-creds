@@ -126,8 +126,8 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                       <button onClick={() => setEditor({ note: n })} className="shrink-0 text-[11px] font-medium text-[var(--color-accent)]">Add the file</button>
                     )}
                     {count > 0 && hasImportSource(n) && (
-                      <button disabled={!!importer.busy} onClick={() => importer.run(n, "questions")} className="shrink-0 text-[11px] text-app-ink-muted hover:text-app-ink">
-                        {busy ? "Importing…" : "Re-import"}
+                      <button disabled={!!importer.busy} title="Replaces this list with a fresh read of the file (progress on these questions resets)" onClick={() => importer.run(n, "questions", { replace: true })} className="shrink-0 text-[11px] text-app-ink-muted hover:text-app-ink">
+                        {busy ? "Reading…" : "Re-read file"}
                       </button>
                     )}
                   </div>

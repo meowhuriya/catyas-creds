@@ -28,7 +28,7 @@ function parseMarkedBank(text: string): ParsedItem[] {
   const flush = () => {
     if (cur) {
       const t = (cur.text || cur.title).replace(/\s+/g, " ").trim();
-      if (t) out.push({ text: t, chapter: cur.chapter || undefined, marks: cur.marks });
+      if (t) out.push({ text: t, chapter: cur.chapter || undefined, marks: cur.marks || undefined });
     }
     cur = null;
   };
@@ -57,6 +57,12 @@ function parseMarkedBank(text: string): ParsedItem[] {
     if (h) {
       flush();
       cur = { text: "", title: (h[3] || "").trim(), marks: Number(h[2]), chapter, open: true };
+      continue;
+    }
+    const h2 = line.match(/^(SAQ|LAQ|Short Answer|Long Answer)\s*(?:Question)?\s*(\d{1,3})\s*[·•.\-:|]?\s*(.*)$/i);
+    if (h2 && chapter && !(cur && cur.open && cur.text)) {
+      flush();
+      cur = { text: "", title: (h2[3] || "").trim(), marks: 0, chapter, open: true };
       continue;
     }
     if (cur && cur.open) cur.text += (cur.text ? " " : "") + line;
