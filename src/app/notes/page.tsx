@@ -16,7 +16,7 @@ import { VAULT_SECTIONS, VaultNote } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
 import { daysLeft, useExams } from "@/lib/notes/study";
 import { Butterfly, Diamond } from "@/components/brand/butterfly";
-import { SubjectArt } from "@/components/brand/subject-art";
+import { courseBannerSvg } from "@/components/brand/course-banner-art";
 
 const VIEW_KEY = "valeria_vault_view";
 
@@ -75,10 +75,17 @@ export default function NotesVaultPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-app-ink">Courses</h1>
-          <p className="text-sm text-app-ink-muted">Open a course to see its questions, class notes, assignments and files.</p>
+      <header className="pro-hero relative isolate flex flex-col gap-6 overflow-hidden rounded-3xl px-7 py-9 sm:flex-row sm:items-end sm:justify-between md:px-10">
+        <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,var(--orb-a),transparent)] blur-2xl" />
+        <div className="space-y-1">
+          <p className="text-[13px] font-medium text-[var(--color-ink-muted)]">Courses</p>
+          <h1 className="relative mt-2 flex items-center gap-3 font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-[var(--color-ink)] md:text-[40px]">
+            Your <span className="pro-name-gradient">courses</span>
+            <Butterfly size={40} className="hidden sm:block" />
+          </h1>
+          <p className="relative mt-2 max-w-xl text-[15px] leading-relaxed text-[var(--color-ink-muted)]">
+            Open a course to find its questions, class notes, assignments and files in one place.
+          </p>
         </div>
         <div className="relative flex items-center gap-2">
           <div className="relative">
@@ -211,7 +218,12 @@ function SubjectCard({
       href={`/notes/${encodeURIComponent(subject.id)}`}
       className="group vc-tile relative flex flex-col overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-app-accent"
     >
-      <SubjectArt code={subject.code} title={subject.title} hue={color} height={96} label={subject.slot ?? `${subject.kind === "lab" ? "Lab" : subject.kind === "project" ? "Project" : subject.kind === "skill" ? "Skill course" : "Theory"}`} />
+      <div className="relative h-24 w-full">
+        <div aria-hidden className="absolute inset-0" dangerouslySetInnerHTML={{ __html: courseBannerSvg({ code: subject.code, title: subject.title, hue: color, uid: `c${subject.id}` }) }} />
+        <span className="absolute left-4 top-3 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
+          {subject.code} · {subject.slot ?? (subject.kind === "lab" ? "Lab" : subject.kind === "project" ? "Project" : subject.kind === "skill" ? "Skill course" : "Theory")}
+        </span>
+      </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="min-w-0">
           <h3 className="font-display text-xl leading-snug text-app-ink line-clamp-2">{subject.title}</h3>

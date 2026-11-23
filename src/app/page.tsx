@@ -3,12 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, ClipboardList, NotebookPen, Plus, Sprout, Target, Timer } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useDataStore } from "@/lib/repository";
 import { Bar, ExamCard } from "@/components/notes/exam-panel";
 import { Bloom } from "@/components/focus/flower";
 import { useVault } from "@/lib/notes/use-vault";
 import { daysLeft, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
-import { getSubject, subjectsFor } from "@/lib/notes/curriculum";
+import { getSubject, subjectColor, subjectsFor } from "@/lib/notes/curriculum";
+import { courseBannerSvg } from "@/components/brand/course-banner-art";
 import { bucketOf, partsProgress, useAssignments } from "@/lib/assignments/store";
 import { useFocusDay, useFocusSettings } from "@/lib/focus/store";
 import { useGarden } from "@/lib/focus/garden";
@@ -22,6 +23,10 @@ function greeting() {
 /** Home: what's coming up and where to go next. Nothing else. */
 export default function HomePage() {
   const { notes, ready } = useVault();
+  const { currentUser, firebaseUser } = useDataStore();
+  const firstName = (currentUser?.displayName || firebaseUser?.displayName || "Huriya").split(" ")[0];
+  const [hello, setHello] = React.useState("Welcome back");
+  React.useEffect(() => setHello(greeting()), []);
   const { exams } = useExams();
   const { topics } = useNoteTopics();
   const { assignments } = useAssignments();
@@ -56,13 +61,37 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-[13px] font-medium text-app-ink-muted">{new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
-          <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-app-ink">{greeting()}, Huriya</h1>
+      <section className="pro-hero relative isolate overflow-hidden rounded-3xl px-7 py-9 md:px-12 md:py-11">
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-28 -z-10 h-[460px] w-[460px] rounded-full bg-[radial-gradient(closest-side,var(--orb-a),transparent)] blur-2xl" />
+        <div aria-hidden className="pointer-events-none absolute -bottom-40 left-1/4 -z-10 h-[360px] w-[360px] rounded-full bg-[radial-gradient(closest-side,var(--orb-b),transparent)] blur-2xl" />
+        <div className="grid items-center gap-8 md:grid-cols-[1fr_auto]">
+          <div className="max-w-xl">
+            <p className="text-[13px] font-medium text-[var(--color-ink-muted)]">{new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
+            <h1 className="mt-3 font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.025em] text-[var(--color-ink)] md:text-[44px]">
+              {hello}, <span className="pro-name-gradient">{firstName}</span>
+            </h1>
+            <p className="mt-3 max-w-md text-[15px] leading-relaxed text-[var(--color-ink-muted)]">
+              {upcoming[0]
+                ? `${upcoming[0].name} is ${daysLeft(upcoming[0].date) === 0 ? "today" : daysLeft(upcoming[0].date) === null ? "coming up" : `in ${daysLeft(upcoming[0].date)} day${daysLeft(upcoming[0].date) === 1 ? "" : "s"}`}.`
+                : "No exams coming up."}{" "}
+              {due.length ? `${due.length} assignment${due.length === 1 ? "" : "s"} due soon.` : "Nothing due this week."}
+            </p>
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <Link href="/focus" className="pro-btn-solid inline-flex h-11 items-center gap-2 rounded-full px-5 text-[14px] font-semibold transition">
+                <Timer className="h-4 w-4" /> Start focusing
+              </Link>
+              <Link href={upcoming[0] ? `/prep/${encodeURIComponent(upcoming[0].id)}` : "/notes"} className="inline-flex h-11 items-center gap-2 rounded-full border border-[var(--hair)] px-5 text-[14px] font-medium text-[var(--color-ink)] transition hover:border-[var(--hair-strong)] hover:bg-[var(--wash)]">
+                {upcoming[0] ? `Open ${upcoming[0].name}` : "Open courses"} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+          <div className="relative mx-auto hidden h-[260px] w-[260px] items-center justify-center md:flex">
+            <div aria-hidden className="absolute inset-10 rounded-full blur-2xl" style={{ background: "radial-gradient(closest-side, rgb(var(--accent-rgb) / 0.3), transparent)" }} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/brand/butterfly-real-512.png" alt="" aria-hidden draggable={false} className="pro-butterfly relative mx-auto h-[230px] w-[230px] select-none drop-shadow-[0_16px_24px_rgba(20,17,31,0.22)]" />
+          </div>
         </div>
-        <Link href="/focus"><Button size="lg"><Timer className="h-4 w-4" /> Start focusing</Button></Link>
-      </header>
+      </section>
 
       {/* Today at a glance */}
       <section className="grid gap-3 sm:grid-cols-3">
@@ -135,7 +164,9 @@ export default function HomePage() {
           {courseIds.map((id) => {
             const c = courseCard(id);
             return (
-              <Link key={id} href={`/notes/${encodeURIComponent(id)}`} className="vc-tile group space-y-3 p-4 hover:border-app-accent">
+              <Link key={id} href={`/notes/${encodeURIComponent(id)}`} className="vc-tile group overflow-hidden hover:border-app-accent">
+                {getSubject(id) && <div aria-hidden className="h-16 w-full" dangerouslySetInnerHTML={{ __html: courseBannerSvg({ code: getSubject(id)!.code, title: getSubject(id)!.title, hue: subjectColor(getSubject(id)!), uid: `h${id}` }) }} />}
+                <div className="space-y-3 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <span className="min-w-0">
                     {c.code && <span className="block text-[11px] font-medium text-app-ink-muted">{c.code}</span>}
@@ -146,6 +177,7 @@ export default function HomePage() {
                 <div className="space-y-1">
                   <Bar pct={c.p.pct} />
                   <p className="text-xs text-app-ink-muted">{c.p.total ? `${c.p.done}/${c.p.total} questions mastered` : "No questions yet"} · {c.files} file{c.files === 1 ? "" : "s"}</p>
+                </div>
                 </div>
               </Link>
             );

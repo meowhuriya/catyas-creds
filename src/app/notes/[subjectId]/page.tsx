@@ -20,7 +20,7 @@ import { YEAR_LABELS, getSubject, subjectColor } from "@/lib/notes/curriculum";
 import { VAULT_SECTIONS, VaultNote, VaultSection } from "@/lib/notes/vault-types";
 import { cn } from "@/lib/utils";
 import { Butterfly } from "@/components/brand/butterfly";
-import { SubjectArt } from "@/components/brand/subject-art";
+import { courseBannerSvg } from "@/components/brand/course-banner-art";
 
 /** Everything except Q-banks (Questions tab) and class notes (their own tab). */
 const FILE_SECTIONS = VAULT_SECTIONS.filter((s) => s.key !== "qbank" && s.key !== "notes");
@@ -92,25 +92,22 @@ export default function SubjectNotesPage() {
         <ArrowLeft className="h-4 w-4" /> All courses
       </Link>
 
-      <header className="group vc-tile relative overflow-hidden">
-        <SubjectArt code={subject.code} title={subject.title} hue={color} height={120} label={subject.slot} />
-        <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-end sm:justify-between">
-          <div className="space-y-1">
-            <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color }}>
+      <header className="relative isolate overflow-hidden rounded-3xl shadow-[0_18px_40px_-24px_rgba(20,17,31,0.55)]">
+        <div aria-hidden className="absolute inset-0 -z-10" dangerouslySetInnerHTML={{ __html: courseBannerSvg({ code: subject.code, title: subject.title, hue: color, uid: "cb" }) }} />
+        <div className="flex min-h-[220px] flex-col justify-end gap-4 p-6 text-white sm:flex-row sm:items-end sm:justify-between md:p-8">
+          <div className="max-w-[640px] space-y-1.5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80">
               {subject.code} · {YEAR_LABELS[subject.year]} · Sem {subject.sem}
               {subject.slot ? ` · ${subject.slot}` : ""}
             </p>
-            <h1 className="font-display text-4xl font-normal leading-[1.05] text-app-ink md:text-5xl">{subject.title}</h1>
-            <p className="text-xs text-app-ink-muted">
-              {subject.credits} credit{subject.credits > 1 ? "s" : ""} · {mine.length} note{mine.length === 1 ? "" : "s"}
+            <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.02em] drop-shadow-sm md:text-[44px]">{subject.title}</h1>
+            <p className="text-sm text-white/80">
+              {subject.credits} credit{subject.credits > 1 ? "s" : ""} · {mine.length} file{mine.length === 1 ? "" : "s"}
+              {subjectAssignments.length ? ` · ${openAssignments} assignment${openAssignments === 1 ? "" : "s"} to do` : ""}
             </p>
           </div>
           {(view === "notes" || view === "files") && (
-            <Button
-              onClick={() => openNew(view === "notes" ? "notes" : undefined)}
-              size="lg"
-              className="shrink-0"
-            >
+            <Button onClick={() => openNew(view === "notes" ? "notes" : undefined)} size="lg" className="shrink-0 bg-white text-[#14161F] hover:bg-white/90">
               <Plus className="h-4 w-4" /> {view === "notes" ? "Add class notes" : `Add to ${active.short}`}
             </Button>
           )}

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import {
   CalendarDays,
   ChevronDown,
@@ -12,6 +13,7 @@ import {
   Plus,
   Timer,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -60,19 +62,97 @@ function dueLabel(a: Assignment): string {
   return `Due in ${d} days`;
 }
 
+type Store = ReturnType<typeof useAssignments>;
+
+/** Saves files onto an assignment (teacher's brief or my work). The brief is read for questions when the list is empty. */
+async function attachFiles(opts: {
+  vault: Vault;
+  store: Store;
+  a: { id: string; subjectId: string; title: string; partsCount: number; noteId?: string };
+  slot: "briefNoteId" | "workNoteId";
+  files: File[];
+  uid: string | null;
+}): Promise<{ count: number; questions: number; hint?: string }> {
+  const { vault, store, a, slot, files } = opts;
+  const refs = [];
+  for (const f of files) refs.push(await vault.addFile(f));
+  const existing = a.noteId ? vault.notes.find((n) => n.id === a.noteId) : undefined;
+  const saved = await vault.saveNote({
+    id: existing?.id,
+    courseId: a.subjectId,
+    section: (slot === "briefNoteId" ? "assignment" : "submission") as VaultSection,
+    title: existing?.title ?? `${a.title}${slot === "workNoteId" ? " (my work)" : " (brief)"}`,
+    body: existing?.body ?? "",
+    links: existing?.links ?? [],
+    mediaIds: existing?.mediaIds ?? [],
+    files: [...(existing?.files ?? []), ...refs],
+    pinned: existing?.pinned ?? false,
+  });
+  store.patch(a.id, { [slot]: saved.id });
+  if (slot === "briefNoteId" && a.partsCount === 0) {
+    const r = await extractQuestionTexts(saved, opts.uid);
+    if (r.items.length) store.addParts(a.id, r.items);
+    return { count: refs.length, questions: r.items.length, hint: r.hint };
+  }
+  return { count: refs.length, questions: 0 };
+}
+
+/** A file picker that lists what you chose. */
+function FilePick({ label, hint, files, setFiles, existing }: { label: string; hint: string; files: File[]; setFiles: (f: File[]) => void; existing?: number }) {
+  const [over, setOver] = React.useState(false);
+  return (
+    <div className="space-y-1.5">
+      <label
+        onDragOver={(e) => { e.preventDefault(); setOver(true); }}
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => { e.preventDefault(); setOver(false); setFiles([...files, ...Array.from(e.dataTransfer.files)]); }}
+        className={cn("flex cursor-pointer items-center gap-3 rounded-control border border-dashed px-3 py-3 transition-colors", over ? "border-app-accent bg-[var(--accent-soft)]" : "border-app-border hover:border-app-accent")}
+      >
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--color-accent)]"><Upload className="h-4 w-4" /></span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-medium text-app-ink">{label}</span>
+          <span className="block text-xs text-app-ink-muted">{existing ? `${existing} file${existing === 1 ? "" : "s"} already attached · ` : ""}{hint}</span>
+        </span>
+        <input type="file" multiple accept=".pdf,.ppt,.pptx,.doc,.docx,.txt,image/*" className="hidden" onChange={(e) => { setFiles([...files, ...Array.from(e.target.files ?? [])]); e.target.value = ""; }} />
+      </label>
+      {files.length > 0 && (
+        <ul className="space-y-1">
+          {files.map((f, i) => (
+            <li key={i} className="flex items-center gap-2 rounded-control bg-app-surface-muted px-2.5 py-1.5 text-xs text-app-ink">
+              <FileText className="h-3.5 w-3.5 shrink-0 text-app-ink-muted" />
+              <span className="min-w-0 flex-1 truncate">{f.name}</span>
+              <span className="shrink-0 text-app-ink-muted">{(f.size / 1024 / 1024).toFixed(1)} MB</span>
+              <button type="button" onClick={() => setFiles(files.filter((_, j) => j !== i))} aria-label={`Remove ${f.name}`}><X className="h-3.5 w-3.5 text-app-ink-muted hover:text-red-600" /></button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 /* ---------------- form ---------------- */
 function AssignmentForm({
   subjectId,
   vaultSubjects,
   assignment,
+  vault,
   onClose,
 }: {
   subjectId?: string;
   vaultSubjects: string[];
   assignment?: Assignment;
+  vault: Vault;
   onClose: () => void;
 }) {
-  const { save } = useAssignments();
+  const store = useAssignments();
+  const { save } = store;
+  const toast = useToast();
+  const { firebaseUser } = useDataStore();
+  const [briefFiles, setBriefFiles] = React.useState<File[]>([]);
+  const [workFiles, setWorkFiles] = React.useState<File[]>([]);
+  const [busy, setBusy] = React.useState("");
+  const countFiles = (id?: string) => (id ? vault.notes.find((n) => n.id === id)?.files.length ?? 0 : 0);
   const [subj, setSubj] = React.useState(assignment?.subjectId ?? subjectId ?? "");
   const [title, setTitle] = React.useState(assignment?.title ?? "");
   const [kind, setKind] = React.useState<AssignmentKind>(assignment?.kind ?? "written");
@@ -85,14 +165,15 @@ function AssignmentForm({
     return SUBJECTS.filter((s) => ids.has(s.id));
   }, [vaultSubjects]);
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={() => !busy && onClose()}>
       <form
         onClick={(e) => e.stopPropagation()}
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          if (!title.trim() || !subj) return;
-          save({
+          if (!title.trim() || !subj || busy) return;
+          const newParts = makeParts(parts.split(/\n+/));
+          const id = save({
             ...(assignment ?? {}),
             id: assignment?.id,
             subjectId: subj,
@@ -100,11 +181,29 @@ function AssignmentForm({
             kind,
             due,
             how: how.trim() || undefined,
-            parts: [...(assignment?.parts ?? []), ...makeParts(parts.split(/\n+/))],
+            parts: [...(assignment?.parts ?? []), ...newParts],
           });
+          const base = { id, subjectId: subj, title: title.trim(), partsCount: (assignment?.parts.length ?? 0) + newParts.length };
+          try {
+            if (briefFiles.length) {
+              setBusy("Reading the teacher's file…");
+              const r = await attachFiles({ vault, store, a: { ...base, noteId: assignment?.briefNoteId }, slot: "briefNoteId", files: briefFiles, uid: firebaseUser?.uid ?? null });
+              if (r.questions) toast.success("Questions added", `${r.questions} found in the teacher's file.`);
+              else if (base.partsCount === 0 && r.hint) toast.info("File saved", r.hint);
+            }
+            if (workFiles.length) {
+              setBusy("Uploading your work…");
+              await attachFiles({ vault, store, a: { ...base, noteId: assignment?.workNoteId }, slot: "workNoteId", files: workFiles, uid: firebaseUser?.uid ?? null });
+              store.setStatus(id, "submitted");
+              toast.success("Submission saved", "Marked as submitted. Change it on the card if not yet handed in.");
+            }
+          } catch (err) {
+            toast.error("Upload failed", err instanceof Error ? err.message : "Try again");
+          }
+          setBusy("");
           onClose();
         }}
-        className="flex max-h-[90vh] w-full max-w-md flex-col gap-3 overflow-y-auto rounded-2xl border border-app-border bg-app-surface p-5 shadow-2xl"
+        className="flex max-h-[90vh] w-full max-w-lg flex-col gap-3 overflow-y-auto rounded-2xl border border-app-border bg-app-surface p-5 shadow-2xl"
       >
         <div className="flex items-center justify-between">
           <h3 className="font-display text-xl text-app-ink">{assignment ? "Edit assignment" : "New assignment"}</h3>
@@ -135,9 +234,15 @@ function AssignmentForm({
           className="w-full resize-y rounded-control border border-app-border bg-app-surface px-3 py-2 text-sm outline-none focus:border-app-accent" />
         <input value={how} onChange={(e) => setHow(e.target.value)} placeholder="How to hand it in (e.g. mail to ma'am, hand-written on Monday)"
           className="w-full rounded-control border border-app-border bg-app-surface px-3 py-2 text-sm outline-none focus:border-app-accent" />
-        <Button type="submit" disabled={!title.trim() || !subj}>{assignment ? "Save" : "Add assignment"}</Button>
+        <div className="space-y-2 rounded-control border border-app-border p-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-app-ink-muted">Files</p>
+          <FilePick label="Teacher's file" hint="PDF, PPT, Word or photo. Questions are read from it." files={briefFiles} setFiles={setBriefFiles} existing={countFiles(assignment?.briefNoteId)} />
+          <FilePick label="My submission" hint="Your finished PDF / PPT / photos. Adding it marks this submitted." files={workFiles} setFiles={setWorkFiles} existing={countFiles(assignment?.workNoteId)} />
+        </div>
+        <Button type="submit" disabled={!title.trim() || !subj || !!busy}>{busy || (assignment ? "Save" : "Add assignment")}</Button>
       </form>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -178,28 +283,10 @@ function AssignmentCard({
     if (!files?.length) return;
     setUpBusy(slot);
     try {
-      const refs = [];
-      for (const f of Array.from(files)) refs.push(await vault.addFile(f));
-      const existing = a[slot] ? vault.notes.find((n) => n.id === a[slot]) : undefined;
-      const saved = await vault.saveNote({
-        id: existing?.id,
-        courseId: a.subjectId,
-        section: (slot === "briefNoteId" ? "assignment" : "submission") as VaultSection,
-        title: existing?.title ?? `${a.title}${slot === "workNoteId" ? " (my work)" : " (brief)"}`,
-        body: existing?.body ?? "",
-        links: existing?.links ?? [],
-        mediaIds: existing?.mediaIds ?? [],
-        files: [...(existing?.files ?? []), ...refs],
-        pinned: existing?.pinned ?? false,
-      });
-      store.patch(a.id, { [slot]: saved.id });
-      if (slot === "briefNoteId" && a.parts.length === 0) {
-        const r = await extractQuestionTexts(saved, firebaseUser?.uid ?? null);
-        if (r.items.length) {
-          store.addParts(a.id, r.items);
-          toast.success("Questions added", `${r.items.length} found in the file. Tick them off as you finish.`);
-        } else if (r.hint) toast.info("Saved", r.hint);
-      } else toast.success("Uploaded", `${refs.length} file${refs.length === 1 ? "" : "s"} added.`);
+      const r = await attachFiles({ vault, store, a: { id: a.id, subjectId: a.subjectId, title: a.title, partsCount: a.parts.length, noteId: a[slot] }, slot, files: Array.from(files), uid: firebaseUser?.uid ?? null });
+      if (r.questions) toast.success("Questions added", `${r.questions} found in the file. Tick them off as you finish.`);
+      else if (slot === "briefNoteId" && a.parts.length === 0 && r.hint) toast.info("Saved", r.hint);
+      else toast.success("Uploaded", `${r.count} file${r.count === 1 ? "" : "s"} added.`);
     } catch (e) {
       toast.error("Upload failed", e instanceof Error ? e.message : "Try again");
     } finally {
@@ -362,7 +449,8 @@ export function AssignmentList({ vault, subjectId }: { vault: Vault; subjectId?:
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm text-app-ink-muted">{mine.length === 0 ? "Nothing yet." : `${open} to do · ${mine.length - open} submitted`}</p>
+        {mine.length > 0 && <p className="text-sm text-app-ink-muted">{open} to do · {mine.length - open} submitted</p>}
+        {subjectId && <a href="/assignments" className="text-xs font-medium text-[var(--color-accent)] hover:underline">Same list as the Assignments page →</a>}
         {!subjectId && courses.length > 1 && (
           <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs">
             <option value="">All courses</option>
@@ -404,7 +492,7 @@ export function AssignmentList({ vault, subjectId }: { vault: Vault; subjectId?:
         );
       })}
 
-      {form && <AssignmentForm subjectId={subjectId} vaultSubjects={vaultSubjects} assignment={form.a} onClose={() => setForm(null)} />}
+      {form && <AssignmentForm subjectId={subjectId} vaultSubjects={vaultSubjects} assignment={form.a} vault={vault} onClose={() => setForm(null)} />}
 
       {attach && (
         <NoteEditorDialog
