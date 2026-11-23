@@ -92,10 +92,10 @@ export function SoundControlPopover() {
         <div className="flex items-center justify-between">
           <div>
             <div className="font-semibold text-xs text-[#14161F] dark:text-[#F6EBD3]">
-              Procedural UI Sounds
+              Click sounds
             </div>
             <div className="text-[10px] text-[#4B5160] dark:text-[#CFC8BB]">
-              Tactile clicks, marimba triads &amp; fanfare
+              Soft taps, glass toggles, bloom chime
             </div>
           </div>
           <button

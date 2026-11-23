@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useDataStore } from "@/lib/repository";
+import { SoundEngine } from "@/lib/sound-engine";
 import { getSubject } from "@/lib/notes/curriculum";
 import { pickSpecies, plantFlower } from "@/lib/focus/garden";
 import type { Species } from "@/lib/focus/flowers";
@@ -56,24 +57,11 @@ function wiltIfEarly(s: TimerState) {
   if (ms >= 3 * 60_000) plantFlower({ kind: s.species ?? pickSpecies(), minutes: Math.round(ms / 60_000), wilted: true, title: findTask(s.taskId)?.title });
 }
 
-function chime() {
-  try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new AC();
-    [659.25, 880, 1046.5].forEach((f, i) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = "sine";
-      o.frequency.value = f;
-      const t = ctx.currentTime + i * 0.18;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.22, t + 0.03);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.1);
-      o.connect(g).connect(ctx.destination);
-      o.start(t);
-      o.stop(t + 1.2);
-    });
-  } catch {}
+/** Bloom chord when a focus session ends, a calm nudge when a break ends (respects the sound settings). */
+function chime(kind: "bloom" | "nudge" = "bloom") {
+  const e = SoundEngine.getInstance();
+  if (kind === "bloom") e.playBloom();
+  else e.playNudge();
 }
 
 function notify(title: string, body: string) {
@@ -150,7 +138,7 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
           ? { ...s, phase: next, status: "running", endsAt: Date.now() + total, remainingMs: total, startedAt: undefined, focusedMs: 0, cycle, species: undefined }
           : { ...s, phase: next, status: "idle", endsAt: undefined, remainingMs: total, startedAt: undefined, focusedMs: 0, cycle, species: undefined };
       }
-      chime();
+      chime("nudge");
       notify("Break over", "Ready for the next focus session?");
       return { ...s, phase: "focus", status: "idle", endsAt: undefined, remainingMs: durMs("focus"), startedAt: undefined, focusedMs: 0, cycle: s.phase === "long" ? 0 : s.cycle };
     },
