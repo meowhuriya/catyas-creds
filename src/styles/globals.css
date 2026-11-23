@@ -2881,3 +2881,84 @@ html[data-theme="pearl"] { --orb-b: rgb(var(--accent-rgb) / 0.10); }
   --font-display: "Inter Tight", "Inter", system-ui, -apple-system, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
 }
+
+/* ==========================================================================
+   Modern controls (applies site-wide, every theme)
+   Soft filled pills instead of outlined boxes. Uses each theme's own
+   --color-ink and --accent, so light and dark both work.
+   ========================================================================== */
+:root {
+  --ctl-fill: color-mix(in oklab, var(--color-ink) 5.5%, transparent);
+  --ctl-fill-hover: color-mix(in oklab, var(--color-ink) 9%, transparent);
+  --ctl-fill-strong: color-mix(in oklab, var(--color-ink) 12%, transparent);
+  --ctl-ring: color-mix(in oklab, var(--color-accent, #7C5CE6) 35%, transparent);
+  --ctl-accent-soft: color-mix(in oklab, var(--color-accent, #7C5CE6) 14%, transparent);
+}
+
+/* Text fields, dropdowns, text areas: filled, no outline box, soft ring on focus */
+body :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), select, textarea) {
+  border-color: transparent;
+  background-color: var(--ctl-fill);
+  border-radius: 14px;
+  box-shadow: none;
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+body :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), select, textarea):hover {
+  background-color: var(--ctl-fill-hover);
+}
+body :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), select, textarea):focus,
+body :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]), select, textarea):focus-visible {
+  outline: none;
+  border-color: transparent;
+  background-color: var(--color-surface, transparent);
+  box-shadow: 0 0 0 3px var(--ctl-ring), 0 1px 2px rgba(0, 0, 0, .06);
+}
+body textarea { border-radius: 16px; }
+
+/* Outlined chips and small buttons become soft filled pills */
+body :is(button, a, label).border:not(.border-dashed):not(.vc-tile):not([class*="bg-app-accent"]):not([class*="bg-white"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-[var(--accent-soft)]"]) {
+  border-color: transparent;
+  background-color: var(--ctl-fill);
+  transition: background-color .15s ease, color .15s ease, transform .1s ease;
+}
+body :is(button, a, label).border:not(.border-dashed):not(.vc-tile):not([class*="bg-app-accent"]):not([class*="bg-white"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-[var(--accent-soft)]"]):hover {
+  background-color: var(--ctl-fill-strong);
+}
+body :is(button, a).border:not(.vc-tile):active { transform: scale(.98); }
+
+/* Selected chips / segments: solid accent with a soft glow, no hard edge */
+body :is(button, a).border[class*="bg-app-accent"],
+body :is(button, a)[class*="bg-app-accent"][class*="rounded"] {
+  border-color: transparent;
+  box-shadow: 0 6px 18px -8px var(--color-accent, #7C5CE6);
+}
+body :is(button, a).border[class*="bg-[var(--accent-soft)]"] { border-color: transparent; }
+
+/* Dashed "add" chips keep their hint of an edge, but softer */
+body :is(button, a, label).border-dashed:not(.vc-tile) {
+  border-color: color-mix(in oklab, var(--color-ink) 16%, transparent);
+}
+
+/* Segmented groups (tabs, phase pickers): one soft track, no box */
+body [role="tablist"],
+body .rounded-full.border.p-1,
+body .rounded-control.border.p-1 {
+  border-color: transparent;
+  background-color: var(--ctl-fill);
+}
+body :is([role="tablist"], .rounded-full.border.p-1, .rounded-control.border.p-1) > button:not([class*="bg-app-accent"]) {
+  background-color: transparent;
+}
+body :is([role="tablist"], .rounded-full.border.p-1, .rounded-control.border.p-1) > button[class*="bg-app-accent"] {
+  box-shadow: 0 6px 16px -8px var(--color-accent, #7C5CE6);
+}
+
+/* Small info boxes (rounded-control with a border, not buttons): soft panel instead of an outline */
+body div.rounded-control.border:not(.border-dashed):not([class*="border-red"]):not([class*="border-amber"]),
+body div.rounded-xl.border.border-app-border:not(.border-dashed) {
+  border-color: transparent;
+  background-color: var(--ctl-fill);
+}
+
+/* Option grid buttons (segmented choices with rounded-control) look like pills */
+body button.rounded-control.border { border-radius: 999px; }
