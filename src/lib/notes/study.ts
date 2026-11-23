@@ -181,6 +181,12 @@ export function useNoteTopics() {
     toggle: (noteId: string, id: string) => update(noteId, (l) => l.map((i) => (i.id === id ? { ...i, done: !i.done } : i))),
     remove: (noteId: string, id: string) => update(noteId, (l) => l.filter((i) => i.id !== id)),
     removeMany: (noteId: string, ids: string[]) => update(noteId, (l) => l.filter((i) => !ids.includes(i.id))),
+    /** Give a chapter / unit a new name everywhere in this note. */
+    renameChapter: (noteId: string, from: string, to: string) =>
+      update(noteId, (l) => l.map((i) => ((i.chapter || "") === from ? { ...i, chapter: to.trim() || undefined } : i))),
+    /** Fix the wording of one question. */
+    editText: (noteId: string, id: string, text: string) =>
+      update(noteId, (l) => l.map((i) => (i.id === id && text.trim() ? { ...i, text: text.trim() } : i))),
   };
 }
 

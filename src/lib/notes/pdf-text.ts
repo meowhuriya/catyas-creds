@@ -48,13 +48,53 @@ export function itemsToText(items: TextItem[]): string {
     if (last && Math.abs(p.y - last.y) <= Math.max(2.5, p.h * 0.4)) last.parts.push(p);
     else lines.push({ y: p.y, parts: [p] });
   }
+  // Superscripts (e.g. the "sin x" in e^(sin x)) are a smaller row sitting just above their line.
+  // Fold them into that line as ^(...) instead of letting them become a line of their own.
+  type P = (typeof pieces)[number] & { sup?: boolean };
+  const hOf = (ps: P[]) => Math.max(...ps.map((p) => p.h));
+  for (let i = 1; i < lines.length; i++) {
+    const a = lines[i - 1] as { y: number; parts: P[] };
+    const b = lines[i] as { y: number; parts: P[] };
+    if (!a.parts.length || !b.parts.length) continue;
+    const ha = hOf(a.parts);
+    const gap = a.y - b.y;
+    const touches = (p: P) => a.parts.some((q) => !(q as P).sup && (Math.abs(p.x - (q.x + q.w)) < Math.max(3, q.h * 0.5) || ((q.s.trim().length === 1 || /^[∫∑Σ∏∮]/.test(q.s.trim())) && p.x >= q.x - 2 && p.x <= q.x + q.w + 3)));
+    if (hOf(b.parts) <= ha * 0.8 && gap > 0 && gap < ha * 0.7 && (b.parts.length <= 4 || b.parts.every((p) => /^[\d+\-−]{1,3}$/.test(p.s.trim()))) && b.parts.every((p) => { const v = p.s.trim(); return v.length <= 12 && !/^[A-Z][A-Z:.]{1,}$/.test(v) && !/^[A-Z][a-z]{3,}/.test(v); }) && b.parts.every(touches)) {
+      for (const p of b.parts) (p as P & { sub?: boolean }).sub = true;
+      a.parts.push(...b.parts);
+      b.parts = [];
+    }
+  }
+  for (let i = 0; i < lines.length - 1; i++) {
+    const a = lines[i] as { y: number; parts: P[] };
+    const b = lines[i + 1] as { y: number; parts: P[] };
+    const hb = hOf(b.parts);
+    const gap = a.y - b.y;
+    // each raised piece must sit right after a piece of the line below (like the "sin x" after "e")
+    const touches = (p: P) => b.parts.some((q) => !(q as P).sup && (Math.abs(p.x - (q.x + q.w)) < Math.max(3, q.h * 0.5) || ((q.s.trim().length === 1 || /^[∫∑Σ∏∮]/.test(q.s.trim())) && p.x >= q.x - 2 && p.x <= q.x + q.w + 3)));
+    const mathy = (p: P) => { const v = p.s.trim(); return v.length <= 12 && !/^\d+[.)]$/.test(v) && !/^[A-Z][A-Z:.]{1,}$/.test(v) && !/^[A-Z][a-z]{3,}/.test(v); };
+    const small = a.parts.every(mathy);
+    if (hOf(a.parts) <= hb * 0.8 && gap > 0 && gap < hb * 0.95 && (a.parts.length <= 4 || a.parts.every((p) => /^[\d+\-−]{1,3}$/.test(p.s.trim()))) && small && a.parts.every(touches)) {
+      for (const p of a.parts) (p as P).sup = true;
+      b.parts.push(...a.parts);
+      a.parts = [];
+    }
+  }
   const out: string[] = [];
   let prevY: number | null = null;
   for (const ln of lines) {
+    if (!ln.parts.length) continue;
     ln.parts.sort((a, b) => a.x - b.x);
     let t = "";
     let endX = 0;
-    ln.parts.forEach((p, i) => {
+    (ln.parts as P[]).forEach((p, i) => {
+      if (p.sup || (p as P & { sub?: boolean }).sub) {
+        const v = p.s.trim();
+        const mark = p.sup ? "^" : "_";
+        t += v.length > 1 ? `${mark}(${v})` : `${mark}${v}`;
+        endX = p.x + p.w;
+        return;
+      }
       if (i > 0 && p.x - endX > 1.2 && !t.endsWith(" ") && !p.s.startsWith(" ")) t += " ";
       t += p.s;
       endX = p.x + p.w;

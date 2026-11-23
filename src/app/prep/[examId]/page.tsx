@@ -292,6 +292,8 @@ export default function ExamPrepPage() {
               filter={filter}
               setFilter={setFilter}
               onToggle={(e) => nt.toggle(e.noteId, e.itemId)}
+              onRename={() => { const to = window.prompt("Chapter name", stop.label); if (to && to.trim() && to.trim() !== stop.label) { nt.renameChapter(stop.note.id, stop.chapter, to); setAt(`${stop.note.id}|${to.trim()}`); } }}
+              onEdit={(e) => { const t = window.prompt("Edit question", e.item.text); if (t && t.trim()) nt.editText(e.noteId, e.itemId, t); }}
               onTest={(es) => testOn(es)}
               onFocus={(es) => addToFocus(`${exam.name} · ${stop.label}`, es)}
               onOpen={() => setReading(stop.note.id)}
@@ -370,6 +372,8 @@ function ChapterView({
   filter,
   setFilter,
   onToggle,
+  onEdit,
+  onRename,
   onTest,
   onFocus,
   onOpen,
@@ -379,6 +383,8 @@ function ChapterView({
   filter: Filter;
   setFilter: (f: Filter) => void;
   onToggle: (e: QEntry) => void;
+  onEdit: (e: QEntry) => void;
+  onRename: () => void;
   onTest: (es: QEntry[]) => void;
   onFocus: (es: QEntry[]) => void;
   onOpen: () => void;
@@ -396,6 +402,7 @@ function ChapterView({
     <section className="vc-tile overflow-hidden">
       <div className="space-y-4 p-5">
         <ChapterHead eyebrow={eyebrow} title={stop.label} onOpen={onOpen} />
+        <button onClick={onRename} className="-mt-2 inline-flex items-center gap-1 text-xs text-app-ink-muted hover:text-app-ink"><Pencil className="h-3 w-3" /> Rename chapter</button>
         <div className="flex items-center gap-3">
           <Bar pct={st.pct} className="h-2 flex-1" />
           <span className="text-sm text-app-ink-muted tabular-nums">{st.mastered}/{st.total} mastered</span>
@@ -416,7 +423,7 @@ function ChapterView({
         {shown.map((e) => (
           <li key={e.key} className="flex items-start gap-3 px-5 py-3">
             <input type="checkbox" checked={e.item.done} onChange={() => onToggle(e)} title="Mastered" className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
-            <span className={cn("flex-1 text-[15px] leading-snug", e.item.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{e.item.text}</span>
+            <span title="Double-click to fix the wording" onDoubleClick={() => onEdit(e)} className={cn("flex-1 text-[15px] leading-snug", e.item.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{e.item.text}</span>
             <span className="flex shrink-0 items-center gap-1.5">
               {e.item.weak && !e.item.done && <span className="rounded-full bg-amber-500/15 px-1.5 text-[10px] font-semibold text-amber-700">weak</span>}
               {!!e.item.marks && <span className="rounded-full border border-app-border px-1.5 text-[10px] text-app-ink-muted">{e.item.marks}M</span>}

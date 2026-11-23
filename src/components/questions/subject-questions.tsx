@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ChevronDown, FileQuestion, Loader2, Plus, Target, Timer, Sparkles, Trash2 } from "lucide-react";
+import { ChevronDown, FileQuestion, Loader2, Pencil, Plus, Target, Timer, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
@@ -180,13 +180,14 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                         <Target className="h-4 w-4" /> Test me on this chapter
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => toFocus(g.entries, name, g.chapter || undefined)}><Timer className="h-4 w-4" /> Focus on it today</Button>
+                      <Button size="sm" variant="ghost" onClick={() => { const to = window.prompt("Chapter name", name); if (to && to.trim() && to.trim() !== name) { const notesIn = new Set(g.entries.map((e) => e.noteId)); notesIn.forEach((nid) => nt.renameChapter(nid, g.chapter, to)); } }}><Pencil className="h-4 w-4" /> Rename</Button>
                       <Button size="sm" variant="ghost" onClick={() => { if (window.confirm(`Delete all ${g.entries.length} questions in "${name}"? This can't be undone.`)) { const by = new Map<string, string[]>(); g.entries.forEach((e) => by.set(e.noteId, [...(by.get(e.noteId) ?? []), e.itemId])); by.forEach((ids, nid) => nt.removeMany(nid, ids)); } }}><Trash2 className="h-4 w-4" /> Delete chapter</Button>
                     </div>
                     <ul className="space-y-0.5">
                       {g.entries.map((e) => (
                         <li key={e.key} className="flex items-start gap-2 rounded px-1 py-1 hover:bg-app-surface-muted">
                           <input type="checkbox" checked={e.item.done} onChange={() => nt.toggle(e.noteId, e.itemId)} title="Mark as mastered" className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
-                          <span className={cn("flex-1 text-sm leading-snug", e.item.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{e.item.text}</span>
+                          <span title="Double-click to fix the wording" onDoubleClick={() => { const t = window.prompt("Edit question", e.item.text); if (t && t.trim()) nt.editText(e.noteId, e.itemId, t); }} className={cn("flex-1 text-sm leading-snug", e.item.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{e.item.text}</span>
                           {!!e.item.marks && <span className="shrink-0 rounded-full border border-app-border px-1.5 text-[10px] text-app-ink-muted">{e.item.marks}M</span>}
                           <ScorePill item={e.item} />
                           <button onClick={() => setDrill({ notes, only: [{ noteId: e.noteId, itemId: e.itemId }] })} className="shrink-0 rounded-full border border-app-border px-2 py-0.5 text-[11px] text-app-ink-muted hover:border-app-accent hover:text-app-ink">Answer</button>

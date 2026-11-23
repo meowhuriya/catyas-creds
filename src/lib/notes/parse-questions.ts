@@ -18,12 +18,21 @@ function marksIn(s: string): number | undefined {
  * "Q1 · 2M  Title" style banks (a header line, then the question, then the answer after a gap).
  * Reads only the question text and ignores the worked answers that follow.
  */
+/** A heading that stops on a joining word ("Eigenvalues, Cayley–Hamilton and") carries on to the next line. */
+const DANGLING = /(?:\b(?:and|of|its|the|in|on|for|to|with|by|from|using|via|&)|[,–—:-])\s*$/i;
+function joinTitle(title: string, next: string | undefined): string | null {
+  if (!next || !DANGLING.test(title)) return null;
+  const n = next.trim();
+  if (!n || n.length > 60 || /^(in this unit|unit|experiment|q\s*\d|saq|laq|\d+[.)])/i.test(n) || /[.?]$/.test(n)) return null;
+  return `${title} ${n}`;
+}
+
 function parseMarkedBank(text: string): ParsedItem[] {
   const HDR = /^Q\s*(\d{1,3})\s*[·•.\-:|]\s*(\d{1,2})\s*M(?:arks?)?\b\s*(.*)$/i;
   const out: ParsedItem[] = [];
   let chapter = "";
-  let cur: { text: string; title: string; marks: number; chapter: string; open: boolean } | null = null;
-  let unit: "none" | "num" | "title" = "none";
+  let cur: { text: string; title: string; marks: number; chapter: string; open: boolean; tail?: boolean } | null = null;
+  let unit: "none" | "num" | "title" | "more" = "none";
   let unitNum = "";
   const flush = () => {
     if (cur) {
@@ -35,7 +44,14 @@ function parseMarkedBank(text: string): ParsedItem[] {
   for (const raw of text.split(/\r?\n/)) {
     const line = raw.trim();
     if (!line) {
-      if (cur && cur.text) cur.open = false; // a gap after the question means the answer starts
+      if (cur && cur.text) {
+        // "LAQ 3" + "Hardness" + gap: that short line is the end of the heading, the question comes next
+        const t = cur.text.trim();
+        if (!cur.tail && t.length < 36 && t.split(/\s+/).length <= 4 && !/[.?:;]$/.test(t) && !/^(define|state|what|why|how|explain|write|list|give|name)\b/i.test(t)) {
+          cur.tail = true;
+          cur.text = "";
+        } else cur.open = false; // a gap after the question means the answer starts
+      }
       continue;
     }
     if (/^UNIT\b/i.test(line) && line.length < 20) {
@@ -50,8 +66,16 @@ function parseMarkedBank(text: string): ParsedItem[] {
     }
     if (unit === "title") {
       chapter = `Unit ${unitNum}: ${line.slice(0, 70)}`;
-      unit = "none";
+      unit = DANGLING.test(line) ? "more" : "none";
       continue;
+    }
+    if (unit === "more") {
+      unit = "none";
+      const j = joinTitle(chapter, line);
+      if (j) {
+        chapter = j.slice(0, 100);
+        continue;
+      }
     }
     const h = line.match(HDR);
     if (h) {
@@ -87,7 +111,7 @@ export function chapterOf(line: string): string | null {
 }
 
 const titleCase = (t: string) =>
-  t.toLowerCase().replace(/(^|[\s(-])([a-z]+)/g, (_, a, w) => (a && /^(and|its|of|the|to|in|on|for)$/.test(w) ? a + w : a + w[0].toUpperCase() + w.slice(1)));
+  t.toLowerCase().replace(/(^|[\s(-])([a-z]+)/g, (_, a, w) => (a && /^(and|its|of|the|to|in|on|for|a|an|with|by|using|vs)$/.test(w) ? a + w : a + w[0].toUpperCase() + w.slice(1)));
 
 /**
  * "UNIT – I: TITLE", then "Short Answer Questions" / "Long Answer Questions" tables with an
@@ -204,7 +228,7 @@ function parseExperimentBank(text: string): ParsedItem[] {
     const num = t.match(/^([\d$]{1,2})\s*[.)]?\s*(?=[A-Z]|$)(.*)$/);
     const isNum = !!num && (num[2].length === 0 || /\s/.test(t.charAt(num[1].length)) || /^[\d$]{1,2}[.)]/.test(t));
     if (titleMode) {
-      if (!isNum && isCaps(t)) {
+      if (!isNum && (isCaps(t) || /^[A-Z]{2,3}$/.test(t))) {
         cur.title += " " + t;
         continue;
       }
@@ -222,7 +246,7 @@ function parseExperimentBank(text: string): ParsedItem[] {
   const out: ParsedItem[] = [];
   withItems.forEach((x, i) => {
     const n = increasing ? x.printed : i + 1;
-    const title = titleCase(x.title.replace(/[#$]/g, "").replace(/\s+/g, " ").trim()).slice(0, 80);
+    const title = fixOcr(titleCase(x.title.replace(/[#$]/g, "").replace(/[.\s]+$/, "").replace(/\s+/g, " ").trim())).slice(0, 120);
     const chapter = `Experiment ${n}${title ? ": " + title : ""}`;
     for (const it of x.items) out.push({ text: it, chapter });
   });
@@ -270,7 +294,71 @@ function parseOutline(text: string): ParsedItem[] {
  * Pulls numbered questions out of plain text without any AI: instant and free.
  * Returns [] when the text doesn't look like a numbered list.
  */
+/** Joins "Unit 2: Eigenvalues and" + "Quadratic Forms" when a unit / experiment heading wraps. */
+function joinWrappedHeadings(text: string): string {
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i].trim();
+    if (!l || !chapterOf(l) || !DANGLING.test(l)) continue;
+    let k = i + 1;
+    while (k < lines.length && !lines[k].trim()) k++;
+    const j = joinTitle(l, lines[k]);
+    if (j) {
+      lines[i] = j;
+      lines.splice(i + 1, k - i);
+    }
+  }
+  return lines.join("\n");
+}
+
+/** Common OCR slips in scanned lab manuals: joined words and misread letters. */
+function fixOcr(t: string): string {
+  return t
+    .replace(/\b([A-Za-z]{5,})(of|with)\b/g, (m, a, b) => (/^(waterpro|bullet)/i.test(a) ? m : `${a} ${b}`))
+    .replace(/\bW[vV]ith\b/g, "with")
+    .replace(/\bH-1on\b/gi, "H-Ion")
+    .replace(/\bPh\b/g, "pH")
+    .replace(/\bMeteric\b/gi, "Metric")
+    .replace(/\bAstandard\b/gi, "a Standard")
+    .replace(/\bHydroxde\b/gi, "Hydroxide")
+    .replace(/\bIchromate\b/gi, "Dichromate")
+    .replace(/\bNylon\s*6[.,]\s*6\b/gi, "Nylon 6,6")
+    .replace(/\bisthe\b/gi, "is the")
+    .replace(/\b([Oo])fthe\b/g, "of the")
+    .replace(/\b(how|of|for|is|do|in|on|with|what)(the|a|you)\b/gi, "$1 $2")
+    .replace(/\bamixture\b/gi, "a mixture")
+    .replace(/\btwO\b/g, "two")
+    .replace(/\bHCI\s*Vs\b/g, "HCl vs")
+    .replace(/\bHCI\b/g, "HCl")
+    .replace(/(conductometric|potentiometric)(titration)/gi, "$1 $2")
+    .replace(/\s{2,}/g, " ");
+}
+
+const SUP: Record<string, string> = { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "+": "⁺", "-": "⁻", "−": "⁻", "=": "⁼", "(": "⁽", ")": "⁾", n: "ⁿ", i: "ⁱ", x: "ˣ", y: "ʸ" };
+const SUB: Record<string, string> = { "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉", "+": "₊", "-": "₋", "−": "₋", "=": "₌", "(": "₍", ")": "₎", a: "ₐ", e: "ₑ", o: "ₒ", x: "ₓ", n: "ₙ" };
+/** H_2O → H₂O, Ca^(2+) → Ca²⁺ when every character has a small form; otherwise keeps ^( ) / _( ). */
+function smallScripts(t: string): string {
+  const conv = (body: string, map: Record<string, string>) => ([...body].every((c) => map[c]) ? [...body].map((c) => map[c]).join("") : null);
+  return t
+    .replace(/\^\(([^()]{1,10})\)|\^([0-9+\-−nixy])/g, (m, a, b) => conv(a ?? b, SUP) ?? m)
+    .replace(/_\(([^()]{1,10})\)|_([0-9+\-−aeoxn])/g, (m, a, b) => conv(a ?? b, SUB) ?? m);
+}
+
+/** Tidies one question: e^(sin x) style powers, spacing around punctuation. */
+function tidy(t: string): string {
+  return smallScripts(fixOcr(t))
+    .replace(/\s+([,.;:?!)\]])/g, "$1")
+    .replace(/([(\[])\s+/g, "$1")
+    .replace(/\^\((\S)\)/g, "^$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 export function parseQuestions(text: string): ParsedItem[] {
+  return parseAll(joinWrappedHeadings(text)).map((q) => ({ ...q, text: tidy(q.text), chapter: q.chapter ? tidy(q.chapter) : q.chapter }));
+}
+
+function parseAll(text: string): ParsedItem[] {
   const marked = parseMarkedBank(text);
   if (marked.length >= 3) return marked;
   const table = parseTableBank(text);
