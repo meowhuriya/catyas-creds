@@ -115,17 +115,17 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
   // Generate breadcrumbs from pathname
   const breadcrumbItems = React.useMemo(() => {
     if (pathname === "/") {
-      return [{ label: "Dashboard" }];
+      return [{ label: "Home" }];
     }
     const segments = pathname.split("/").filter(Boolean);
-    const items: Array<{ label: string; href?: string }> = [{ label: "Dashboard", href: "/" }];
+    const items: Array<{ label: string; href?: string }> = [{ label: "Home", href: "/" }];
 
     let acc = "";
     segments.forEach((seg, i) => {
       acc += `/${seg}`;
       const isLast = i === segments.length - 1;
       const prev = segments[i - 1];
-      const named: Record<string, string> = { prep: "Exam Prep", notes: "Notes Vault" };
+      const named: Record<string, string> = { prep: "Exams", notes: "Courses", courses: "Lessons & videos", "college-works": "Assignments" };
       const formatted =
         named[seg] ??
         (prev === "notes" ? getSubject(decodeURIComponent(seg))?.title : undefined) ??

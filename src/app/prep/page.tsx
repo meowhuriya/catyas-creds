@@ -19,18 +19,12 @@ export default function ExamPrepHub() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      <header className="pro-hero relative isolate flex flex-col gap-5 overflow-hidden rounded-3xl px-7 py-8 sm:flex-row sm:items-end sm:justify-between md:px-10">
-        <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,var(--orb-a),transparent)] blur-2xl" />
-        <div className="space-y-2">
-          <p className="text-[13px] font-medium text-[var(--color-ink-muted)]">Exam Prep</p>
-          <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-[var(--color-ink)] md:text-[40px]">
-            Master your <span className="pro-name-gradient">Q-banks</span>
-          </h1>
-          <p className="max-w-xl text-[15px] leading-relaxed text-[var(--color-ink-muted)]">
-            Pick an exam, tag its Q-banks, and get tested on the real questions every day until you know them.
-          </p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-app-ink">Exams</h1>
+          <p className="text-sm text-app-ink-muted">Each exam has its own plan: chapters in order, a daily share, and Test me.</p>
         </div>
-        <Button size="lg" onClick={() => setForm(true)} disabled={!ready || notes.length === 0}>
+        <Button onClick={() => setForm(true)} disabled={!ready || notes.length === 0}>
           <Plus className="h-4 w-4" /> New exam
         </Button>
       </header>
@@ -38,7 +32,7 @@ export default function ExamPrepHub() {
       {upcoming.length === 0 && (
         <section className="grid gap-3 sm:grid-cols-3">
           <Step n={1} icon={Upload} title="Upload your Q-bank" done={qbanks > 0}>
-            In <Link href="/notes" className="font-semibold text-[var(--color-accent)]">Notes Vault</Link>, open the subject, go to <b>Question Banks</b> and add the file (PDF, Word, PPT, photos or a Drive link).
+            In <Link href="/notes" className="font-semibold text-[var(--color-accent)]">Courses</Link>, open the course, go to <b>Questions</b> and add the file (PDF, Word, PPT, photos or a Drive link).
           </Step>
           <Step n={2} icon={FileQuestion} title="Create the exam" done={exams.length > 0}>
             Press <b>New exam</b>, set the date and tick the Q-banks and notes it covers.

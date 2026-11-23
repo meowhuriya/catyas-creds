@@ -27,21 +27,20 @@ export function MobileTabBar() {
   const [moreOpen, setMoreOpen] = React.useState(false);
 
   const mainTabs = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard },
+    { label: "Home", href: "/", icon: LayoutDashboard },
+    { label: "Courses", href: "/notes", icon: NotebookPen },
+    { label: "Exams", href: "/prep", icon: Target },
+    { label: "Assignments", href: "/assignments", icon: ClipboardCheck },
     { label: "Focus", href: "/focus", icon: Timer },
-    { label: "Notes", href: "/notes", icon: NotebookPen },
-    { label: "Exam Prep", href: "/prep", icon: Target },
-    { label: "Courses", href: "/courses", icon: BookOpen },
   ];
 
   const moreItems = [
-    { label: "Assignments", href: "/assignments", icon: ClipboardCheck },
+    { label: "Grades, transcript & degree", href: "/grades", icon: GraduationCap },
+    { label: "Certificates", href: "/certificates", icon: Award },
+    { label: "Research & Lab", href: "/research", icon: FlaskConical },
+    { label: "Smart Recall", href: "/recall", icon: FileText },
     { label: "Planner", href: "/planner", icon: Calendar },
-    { label: "Research & Lab (NotebookLM)", href: "/research", icon: FlaskConical },
-    { label: "Certificates & Comps", href: "/certificates", icon: Award },
-    { label: "Grades & GPA", href: "/grades", icon: GraduationCap },
-    { label: "Official Transcript", href: "/transcript", icon: FileText },
-    { label: "Degree Progress", href: "/degree", icon: Award },
+    { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 
@@ -53,7 +52,7 @@ export function MobileTabBar() {
           <div className="fixed inset-x-0 bottom-16 rounded-t-[14px] border-t border-[#E4D9C0] dark:border-[#3D2D31] bg-[#FBF6EC] dark:bg-[#221A1C] p-4 shadow-dialog">
             <div className="flex items-center justify-between pb-3 border-b border-[#E4D9C0] dark:border-[#3D2D31] mb-3">
               <span className="font-serif text-sm font-semibold text-[#14161F] dark:text-[#F6EBD3]">
-                More Academic Navigation
+                More
               </span>
               <button
                 onClick={() => setMoreOpen(false)}

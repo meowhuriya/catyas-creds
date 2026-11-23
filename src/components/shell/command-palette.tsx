@@ -18,6 +18,7 @@ import {
   Search,
   FlaskConical,
   ClipboardCheck,
+  Target,
 } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { cn } from "@/lib/utils";
@@ -83,14 +84,21 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <LayoutDashboard className="h-4 w-4 text-app-ink-muted" />
-                <span>Dashboard</span>
+                <span>Home</span>
               </Command.Item>
               <Command.Item
-                onSelect={() => runCommand(() => router.push("/courses"))}
+                onSelect={() => runCommand(() => router.push("/notes"))}
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <BookOpen className="h-4 w-4 text-app-ink-muted" />
                 <span>Courses</span>
+              </Command.Item>
+              <Command.Item
+                onSelect={() => runCommand(() => router.push("/prep"))}
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
+              >
+                <Target className="h-4 w-4 text-app-ink-muted" />
+                <span>Exams</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/assignments"))}
@@ -104,35 +112,35 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <FlaskConical className="h-4 w-4 text-app-ink-muted" />
-                <span>Research & Lab (NotebookLM Studio)</span>
+                <span>Research & Lab</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/certificates"))}
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <Award className="h-4 w-4 text-app-ink-muted" />
-                <span>Activities & Certificate Feed</span>
+                <span>Certificates</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/planner"))}
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <Calendar className="h-4 w-4 text-app-ink-muted" />
-                <span>Academic Planner</span>
+                <span>Planner</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/grades"))}
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <GraduationCap className="h-4 w-4 text-app-ink-muted" />
-                <span>Grades & SGPA</span>
+                <span>Grades</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/transcript"))}
                 className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-control text-app-ink cursor-pointer hover:bg-app-surface-muted aria-selected:bg-app-surface-muted"
               >
                 <FileText className="h-4 w-4 text-app-ink-muted" />
-                <span>Official Transcript</span>
+                <span>Transcript</span>
               </Command.Item>
               <Command.Item
                 onSelect={() => runCommand(() => router.push("/degree"))}

@@ -39,47 +39,41 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: null,
     items: [
-      { label: "Dashboard", href: "/", icon: LayoutDashboard },
+      { label: "Home", href: "/", icon: LayoutDashboard },
+      { label: "Courses", href: "/notes", icon: NotebookPen },
+      { label: "Exams", href: "/prep", icon: Target },
+      { label: "Assignments", href: "/assignments", icon: ClipboardList },
       { label: "Focus", href: "/focus", icon: Timer },
     ],
   },
   {
-    title: "Study",
-    items: [
-      { label: "Notes Vault", href: "/notes", icon: NotebookPen },
-      { label: "Exam Prep", href: "/prep", icon: Target },
-      { label: "Assignments", href: "/assignments", icon: ClipboardList },
-      { label: "Courses", href: "/courses", icon: BookOpen },
-      { label: "Smart Recall", href: "/recall", icon: RotateCcw },
-      { label: "Planner", href: "/planner", icon: Calendar },
-    ],
-  },
-  {
-    title: "College",
+    title: "More",
     items: [
       { label: "Grades", href: "/grades", icon: GraduationCap },
-      { label: "Transcript", href: "/transcript", icon: FileText },
-      { label: "Degree Progress", href: "/degree", icon: Award },
-    ],
-  },
-  {
-    title: "Grow",
-    items: [
-      { label: "Research & Lab", href: "/research", icon: FlaskConical },
       { label: "Certificates", href: "/certificates", icon: Medal },
+      { label: "Research & Lab", href: "/research", icon: FlaskConical },
+      { label: "Smart Recall", href: "/recall", icon: RotateCcw },
+      { label: "Planner", href: "/planner", icon: Calendar },
       { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
+      { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     ],
   },
 ];
+
+/** Grades also covers the transcript and degree pages. */
+const ALSO_ACTIVE: Record<string, string[]> = { "/grades": ["/transcript", "/degree"], "/notes": ["/notes"], "/prep": ["/prep", "/notes/exam"] };
 
 const SETTINGS: NavItem = { label: "Settings", href: "/settings", icon: Settings };
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const inMore = NAV_GROUPS[1].items.some((i) => pathname.startsWith(i.href) || (ALSO_ACTIVE[i.href] ?? []).some((p) => pathname.startsWith(p)));
+  const [moreOpen, setMoreOpen] = React.useState(false);
+  const showMore = moreOpen || inMore;
 
   const renderItem = (item: NavItem) => {
     const Icon = item.icon;
-    const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+    const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href) || (ALSO_ACTIVE[item.href] ?? []).some((p) => pathname.startsWith(p));
     return (
       <Link
         key={item.href}
@@ -130,14 +124,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               (collapsed ? (
                 <div className="mx-3 mb-2 border-t border-app-border/70" />
               ) : (
-                <div className="flex items-center gap-2 px-3 pb-1.5">
+                <button type="button" onClick={() => setMoreOpen((o) => !o)} aria-expanded={showMore} className="flex w-full items-center gap-2 px-3 pb-1.5 text-left">
                   <span className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-muted)]/60">
                     {group.title}
                   </span>
                   <span className="h-px flex-1 bg-gradient-to-r from-[rgba(60,40,110,0.16)] to-transparent" />
-                </div>
+                  <ChevronRight className={cn("h-3.5 w-3.5 text-[var(--color-ink-muted)]/60 transition-transform", showMore && "rotate-90")} />
+                </button>
               ))}
-            {group.items.map(renderItem)}
+            {(!group.title || collapsed || showMore) && group.items.map(renderItem)}
           </div>
         ))}
       </nav>

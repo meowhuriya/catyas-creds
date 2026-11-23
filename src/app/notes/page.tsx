@@ -75,18 +75,10 @@ export default function NotesVaultPage() {
 
   return (
     <div className="space-y-6">
-      <header className="pro-hero relative isolate flex flex-col gap-6 overflow-hidden rounded-3xl px-7 py-9 sm:flex-row sm:items-end sm:justify-between md:px-10">
-        <div aria-hidden className="pointer-events-none absolute -right-20 -top-24 -z-10 h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,var(--orb-a),transparent)] blur-2xl" />
-        <div className="space-y-1">
-          <p className="text-[13px] font-medium text-[var(--color-ink-muted)]">Notes Vault</p>
-          <h1 className="relative mt-2 flex items-center gap-3 font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-[var(--color-ink)] md:text-[40px]">
-            Your <span className="pro-name-gradient">vault</span>
-            <Butterfly size={40} className="hidden sm:block" />
-          </h1>
-          <p className="relative mt-2 max-w-xl text-[15px] leading-relaxed text-[var(--color-ink-muted)]">
-            Pick your year, open a subject and keep exam-important points, viva questions, assignments, your submissions,
-            photos and links together. No more scrolling through WhatsApp.
-          </p>
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-app-ink">Courses</h1>
+          <p className="text-sm text-app-ink-muted">Open a course to see its questions, class notes, assignments and files.</p>
         </div>
         <div className="relative flex items-center gap-2">
           <div className="relative">
@@ -146,25 +138,6 @@ export default function NotesVaultPage() {
         </p>
       </div>
 
-      {!q && (
-        <Link href={upcoming[0] ? `/prep/${encodeURIComponent(upcoming[0].id)}` : "/prep"} className="vc-tile flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3.5 transition-colors hover:border-app-accent">
-          <Target className="h-4 w-4 text-app-accent" />
-          {upcoming[0] ? (
-            <>
-              <span className="text-sm text-app-ink">
-                <b>{upcoming[0].name}</b> · {getSubject(upcoming[0].subjectId)?.title}
-              </span>
-              <span className="text-xs text-app-ink-muted">
-                {daysLeft(upcoming[0].date) === null ? "no date" : daysLeft(upcoming[0].date) === 0 ? "today" : `in ${daysLeft(upcoming[0].date)} days`}
-                {upcoming.length > 1 ? ` · +${upcoming.length - 1} more` : ""}
-              </span>
-            </>
-          ) : (
-            <span className="text-sm text-app-ink">Preparing for an exam? Set it up in <b>Exam Prep</b> and get tested on your Q-banks.</span>
-          )}
-          <span className="ml-auto text-xs font-semibold text-[var(--color-accent)]">Open Exam Prep →</span>
-        </Link>
-      )}
 
       {q ? (
         <section aria-live="polite" className="space-y-2">

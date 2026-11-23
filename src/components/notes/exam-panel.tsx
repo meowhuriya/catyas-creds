@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CalendarDays, ChevronRight, Plus, X } from "lucide-react";
+import { CalendarDays, ChevronRight, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Exam, daysLeft, examSubjects, useExams, useNoteTopics } from "@/lib/notes/study";
 import { useExamPlan } from "@/lib/notes/use-exam-plan";
@@ -159,6 +159,8 @@ export function ExamForm({ subjectId, notes, exam, onClose }: { subjectId?: stri
 
 export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; allNotes: VaultNote[]; showSubject?: boolean }) {
   const plan = useExamPlan(exam, allNotes);
+  const { remove } = useExams();
+  const [confirm, setConfirm] = React.useState(false);
   const label =
     plan.phase === "nodate" ? "No date set" : plan.phase === "over" ? "Finished" : plan.phase === "examday" ? "Exam today" : `${plan.left} day${plan.left === 1 ? "" : "s"} left`;
   return (
@@ -172,8 +174,26 @@ export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; 
             {exam.date && ` · ${new Date(exam.date + "T00:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" })}`}
           </p>
         </div>
-        <span className="font-display text-2xl text-app-ink">{plan.overall.pct}%</span>
+        <span className="flex shrink-0 items-center gap-1">
+          <span className="font-display text-2xl text-app-ink">{plan.overall.pct}%</span>
+          <button
+            type="button"
+            aria-label={`Delete ${exam.name}`}
+            title="Delete exam"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setConfirm(true); }}
+            className="rounded-full p-1.5 text-app-ink-muted opacity-60 hover:bg-red-500/10 hover:text-red-600 hover:opacity-100"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </span>
       </div>
+      {confirm && (
+        <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="flex flex-wrap items-center gap-2 rounded-control border border-red-500/30 bg-red-500/5 px-3 py-2 text-xs text-app-ink">
+          <span className="flex-1">Delete this exam? Questions and scores stay.</span>
+          <button type="button" onClick={() => setConfirm(false)} className="rounded-full px-2 py-1 text-app-ink-muted hover:text-app-ink">Cancel</button>
+          <button type="button" onClick={() => remove(exam.id)} className="rounded-full bg-red-600 px-3 py-1 font-semibold text-white">Delete</button>
+        </div>
+      )}
       <Bar pct={plan.overall.pct} />
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-app-ink-muted">
         {plan.todayTasks.length > 0 ? (

@@ -73,7 +73,7 @@ export default function SubjectNotesPage() {
       <div className="space-y-3 py-10 text-center">
         <h1 className="font-serif text-2xl font-semibold text-app-ink">Subject not found</h1>
         <Link href="/notes" className="text-sm font-semibold text-app-accent hover:underline">
-          Back to the Notes Vault
+          All courses
         </Link>
       </div>
     );
@@ -89,7 +89,7 @@ export default function SubjectNotesPage() {
   return (
     <div className="space-y-6">
       <Link href="/notes" className="inline-flex items-center gap-1.5 text-sm font-medium text-app-ink-muted transition-colors hover:text-app-ink">
-        <ArrowLeft className="h-4 w-4" /> All subjects
+        <ArrowLeft className="h-4 w-4" /> All courses
       </Link>
 
       <header className="group vc-tile relative overflow-hidden">
