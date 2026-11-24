@@ -26,6 +26,8 @@ import { NoteReader } from "@/components/notes/note-reader";
 import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { TopicChecklist, ScorePill } from "@/components/notes/topic-checklist";
 import { Drill } from "@/components/prep/drill";
+import { ChapterBadges } from "@/components/rewards/rank-up";
+import { CatJar } from "@/components/rewards/cat-jar";
 import { getSubject } from "@/lib/notes/curriculum";
 import { REVISION_DAYS, examSubjects, useExams, useNoteTopics } from "@/lib/notes/study";
 import { useExamPlan } from "@/lib/notes/use-exam-plan";
@@ -149,8 +151,9 @@ export default function ExamPrepPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Bar pct={plan.overall.pct} className="h-2 flex-1" />
-          <span className="text-sm font-semibold text-app-ink tabular-nums">{plan.overall.pct}% ready</span>
+          <CatJar value={exam.progress ?? plan.overall.pct} auto={plan.overall.pct} label="How ready are you?" onSet={(v) => exams.save({ ...exam, progress: v })} size={64} />
+          <Bar pct={exam.progress ?? plan.overall.pct} className="h-2 flex-1" />
+          <span className="text-sm font-semibold text-app-ink tabular-nums">{exam.progress ?? plan.overall.pct}% ready{exam.progress !== undefined ? " (set by you)" : ""}</span>
         </div>
       </header>
 
@@ -407,6 +410,7 @@ function ChapterView({
           <Bar pct={st.pct} className="h-2 flex-1" />
           <span className="text-sm text-app-ink-muted tabular-nums">{st.mastered}/{st.total} mastered</span>
         </div>
+        <ChapterBadges noteIds={[stop.note.id]} chapter={stop.chapter} />
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => onTest(stop.entries)} disabled={!st.total}><Target className="h-4 w-4" /> {st.mastered === st.total ? "Test me again" : "Test me on this chapter"}</Button>
           <Button variant="outline" onClick={() => onFocus(stop.entries)} disabled={st.mastered === st.total}><Timer className="h-4 w-4" /> Add to today in Focus</Button>

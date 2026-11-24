@@ -4,8 +4,8 @@ import * as React from "react";
 import { useDataStore } from "@/lib/repository";
 import { SoundEngine } from "@/lib/sound-engine";
 import { getSubject } from "@/lib/notes/curriculum";
-import { pickSpecies, plantFlower } from "@/lib/focus/garden";
-import type { Species } from "@/lib/focus/flowers";
+import { randomEgg } from "@/lib/rewards/catalog";
+import { layEgg } from "@/lib/rewards/pantry";
 import { findTask, logFocus, readSettings } from "@/lib/focus/store";
 
 export type Phase = "focus" | "short" | "long";
@@ -20,7 +20,7 @@ interface TimerState {
   focusedMs: number; // focused time already counted in this phase before a pause
   taskId?: string;
   cycle: number; // focus sessions finished in the current set
-  species?: Species; // the flower growing in this focus session
+  species?: string; // the egg being kept warm in this focus session (egg id)
 }
 
 interface TimerApi extends TimerState {
@@ -54,7 +54,7 @@ function load(): TimerState {
 function wiltIfEarly(s: TimerState) {
   if (s.phase !== "focus") return;
   const ms = s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0);
-  if (ms >= 3 * 60_000) plantFlower({ kind: s.species ?? pickSpecies(), minutes: Math.round(ms / 60_000), wilted: true, title: findTask(s.taskId)?.title });
+  void ms; // leaving early: the egg just goes back to the nest, nothing hatches
 }
 
 /** Bloom chord when a focus session ends, a calm nudge when a break ends (respects the sound settings). */
@@ -128,7 +128,7 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
       if (s.phase === "focus") {
         const fms = s.focusedMs + (s.startedAt ? Date.now() - s.startedAt : 0);
         record(fms, s.taskId, true);
-        plantFlower({ kind: s.species ?? pickSpecies(), minutes: Math.max(1, Math.round(fms / 60_000)), title: findTask(s.taskId)?.title });
+        layEgg({ eggId: s.species, minutes: Math.max(1, Math.round(fms / 60_000)), title: findTask(s.taskId)?.title });
         const cycle = s.cycle + 1;
         const next: Phase = cycle % settings.longEvery === 0 ? "long" : "short";
         chime();
@@ -163,7 +163,7 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
       const s = stRef.current;
       if (s.status === "running") return;
       const rem = s.status === "idle" ? durMs(s.phase) : s.remainingMs;
-      apply({ ...s, status: "running", endsAt: Date.now() + rem, remainingMs: rem, startedAt: s.phase === "focus" ? Date.now() : undefined, species: s.phase === "focus" ? s.species ?? pickSpecies() : s.species });
+      apply({ ...s, status: "running", endsAt: Date.now() + rem, remainingMs: rem, startedAt: s.phase === "focus" ? Date.now() : undefined, species: s.phase === "focus" ? s.species ?? randomEgg().id : s.species });
       setNow(Date.now());
     },
     pause: () => {

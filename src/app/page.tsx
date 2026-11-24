@@ -5,14 +5,14 @@ import Link from "next/link";
 import { ArrowRight, CalendarDays, ClipboardList, NotebookPen, Plus, Sprout, Target, Timer } from "lucide-react";
 import { useDataStore } from "@/lib/repository";
 import { Bar, ExamCard } from "@/components/notes/exam-panel";
-import { Bloom } from "@/components/focus/flower";
 import { useVault } from "@/lib/notes/use-vault";
 import { daysLeft, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
 import { getSubject, subjectColor, subjectsFor } from "@/lib/notes/curriculum";
 import { courseBannerSvg } from "@/components/brand/course-banner-art";
 import { bucketOf, partsProgress, useAssignments } from "@/lib/assignments/store";
 import { useFocusDay, useFocusSettings } from "@/lib/focus/store";
-import { useGarden } from "@/lib/focus/garden";
+import { usePantry } from "@/lib/rewards/pantry";
+import { foodById } from "@/lib/rewards/catalog";
 import { cn } from "@/lib/utils";
 
 function greeting() {
@@ -32,7 +32,8 @@ export default function HomePage() {
   const { assignments } = useAssignments();
   const focus = useFocusDay();
   const [settings] = useFocusSettings();
-  const garden = useGarden();
+  const pantry = usePantry();
+  const foodsToday = pantry.today.filter((i) => i.foodId);
   const [sem, setSem] = React.useState<{ year: number; sem: 1 | 2 }>({ year: 1, sem: 1 });
   React.useEffect(() => {
     try {
@@ -101,12 +102,16 @@ export default function HomePage() {
           <Bar pct={goalPct} />
         </Link>
         <Link href="/focus" className="vc-tile group space-y-2 p-4 hover:border-app-accent">
-          <p className="flex items-center gap-1.5 text-xs font-medium text-app-ink-muted"><Sprout className="h-3.5 w-3.5" /> Garden</p>
-          <div className="flex min-h-[32px] items-center gap-0.5">
-            {garden.bloomed.length ? garden.bloomed.slice(0, 8).map((f) => <Bloom key={f.id} species={f.kind} size={32} />) : <span className="text-sm text-app-ink-muted">No flowers yet today</span>}
-            {garden.bloomed.length > 8 && <span className="ml-1 text-xs text-app-ink-muted">+{garden.bloomed.length - 8}</span>}
+          <p className="flex items-center gap-1.5 text-xs font-medium text-app-ink-muted"><Sprout className="h-3.5 w-3.5" /> Today&apos;s pantry</p>
+          <div className="flex min-h-[36px] items-center gap-0.5">
+            {foodsToday.length ? foodsToday.slice(0, 7).map((it) => {
+              const f = foodById(it.foodId);
+              // eslint-disable-next-line @next/next/no-img-element
+              return f ? <img key={it.id} src={f.src} alt={f.name} title={f.name} className="h-9 w-9 object-contain" /> : null;
+            }) : <span className="text-sm text-app-ink-muted">No food yet today</span>}
+            {foodsToday.length > 7 && <span className="ml-1 text-xs text-app-ink-muted">+{foodsToday.length - 7}</span>}
           </div>
-          <p className="text-xs text-app-ink-muted">{garden.bloomed.length} flower{garden.bloomed.length === 1 ? "" : "s"} · {garden.bouquets.length} bouquet{garden.bouquets.length === 1 ? "" : "s"} so far</p>
+          <p className="text-xs text-app-ink-muted">{pantry.waiting.length ? `${pantry.waiting.length} egg${pantry.waiting.length === 1 ? "" : "s"} waiting to hatch` : `${pantry.foodCount} dishes collected so far`}</p>
         </Link>
         <Link href="/focus" className="vc-tile group space-y-2 p-4 hover:border-app-accent">
           <p className="flex items-center gap-1.5 text-xs font-medium text-app-ink-muted"><ClipboardList className="h-3.5 w-3.5" /> Today&apos;s list</p>

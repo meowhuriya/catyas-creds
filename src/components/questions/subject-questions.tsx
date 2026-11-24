@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { ChapterBadges } from "@/components/rewards/rank-up";
 import { ChevronDown, FileQuestion, Loader2, Pencil, Plus, Target, Timer, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
@@ -192,6 +193,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                       <Button size="sm" variant="ghost" onClick={() => { const to = window.prompt("Chapter name", name); if (to && to.trim() && to.trim() !== name) { const notesIn = new Set(g.entries.map((e) => e.noteId)); notesIn.forEach((nid) => nt.renameChapter(nid, g.chapter, to)); } }}><Pencil className="h-4 w-4" /> Rename</Button>
                       <Button size="sm" variant="ghost" onClick={() => { if (window.confirm(`Delete all ${g.entries.length} questions in "${name}"? This can't be undone.`)) { const by = new Map<string, string[]>(); g.entries.forEach((e) => by.set(e.noteId, [...(by.get(e.noteId) ?? []), e.itemId])); by.forEach((ids, nid) => nt.removeMany(nid, ids)); } }}><Trash2 className="h-4 w-4" /> Delete chapter</Button>
                     </div>
+                    <ChapterBadges noteIds={Array.from(new Set(g.entries.map((e) => e.noteId)))} chapter={g.chapter} />
                     <ul className="space-y-0.5">
                       {g.entries.map((e) => (
                         <li key={e.key} className="flex items-start gap-2 rounded px-1 py-1 hover:bg-app-surface-muted">

@@ -16,6 +16,7 @@ import { loadSavedAppearance, applyAppearanceToDOM, getCustomWallpaper } from "@
 import { onCloudSyncUpdate } from "@/lib/cloud-sync/synced-storage";
 import { validateSeedTotals } from "@/lib/syllabus/seed-loader";
 import { SoundEngine } from "@/lib/sound-engine";
+import { BadgeWatcher } from "@/components/rewards/rank-up";
 import { Loader2, Info } from "lucide-react";
 import { TiltFx } from "@/components/fx/tilt-fx";
 
@@ -209,6 +210,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         onOpenCommand={() => setCommandOpen(true)}
       />
 
+      <BadgeWatcher />
       {/* Procedural Sound Celebration & Floating Reward Overlay */}
       <CelebrationOverlay />
     </div>

@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
 import { Drill } from "@/components/prep/drill";
 import { QuestionPicker, PickResult } from "@/components/focus/question-picker";
-import { GardenCard } from "@/components/focus/garden-card";
+import { PantryCard } from "@/components/rewards/pantry-card";
 import { TimerCard } from "@/components/focus/timer-card";
 import { blocksToTasks, fallbackBlocks, planInput, PlanBlock } from "@/lib/focus/plan";
 import { FocusTask, dateKey, readSettings, streak, useFocusDay, useFocusDays, useFocusSettings } from "@/lib/focus/store";
@@ -203,7 +203,7 @@ export default function FocusPage() {
         </section>
       </div>
 
-      <GardenCard />
+      <PantryCard />
       <HoursChart days={days} goal={settings.goalMin} />
 
       {picker && <QuestionPicker entries={entries} initialSubject={active?.subjectId} onClose={() => setPicker(false)} onPick={onPick} />}

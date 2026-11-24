@@ -232,3 +232,73 @@ export function fanfare(bus: Bus, t: number) {
 export function shimmer(bus: Bus, t: number) {
   [1318.51, 1975.53, 2637.02].forEach((f, i) => pluck(bus, t + i * 0.04, f, 0.1, 0.4, 0.6));
 }
+
+
+/* ---------- v2: one subtle click + two moments ---------- */
+
+/** The only UI click: a small, crisp "klick". Quiet and dry. */
+export function klick(bus: Bus, t: number) {
+  const j = jitter(0.04);
+  flick(bus, t, 4600 * j, 0.22, 0.006, 2.2, 0.02);
+  flick(bus, t + 0.0035, 2600 * j, 0.09, 0.009, 1.6, 0.02);
+  const o = bus.ctx.createOscillator();
+  const g = bus.ctx.createGain();
+  o.type = "triangle";
+  o.frequency.setValueAtTime(1850 * j, t);
+  o.frequency.exponentialRampToValueAtTime(1200 * j, t + 0.012);
+  env(g, t, 0.05, 0.0008, 0.012);
+  o.connect(g);
+  out(bus, g, 0);
+  o.start(t);
+  o.stop(t + 0.02);
+}
+
+/** Egg is ready to hatch (end of a focus session): one soft bell. */
+export function ready(bus: Bus, t: number) {
+  pluck(bus, t, 987.77, 0.12, 1.2, 0.5);
+  pluck(bus, t + 0.12, 1318.51, 0.08, 1.4, 0.55);
+}
+
+/** Tap the egg: three cracks, then a pop and sparkle as the food comes out. */
+export function hatch(bus: Bus, t: number) {
+  [0, 0.16, 0.3].forEach((d, i) => {
+    flick(bus, t + d, 1800 + i * 500, 0.35, 0.02, 0.9, 0.05);
+    flick(bus, t + d + 0.008, 3400, 0.18, 0.015, 1.4, 0.05);
+    body(bus, t + d, 180 + i * 30, 0.2, 0.05, 0.05);
+  });
+  const p = t + 0.52;
+  body(bus, p, 260, 0.4, 0.12, 0.15, 0.6); // pitch rises: a pop
+  [1046.5, 1318.51, 1567.98, 2093.0].forEach((f, i) => pluck(bus, p + 0.05 + i * 0.05, f, 0.08, 0.8, 0.6));
+}
+
+/** Rank-up: a rising whoosh, a heavy impact, then a bright shimmering chord. */
+export function rankUp(bus: Bus, t: number) {
+  const ctx = bus.ctx;
+  // riser
+  const n = ctx.createBufferSource();
+  const len = Math.floor(ctx.sampleRate * 0.7);
+  const b = ctx.createBuffer(1, len, ctx.sampleRate);
+  const d = b.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  n.buffer = b;
+  const bp = ctx.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.Q.value = 2.5;
+  bp.frequency.setValueAtTime(300, t);
+  bp.frequency.exponentialRampToValueAtTime(3800, t + 0.6);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(0.35, t + 0.55);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 0.64);
+  n.connect(bp).connect(g);
+  out(bus, g, 0.2);
+  n.start(t);
+  n.stop(t + 0.7);
+  // impact
+  const hit = t + 0.6;
+  body(bus, hit, 55, 0.9, 0.5, 0.25, 2.2);
+  flick(bus, hit, 1200, 0.45, 0.08, 0.6, 0.3);
+  // shimmer chord (E major add9, opening upward)
+  [329.63, 493.88, 659.25, 739.99, 987.77, 1318.51].forEach((f, i) => pluck(bus, hit + 0.04 + i * 0.045, f, 0.13 - i * 0.012, 2.2, 0.65));
+  [2637.02, 3135.96].forEach((f, i) => pluck(bus, hit + 0.35 + i * 0.08, f, 0.03, 1.2, 0.8));
+}

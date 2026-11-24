@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { CalendarDays, ChevronRight, Plus, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Exam, daysLeft, examSubjects, useExams, useNoteTopics } from "@/lib/notes/study";
+import { CatJar } from "@/components/rewards/cat-jar";
 import { useExamPlan } from "@/lib/notes/use-exam-plan";
 import { VaultNote } from "@/lib/notes/vault-types";
 import { getSubject } from "@/lib/notes/curriculum";
@@ -161,14 +162,15 @@ export function ExamForm({ subjectId, notes, exam, onClose }: { subjectId?: stri
 
 export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; allNotes: VaultNote[]; showSubject?: boolean }) {
   const plan = useExamPlan(exam, allNotes);
-  const { remove } = useExams();
+  const { remove, save } = useExams();
   const [confirm, setConfirm] = React.useState(false);
   const label =
     plan.phase === "nodate" ? "No date set" : plan.phase === "over" ? "Finished" : plan.phase === "examday" ? "Exam today" : `${plan.left} day${plan.left === 1 ? "" : "s"} left`;
   return (
     <Link href={`/prep/${encodeURIComponent(exam.id)}`} className="vc-tile group block space-y-3 p-4 transition-colors hover:border-app-accent">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+        <CatJar value={exam.progress ?? plan.overall.pct} auto={plan.overall.pct} label="How ready are you?" onSet={(v) => save({ ...exam, progress: v })} size={52} />
+        <div className="min-w-0 flex-1">
           {showSubject && <p className="truncate text-[11px] font-medium text-app-ink-muted">{examSubjects(exam).map((id) => getSubject(id)?.title ?? id).join(" · ")}</p>}
           <h3 className="truncate font-display text-lg text-app-ink">{exam.name}</h3>
           <p className="text-xs text-app-ink-muted">
@@ -177,7 +179,7 @@ export function ExamCard({ exam, allNotes, showSubject = false }: { exam: Exam; 
           </p>
         </div>
         <span className="flex shrink-0 items-center gap-1">
-          <span className="font-display text-2xl text-app-ink">{plan.overall.pct}%</span>
+          <span className="font-display text-2xl text-app-ink">{exam.progress ?? plan.overall.pct}%</span>
           <button
             type="button"
             aria-label={`Delete ${exam.name}`}

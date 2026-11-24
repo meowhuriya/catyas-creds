@@ -148,45 +148,40 @@ export class SoundEngine {
     return false;
   }
 
-  /** Ordinary button press. */
-  public playClick(kind: Kind = "press"): void {
+  /** Every click in the app makes the same small "klick". */
+  public playClick(_kind: Kind = "press"): void {
     if (this.throttled()) return;
-    this.play(kind === "tick" ? UI.tick : kind === "primary" ? UI.primary : kind === "danger" ? UI.danger : UI.press);
+    this.play(UI.klick);
   }
   public playTick(): void {
-    this.playClick("tick");
+    this.playClick();
   }
   public playPrimary(): void {
-    this.playClick("primary");
+    this.playClick();
   }
   public playDanger(): void {
-    this.playClick("danger");
+    this.playClick();
   }
-  public playToggle(isOn: boolean): void {
-    this.play((b, t) => UI.toggle(b, t, isOn));
+  public playToggle(_isOn: boolean): void {
+    this.playClick();
   }
-  public playCorrect(streakCount = 1): void {
-    this.play((b, t) => UI.correct(b, t, streakCount));
-  }
-  public playWrong(): void {
-    this.play(UI.wrong);
-  }
-  public playMasteryFanfare(): void {
-    this.play(UI.fanfare);
-  }
-  /** A focus session finished and a flower bloomed. */
+  /* Answer / mastery / hover sounds are switched off on purpose: only the klick, the egg and the rank-up make sound. */
+  public playCorrect(_streakCount = 1): void {}
+  public playWrong(): void {}
+  public playMasteryFanfare(): void {}
+  public playBadgeShimmer(): void {}
+  public playNudge(): void {}
+  /** Focus session finished: the egg is ready to hatch. */
   public playBloom(): void {
-    this.play(UI.bloom);
+    this.play(UI.ready);
   }
-  /** Break is over. */
-  public playNudge(): void {
-    this.play(UI.nudge);
+  /** Tapping the egg open. */
+  public playHatch(): void {
+    this.play(UI.hatch);
   }
-  public playBadgeShimmer(): void {
-    const now = Date.now();
-    if (now - this.shimmerThrottle < 180) return;
-    this.shimmerThrottle = now;
-    this.play(UI.shimmer);
+  /** A badge rank-up. */
+  public playRankUp(): void {
+    this.play(UI.rankUp);
   }
 
   /** Which sound an element gets. */
@@ -365,6 +360,8 @@ export function useSound() {
     playWrong: () => engine.playWrong(),
     playMasteryFanfare: () => engine.playMasteryFanfare(),
     playBloom: () => engine.playBloom(),
+    playHatch: () => engine.playHatch(),
+    playRankUp: () => engine.playRankUp(),
     playNudge: () => engine.playNudge(),
     playBadgeShimmer: () => engine.playBadgeShimmer(),
     attachGlobalClickListener: () => engine.attachGlobalClickListener(),

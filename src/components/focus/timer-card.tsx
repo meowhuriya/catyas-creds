@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { ScorePill } from "@/components/notes/topic-checklist";
 import { FocusTask, useFocusSettings } from "@/lib/focus/store";
 import { Phase, fmt, useFocusTimer } from "@/lib/focus/timer";
-import { Flower } from "@/components/focus/flower";
+import { EggProgress } from "@/components/rewards/egg";
+import { HatchOverlay } from "@/components/rewards/hatch-overlay";
+import { usePantry } from "@/lib/rewards/pantry";
 import { QEntry } from "@/lib/notes/questions";
 import { useNoteTopics } from "@/lib/notes/study";
 import { cn } from "@/lib/utils";
@@ -30,6 +32,8 @@ export function TimerCard({
   const nt = useNoteTopics();
   const [settings, setSettings] = useFocusSettings();
   const [showSettings, setShowSettings] = React.useState(false);
+  const pantry = usePantry();
+  const [hatching, setHatching] = React.useState(false);
   const pct = t.totalMs ? 1 - t.leftMs / t.totalMs : 0;
   const R = 118;
   const C = 2 * Math.PI * R;
@@ -75,8 +79,11 @@ export function TimerCard({
             strokeDasharray={C} strokeDashoffset={C * (1 - pct)} style={{ transition: "stroke-dashoffset 0.5s linear" }} />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          {!isBreak && <Flower species={t.species ?? "orchid"} progress={t.status === "idle" ? 0 : pct} size={112} className="-mt-4 mb-1" />}
-          <span className={cn("font-display font-semibold leading-none tracking-tight text-app-ink tabular-nums", isBreak ? "text-[64px]" : "text-[44px]")}>{fmt(t.leftMs)}</span>
+          {!isBreak && <EggProgress eggId={t.species} progress={t.status === "idle" ? 0 : pct} size={92} className="-mt-2 mb-2" />}
+          {isBreak && pantry.waiting.length > 0 && (
+            <EggProgress eggId={pantry.waiting[pantry.waiting.length - 1].eggId} progress={1} ready size={92} className="-mt-2 mb-2" onTap={() => setHatching(true)} />
+          )}
+          <span className={cn("font-display font-semibold leading-none tracking-tight text-app-ink tabular-nums", isBreak && !pantry.waiting.length ? "text-[64px]" : "text-[44px]")}>{fmt(t.leftMs)}</span>
           <span className="mt-2 text-xs font-medium uppercase tracking-[0.16em] text-app-ink-muted">
             {t.status === "paused" ? "Paused" : isBreak ? (t.phase === "long" ? "Long break" : "Short break") : "Focus"}
           </span>
@@ -140,6 +147,7 @@ export function TimerCard({
           </button>
         )}
       </div>
+      {hatching && pantry.waiting.length > 0 && <HatchOverlay items={pantry.waiting} onClose={() => setHatching(false)} />}
     </section>
   );
 }

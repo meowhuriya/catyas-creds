@@ -21,6 +21,7 @@ import { useToast } from "@/components/ui/toast";
 import { NoteEditorDialog } from "@/components/notes/note-editor-dialog";
 import { NoteReader } from "@/components/notes/note-reader";
 import { Bar } from "@/components/notes/exam-panel";
+import { CatJar } from "@/components/rewards/cat-jar";
 import { useDataStore } from "@/lib/repository";
 import { extractQuestionTexts } from "@/lib/notes/use-import";
 import { useVault } from "@/lib/notes/use-vault";
@@ -36,6 +37,7 @@ import {
   KIND_LABEL,
   STATUS_LABEL,
   bucketOf,
+  catLevel,
   makeParts,
   partsProgress,
   useAssignments,
@@ -312,7 +314,11 @@ function AssignmentCard({
 
   return (
     <article className="vc-tile overflow-hidden">
-      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-start gap-3 p-4 text-left">
+      <div className="flex items-start">
+        <div className="pl-3 pt-3">
+          <CatJar value={catLevel(a)} auto={catLevel({ ...a, progress: undefined })} label="How far along?" onSet={(v) => store.patch(a.id, { progress: v })} size={52} />
+        </div>
+      <button onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex min-w-0 flex-1 items-start gap-3 p-4 pl-3 text-left">
         <div className="min-w-0 flex-1 space-y-1.5">
           <div className="flex items-center gap-2 text-[11px] text-app-ink-muted">
             <span className="rounded-full border border-app-border px-1.5 py-px">{KIND_LABEL[a.kind]}</span>
@@ -329,6 +335,7 @@ function AssignmentCard({
         </div>
         <ChevronDown className={cn("mt-1 h-4 w-4 shrink-0 text-app-ink-muted transition-transform", open && "rotate-180")} />
       </button>
+      </div>
 
       {open && (
         <div className="space-y-4 border-t border-app-border p-4">

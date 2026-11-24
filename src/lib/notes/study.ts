@@ -32,6 +32,8 @@ export interface Exam {
   scope?: Record<string, string[]>;
   todos?: StudyItem[];
   today?: { date: string; keys: string[] };
+  /** Set by hand on the cat (0-100); otherwise readiness is worked out. */
+  progress?: number;
 }
 export interface Progress {
   done: number;
