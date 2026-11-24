@@ -85,7 +85,7 @@ function CoursesContent() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Button
+          {false && /* AI switched off */ (<Button
             variant="outline"
             size="sm"
             onClick={() => setAiBuilderOpen(true)}
@@ -93,7 +93,7 @@ function CoursesContent() {
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Draft with AI</span>
-          </Button>
+          </Button>)}
 
           <Button
             variant="outline"

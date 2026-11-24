@@ -295,6 +295,7 @@ export default function ExamPrepPage() {
               filter={filter}
               setFilter={setFilter}
               onToggle={(e) => nt.toggle(e.noteId, e.itemId)}
+              onMarkAll={() => { const st2 = qStats(stop.entries); const allDone = st2.mastered === st2.total; if (allDone || window.confirm(`Mark all ${st2.total} questions in "${stop.label}" as done?`)) nt.markChapter(stop.note.id, stop.chapter, !allDone); }}
               onRename={() => { const to = window.prompt("Chapter name", stop.label); if (to && to.trim() && to.trim() !== stop.label) { nt.renameChapter(stop.note.id, stop.chapter, to); setAt(`${stop.note.id}|${to.trim()}`); } }}
               onEdit={(e) => { const t = window.prompt("Edit question", e.item.text); if (t && t.trim()) nt.editText(e.noteId, e.itemId, t); }}
               onTest={(es) => testOn(es)}
@@ -377,6 +378,7 @@ function ChapterView({
   onToggle,
   onEdit,
   onRename,
+  onMarkAll,
   onTest,
   onFocus,
   onOpen,
@@ -388,6 +390,7 @@ function ChapterView({
   onToggle: (e: QEntry) => void;
   onEdit: (e: QEntry) => void;
   onRename: () => void;
+  onMarkAll: () => void;
   onTest: (es: QEntry[]) => void;
   onFocus: (es: QEntry[]) => void;
   onOpen: () => void;
@@ -405,7 +408,10 @@ function ChapterView({
     <section className="vc-tile overflow-hidden">
       <div className="space-y-4 p-5">
         <ChapterHead eyebrow={eyebrow} title={stop.label} onOpen={onOpen} />
-        <button onClick={onRename} className="-mt-2 inline-flex items-center gap-1 text-xs text-app-ink-muted hover:text-app-ink"><Pencil className="h-3 w-3" /> Rename chapter</button>
+        <div className="-mt-2 flex flex-wrap gap-3">
+          <button onClick={onRename} className="inline-flex items-center gap-1 text-xs text-app-ink-muted hover:text-app-ink"><Pencil className="h-3 w-3" /> Rename chapter</button>
+          <button onClick={onMarkAll} className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-accent)]"><Check className="h-3 w-3" /> {st.mastered === st.total ? "Undo chapter done" : "Mark chapter done"}</button>
+        </div>
         <div className="flex items-center gap-3">
           <Bar pct={st.pct} className="h-2 flex-1" />
           <span className="text-sm text-app-ink-muted tabular-nums">{st.mastered}/{st.total} mastered</span>

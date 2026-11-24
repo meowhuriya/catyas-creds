@@ -24,7 +24,7 @@ export function RankUpOverlay({ badge, more, onClose }: { badge: Badge; more: nu
       window.removeEventListener("keydown", k);
     };
   }, [badge.key, onClose]);
-  const what = badge.kind === "exam" ? "Exam ready" : badge.kind === "qbank" ? "Q-bank conquered" : "Chapter rank up";
+  const what = badge.kind === "exam" ? "Exam ready" : badge.kind === "qbank" ? "Q-bank conquered" : badge.tier === "grandmaster" ? "Chapter tested & mastered" : badge.tier === "master" ? "Chapter complete" : "Chapter rank up";
   const course = badge.courseId ? getSubject(badge.courseId)?.title : undefined;
   return createPortal(
     <div onClick={onClose} role="dialog" aria-label={`${t.name} badge earned`} className="vc-fade-in fixed inset-0 z-[320] flex cursor-pointer flex-col items-center justify-center overflow-hidden text-white" style={{ background: `radial-gradient(ellipse at 50% 42%, ${t.color}40 0%, #0d1117 48%, #05070a 100%)` }}>
@@ -80,16 +80,22 @@ export function BadgeWatcher() {
     for (const n of notes) {
       const items = topics[n.id] ?? [];
       if (!items.length) continue;
-      const groups = new Map<string, { done: number; total: number }>();
+      const groups = new Map<string, { done: number; total: number; tested: number; scoreSum: number }>();
       for (const it of items) {
-        const g = groups.get(it.chapter || "") ?? { done: 0, total: 0 };
+        const g = groups.get(it.chapter || "") ?? { done: 0, total: 0, tested: 0, scoreSum: 0 };
         g.total++;
         if (it.done) g.done++;
+        if (it.attempts) {
+          g.tested++;
+          g.scoreSum += it.lastScore ?? 0;
+        }
         groups.set(it.chapter || "", g);
       }
       groups.forEach((g, ch) => {
-        for (const tier of chapterTiers(Math.round((g.done / g.total) * 100), g.total))
-          add({ key: `ch:${n.id}:${ch}:${tier}`, tier, kind: "chapter", noteId: n.id, chapter: ch, courseId: n.courseId, label: ch || n.title });
+        const base = { kind: "chapter" as const, noteId: n.id, chapter: ch, courseId: n.courseId, label: ch || n.title };
+        for (const tier of chapterTiers(Math.round((g.done / g.total) * 100), g.total)) add({ ...base, key: `ch:${n.id}:${ch}:${tier}`, tier });
+        // Done the hard way: every question tested, averaging 8/10 or more.
+        if (g.done === g.total && g.tested === g.total && g.scoreSum / g.total >= 8) add({ ...base, key: `ch:${n.id}:${ch}:grandmaster`, tier: "grandmaster" });
       });
       if (n.section === "qbank" && items.length >= 5 && items.every((i) => i.done))
         add({ key: `qb:${n.id}:challenger`, tier: "challenger", kind: "qbank", noteId: n.id, courseId: n.courseId, label: n.title });
@@ -98,7 +104,7 @@ export function BadgeWatcher() {
       const scoped = scopedTopics(ex, topics);
       const all = ex.noteIds.flatMap((id) => scoped[id] ?? []);
       if (all.length >= 5 && all.every((i) => i.done))
-        add({ key: `ex:${ex.id}:grandmaster`, tier: "grandmaster", kind: "exam", examId: ex.id, courseId: examSubjects(ex)[0], label: ex.name });
+        add({ key: `ex:${ex.id}:challenger`, tier: "challenger", kind: "exam", examId: ex.id, courseId: examSubjects(ex)[0], label: ex.name });
     }
 
     if (!fresh.length && store.seeded) return;
@@ -143,4 +149,20 @@ export function ChapterBadges({ noteIds, chapter }: { noteIds: string[]; chapter
   const mine = all.filter((b) => b.kind === "chapter" && noteIds.includes(b.noteId ?? "") && (b.chapter ?? "") === chapter).sort((a, b) => tierRank(b.tier) - tierRank(a.tier));
   if (!mine.length) return <p className="text-xs text-app-ink-muted">No badges yet: master 10% of this chapter for Iron.</p>;
   return <BadgeStrip badges={mine} />;
+}
+
+/** The best badge earned anywhere in a course (for course cards). */
+export function CourseBadge({ courseId, size = 40 }: { courseId: string; size?: number }) {
+  const all = useBadges();
+  const mine = all.filter((b) => b.courseId === courseId);
+  if (!mine.length) return null;
+  const best = mine.reduce((a, b) => (tierRank(b.tier) > tierRank(a.tier) ? b : a));
+  const t = tierById(best.tier);
+  return (
+    <span title={`Best badge: ${t.name} (${best.label}) · ${mine.length} badge${mine.length === 1 ? "" : "s"} earned`} className="inline-flex items-center gap-1.5 rounded-full bg-black/35 py-0.5 pl-1 pr-2.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+      <img src={badgeSrc(best.tier)} alt="" style={{ width: size, height: size * 0.66 }} className="object-contain" draggable={false} />
+      {t.name}
+      {mine.length > 1 && <span className="opacity-70">· {mine.length}</span>}
+    </span>
+  );
 }

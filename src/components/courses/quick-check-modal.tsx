@@ -282,7 +282,7 @@ export function QuickCheckModal({
           >
             + Add Custom Question
           </button>
-          <button
+          {false && /* AI switched off */ (<button
             type="button"
             onClick={() => setActiveTab("ai_draft")}
             className={`font-semibold pb-1 border-b-2 transition-colors flex items-center gap-1 ${
@@ -293,7 +293,7 @@ export function QuickCheckModal({
           >
             <Sparkles className="h-3 w-3 text-app-accent" />
             <span>Draft with AI</span>
-          </button>
+          </button>)}
         </div>
 
         {activeTab === "quiz" ? (

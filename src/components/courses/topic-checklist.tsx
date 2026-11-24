@@ -378,10 +378,10 @@ export function TopicChecklist({
                   {/* Action icons: AI, Check and menu (icon-only with tooltips, visible on hover/focus) */}
                   <div className="flex items-center gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
                     {/* Ask AI Assistant */}
-                    {onOpenTopicAi && (
+                    {false && onOpenTopicAi && (
                       <button
                         type="button"
-                        onClick={() => onOpenTopicAi(topic)}
+                        onClick={() => onOpenTopicAi?.(topic)}
                         className="p-1.5 rounded-[6px] text-[#C93A55] hover:bg-[#C93A55]/10 transition-colors"
                         title="AI study assistant: Explain simply, test me, or flashcards"
                       >

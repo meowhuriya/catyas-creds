@@ -183,6 +183,9 @@ export function useNoteTopics() {
     toggle: (noteId: string, id: string) => update(noteId, (l) => l.map((i) => (i.id === id ? { ...i, done: !i.done } : i))),
     remove: (noteId: string, id: string) => update(noteId, (l) => l.filter((i) => i.id !== id)),
     removeMany: (noteId: string, ids: string[]) => update(noteId, (l) => l.filter((i) => !ids.includes(i.id))),
+    /** Tick (or untick) every question in one chapter at once. */
+    markChapter: (noteId: string, chapter: string, done: boolean) =>
+      update(noteId, (l) => l.map((i) => ((i.chapter || "") === chapter ? { ...i, done, weak: done ? false : i.weak } : i))),
     /** Give a chapter / unit a new name everywhere in this note. */
     renameChapter: (noteId: string, from: string, to: string) =>
       update(noteId, (l) => l.map((i) => ((i.chapter || "") === from ? { ...i, chapter: to.trim() || undefined } : i))),

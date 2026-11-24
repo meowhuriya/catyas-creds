@@ -102,8 +102,8 @@ export function useImportQuestions(subjectTitle?: string) {
             (opts.ai
               ? "AI couldn't find any questions in this."
               : m.images.length || m.links.length
-                ? "This file is a scan or photos, so there's no text to read. Press 'Use AI' to read it."
-                : "I couldn't spot numbered questions (1. 2. 3.) in this file. Press 'Use AI' to try anyway.")
+                ? "This file is a scan or photos, so there's no text to read. Type or paste the questions instead."
+                : "I couldn't spot questions in this file. Paste them in instead, one per line.")
         );
       }
 

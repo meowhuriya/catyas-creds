@@ -104,8 +104,12 @@ export function useVault() {
     async (input: SaveNoteInput): Promise<VaultNote> => {
       const now = new Date().toISOString();
       const existing = input.id ? notesRef.current.find((n) => n.id === input.id) : undefined;
+      // A note saved without a name takes its first file's name ("Untitled note" helps nobody).
+      const untitled = !input.title?.trim() || /^untitled( note)?$/i.test(input.title.trim());
+      const fileName = input.files?.[0]?.name?.replace(/\.[a-z0-9]{2,5}$/i, "").replace(/[_-]+/g, " ").trim();
       const note: VaultNote = {
         ...input,
+        title: untitled && fileName ? fileName : input.title,
         id: existing?.id ?? input.id ?? newId("note"),
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,

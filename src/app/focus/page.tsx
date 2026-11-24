@@ -70,23 +70,9 @@ export default function FocusPage() {
       setPlanMsg("Nothing left to plan: import questions into your Q-banks first, or everything is mastered.");
       return;
     }
-    let blocks: PlanBlock[] = [];
-    let message = "";
-    try {
-      const res = await fetch("/api/ai/plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ budgetMin: budget, subjects: input.map((s) => ({ id: s.id, title: s.title, exam: s.exam, daysLeft: s.daysLeft, chapters: s.chapters })) }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      const valid = new Set(input.flatMap((s) => s.chapters.map((c) => `${s.id}|${c.name}`)));
-      blocks = (data.blocks as PlanBlock[]).filter((b) => b && valid.has(`${b.subjectId}|${b.chapter ?? ""}`) && Number(b.count) > 0);
-      message = data.message;
-    } catch (e) {
-      message = `Planned offline (${e instanceof Error ? e.message : "AI unavailable"}).`;
-    }
-    if (!blocks.length) blocks = fallbackBlocks(input, budget);
+    // Planned on this device (no AI): closer exams and weak questions first.
+    const blocks: PlanBlock[] = fallbackBlocks(input, budget);
+    const message = "";
     const fresh = blocksToTasks(blocks, open, plannedKeys);
     today.replaceAuto(fresh);
     setPlanMsg(message || `Planned ${fresh.length} block${fresh.length === 1 ? "" : "s"} for about ${budget} minutes.`);
@@ -146,7 +132,7 @@ export default function FocusPage() {
           </div>
           {tasks.length > 0 && <Bar pct={tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0} className="mt-3" />}
           <p className="mt-2 text-[11px] text-app-ink-muted">
-            {planMsg || "AI spreads your un-mastered questions across all subjects, putting closer exams and weak questions first."}
+            {planMsg || "Plan my day spreads your un-mastered questions across all subjects, putting closer exams and weak questions first."}
           </p>
 
           {carry.length > 0 && (

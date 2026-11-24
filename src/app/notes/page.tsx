@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { daysLeft, useExams } from "@/lib/notes/study";
 import { Butterfly, Diamond } from "@/components/brand/butterfly";
 import { courseBannerSvg } from "@/components/brand/course-banner-art";
+import { CourseBadge } from "@/components/rewards/rank-up";
 
 const VIEW_KEY = "valeria_vault_view";
 
@@ -220,6 +221,7 @@ function SubjectCard({
     >
       <div className="relative h-24 w-full">
         <div aria-hidden className="absolute inset-0" dangerouslySetInnerHTML={{ __html: courseBannerSvg({ code: subject.code, title: subject.title, hue: color, uid: `c${subject.id}` }) }} />
+        <span className="absolute bottom-2 right-3"><CourseBadge courseId={subject.id} size={34} /></span>
         <span className="absolute left-4 top-3 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
           {subject.code} · {subject.slot ?? (subject.kind === "lab" ? "Lab" : subject.kind === "project" ? "Project" : subject.kind === "skill" ? "Skill course" : "Theory")}
         </span>

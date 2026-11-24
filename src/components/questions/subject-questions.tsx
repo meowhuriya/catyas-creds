@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { ChapterBadges } from "@/components/rewards/rank-up";
-import { ChevronDown, FileQuestion, Loader2, Pencil, Plus, Target, Timer, Sparkles, Trash2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, FileQuestion, Loader2, Pencil, Plus, Target, Timer, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
@@ -141,16 +141,19 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                       </button>
                     )}
                     {count > 0 && (
-                      <button onClick={() => { if (window.confirm(`Delete all ${count} questions in "${n.title}"? This can't be undone.`)) nt.clear(n.id); }} className="shrink-0 text-[11px] text-red-600 hover:underline">Delete all</button>
+                      <button onClick={() => { if (window.confirm(`Delete all ${count} questions in "${n.title}"? The file stays. This can't be undone.`)) nt.clear(n.id); }} className="shrink-0 text-[11px] text-app-ink-muted hover:text-red-600">Clear questions</button>
                     )}
+                    <button
+                      onClick={() => { if (window.confirm(`Delete "${n.title}" and its ${count} question${count === 1 ? "" : "s"}? This can't be undone.`)) { nt.clear(n.id); void vault.removeNote(n.id); } }}
+                      title="Delete this question file"
+                      aria-label={`Delete ${n.title}`}
+                      className="shrink-0 rounded-full p-1 text-app-ink-muted hover:bg-red-500/10 hover:text-red-600"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                   {busy && <p className="mt-1 text-[11px] text-app-ink-muted">{importer.progress || "Reading the Q-bank…"}</p>}
                   {msg?.map((m, i) => (<p key={i} className="mt-1 text-[11px] text-app-ink-muted">{m}</p>))}
-                  {msg && count === 0 && !busy && (
-                    <button disabled={!!importer.busy} onClick={() => importer.run(n, "questions", { ai: true })} className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold text-app-accent hover:underline">
-                      <Sparkles className="h-3 w-3" /> Use AI instead (for scans and photos)
-                    </button>
-                  )}
                 </div>
               );
             })}
@@ -190,6 +193,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                         <Target className="h-4 w-4" /> Test me on this chapter
                       </Button>
                       <Button size="sm" variant="ghost" onClick={() => toFocus(g.entries, name, g.chapter || undefined)}><Timer className="h-4 w-4" /> Whole chapter to today</Button>
+                      <Button size="sm" variant="ghost" onClick={() => { const allDone = s.mastered === s.total; const ids = Array.from(new Set(g.entries.map((e) => e.noteId))); if (allDone || window.confirm(`Mark all ${s.total} questions in "${name}" as done?`)) ids.forEach((nid) => nt.markChapter(nid, g.chapter, !allDone)); }}><CheckCircle2 className="h-4 w-4" /> {s.mastered === s.total ? "Undo chapter done" : "Mark chapter done"}</Button>
                       <Button size="sm" variant="ghost" onClick={() => { const to = window.prompt("Chapter name", name); if (to && to.trim() && to.trim() !== name) { const notesIn = new Set(g.entries.map((e) => e.noteId)); notesIn.forEach((nid) => nt.renameChapter(nid, g.chapter, to)); } }}><Pencil className="h-4 w-4" /> Rename</Button>
                       <Button size="sm" variant="ghost" onClick={() => { if (window.confirm(`Delete all ${g.entries.length} questions in "${name}"? This can't be undone.`)) { const by = new Map<string, string[]>(); g.entries.forEach((e) => by.set(e.noteId, [...(by.get(e.noteId) ?? []), e.itemId])); by.forEach((ids, nid) => nt.removeMany(nid, ids)); } }}><Trash2 className="h-4 w-4" /> Delete chapter</Button>
                     </div>

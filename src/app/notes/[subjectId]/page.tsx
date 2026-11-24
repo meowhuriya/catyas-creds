@@ -1,5 +1,8 @@
 "use client";
 
+import { CourseLearnView } from "@/components/courses/course-learn-view";
+import { CourseBadge } from "@/components/rewards/rank-up";
+
 import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -37,7 +40,7 @@ export default function SubjectNotesPage() {
   const [editorSection, setEditorSection] = React.useState<VaultSection>("notes");
   const [readingId, setReadingId] = React.useState<string | null>(null);
   const [practice, setPractice] = React.useState<{ noteId?: string } | null>(null);
-  const [view, setView] = React.useState<"questions" | "notes" | "assignments" | "files">("questions");
+  const [view, setView] = React.useState<"questions" | "lectures" | "notes" | "assignments" | "files">("questions");
   const [drillNote, setDrillNote] = React.useState<VaultNote | null>(null);
   const [examForm, setExamForm] = React.useState(false);
   const noteTopics = useNoteTopics();
@@ -101,6 +104,7 @@ export default function SubjectNotesPage() {
               {subject.slot ? ` · ${subject.slot}` : ""}
             </p>
             <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.02em] drop-shadow-sm md:text-[44px]">{subject.title}</h1>
+            <CourseBadge courseId={subject.id} size={36} />
             <p className="text-sm text-white/80">
               {subject.credits} credit{subject.credits > 1 ? "s" : ""} · {mine.length} file{mine.length === 1 ? "" : "s"}
               {subjectAssignments.length ? ` · ${openAssignments} assignment${openAssignments === 1 ? "" : "s"} to do` : ""}
@@ -131,7 +135,7 @@ export default function SubjectNotesPage() {
       </div>
 
       <div className="flex gap-1 rounded-control border border-app-border bg-app-surface p-1" role="tablist" aria-label="View">
-        {([["questions", "Questions"], ["notes", "My notes"], ["assignments", "Assignments"], ["files", "More files"]] as const).map(([v, label]) => (
+        {([["questions", "Questions"], ["lectures", "Lectures"], ["notes", "My notes"], ["assignments", "Assignments"], ["files", "More files"]] as const).map(([v, label]) => (
           <button
             key={v}
             role="tab"
@@ -148,7 +152,9 @@ export default function SubjectNotesPage() {
         ))}
       </div>
 
-      {view === "questions" ? (
+      {view === "lectures" ? (
+        <CourseLearnView courseId={`course-${subject.code.toLowerCase()}`} embedded />
+      ) : view === "questions" ? (
         <SubjectQuestions subjectId={subjectId} vault={vault} />
       ) : view === "assignments" ? (
         <AssignmentList vault={vault} subjectId={subjectId} />

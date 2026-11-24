@@ -25,7 +25,7 @@ export function StudyPanel({
     <section className="vc-tile space-y-4 p-5">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="flex items-center gap-2 text-sm font-semibold text-app-ink"><ListChecks className="h-4 w-4 text-app-accent" /> Subject progress</h2>
-        <Button size="sm" className="ml-auto" onClick={onPractice}><Sparkles className="h-4 w-4" /> Practise with AI</Button>
+        {false && /* AI switched off */ (<Button size="sm" className="ml-auto" onClick={onPractice}><Sparkles className="h-4 w-4" /> Practise with AI</Button>)}
       </div>
       <div>
         <div className="mb-1 flex justify-between text-xs text-app-ink-muted"><span>{overall.done} of {overall.total} topics done across all notes</span><span className="font-semibold text-app-ink">{overall.pct}%</span></div>

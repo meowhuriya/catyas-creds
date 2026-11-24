@@ -9,6 +9,7 @@ import { useVault } from "@/lib/notes/use-vault";
 import { daysLeft, progressOf, sumProgress, useExams, useNoteTopics } from "@/lib/notes/study";
 import { getSubject, subjectColor, subjectsFor } from "@/lib/notes/curriculum";
 import { courseBannerSvg } from "@/components/brand/course-banner-art";
+import { CourseBadge } from "@/components/rewards/rank-up";
 import { bucketOf, partsProgress, useAssignments } from "@/lib/assignments/store";
 import { useFocusDay, useFocusSettings } from "@/lib/focus/store";
 import { usePantry } from "@/lib/rewards/pantry";
@@ -170,7 +171,12 @@ export default function HomePage() {
             const c = courseCard(id);
             return (
               <Link key={id} href={`/notes/${encodeURIComponent(id)}`} className="vc-tile group overflow-hidden hover:border-app-accent">
-                {getSubject(id) && <div aria-hidden className="h-16 w-full" dangerouslySetInnerHTML={{ __html: courseBannerSvg({ code: getSubject(id)!.code, title: getSubject(id)!.title, hue: subjectColor(getSubject(id)!), uid: `h${id}` }) }} />}
+                {getSubject(id) && (
+                  <div className="relative h-16 w-full">
+                    <div aria-hidden className="absolute inset-0" dangerouslySetInnerHTML={{ __html: courseBannerSvg({ code: getSubject(id)!.code, title: getSubject(id)!.title, hue: subjectColor(getSubject(id)!), uid: `h${id}` }) }} />
+                    <span className="absolute bottom-1.5 right-2"><CourseBadge courseId={id} size={28} /></span>
+                  </div>
+                )}
                 <div className="space-y-3 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <span className="min-w-0">

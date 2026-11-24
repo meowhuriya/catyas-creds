@@ -35,7 +35,6 @@ export function MobileTabBar() {
   ];
 
   const moreItems = [
-    { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     { label: "Grades, transcript & degree", href: "/grades", icon: GraduationCap },
     { label: "Certificates", href: "/certificates", icon: Award },
     { label: "Research & Lab", href: "/research", icon: FlaskConical },

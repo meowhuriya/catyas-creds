@@ -44,7 +44,6 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Exams", href: "/prep", icon: Target },
       { label: "Assignments", href: "/assignments", icon: ClipboardList },
       { label: "Focus", href: "/focus", icon: Timer },
-      { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     ],
   },
   {
@@ -61,7 +60,7 @@ const NAV_GROUPS: NavGroup[] = [
 ];
 
 /** Grades also covers the transcript and degree pages. */
-const ALSO_ACTIVE: Record<string, string[]> = { "/grades": ["/transcript", "/degree"], "/notes": ["/notes"], "/prep": ["/prep", "/notes/exam"] };
+const ALSO_ACTIVE: Record<string, string[]> = { "/grades": ["/transcript", "/degree"], "/prep": ["/prep", "/notes/exam"], "/notes": ["/notes", "/courses"] };
 
 const SETTINGS: NavItem = { label: "Settings", href: "/settings", icon: Settings };
 

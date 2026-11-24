@@ -202,10 +202,6 @@ export function Drill({
                 <Segmented value={focus} onChange={setFocus} options={[["smart", "Smart mix"], ["new", "Not tried yet"], ["weak", "My weak ones"], ["order", "In order"]]} />
                 <p className="mt-1 text-[11px] text-app-ink-muted">Smart mix: weak ones first, then ones you haven&apos;t tried, then shaky ones.</p>
               </Field>
-              <Field label="Ask them">
-                <Segmented value={style} onChange={setStyle} options={[["exact", "Exactly as in the Q-bank"], ["twist", "Twisted by AI"]]} />
-                <p className="mt-1 text-[11px] text-app-ink-muted">Twisted: same concept, asked from a new angle, so you can&apos;t just memorise the wording.</p>
-              </Field>
               <Field label="How many">
                 <Segmented value={String(count)} onChange={(v) => setCount(Number(v))} options={[["5", "5"], ["10", "10"], ["15", "15"], ["20", "20"]]} />
               </Field>
@@ -310,6 +306,7 @@ function QuestionView({
   const [reveal, setReveal] = React.useState<{ modelAnswer?: string; simple?: string } | null>(null);
   const [secs, setSecs] = React.useState(0);
   const [showModel, setShowModel] = React.useState(false);
+  const [rating, setRating] = React.useState(false);
   const suggested = card.marks ? Math.round(card.marks * 1.5) : long ? 12 : 3;
 
   React.useEffect(() => {
@@ -400,14 +397,29 @@ function QuestionView({
             </div>
           )}
 
-          {error && <p className="rounded-control bg-[var(--accent-soft)] px-3 py-2 text-sm text-app-ink">{error}</p>}
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={grade} disabled={!!busy || (mode === "type" ? !typed.trim() : photos.length === 0)} className="flex-1">
-              {busy === "grade" ? <><Loader2 className="h-4 w-4 animate-spin" /> Marking…</> : "Mark my answer"}
-            </Button>
-            <Button variant="ghost" onClick={showAnswer} disabled={!!busy}>{busy === "answer" ? <Loader2 className="h-4 w-4 animate-spin" /> : null} I don&apos;t know it</Button>
-            <Button variant="ghost" onClick={onNext} disabled={!!busy}>Skip</Button>
-          </div>
+          {!rating ? (
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => setRating(true)} className="flex-1">I&apos;ve answered: check myself</Button>
+              <Button variant="ghost" onClick={() => onGraded({ score: 0, verdict: "Didn't know it yet", self: true })}>I don&apos;t know it</Button>
+              <Button variant="ghost" onClick={onNext}>Skip</Button>
+            </div>
+          ) : (
+            <div className="space-y-2 rounded-2xl bg-[var(--ctl-fill)] p-3">
+              <p className="text-sm font-medium text-app-ink">Compare with your notes or answer key. How did you do?</p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {([
+                  [10, "Got it all", "Marked as mastered."],
+                  [7, "Mostly", "Almost. It'll come back once more."],
+                  [4, "Shaky", "It'll come back soon."],
+                  [0, "Didn't know", "Marked weak. It comes first next time."],
+                ] as const).map(([score, label, verdict]) => (
+                  <button key={label} onClick={() => onGraded({ score, verdict: `${label}: ${verdict}`, self: true })} className={cn("rounded-xl px-3 py-2.5 text-sm font-semibold", score >= 7 ? "bg-emerald-500/15 text-emerald-700" : score >= 4 ? "bg-sky-500/15 text-sky-700" : "bg-amber-500/15 text-amber-700")}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
 

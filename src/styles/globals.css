@@ -88,9 +88,14 @@ body::before {
 }
 
 /* All app content sits above the veil layer */
-#__next, main, #main-content, aside, header, nav, .app-shell-container {
+#__next, aside, header, nav, .app-shell-container {
   position: relative;
   z-index: 1;
+}
+/* The page itself stays above the veil by order alone: no z-index here, so pop-ups opened
+   inside a page (note reader, drills, viewers) can rise above the top bar. */
+main, #main-content {
+  position: relative;
 }
 
 /* Phones: scroll background and 0.45 default check scale */

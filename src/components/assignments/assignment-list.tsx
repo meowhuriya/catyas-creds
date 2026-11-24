@@ -46,13 +46,12 @@ import { cn } from "@/lib/utils";
 
 type Vault = ReturnType<typeof useVault>;
 
-const BUCKETS: { key: Bucket; label: string; tone: string }[] = [
-  { key: "ready", label: "Ready, not submitted yet", tone: "text-emerald-600" },
-  { key: "overdue", label: "Overdue", tone: "text-red-600" },
-  { key: "week", label: "Due this week", tone: "text-app-accent" },
-  { key: "later", label: "Later", tone: "text-app-ink-muted" },
-  { key: "nodate", label: "No date yet", tone: "text-app-ink-muted" },
-  { key: "done", label: "Submitted", tone: "text-app-ink-muted" },
+/** Sections by where you are with each one. Inside a section, the soonest due comes first. */
+const SECTIONS: { key: AssignmentStatus | "done"; label: string; hint: string; tone: string; dot: string }[] = [
+  { key: "ready", label: "Ready, not submitted yet", hint: "Finished. Hand these in.", tone: "text-emerald-600", dot: "bg-emerald-500" },
+  { key: "doing", label: "In progress", hint: "Started, not finished.", tone: "text-sky-600", dot: "bg-sky-500" },
+  { key: "todo", label: "Not started", hint: "Nothing done yet.", tone: "text-amber-600", dot: "bg-amber-500" },
+  { key: "done", label: "Submitted", hint: "", tone: "text-app-ink-muted", dot: "bg-app-ink-muted" },
 ];
 
 function dueLabel(a: Assignment): string {
@@ -458,7 +457,18 @@ export function AssignmentList({ vault, subjectId }: { vault: Vault; subjectId?:
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-2">
-        {mine.length > 0 && <p className="text-sm text-app-ink-muted">{open} to do · {mine.length - open} submitted</p>}
+        {mine.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {SECTIONS.map((b) => {
+              const n = mine.filter((a) => (b.key === "done" ? a.status === "submitted" : a.status === b.key)).length;
+              return n ? (
+                <span key={b.key} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--ctl-fill)] px-2.5 py-1 text-xs text-app-ink">
+                  <span className={cn("h-1.5 w-1.5 rounded-full", b.dot)} /> {n} {b.key === "done" ? "submitted" : b.key === "ready" ? "ready" : b.key === "doing" ? "in progress" : "not started"}
+                </span>
+              ) : null;
+            })}
+          </div>
+        )}
         {subjectId && <a href="/assignments" className="text-xs font-medium text-[var(--color-accent)] hover:underline">Same list as the Assignments page →</a>}
         {!subjectId && courses.length > 1 && (
           <select value={filter} onChange={(e) => setFilter(e.target.value)} className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs">
@@ -477,8 +487,8 @@ export function AssignmentList({ vault, subjectId }: { vault: Vault; subjectId?:
         </div>
       )}
 
-      {BUCKETS.map((b) => {
-        const list = mine.filter((a) => bucketOf(a) === b.key).sort(byDue);
+      {SECTIONS.map((b) => {
+        const list = mine.filter((a) => (b.key === "done" ? a.status === "submitted" : a.status === b.key)).sort(byDue);
         if (!list.length) return null;
         const collapsed = b.key === "done" && !showDone;
         return (
@@ -488,7 +498,12 @@ export function AssignmentList({ vault, subjectId }: { vault: Vault; subjectId?:
                 <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", collapsed && "-rotate-90")} /> {b.label} ({list.length})
               </button>
             ) : (
-              <p className={cn("text-xs font-semibold uppercase tracking-wide", b.tone)}>{b.label} ({list.length})</p>
+              <div className="flex items-baseline gap-2">
+                <span className={cn("h-2 w-2 shrink-0 translate-y-[-1px] rounded-full", b.dot)} />
+                <p className={cn("text-sm font-semibold", b.tone)}>{b.label}</p>
+                <span className="rounded-full bg-[var(--ctl-fill)] px-2 text-xs font-semibold text-app-ink">{list.length}</span>
+                {b.hint && <span className="text-xs text-app-ink-muted">{b.hint}</span>}
+              </div>
             )}
             {!collapsed && (
               <div className="space-y-2">

@@ -295,7 +295,7 @@ function PlannerContent() {
             </button>
           </div>
 
-          <Button
+          {false && /* AI switched off */ (<Button
             variant="outline"
             size="sm"
             onClick={() => setAiPlanModalOpen(true)}
@@ -303,7 +303,7 @@ function PlannerContent() {
           >
             <Sparkles className="h-3.5 w-3.5" />
             <span>Draft Plan with AI</span>
-          </Button>
+          </Button>)}
 
           <Button
             variant="primary"
