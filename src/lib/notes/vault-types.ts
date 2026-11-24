@@ -6,7 +6,7 @@ export const VAULT_SECTIONS: { key: VaultSection; label: string; short: string; 
   { key: "viva", label: "Viva", short: "Viva", hint: "Viva questions, answers and lab points" },
   { key: "assignment", label: "Assignments", short: "Assignments", hint: "Assignment questions, submissions and deadlines" },
   { key: "submission", label: "My Submissions", short: "Submissions", hint: "Your own answers, PPTs, decks and files you submitted" },
-  { key: "notes", label: "Class Notes", short: "Notes", hint: "Notes, handouts, photos and videos your teachers share" },
+  { key: "notes", label: "My Notes", short: "My notes", hint: "Your notes, handouts, photos and videos from class" },
 ];
 
 export interface VaultLink {

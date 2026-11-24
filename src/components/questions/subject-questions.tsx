@@ -50,13 +50,22 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
   const reader = reading ? notes.find((n) => n.id === reading) : undefined;
 
   const toFocus = (list: QEntry[], label: string, chapter?: string) => {
-    const pick = smartOpen(list).slice(0, 8);
+    const pick = smartOpen(list);
     if (!pick.length) {
       toast.info("Nothing left here", "Every question in this chapter is mastered.");
       return;
     }
+    const title = `${subject?.code ?? ""} · ${label}`.replace(/^ · /, "");
+    const existing = focus.day.tasks.find((t) => !t.done && t.title === title);
+    if (existing) {
+      const have = new Set((existing.refs ?? []).map((r) => `${r.noteId}:${r.itemId}`));
+      const add = pick.filter((e) => !have.has(e.key));
+      focus.updateTask(existing.id, { refs: [...(existing.refs ?? []), ...add.map((e) => ({ noteId: e.noteId, itemId: e.itemId }))] });
+      toast.success("Added to today's Focus", add.length ? `${add.length} more in ${label}.` : `Already on today's list.`);
+      return;
+    }
     focus.addTask({
-      title: `${subject?.code ?? ""} · ${label}`.replace(/^ · /, ""),
+      title,
       kind: "questions",
       subjectId,
       chapter,
@@ -179,7 +188,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                       <Button size="sm" onClick={() => setDrill({ notes, only: smartOpen(g.entries).slice(0, 10).map((e) => ({ noteId: e.noteId, itemId: e.itemId })) })} disabled={s.mastered === s.total}>
                         <Target className="h-4 w-4" /> Test me on this chapter
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => toFocus(g.entries, name, g.chapter || undefined)}><Timer className="h-4 w-4" /> Focus on it today</Button>
+                      <Button size="sm" variant="ghost" onClick={() => toFocus(g.entries, name, g.chapter || undefined)}><Timer className="h-4 w-4" /> Whole chapter to today</Button>
                       <Button size="sm" variant="ghost" onClick={() => { const to = window.prompt("Chapter name", name); if (to && to.trim() && to.trim() !== name) { const notesIn = new Set(g.entries.map((e) => e.noteId)); notesIn.forEach((nid) => nt.renameChapter(nid, g.chapter, to)); } }}><Pencil className="h-4 w-4" /> Rename</Button>
                       <Button size="sm" variant="ghost" onClick={() => { if (window.confirm(`Delete all ${g.entries.length} questions in "${name}"? This can't be undone.`)) { const by = new Map<string, string[]>(); g.entries.forEach((e) => by.set(e.noteId, [...(by.get(e.noteId) ?? []), e.itemId])); by.forEach((ids, nid) => nt.removeMany(nid, ids)); } }}><Trash2 className="h-4 w-4" /> Delete chapter</Button>
                     </div>
@@ -190,6 +199,7 @@ export function SubjectQuestions({ subjectId, vault }: { subjectId: string; vaul
                           <span title="Double-click to fix the wording" onDoubleClick={() => { const t = window.prompt("Edit question", e.item.text); if (t && t.trim()) nt.editText(e.noteId, e.itemId, t); }} className={cn("flex-1 text-sm leading-snug", e.item.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{e.item.text}</span>
                           {!!e.item.marks && <span className="shrink-0 rounded-full border border-app-border px-1.5 text-[10px] text-app-ink-muted">{e.item.marks}M</span>}
                           <ScorePill item={e.item} />
+                          <button onClick={() => toFocus([e], name, g.chapter || undefined)} title="Add this question to today's Focus" className="shrink-0 rounded-full border border-app-border px-2 py-0.5 text-[11px] text-app-ink-muted hover:border-app-accent hover:text-app-ink">+ Today</button>
                           <button onClick={() => setDrill({ notes, only: [{ noteId: e.noteId, itemId: e.itemId }] })} className="shrink-0 rounded-full border border-app-border px-2 py-0.5 text-[11px] text-app-ink-muted hover:border-app-accent hover:text-app-ink">Answer</button>
                         </li>
                       ))}

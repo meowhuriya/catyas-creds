@@ -35,12 +35,12 @@ export function MobileTabBar() {
   ];
 
   const moreItems = [
+    { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     { label: "Grades, transcript & degree", href: "/grades", icon: GraduationCap },
     { label: "Certificates", href: "/certificates", icon: Award },
     { label: "Research & Lab", href: "/research", icon: FlaskConical },
     { label: "Smart Recall", href: "/recall", icon: FileText },
     { label: "Planner", href: "/planner", icon: Calendar },
-    { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     { label: "Settings", href: "/settings", icon: Settings },
   ];
 

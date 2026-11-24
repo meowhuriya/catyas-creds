@@ -4,7 +4,7 @@ import * as React from "react";
 import { useDataStore } from "@/lib/repository";
 import { collectMaterial } from "@/lib/notes/material";
 import { useNoteTopics } from "@/lib/notes/study";
-import { chunkText, parseQuestions } from "@/lib/notes/parse-questions";
+import { chunkText, parseQuestions, reflowLines } from "@/lib/notes/parse-questions";
 import { VaultNote } from "@/lib/notes/vault-types";
 
 /** Reads a note's files/photos/links/text with Gemini and adds the questions (or topics) it finds. */
@@ -64,7 +64,7 @@ export function useImportQuestions(subjectTitle?: string) {
         for (const l of m.links) jobs.push({ label: "Drive link", go: () => callAi(kind, { links: [l] }) });
       } else if (kind === "questions") {
         // No numbering found: take every line that ends with a question mark.
-        const qs = m.text.split(/\n+/).map((l) => l.trim()).filter((l) => l.length > 12 && /\?\s*$/.test(l));
+        const qs = reflowLines(m.text).filter((l) => l.length > 12 && /\?\s*$/.test(l));
         if (qs.length >= 3) all.push(...qs.map((text) => ({ text })));
       }
 
@@ -141,7 +141,7 @@ export async function extractQuestionTexts(note: VaultNote, uid: string | null):
   const m = await collectMaterial([note], uid);
   let items = parseQuestions(m.text).map((q) => q.text);
   if (!items.length) {
-    const lines = m.text.split(/\n+/).map((l) => l.trim()).filter((l) => l.length > 12);
+    const lines = reflowLines(m.text).filter((l) => l.length > 12);
     const asked = lines.filter((l) => /\?\s*$/.test(l) || /^(q\s*\d+|\d+)[.)]\s/i.test(l)).map((l) => l.replace(/^(q\s*\d+|\d+)[.)]\s*/i, ""));
     if (asked.length >= 2) items = asked;
   }

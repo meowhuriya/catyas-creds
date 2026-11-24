@@ -150,12 +150,11 @@ export default function FocusPage() {
           </p>
 
           {carry.length > 0 && (
-            <button
-              onClick={() => carry.forEach((t) => today.addTask({ ...t, id: undefined, done: false, minutes: 0, pomos: 0, auto: false }))}
-              className="mt-3 rounded-control bg-[var(--accent-soft)] px-3 py-2 text-left text-xs text-app-ink"
-            >
-              {carry.length} unfinished from yesterday. <b className="text-[var(--color-accent)]">Bring them over</b>
-            </button>
+            <div className="mt-3 flex items-center gap-2 rounded-control bg-[var(--accent-soft)] px-3 py-2 text-xs text-app-ink">
+              <span className="flex-1">{carry.length} unfinished from yesterday.</span>
+              <button onClick={() => carry.forEach((t) => today.addTask({ ...t, id: undefined, done: false, minutes: 0, pomos: 0, auto: false }))} className="font-semibold text-[var(--color-accent)]">Bring them over</button>
+              <button onClick={() => today.dismissFrom(yesterday)} className="text-app-ink-muted hover:text-app-ink">Dismiss</button>
+            </div>
           )}
 
           <ul className="mt-3 flex-1 space-y-1.5">

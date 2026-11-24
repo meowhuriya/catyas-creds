@@ -44,6 +44,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Exams", href: "/prep", icon: Target },
       { label: "Assignments", href: "/assignments", icon: ClipboardList },
       { label: "Focus", href: "/focus", icon: Timer },
+      { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     ],
   },
   {
@@ -55,7 +56,6 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Smart Recall", href: "/recall", icon: RotateCcw },
       { label: "Planner", href: "/planner", icon: Calendar },
       { label: "Leaderboard", href: "/leaderboard", icon: Trophy },
-      { label: "Lessons & videos", href: "/courses", icon: BookOpen },
     ],
   },
 ];

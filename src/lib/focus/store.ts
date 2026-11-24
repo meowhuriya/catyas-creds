@@ -85,7 +85,19 @@ export function useFocusDay(date: string = todayKey()) {
     },
     updateTask: (id: string, patch: Partial<FocusTask>) =>
       updateDay(date, (d) => ({ ...d, tasks: d.tasks.map((t) => (t.id === id ? { ...t, ...patch } : t)) })),
-    removeTask: (id: string) => updateDay(date, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.id !== id) })),
+    /** Deletes the task for good: also from earlier days' unfinished lists, so it doesn't come back as "unfinished from yesterday". */
+    removeTask: (id: string) => {
+      const all = readKey(DAYS_KEY, EMPTY_DAYS);
+      const title = all[date]?.tasks.find((t) => t.id === id)?.title;
+      updateDay(date, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.id !== id) }));
+      if (!title) return;
+      for (const k of Object.keys(all)) {
+        if (k >= date) continue;
+        if (all[k].tasks.some((t) => !t.done && t.title === title)) updateDay(k, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.done || t.title !== title) }));
+      }
+    },
+    /** Drops yesterday's unfinished tasks without bringing them over. */
+    dismissFrom: (day: string) => updateDay(day, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.done) })),
     moveTask: (id: string, dir: -1 | 1) =>
       updateDay(date, (d) => {
         const i = d.tasks.findIndex((t) => t.id === id);

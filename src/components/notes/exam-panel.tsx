@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CalendarDays, ChevronRight, Plus, Trash2, X } from "lucide-react";
@@ -56,8 +57,8 @@ export function ExamForm({ subjectId, notes, exam, onClose }: { subjectId?: stri
     });
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={onClose}>
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm" onClick={onClose}>
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={(e) => {
@@ -153,7 +154,8 @@ export function ExamForm({ subjectId, notes, exam, onClose }: { subjectId?: stri
         </div>
         <Button type="submit" className="w-full" disabled={!name.trim() || !courses.length}>Save exam</Button>
       </form>
-    </div>
+    </div>,
+    document.body
   );
 }
 

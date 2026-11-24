@@ -108,7 +108,7 @@ export default function SubjectNotesPage() {
           </div>
           {(view === "notes" || view === "files") && (
             <Button onClick={() => openNew(view === "notes" ? "notes" : undefined)} size="lg" className="shrink-0 bg-white text-[#14161F] hover:bg-white/90">
-              <Plus className="h-4 w-4" /> {view === "notes" ? "Add class notes" : `Add to ${active.short}`}
+              <Plus className="h-4 w-4" /> {view === "notes" ? "Add to my notes" : `Add to ${active.short}`}
             </Button>
           )}
         </div>
@@ -131,7 +131,7 @@ export default function SubjectNotesPage() {
       </div>
 
       <div className="flex gap-1 rounded-control border border-app-border bg-app-surface p-1" role="tablist" aria-label="View">
-        {([["questions", "Questions"], ["notes", "Class notes"], ["assignments", "Assignments"], ["files", "More files"]] as const).map(([v, label]) => (
+        {([["questions", "Questions"], ["notes", "My notes"], ["assignments", "Assignments"], ["files", "More files"]] as const).map(([v, label]) => (
           <button
             key={v}
             role="tab"
@@ -158,9 +158,9 @@ export default function SubjectNotesPage() {
         ) : classNotes.length === 0 ? (
           <div className="flex flex-col items-center gap-3 px-6 py-16 text-center">
             <Butterfly size={56} className="opacity-90" />
-            <p className="font-display text-2xl font-normal tracking-[-0.01em] text-app-ink">No class notes yet</p>
+            <p className="font-display text-2xl font-normal tracking-[-0.01em] text-app-ink">Nothing in My notes yet</p>
             <p className="max-w-sm text-sm text-app-ink-muted">Upload what your teacher shares (PPTs, PDFs, handouts, photos of the board) or paste a Drive link. Open any of them here while you study.</p>
-            <Button onClick={() => openNew("notes")}><Plus className="h-4 w-4" /> Add class notes</Button>
+            <Button onClick={() => openNew("notes")}><Plus className="h-4 w-4" /> Add to my notes</Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">

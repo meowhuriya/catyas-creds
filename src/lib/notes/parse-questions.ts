@@ -283,8 +283,17 @@ function parseOutline(text: string): ParsedItem[] {
       sections++;
       continue;
     }
-    if (!chapter || line.length < 12) continue;
+    if (!chapter) continue;
+    const numbered = /^\s*(?:q(?:uestion)?\.?\s*)?\d{1,3}\s*[.)\]:-]\s*/i.test(line);
     const t = line.replace(/^\s*(?:q(?:uestion)?\.?\s*)?\d{1,3}\s*[.)\]:-]\s*/i, "").trim();
+    // A question that wraps onto the next line: the next line starts in lower case, or the last one
+    // stopped on a comma / joining word ("...functions with" + "input arguments...").
+    const prev = out[out.length - 1];
+    if (!numbered && prev && prev.chapter === chapter && prev.marks === marks && (/^[a-z(&*]/.test(t) || /,\s*$/.test(prev.text))) {
+      prev.text = `${prev.text} ${t}`;
+      continue;
+    }
+    if (line.length < 12) continue;
     if (t.length > 8) out.push({ text: t, chapter, marks });
   }
   return units >= 2 || (units >= 1 && sections >= 1) ? out : [];
@@ -436,4 +445,20 @@ export function chunkText(text: string, size = 6000): string[] {
   }
   if (buf.trim()) out.push(buf);
   return out;
+}
+
+/** Joins lines that are really one sentence wrapped by the PDF (next line starts in lower case, or the last ended on a comma). */
+export function reflowLines(text: string): string[] {
+  const out: string[] = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const l = raw.trim();
+    if (!l) {
+      out.push("");
+      continue;
+    }
+    const prev = out[out.length - 1];
+    if (prev && (/^[a-z(&*]/.test(l) || /,\s*$/.test(prev))) out[out.length - 1] = `${prev} ${l}`;
+    else out.push(l);
+  }
+  return out.filter(Boolean);
 }

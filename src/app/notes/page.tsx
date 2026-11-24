@@ -84,7 +84,7 @@ export default function NotesVaultPage() {
             <Butterfly size={40} className="hidden sm:block" />
           </h1>
           <p className="relative mt-2 max-w-xl text-[15px] leading-relaxed text-[var(--color-ink-muted)]">
-            Open a course to find its questions, class notes, assignments and files in one place.
+            Open a course to find its questions, your notes, assignments and files in one place.
           </p>
         </div>
         <div className="relative flex items-center gap-2">

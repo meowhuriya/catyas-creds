@@ -92,10 +92,10 @@ export function SoundControlPopover() {
         <div className="flex items-center justify-between">
           <div>
             <div className="font-semibold text-xs text-[#14161F] dark:text-[#F6EBD3]">
-              Click sounds
+              Click sound
             </div>
             <div className="text-[10px] text-[#4B5160] dark:text-[#CFC8BB]">
-              Soft taps, glass toggles, bloom chime
+              One quiet klick, plus egg hatch &amp; rank-up
             </div>
           </div>
           <button

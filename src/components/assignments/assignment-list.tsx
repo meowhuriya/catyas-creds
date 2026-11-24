@@ -45,6 +45,7 @@ import { cn } from "@/lib/utils";
 type Vault = ReturnType<typeof useVault>;
 
 const BUCKETS: { key: Bucket; label: string; tone: string }[] = [
+  { key: "ready", label: "Ready, not submitted yet", tone: "text-emerald-600" },
   { key: "overdue", label: "Overdue", tone: "text-red-600" },
   { key: "week", label: "Due this week", tone: "text-app-accent" },
   { key: "later", label: "Later", tone: "text-app-ink-muted" },
@@ -194,8 +195,8 @@ function AssignmentForm({
             if (workFiles.length) {
               setBusy("Uploading your work…");
               await attachFiles({ vault, store, a: { ...base, noteId: assignment?.workNoteId }, slot: "workNoteId", files: workFiles, uid: firebaseUser?.uid ?? null });
-              store.setStatus(id, "submitted");
-              toast.success("Submission saved", "Marked as submitted. Change it on the card if not yet handed in.");
+              if (assignment?.status !== "submitted") store.setStatus(id, "ready");
+              toast.success("Your work is saved", "Marked as Ready. Press Submitted once you've handed it in.");
             }
           } catch (err) {
             toast.error("Upload failed", err instanceof Error ? err.message : "Try again");
@@ -237,7 +238,7 @@ function AssignmentForm({
         <div className="space-y-2 rounded-control border border-app-border p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-app-ink-muted">Files</p>
           <FilePick label="Teacher's file" hint="PDF, PPT, Word or photo. Questions are read from it." files={briefFiles} setFiles={setBriefFiles} existing={countFiles(assignment?.briefNoteId)} />
-          <FilePick label="My submission" hint="Your finished PDF / PPT / photos. Adding it marks this submitted." files={workFiles} setFiles={setWorkFiles} existing={countFiles(assignment?.workNoteId)} />
+          <FilePick label="My submission" hint="Your finished PDF / PPT / photos. It moves to Ready until you mark it Submitted." files={workFiles} setFiles={setWorkFiles} existing={countFiles(assignment?.workNoteId)} />
         </div>
         <Button type="submit" disabled={!title.trim() || !subj || !!busy}>{busy || (assignment ? "Save" : "Add assignment")}</Button>
       </form>
@@ -284,6 +285,7 @@ function AssignmentCard({
     setUpBusy(slot);
     try {
       const r = await attachFiles({ vault, store, a: { id: a.id, subjectId: a.subjectId, title: a.title, partsCount: a.parts.length, noteId: a[slot] }, slot, files: Array.from(files), uid: firebaseUser?.uid ?? null });
+      if (slot === "workNoteId" && a.status !== "submitted") store.setStatus(a.id, "ready");
       if (r.questions) toast.success("Questions added", `${r.questions} found in the file. Tick them off as you finish.`);
       else if (slot === "briefNoteId" && a.parts.length === 0 && r.hint) toast.info("Saved", r.hint);
       else toast.success("Uploaded", `${r.count} file${r.count === 1 ? "" : "s"} added.`);
@@ -404,8 +406,8 @@ function AssignmentCard({
           {/* actions */}
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex overflow-hidden rounded-control border border-app-border text-xs">
-              {(["todo", "doing", "submitted"] as AssignmentStatus[]).map((s) => (
-                <button key={s} onClick={() => store.setStatus(a.id, s)} className={cn("px-2.5 py-1.5", a.status === s ? "bg-app-accent text-white" : "text-app-ink-muted hover:text-app-ink")}>{STATUS_LABEL[s]}</button>
+              {(["todo", "doing", "ready", "submitted"] as AssignmentStatus[]).map((s) => (
+                <button key={s} onClick={() => store.setStatus(a.id, s)} className={cn("px-2.5 py-1.5", a.status === s ? "bg-app-accent text-white" : "text-app-ink-muted hover:text-app-ink")}>{s === "ready" ? "Ready" : STATUS_LABEL[s]}</button>
               ))}
             </div>
             {a.status !== "submitted" && (

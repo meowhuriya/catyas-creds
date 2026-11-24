@@ -4,10 +4,10 @@ import { StudyItem, daysLeft, readKey, useStored, writeKey } from "@/lib/notes/s
 import { newId } from "@/lib/notes/vault-types";
 
 export type AssignmentKind = "slides" | "written" | "lab" | "other";
-export type AssignmentStatus = "todo" | "doing" | "submitted";
+export type AssignmentStatus = "todo" | "doing" | "ready" | "submitted";
 
 export const KIND_LABEL: Record<AssignmentKind, string> = { slides: "PPT / slides", written: "Written work", lab: "Lab record", other: "Other" };
-export const STATUS_LABEL: Record<AssignmentStatus, string> = { todo: "Not started", doing: "In progress", submitted: "Submitted" };
+export const STATUS_LABEL: Record<AssignmentStatus, string> = { todo: "Not started", doing: "In progress", ready: "Ready, not submitted", submitted: "Submitted" };
 
 export interface AssignmentLink {
   id: string;
@@ -32,6 +32,8 @@ export interface Assignment {
   notes?: string;
   createdAt: string;
   submittedAt?: string;
+  /** Set by hand on the cat (0-100); otherwise worked out from status and parts. */
+  progress?: number;
 }
 
 const KEY = "vc_assignments_v1";
@@ -81,10 +83,11 @@ export function useAssignments() {
   };
 }
 
-export type Bucket = "overdue" | "week" | "later" | "nodate" | "done";
+export type Bucket = "ready" | "overdue" | "week" | "later" | "nodate" | "done";
 
 export function bucketOf(a: Assignment): Bucket {
   if (a.status === "submitted") return "done";
+  if (a.status === "ready") return "ready";
   const d = daysLeft(a.due);
   if (d === null) return "nodate";
   if (d < 0) return "overdue";
@@ -96,4 +99,14 @@ export function partsProgress(a: Assignment) {
   const total = a.parts.length;
   const done = a.parts.filter((p) => p.done).length;
   return { total, done, pct: total ? Math.round((done / total) * 100) : a.status === "submitted" ? 100 : 0 };
+}
+
+/** How full the cat is: your own setting if you set one, otherwise status + ticked parts. */
+export function catLevel(a: Assignment): number {
+  if (typeof a.progress === "number") return a.progress;
+  if (a.status === "submitted") return 100;
+  if (a.status === "ready") return 90;
+  const p = partsProgress(a);
+  const base = a.status === "doing" ? 15 : 0;
+  return p.total ? Math.max(base, Math.round(p.pct * 0.85)) : base;
 }
