@@ -323,16 +323,7 @@ export function getLocalCollegeWorks(userId?: string): CollegeWorkItem[] {
         if (Array.isArray(parsed)) return parsed;
       }
 
-      // Migrate pre-login generic local edits only if this user hasn't synced on this device yet
-      if (!hasCompletedInitialCloudSync(userId)) {
-        const genericSaved = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (genericSaved !== null) {
-          const parsed = JSON.parse(genericSaved);
-          if (Array.isArray(parsed)) return parsed;
-        }
-      }
-
-      // Signed-in fresh device waits for cloud snapshot instead of injecting seed works
+      // Signed-in fresh device waits for its own cloud snapshot instead of adopting another user's works
       return [];
     }
 

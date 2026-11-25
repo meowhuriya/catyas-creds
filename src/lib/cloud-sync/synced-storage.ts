@@ -46,6 +46,24 @@ export const SYNCED_KEYS = [
   "vc_badges_v1",
 ] as const;
 
+/**
+ * User-private keys that belong strictly to one account.
+ * These must NEVER bleed, cross-upload, or merge across different Gmail accounts.
+ * (Note: focus keys are excluded so focus behavior is not altered).
+ */
+export const USER_PRIVATE_KEYS = new Set<string>([
+  "valeria_research_projects",
+  "valeria_activities_feed",
+  "vc_assignments_v1",
+  "vc_pantry_v1",
+  "vc_study_v1",
+  "vc_note_topics_v1",
+  "vc_exams_v1",
+  "vc_badges_v1",
+]);
+
+export const SYNC_OWNER_KEY = "valeria_cloud_sync_owner_uid";
+
 export const CLOUD_SYNC_EVENT = "cloud-sync:update";
 
 const SYNCED_SET = new Set<string>(SYNCED_KEYS);
@@ -95,13 +113,22 @@ function rawGet(key: string): string | null {
 
 function applyLocal(key: string, value: string | null) {
   try {
-    if (value === null) origRemove?.(key);
-    else origSet?.(key, value);
+    if (value === null) {
+      if (origRemove) origRemove(key);
+      else if (typeof window !== "undefined" && window.localStorage) window.localStorage.removeItem(key);
+      else if (typeof localStorage !== "undefined") localStorage.removeItem(key);
+    } else {
+      if (origSet) origSet(key, value);
+      else if (typeof window !== "undefined" && window.localStorage) window.localStorage.setItem(key, value);
+      else if (typeof localStorage !== "undefined") localStorage.setItem(key, value);
+    }
   } catch (err) {
     console.warn("[cloud-sync] could not write local copy of", key, err);
   }
   try {
-    window.dispatchEvent(new CustomEvent(CLOUD_SYNC_EVENT, { detail: { key } }));
+    if (typeof window !== "undefined" && typeof window.dispatchEvent === "function") {
+      window.dispatchEvent(new CustomEvent(CLOUD_SYNC_EVENT, { detail: { key } }));
+    }
   } catch {}
 }
 
@@ -257,15 +284,51 @@ export async function startCloudSync(uid: string): Promise<() => void> {
   const col = collection(db, "users", uid, COLLECTION);
   const initKey = `cloud_sync_init_${uid}`;
   const firstTimeOnDevice = rawGet(initKey) !== "1";
+  const previousOwner = rawGet(SYNC_OWNER_KEY);
+  const isDifferentUser = Boolean(previousOwner && previousOwner !== uid);
 
   try {
     const remote = assemble(await getDocs(col));
     activeUid = uid;
 
     for (const key of SYNCED_KEYS) {
+      const isPrivate = USER_PRIVATE_KEYS.has(key);
       const local = rawGet(key);
       const r = remote.get(key);
 
+      if (isPrivate) {
+        // User-private files/assignments/pantry/notes:
+        // If switching accounts, NEVER upload the previous account's local data to the new account!
+        if (isDifferentUser) {
+          if (r && r.value !== null) {
+            applyLocal(key, r.value);
+            knownRevs.set(key, r.rev);
+          } else {
+            applyLocal(key, null);
+          }
+          continue;
+        }
+
+        // If this user has no data in Cloud Firestore:
+        if (!r || r.value === null) {
+          if (firstTimeOnDevice && previousOwner !== uid) {
+            // Fresh account or unowned local data: start with empty private state
+            applyLocal(key, null);
+          } else if (local !== null && !firstTimeOnDevice) {
+            await uploadKey(key);
+          }
+          continue;
+        }
+
+        // User has data in Firestore: remote data for this user is authoritative
+        knownRevs.set(key, r.rev);
+        if (local !== r.value) {
+          applyLocal(key, r.value);
+        }
+        continue;
+      }
+
+      // Common / non-private keys (appearance/theme/sound): standard sync
       if (!r) {
         if (local !== null) await uploadKey(key);
         continue;
@@ -288,6 +351,7 @@ export async function startCloudSync(uid: string): Promise<() => void> {
     }
     try {
       origSet?.(initKey, "1");
+      origSet?.(SYNC_OWNER_KEY, uid);
     } catch {}
     status = "synced";
   } catch (err: any) {
@@ -320,7 +384,7 @@ export async function startCloudSync(uid: string): Promise<() => void> {
   return stopCloudSync;
 }
 
-export function stopCloudSync() {
+export function stopCloudSync(clearPrivateData = false) {
   for (const k of Array.from(timers.keys())) flushUpload(k);
   unsubscribeSnapshot?.();
   unsubscribeSnapshot = null;
@@ -328,6 +392,16 @@ export function stopCloudSync() {
   knownRevs.clear();
   chunkCounts.clear();
   status = "idle";
+
+  if (clearPrivateData) {
+    try {
+      if (origRemove) origRemove(SYNC_OWNER_KEY);
+      else if (typeof window !== "undefined") window.localStorage.removeItem(SYNC_OWNER_KEY);
+      for (const key of USER_PRIVATE_KEYS) {
+        applyLocal(key, null);
+      }
+    } catch {}
+  }
 }
 
 /** Subscribe to remote updates for one or more keys. */

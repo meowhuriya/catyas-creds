@@ -346,6 +346,10 @@ describe("College Works Academic Management System", () => {
         // Signed-in fresh second device has no local user/generic keys -> [] instead of SEED_COLLEGE_WORKS
         expect(getLocalCollegeWorks("uid-fresh-phone")).toEqual([]);
 
+        // When a different user logs in, they NEVER inherit another user's works from generic storage
+        store.set(LOCAL_STORAGE_KEY, JSON.stringify([{ id: "user-a-work", title: "User A Assignment" }]));
+        expect(getLocalCollegeWorks("uid-user-b")).toEqual([]);
+
         // Guest mode with empty array stored intentionally respects []
         store.set(LOCAL_STORAGE_KEY, JSON.stringify([]));
         expect(getLocalCollegeWorks(undefined)).toEqual([]);

@@ -87,7 +87,18 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
         });
 
       const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setFirebaseUser(user);
+        setFirebaseUser((prevUser) => {
+          if (prevUser && user && prevUser.uid !== user.uid) {
+            // Switched accounts: clear previous account's private storage so it never bleeds into new account
+            stopCloudSync(true);
+            if (typeof window !== "undefined") {
+              try {
+                localStorage.removeItem("valeria_college_works");
+              } catch {}
+            }
+          }
+          return user;
+        });
         setAuthLoading(false);
       });
       return () => unsubscribe();
@@ -160,12 +171,20 @@ export function DataStoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    stopCloudSync();
+    stopCloudSync(true);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("valeria_college_works");
+      } catch {}
+    }
     if (isRealMode && auth) {
       await fbSignOut(auth);
     }
     setFirebaseUser(null);
     setCurrentUser(null);
+    setTerms(SEED_TERMS.map((t) => ({ ...t })));
+    setCourses(SEED_COURSES.map((c) => ({ ...c })));
+    setCurrentTerm({ ...SEED_TERMS[0] });
     setVersion((v) => v + 1);
   };
 
