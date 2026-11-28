@@ -58,12 +58,8 @@ export function TimerCard({
 
       {showSettings && (
         <div className="mt-3 grid grid-cols-2 gap-3 rounded-control border border-app-border p-3 text-xs sm:grid-cols-3">
-          {([["focusMin", "Focus (min)", 5, 120], ["shortMin", "Short break", 1, 30], ["longMin", "Long break", 5, 60], ["longEvery", "Long break every", 2, 8], ["goalMin", "Daily goal (min)", 30, 720]] as const).map(([k, label, min, max]) => (
-            <label key={k} className="space-y-1 text-app-ink-muted">
-              <span className="block">{label}</span>
-              <input type="number" min={min} max={max} value={settings[k]} onChange={(e) => setSettings({ [k]: Math.max(min, Math.min(max, Number(e.target.value) || min)) })}
-                className="w-full rounded-control border border-app-border bg-app-surface px-2 py-1.5 text-sm text-app-ink" />
-            </label>
+          {([["focusMin", "Focus (min)", 1, 240], ["shortMin", "Short break", 1, 60], ["longMin", "Long break", 1, 120], ["longEvery", "Long break every", 1, 12], ["goalMin", "Daily goal (min)", 1, 1440]] as const).map(([k, label, min, max]) => (
+            <SettingNumber key={k} label={label} value={settings[k]} min={min} max={max} onChange={(v) => setSettings({ [k]: v })} />
           ))}
           <label className="flex items-center gap-2 self-end pb-2 text-app-ink-muted">
             <input type="checkbox" checked={settings.autoBreak} onChange={(e) => setSettings({ autoBreak: e.target.checked })} className="accent-[var(--accent)]" /> Start breaks automatically
@@ -149,5 +145,38 @@ export function TimerCard({
       </div>
       {hatching && pantry.waiting.length > 0 && <HatchOverlay items={pantry.waiting} onClose={() => setHatching(false)} />}
     </section>
+  );
+}
+
+
+/** A number box you can clear and retype freely; it only checks the limits when you leave it. */
+function SettingNumber({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
+  const [text, setText] = React.useState(String(value));
+  React.useEffect(() => setText(String(value)), [value]);
+  const commit = () => {
+    const n = Math.round(Number(text));
+    if (!text.trim() || !Number.isFinite(n)) return setText(String(value));
+    const v = Math.max(min, Math.min(max, n));
+    setText(String(v));
+    if (v !== value) onChange(v);
+  };
+  return (
+    <label className="space-y-1 text-app-ink-muted">
+      <span className="block">{label}</span>
+      <input
+        type="text"
+        inputMode="numeric"
+        value={text}
+        onChange={(e) => {
+          const t = e.target.value.replace(/[^0-9]/g, "");
+          setText(t);
+          const n = Number(t);
+          if (t && n >= min && n <= max) onChange(n);
+        }}
+        onBlur={commit}
+        onKeyDown={(e) => e.key === "Enter" && (e.currentTarget as HTMLInputElement).blur()}
+        className="w-full rounded-control border border-app-border bg-app-surface px-2 py-1.5 text-sm text-app-ink"
+      />
+    </label>
   );
 }
