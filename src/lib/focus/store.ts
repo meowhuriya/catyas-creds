@@ -47,9 +47,9 @@ const EMPTY_DAY: FocusDay = { tasks: [], minutes: 0, pomos: 0 };
 
 function prune(days: Record<string, FocusDay>): Record<string, FocusDay> {
   const keys = Object.keys(days).sort();
-  if (keys.length <= 120) return days;
+  if (keys.length <= 500) return days;
   const out: Record<string, FocusDay> = {};
-  for (const k of keys.slice(-120)) out[k] = days[k];
+  for (const k of keys.slice(-500)) out[k] = days[k];
   return out;
 }
 
@@ -94,8 +94,10 @@ export function useFocusDay(date: string = todayKey()) {
       const title = all[date]?.tasks.find((t) => t.id === id)?.title;
       updateDay(date, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.id !== id) }));
       if (!title) return;
+      // only the "unfinished from yesterday" copy, and only when deleting from today's list
+      if (date !== todayKey()) return;
       for (const k of Object.keys(all)) {
-        if (k >= date) continue;
+        if (k >= date || k < addDays(date, -1)) continue;
         if (all[k].tasks.some((t) => !t.done && t.title === title)) updateDay(k, (d) => ({ ...d, tasks: d.tasks.filter((t) => t.done || t.title !== title) }));
       }
     },
@@ -209,4 +211,59 @@ export function parseTimedTodo(text: string): { title: string; start?: string; e
 export function byTime(tasks: FocusTask[]): FocusTask[] {
   const timed = tasks.filter((x) => x.start).sort((a, b) => a.start!.localeCompare(b.start!));
   return [...timed, ...tasks.filter((x) => !x.start)];
+}
+
+/* ---------------- planning across days ---------------- */
+
+/** "2026-11-28" plus n days. */
+export function addDays(key: string, n: number): string {
+  const d = new Date(key + "T00:00:00");
+  d.setDate(d.getDate() + n);
+  return dateKey(d);
+}
+
+/** Moves (or copies) a to-do to another day. */
+export function moveTaskToDay(id: string, from: string, to: string, copy = false) {
+  if (from === to) return;
+  const all = readKey(DAYS_KEY, EMPTY_DAYS);
+  const t = all[from]?.tasks.find((x) => x.id === id);
+  if (!t) return;
+  const moved: FocusTask = copy ? { ...t, id: newId("task"), done: false, minutes: 0, pomos: 0 } : t;
+  if (!copy) updateDay(from, (d) => ({ ...d, tasks: d.tasks.filter((x) => x.id !== id) }));
+  updateDay(to, (d) => ({ ...d, tasks: [...d.tasks, { ...moved, auto: false }] }));
+}
+
+/** Minutes a to-do was planned for (its time slot), 0 if it has none. */
+export function slotMinutes(t: FocusTask): number {
+  if (!t.start || !t.end) return 0;
+  const m = (x: string) => Number(x.slice(0, 2)) * 60 + Number(x.slice(3, 5));
+  const d = m(t.end) - m(t.start);
+  return d > 0 ? d : 0;
+}
+
+export interface DayStats {
+  planned: number;
+  done: number;
+  plannedMin: number;
+  focusedMin: number;
+  /** share of planned to-dos finished, 0-100 (null when nothing was planned) */
+  followed: number | null;
+}
+export function dayStats(day: FocusDay | undefined): DayStats {
+  const tasks = day?.tasks ?? [];
+  const done = tasks.filter((t) => t.done).length;
+  return {
+    planned: tasks.length,
+    done,
+    plannedMin: tasks.reduce((a, t) => a + slotMinutes(t), 0),
+    focusedMin: day?.minutes ?? 0,
+    followed: tasks.length ? Math.round((done / tasks.length) * 100) : null,
+  };
+}
+
+/** Adds a to-do to any day (used by the planner and exam coverage). */
+export function addTaskToDay(date: string, t: Omit<FocusTask, "id" | "done" | "minutes" | "pomos" | "createdAt"> & Partial<FocusTask>): string {
+  const task = makeTask(t);
+  updateDay(date, (d) => ({ ...d, tasks: [...d.tasks, task] }));
+  return task.id;
 }

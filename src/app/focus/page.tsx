@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowDown, ArrowUp, Clock, Flame, ListPlus, Loader2, Pencil, Plus, Sparkles, Timer, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, CalendarDays, Clock, Flame, ListPlus, Loader2, Pencil, Plus, Sparkles, Timer, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
@@ -10,7 +10,8 @@ import { QuestionPicker, PickResult } from "@/components/focus/question-picker";
 import { PantryCard } from "@/components/rewards/pantry-card";
 import { TimerCard } from "@/components/focus/timer-card";
 import { blocksToTasks, fallbackBlocks, planInput, PlanBlock } from "@/lib/focus/plan";
-import { FocusTask, byTime, dateKey, fmtRange, parseTimedTodo, readSettings, streak, useFocusDay, useFocusDays, useFocusSettings } from "@/lib/focus/store";
+import { FocusTask, byTime, dateKey, fmtRange, moveTaskToDay, parseTimedTodo, readSettings, streak, useFocusDay, useFocusDays, useFocusSettings } from "@/lib/focus/store";
+import { DayStrip, ExamCoverage, PlanReview, relDay } from "@/components/focus/planner";
 import { useFocusTimer } from "@/lib/focus/timer";
 import { getSubject } from "@/lib/notes/curriculum";
 import { QEntry, questionEntries, refKey } from "@/lib/notes/questions";
@@ -23,8 +24,18 @@ export default function FocusPage() {
   const nt = useNoteTopics();
   const { exams } = useExams();
   const timer = useFocusTimer();
-  const today = useFocusDay();
+  // The list below shows whichever day you're planning; the timer always works on today.
+  const [planDate, setPlanDate] = React.useState(todayKey());
+  const isToday = planDate === todayKey();
+  const realToday = useFocusDay();
+  const today = useFocusDay(planDate);
   const days = useFocusDays();
+  const listRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => setEditing(null), [planDate]);
+  const openDay = (k: string) => {
+    setPlanDate(k);
+    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const [settings] = useFocusSettings();
   const toast = useToast();
 
@@ -33,13 +44,13 @@ export default function FocusPage() {
   const entriesOf = React.useCallback((t?: FocusTask) => (t?.refs ?? []).map((r) => byKey.get(refKey(r))).filter(Boolean) as QEntry[], [byKey]);
 
   const tasks = today.day.tasks;
-  const active = tasks.find((t) => t.id === timer.taskId);
+  const active = realToday.day.tasks.find((t) => t.id === timer.taskId);
   const [picker, setPicker] = React.useState(false);
   const [drill, setDrill] = React.useState<QEntry[] | null>(null);
   const [newTodo, setNewTodo] = React.useState("");
   const [newStart, setNewStart] = React.useState("");
   const [newEnd, setNewEnd] = React.useState("");
-  const [editing, setEditing] = React.useState<{ id: string; title: string; start: string; end: string } | null>(null);
+  const [editing, setEditing] = React.useState<{ id: string; title: string; start: string; end: string; day?: string } | null>(null);
   const [nowMin, setNowMin] = React.useState(() => new Date().getHours() * 60 + new Date().getMinutes());
   React.useEffect(() => {
     const t = setInterval(() => setNowMin(new Date().getHours() * 60 + new Date().getMinutes()), 30_000);
@@ -60,6 +71,14 @@ export default function FocusPage() {
     if (!editing) return;
     const title = editing.title.trim();
     if (title) today.updateTask(editing.id, { title, start: editing.start || undefined, end: editing.start && editing.end ? editing.end : undefined });
+    if (editing.day && editing.day !== planDate) {
+      if (editing.id === timer.taskId) timer.setTask(undefined);
+      // let the update land first, then move it
+      const id = editing.id;
+      const to = editing.day;
+      setTimeout(() => moveTaskToDay(id, planDate, to), 0);
+      toast.success("Moved", `To ${relDay(to)}.`);
+    }
     setEditing(null);
   };
   const [planning, setPlanning] = React.useState(false);
@@ -82,12 +101,19 @@ export default function FocusPage() {
   })();
   const carry = (days[yesterday]?.tasks ?? []).filter((t) => !t.done && !tasks.some((x) => x.title === t.title));
 
-  const plannedKeys = new Set(tasks.flatMap((t) => (t.done ? [] : (t.refs ?? []).map(refKey))));
+  // Questions already planned on any day from today on aren't planned twice.
+  const plannedKeys = new Set(
+    Object.entries(days)
+      .filter(([k]) => k >= todayKey())
+      .flatMap(([k, d]) => (k === planDate ? [] : d.tasks))
+      .concat(tasks)
+      .flatMap((t) => (t.done ? [] : (t.refs ?? []).map(refKey)))
+  );
 
   const planDay = async () => {
     setPlanning(true);
     setPlanMsg("");
-    const budget = Math.max(30, readSettings().goalMin - today.day.minutes);
+    const budget = Math.max(30, readSettings().goalMin - (isToday ? today.day.minutes : 0));
     const open = entries.filter((e) => !plannedKeys.has(e.key));
     const input = planInput(open, exams);
     if (!input.length) {
@@ -113,7 +139,7 @@ export default function FocusPage() {
       chapter: r.chapter || undefined,
       refs: r.entries.map((e) => ({ noteId: e.noteId, itemId: e.itemId })),
     });
-    if (focusNow) timer.setTask(id);
+    if (focusNow && isToday) timer.setTask(id);
     setPicker(false);
   };
 
@@ -132,7 +158,7 @@ export default function FocusPage() {
           <p className="text-[13px] font-medium text-app-ink-muted">{new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" })}</p>
           <h1 className="font-display text-[34px] font-semibold leading-tight tracking-[-0.025em] text-app-ink">Focus</h1>
         </div>
-        <HoursStrip todayMin={today.day.minutes} goal={settings.goalMin} pomos={today.day.pomos} streakDays={streak(days)} />
+        <HoursStrip todayMin={realToday.day.minutes} goal={settings.goalMin} pomos={realToday.day.pomos} streakDays={streak(days)} />
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr]">
@@ -141,26 +167,32 @@ export default function FocusPage() {
           taskEntries={entriesOf(active)}
           onPickTask={() => setPicker(true)}
           onTest={(es) => setDrill(es)}
-          onMarkDone={() => active && today.updateTask(active.id, { done: true })}
+          onMarkDone={() => active && realToday.updateTask(active.id, { done: true })}
         />
 
         {/* Today's to-do */}
-        <section className="vc-tile flex flex-col p-5">
-          <div className="flex items-center justify-between gap-2">
+        <section ref={listRef} className="vc-tile flex scroll-mt-24 flex-col p-5">
+          <DayStrip selected={planDate} onSelect={setPlanDate} days={days} exams={exams} />
+          <div className="mt-4 flex items-center justify-between gap-2">
             <div>
-              <h2 className="text-sm font-semibold text-app-ink">Today</h2>
-              <p className="text-xs text-app-ink-muted">{tasks.length ? `${doneCount} of ${tasks.length} done` : "Nothing planned yet"}</p>
+              <h2 className="text-sm font-semibold text-app-ink">{relDay(planDate)}</h2>
+              <p className="text-xs text-app-ink-muted">
+                {tasks.length ? `${doneCount} of ${tasks.length} done` : planDate < todayKey() ? "Nothing was planned" : "Nothing planned yet"}
+                {!isToday && planDate > todayKey() ? " · planning ahead" : ""}
+              </p>
             </div>
-            <Button size="sm" onClick={planDay} disabled={planning}>
-              {planning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} {tasks.some((t) => t.auto) ? "Re-plan" : "Plan my day"}
-            </Button>
+            {planDate >= todayKey() && (
+              <Button size="sm" onClick={planDay} disabled={planning}>
+                {planning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />} {tasks.some((t) => t.auto) ? "Re-plan" : isToday ? "Plan my day" : "Fill this day"}
+              </Button>
+            )}
           </div>
           {tasks.length > 0 && <Bar pct={tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0} className="mt-3" />}
           <p className="mt-2 text-[11px] text-app-ink-muted">
             {planMsg || "Plan my day spreads your un-mastered questions across all subjects, putting closer exams and weak questions first."}
           </p>
 
-          {carry.length > 0 && (
+          {isToday && carry.length > 0 && (
             <div className="mt-3 flex items-center gap-2 rounded-control bg-[var(--accent-soft)] px-3 py-2 text-xs text-app-ink">
               <span className="flex-1">{carry.length} unfinished from yesterday.</span>
               <button onClick={() => carry.forEach((t) => today.addTask({ ...t, id: undefined, done: false, minutes: 0, pomos: 0, auto: false }))} className="font-semibold text-[var(--color-accent)]">Bring them over</button>
@@ -176,8 +208,8 @@ export default function FocusPage() {
               const isActive = t.id === timer.taskId;
               const s0 = mins(t.start);
               const e0 = t.end ? mins(t.end) : s0 >= 0 ? s0 + 60 : -1;
-              const isNow = s0 >= 0 && nowMin >= s0 && nowMin < e0 && !t.done;
-              const isLate = s0 >= 0 && nowMin >= e0 && !t.done;
+              const isNow = isToday && s0 >= 0 && nowMin >= s0 && nowMin < e0 && !t.done;
+              const isLate = !t.done && ((isToday && s0 >= 0 && nowMin >= e0) || planDate < todayKey());
               if (editing?.id === t.id)
                 return (
                   <li key={t.id} className="space-y-2 rounded-control border border-app-accent bg-app-surface px-3 py-2.5">
@@ -189,6 +221,8 @@ export default function FocusPage() {
                       to
                       <input type="time" value={editing.end} onChange={(e) => setEditing({ ...editing, end: e.target.value })} aria-label="End time" className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
                       {(editing.start || editing.end) && <button onClick={() => setEditing({ ...editing, start: "", end: "" })} className="hover:text-app-ink">No time</button>}
+                      <CalendarDays className="ml-2 h-3.5 w-3.5" />
+                      <input type="date" value={editing.day ?? planDate} onChange={(e) => e.target.value && setEditing({ ...editing, day: e.target.value })} aria-label="Day" className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
                       <span className="ml-auto flex gap-2">
                         <button onClick={() => setEditing(null)} className="rounded-full px-3 py-1 hover:text-app-ink">Cancel</button>
                         <button onClick={saveEdit} className="rounded-full bg-app-accent px-3 py-1 font-semibold text-white">Save</button>
@@ -206,7 +240,7 @@ export default function FocusPage() {
                           <Clock className="h-3 w-3" /> {fmtRange(t.start, t.end)}{isNow ? " · now" : ""}
                         </span>
                       )}
-                      <p onDoubleClick={() => setEditing({ id: t.id, title: t.title, start: t.start ?? "", end: t.end ?? "" })} title="Double-click to edit" className={cn("text-sm leading-snug", t.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{t.title}</p>
+                      <p onDoubleClick={() => setEditing({ id: t.id, title: t.title, start: t.start ?? "", end: t.end ?? "", day: planDate })} title="Double-click to edit" className={cn("text-sm leading-snug", t.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{t.title}</p>
                       <p className="text-[11px] text-app-ink-muted">
                         {t.kind === "questions" ? `${m}/${es.length} mastered` : "To-do"}
                         {t.minutes ? ` · ${t.minutes} min` : ""}
@@ -214,7 +248,7 @@ export default function FocusPage() {
                         {t.why ? ` · ${t.why}` : ""}
                       </p>
                     </div>
-                    {!t.done && !isActive && (
+                    {!t.done && !isActive && isToday && (
                       <button onClick={() => focusOn(t)} className="shrink-0 rounded-full border border-app-border px-2.5 py-0.5 text-[11px] font-medium text-app-ink-muted hover:border-app-accent hover:text-app-ink">
                         <Timer className="mr-1 inline h-3 w-3" />Focus
                       </button>
@@ -222,12 +256,15 @@ export default function FocusPage() {
                     {isActive && <span className="shrink-0 text-[11px] font-semibold text-[var(--color-accent)]">Now</span>}
                   </div>
                   <div className="mt-1 flex justify-end gap-2 opacity-0 transition-opacity group-hover/row:opacity-100 focus-within:opacity-100">
-                    <button onClick={() => setEditing({ id: t.id, title: t.title, start: t.start ?? "", end: t.end ?? "" })} aria-label="Edit" className="text-app-ink-muted hover:text-app-ink"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setEditing({ id: t.id, title: t.title, start: t.start ?? "", end: t.end ?? "", day: planDate })} aria-label="Edit" className="text-app-ink-muted hover:text-app-ink"><Pencil className="h-3.5 w-3.5" /></button>
                     {!t.start && (
                       <>
                         <button onClick={() => today.moveTask(t.id, -1)} disabled={i === 0} aria-label="Move up" className="text-app-ink-muted disabled:opacity-30"><ArrowUp className="h-3.5 w-3.5" /></button>
                         <button onClick={() => today.moveTask(t.id, 1)} disabled={i === tasks.length - 1} aria-label="Move down" className="text-app-ink-muted disabled:opacity-30"><ArrowDown className="h-3.5 w-3.5" /></button>
                       </>
+                    )}
+                    {!t.done && (
+                      <button onClick={() => { if (isActive) timer.setTask(undefined); const next = dateKey(new Date(new Date(planDate + "T00:00:00").getTime() + 86_400_000)); moveTaskToDay(t.id, planDate, next); toast.success("Moved", `To ${relDay(next)}.`); }} title="Move to the next day" className="text-[11px] font-medium text-app-ink-muted hover:text-app-ink">→ Next day</button>
                     )}
                     <button onClick={() => { if (isActive) timer.setTask(undefined); today.removeTask(t.id); }} aria-label="Remove" className="text-app-ink-muted"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
@@ -256,6 +293,11 @@ export default function FocusPage() {
             </div>
           </form>
         </section>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <PlanReview days={days} onOpenDay={openDay} />
+        <ExamCoverage exams={exams} notes={vault.notes} topics={nt.topics} days={days} />
       </div>
 
       <PantryCard />
