@@ -16,6 +16,9 @@ export interface FocusTask {
   pomos: number;
   auto?: boolean; // created by the planner
   why?: string; // planner's reason
+  /** Optional time slot, "HH:MM" 24-hour (e.g. "09:00" to "10:00"). */
+  start?: string;
+  end?: string;
   createdAt: string;
 }
 
@@ -147,4 +150,63 @@ export function streak(days: Record<string, FocusDay>): number {
     d.setDate(d.getDate() - 1);
   }
   return n;
+}
+
+/* ---------------- time slots for to-dos ---------------- */
+const two = (n: number) => String(n).padStart(2, "0");
+
+/** "09:00" → "9:00 AM" */
+export function fmtTime(t?: string): string {
+  if (!t) return "";
+  const [h, m] = t.split(":").map(Number);
+  return `${((h + 11) % 12) + 1}:${two(m)} ${h < 12 ? "AM" : "PM"}`;
+}
+export function fmtRange(start?: string, end?: string): string {
+  if (!start) return "";
+  return end ? `${fmtTime(start)} – ${fmtTime(end)}` : fmtTime(start);
+}
+
+function toHHMM(h: number, m: number, ap?: string, guessFrom?: number): string {
+  let hh = h;
+  if (ap) {
+    const pm = /p/i.test(ap);
+    if (hh === 12) hh = pm ? 12 : 0;
+    else if (pm) hh += 12;
+  } else if (guessFrom !== undefined) {
+    // no am/pm on the end time: keep it after the start
+    while (hh < guessFrom && hh + 12 < 24) hh += 12;
+  } else if (hh >= 1 && hh <= 6) hh += 12; // "3 - 4 revise" means the afternoon
+  return `${two(Math.min(23, hh))}:${two(Math.min(59, m))}`;
+}
+
+/**
+ * Reads a time slot typed in front of a to-do:
+ * "9:00 am - 10:00 am Revise unit 2", "9-10 maths", "2:30pm to 4 lab record", "7 pm essay".
+ */
+export function parseTimedTodo(text: string): { title: string; start?: string; end?: string } {
+  const t = text.trim();
+  const T = String.raw`(\d{1,2})(?:[:.](\d{2}))?\s*([ap]\.?m\.?)?`;
+  const range = new RegExp(`^${T}\\s*(?:-|–|—|to)\\s*${T}\\s*[:,-]?\\s+(.+)$`, "i");
+  const single = new RegExp(`^(?:at\\s+)?${T}\\s*[:,-]?\\s+(.+)$`, "i");
+  let m = t.match(range);
+  if (m) {
+    const [, h1, m1, a1, h2, m2, a2, rest] = m;
+    const endAp = a2 || undefined;
+    const startAp = a1 || (endAp && Number(h1) <= Number(h2) && Number(h2) !== 12 ? endAp : undefined);
+    const start = toHHMM(Number(h1), Number(m1 ?? 0), startAp);
+    const end = toHHMM(Number(h2), Number(m2 ?? 0), endAp, endAp ? undefined : Number(start.slice(0, 2)));
+    if (Number(h1) <= 24 && Number(h2) <= 24) return { title: rest.trim(), start, end };
+  }
+  m = t.match(single);
+  if (m && (m[3] || m[2])) {
+    const [, h1, m1, a1, rest] = m;
+    return { title: rest.trim(), start: toHHMM(Number(h1), Number(m1 ?? 0), a1) };
+  }
+  return { title: t };
+}
+
+/** Timed to-dos first, in time order; the rest keep the order you gave them. */
+export function byTime(tasks: FocusTask[]): FocusTask[] {
+  const timed = tasks.filter((x) => x.start).sort((a, b) => a.start!.localeCompare(b.start!));
+  return [...timed, ...tasks.filter((x) => !x.start)];
 }

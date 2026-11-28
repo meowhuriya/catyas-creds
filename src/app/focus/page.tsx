@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowDown, ArrowUp, Flame, ListPlus, Loader2, Plus, Sparkles, Timer, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Clock, Flame, ListPlus, Loader2, Pencil, Plus, Sparkles, Timer, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { Bar } from "@/components/notes/exam-panel";
@@ -10,7 +10,7 @@ import { QuestionPicker, PickResult } from "@/components/focus/question-picker";
 import { PantryCard } from "@/components/rewards/pantry-card";
 import { TimerCard } from "@/components/focus/timer-card";
 import { blocksToTasks, fallbackBlocks, planInput, PlanBlock } from "@/lib/focus/plan";
-import { FocusTask, dateKey, readSettings, streak, useFocusDay, useFocusDays, useFocusSettings } from "@/lib/focus/store";
+import { FocusTask, byTime, dateKey, fmtRange, parseTimedTodo, readSettings, streak, useFocusDay, useFocusDays, useFocusSettings } from "@/lib/focus/store";
 import { useFocusTimer } from "@/lib/focus/timer";
 import { getSubject } from "@/lib/notes/curriculum";
 import { QEntry, questionEntries, refKey } from "@/lib/notes/questions";
@@ -37,6 +37,31 @@ export default function FocusPage() {
   const [picker, setPicker] = React.useState(false);
   const [drill, setDrill] = React.useState<QEntry[] | null>(null);
   const [newTodo, setNewTodo] = React.useState("");
+  const [newStart, setNewStart] = React.useState("");
+  const [newEnd, setNewEnd] = React.useState("");
+  const [editing, setEditing] = React.useState<{ id: string; title: string; start: string; end: string } | null>(null);
+  const [nowMin, setNowMin] = React.useState(() => new Date().getHours() * 60 + new Date().getMinutes());
+  React.useEffect(() => {
+    const t = setInterval(() => setNowMin(new Date().getHours() * 60 + new Date().getMinutes()), 30_000);
+    return () => clearInterval(t);
+  }, []);
+  const mins = (hhmm?: string) => (hhmm ? Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5)) : -1);
+  const addTodo = () => {
+    const parsed = parseTimedTodo(newTodo);
+    if (!parsed.title) return;
+    const start = newStart || parsed.start;
+    const end = newEnd || parsed.end;
+    today.addTask({ title: parsed.title, kind: "custom", start: start || undefined, end: end && start ? end : undefined });
+    setNewTodo("");
+    setNewStart("");
+    setNewEnd("");
+  };
+  const saveEdit = () => {
+    if (!editing) return;
+    const title = editing.title.trim();
+    if (title) today.updateTask(editing.id, { title, start: editing.start || undefined, end: editing.start && editing.end ? editing.end : undefined });
+    setEditing(null);
+  };
   const [planning, setPlanning] = React.useState(false);
   const [planMsg, setPlanMsg] = React.useState("");
 
@@ -144,16 +169,44 @@ export default function FocusPage() {
           )}
 
           <ul className="mt-3 flex-1 space-y-1.5">
-            {tasks.map((t, i) => {
+            {byTime(tasks).map((t) => {
+              const i = tasks.indexOf(t);
               const es = entriesOf(t);
               const m = es.filter((e) => e.item.done).length;
               const isActive = t.id === timer.taskId;
+              const s0 = mins(t.start);
+              const e0 = t.end ? mins(t.end) : s0 >= 0 ? s0 + 60 : -1;
+              const isNow = s0 >= 0 && nowMin >= s0 && nowMin < e0 && !t.done;
+              const isLate = s0 >= 0 && nowMin >= e0 && !t.done;
+              if (editing?.id === t.id)
+                return (
+                  <li key={t.id} className="space-y-2 rounded-control border border-app-accent bg-app-surface px-3 py-2.5">
+                    <input autoFocus value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditing(null); }}
+                      className="w-full rounded-control border border-app-border bg-app-surface px-2.5 py-1.5 text-sm outline-none focus:border-app-accent" />
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-app-ink-muted">
+                      <Clock className="h-3.5 w-3.5" />
+                      <input type="time" value={editing.start} onChange={(e) => setEditing({ ...editing, start: e.target.value })} aria-label="Start time" className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
+                      to
+                      <input type="time" value={editing.end} onChange={(e) => setEditing({ ...editing, end: e.target.value })} aria-label="End time" className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
+                      {(editing.start || editing.end) && <button onClick={() => setEditing({ ...editing, start: "", end: "" })} className="hover:text-app-ink">No time</button>}
+                      <span className="ml-auto flex gap-2">
+                        <button onClick={() => setEditing(null)} className="rounded-full px-3 py-1 hover:text-app-ink">Cancel</button>
+                        <button onClick={saveEdit} className="rounded-full bg-app-accent px-3 py-1 font-semibold text-white">Save</button>
+                      </span>
+                    </div>
+                  </li>
+                );
               return (
                 <li key={t.id} className={cn("group/row rounded-control border px-3 py-2.5 transition-colors", isActive ? "border-app-accent bg-[var(--accent-soft)]" : "border-app-border")}>
                   <div className="flex items-start gap-2.5">
                     <input type="checkbox" checked={t.done} onChange={() => today.updateTask(t.id, { done: !t.done })} className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--accent)]" />
                     <div className="min-w-0 flex-1">
-                      <p className={cn("text-sm leading-snug", t.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{t.title}</p>
+                      {t.start && (
+                        <span className={cn("mb-0.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums", isNow ? "bg-app-accent text-white" : isLate ? "bg-amber-500/15 text-amber-700" : "bg-[var(--ctl-fill)] text-app-ink")}>
+                          <Clock className="h-3 w-3" /> {fmtRange(t.start, t.end)}{isNow ? " · now" : ""}
+                        </span>
+                      )}
+                      <p onDoubleClick={() => setEditing({ id: t.id, title: t.title, start: t.start ?? "", end: t.end ?? "" })} title="Double-click to edit" className={cn("text-sm leading-snug", t.done ? "text-app-ink-muted line-through" : "text-app-ink")}>{t.title}</p>
                       <p className="text-[11px] text-app-ink-muted">
                         {t.kind === "questions" ? `${m}/${es.length} mastered` : "To-do"}
                         {t.minutes ? ` · ${t.minutes} min` : ""}
@@ -169,8 +222,13 @@ export default function FocusPage() {
                     {isActive && <span className="shrink-0 text-[11px] font-semibold text-[var(--color-accent)]">Now</span>}
                   </div>
                   <div className="mt-1 flex justify-end gap-2 opacity-0 transition-opacity group-hover/row:opacity-100 focus-within:opacity-100">
-                    <button onClick={() => today.moveTask(t.id, -1)} disabled={i === 0} aria-label="Move up" className="text-app-ink-muted disabled:opacity-30"><ArrowUp className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => today.moveTask(t.id, 1)} disabled={i === tasks.length - 1} aria-label="Move down" className="text-app-ink-muted disabled:opacity-30"><ArrowDown className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => setEditing({ id: t.id, title: t.title, start: t.start ?? "", end: t.end ?? "" })} aria-label="Edit" className="text-app-ink-muted hover:text-app-ink"><Pencil className="h-3.5 w-3.5" /></button>
+                    {!t.start && (
+                      <>
+                        <button onClick={() => today.moveTask(t.id, -1)} disabled={i === 0} aria-label="Move up" className="text-app-ink-muted disabled:opacity-30"><ArrowUp className="h-3.5 w-3.5" /></button>
+                        <button onClick={() => today.moveTask(t.id, 1)} disabled={i === tasks.length - 1} aria-label="Move down" className="text-app-ink-muted disabled:opacity-30"><ArrowDown className="h-3.5 w-3.5" /></button>
+                      </>
+                    )}
                     <button onClick={() => { if (isActive) timer.setTask(undefined); today.removeTask(t.id); }} aria-label="Remove" className="text-app-ink-muted"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </li>
@@ -178,13 +236,24 @@ export default function FocusPage() {
             })}
           </ul>
 
-          <form onSubmit={(e) => { e.preventDefault(); if (newTodo.trim()) today.addTask({ title: newTodo.trim(), kind: "custom" }); setNewTodo(""); }} className="mt-3 flex gap-1.5">
-            <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} placeholder="Add a to-do"
-              className="min-w-0 flex-1 rounded-control border border-app-border bg-app-surface px-3 py-2 text-sm outline-none focus:border-app-accent" />
-            <button type="submit" disabled={!newTodo.trim()} aria-label="Add to-do" className="rounded-control border border-app-border px-2.5 text-app-ink disabled:opacity-40"><Plus className="h-4 w-4" /></button>
-            <button type="button" onClick={() => setPicker(true)} className="inline-flex items-center gap-1 rounded-control border border-app-border px-3 text-xs font-medium text-app-ink hover:border-app-accent">
-              <ListPlus className="h-4 w-4" /> Questions
-            </button>
+          <form onSubmit={(e) => { e.preventDefault(); addTodo(); }} className="mt-3 space-y-1.5">
+            <div className="flex gap-1.5">
+              <input value={newTodo} onChange={(e) => setNewTodo(e.target.value)} placeholder="Add a to-do, e.g. 9:00 am - 10:00 am Revise unit 2"
+                className="min-w-0 flex-1 rounded-control border border-app-border bg-app-surface px-3 py-2 text-sm outline-none focus:border-app-accent" />
+              <button type="submit" disabled={!newTodo.trim()} aria-label="Add to-do" className="rounded-control border border-app-border px-2.5 text-app-ink disabled:opacity-40"><Plus className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setPicker(true)} className="inline-flex items-center gap-1 rounded-control border border-app-border px-3 text-xs font-medium text-app-ink hover:border-app-accent">
+                <ListPlus className="h-4 w-4" /> Questions
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-app-ink-muted">
+              <Clock className="h-3.5 w-3.5" /> Time (optional)
+              <input type="time" value={newStart} onChange={(e) => setNewStart(e.target.value)} aria-label="Start time" className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
+              to
+              <input type="time" value={newEnd} onChange={(e) => setNewEnd(e.target.value)} aria-label="End time" className="rounded-control border border-app-border bg-app-surface px-2 py-1 text-xs text-app-ink" />
+              {newTodo && !newStart && parseTimedTodo(newTodo).start && (
+                <span className="rounded-full bg-[var(--accent-soft)] px-2 py-0.5 font-semibold text-[var(--color-accent)]">{fmtRange(parseTimedTodo(newTodo).start, parseTimedTodo(newTodo).end)}</span>
+              )}
+            </div>
           </form>
         </section>
       </div>
